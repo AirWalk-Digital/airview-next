@@ -10,7 +10,7 @@ export default function Header({ name, title, date, url }) {
         </a>{' '}
         —{' '}
         <Link href="/1">
-          <a>{title}</a>
+          {title}
         </Link>
       </div>
       <time>{date}</time>
