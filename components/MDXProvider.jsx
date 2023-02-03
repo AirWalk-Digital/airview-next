@@ -9,12 +9,12 @@ import Step from "./Step";
 import Steps from "./Steps";
 import { motion } from "framer-motion";
 
-const mdComponents = {
+export const mdComponents = {
   h1: (props) => <h1 {...props} />,
   pre: (props) => props.children,
   code: (props) => {
     const { className } = props;
-    const language = className.replace("language-", "");
+    const language = className?.replace("language-", "");
     return (
       <SyntaxHighlighter
         className={className}
