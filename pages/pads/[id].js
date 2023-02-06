@@ -1,6 +1,6 @@
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
-import MDXProvider, { mdComponents } from "../../components/MDXProvider";
+import { mdComponents } from "../../components/MDXProvider";
 
 export async function getStaticPaths() {
   const axios = require('axios');

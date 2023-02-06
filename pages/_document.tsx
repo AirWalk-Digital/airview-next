@@ -1,5 +1,4 @@
 import Document from "next/document";
-import { ServerStyleSheet } from "styled-components";
 import { ServerStyleSheets } from '@mui/styles';
 
 export default class MyDocument extends Document {
