@@ -1,14 +1,14 @@
 import React from 'react'
-import { ThemeProvider as StyledThemeProvider } from 'styled-components'
+import { ThemeProvider as TP, createTheme } from '@mui/material/styles';
 
-const theme = {
+const theme = createTheme({
   colors: {
     primary: '#0070f3',
   },
-}
+})
 
 export const ThemeProvider = ({ children }) => {
-  return <StyledThemeProvider theme={theme}>{children}</StyledThemeProvider>
+  return <TP theme={theme}>{children}</TP>
 }
 
 export default ThemeProvider

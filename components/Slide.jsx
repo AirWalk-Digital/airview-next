@@ -1,9 +1,9 @@
 import React from 'react'
-import styled from 'styled-components'
+import { styled } from '@mui/material/styles'
 
-const StyledSlide = styled.div`
-  width: 100%;
-`
+const StyledSlide = styled('div')({
+  width: '100%',
+})
 
 export default function Slide({ children, id, className }) {
   return (
