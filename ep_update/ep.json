@@ -1,0 +1,10 @@
+{
+  "parts": [
+    {
+      "name": "ep_update",
+      "hooks":{
+        "padUpdate": "ep_update/index:padUpdate"
+      }
+    }
+  ]
+}
