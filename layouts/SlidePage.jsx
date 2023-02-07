@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { createGlobalStyle } from "styled-components";
+import GlobalStyles from '@mui/material/GlobalStyles';
 import Slide from "../components/Slide";
 import PresentationMode from "../components/PresentationMode";
 import Swipeable from "../components/Swipeable";
@@ -11,7 +11,7 @@ import { useCurrentSlide } from "../context/CurrentSlideContext";
 import { Storage } from "../hooks/useStorage";
 import { MODES } from "../constants/modes";
 
-const GlobalStyle = createGlobalStyle`
+const globalStyles = `
   :root {
     --bg: #050505;
     --meta: #888;
@@ -379,7 +379,7 @@ export default function SlidePage({ children, next }) {
 
   return (
     <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
-      <GlobalStyle />
+      <GlobalStyles styles={globalStyles} />
       <Storage />
       <PresentationMode
         mode={mode}

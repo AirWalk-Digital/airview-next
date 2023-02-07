@@ -1,7 +1,7 @@
 import React from 'react'
-import styled from 'styled-components'
+import { styled } from '@mui/material/styles'
 
-const StyledCover = styled.div``
+const StyledCover = styled('div')({})
 
 export default function Cover({ children }) {
   return <StyledCover>{children}</StyledCover>

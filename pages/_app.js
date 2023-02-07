@@ -1,4 +1,4 @@
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Head from "next/head";
 import { siteConfig } from "../site.config.js";
 import Header from "../components/Header";
@@ -8,11 +8,11 @@ import { CurrentSlideProvider } from "../context/CurrentSlideContext";
 import { ModeProvider } from "../context/ModeContext";
 import TransitionPage from "../layouts/TransitionPage";
 
-const theme = {
+const theme = createTheme({
   colors: {
     primary: "#0070f3",
   },
-};
+})
 
 export default function App({ Component, pageProps }) {
   return (
