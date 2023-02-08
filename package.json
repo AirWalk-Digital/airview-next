@@ -18,12 +18,14 @@
     "axios": "^1.3.1",
     "eslint-config-next": "^13.1.6",
     "framer-motion": "^4.1.17",
+    "net": "^1.0.2",
     "next": "^13.1.6",
     "next-mdx-remote": "^4.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-swipeable": "^6.1.2",
-    "react-syntax-highlighter": "^15.4.4"
+    "react-syntax-highlighter": "^15.4.4",
+    "tls": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "18.11.18",
