@@ -1,5 +1,6 @@
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
+import { useState, useEffect, } from 'react';
 import { mdComponents } from "../../components/MDXProvider";
 
 export async function getStaticPaths() {
@@ -28,7 +29,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: true, // can also be true or 'blocking'
+    fallback: true,
   }
 }
 
@@ -37,7 +38,7 @@ export async function getStaticProps(context) {
   const client = axios.create({
     baseURL: 'http://localhost:9001/api/1.2.1',
     timeout: 1000,
-    params: { 'apikey': process.env.ETHERPAD_API_KEY },
+    params: { apikey: process.env.ETHERPAD_API_KEY },
   });
   let pad = null;
   try {
@@ -49,16 +50,35 @@ export async function getStaticProps(context) {
       }
     })).data.data?.text
   } catch (error) {
-    console.log(error.response)
+    console.log(error)
   }
   const mdxSource = await serialize(pad ?? 'No content')
-  return { props: { source: mdxSource, } }
+  console.log(mdxSource)
+  return { props: { source: mdxSource, padId: context.params.id, } }
 }
 
 export default function Pad(props) {
+  const [pad, setPad] = useState(props);
+  const [refreshToken, setRefreshToken] = useState(Math.random());
+
+  useEffect(() => {
+    fetch(`/api/fetch-pad?pad=${props.padId}`)
+      .then((res) => res.json())
+      .then(data => {
+        setPad(data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+      .finally(() => {
+        // Update refreshToken after 3 seconds so this event will re-trigger and update the data
+        setTimeout(() => setRefreshToken(Math.random()), 5000);
+      });
+  }, [refreshToken]);
+
   return (
     <div className="wrapper">
-      <MDXRemote {...props.source} components={mdComponents} />
+      <MDXRemote {...pad.source} components={mdComponents} />
     </div>
   )
 }
