@@ -35,7 +35,7 @@ export async function getStaticPaths() {
 export async function getStaticProps(context) {
   const axios = require('axios');
   const client = axios.create({
-    baseURL: 'http://localhost:9001/api/1.2.1',
+    baseURL: process.env.ETHERPAD_BASE_URL,
     timeout: 1000,
     params: { 'apikey': process.env.ETHERPAD_API_KEY },
   });

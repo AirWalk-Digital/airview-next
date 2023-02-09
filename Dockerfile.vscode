@@ -35,5 +35,6 @@ USER $USERNAME
 COPY . /tmp/npm
 
 RUN doas chown -R $USERNAME /tmp/npm
-RUN cd /tmp/npm && yarn
+RUN npm config set prefix /tmp/npm
+# RUN cd /tmp/npm && yarn
 
