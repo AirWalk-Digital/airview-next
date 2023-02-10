@@ -16,13 +16,25 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/pads/[id].js", "pages/pads/[id].js"  ],
+    "**/*.tsx",
+    "pages2/pads/[id].jss",
+    "pages2/pads/[id].jss",
+    ".next/types/**/*.ts",
+    "app/page.tsxx",
+    "app2/page.tsxsxx",
+    "app/pad2/page.jsss",
+    "app/pad2/page.jsss"
+  ],
   "exclude": [
     "node_modules"
   ]
