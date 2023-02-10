@@ -1,10 +1,6 @@
 import { serialize } from 'next-mdx-remote/serialize'
 
 export default async function handler(req, res) {
-  console.log('update')
-  console.log(req.query.pad)
-
-  console.log('fetching')
   const axios = require('axios');
   const client = axios.create({
     baseURL: 'http://localhost:9001/api/1.2.1',
@@ -21,7 +17,6 @@ export default async function handler(req, res) {
       }
     }))
     pad = resp.data.data?.text
-    console.log('here', pad)
   } catch (error) {
     console.log(error)
   }

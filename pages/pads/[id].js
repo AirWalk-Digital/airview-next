@@ -52,9 +52,19 @@ export async function getStaticProps(context) {
   } catch (error) {
     console.log(error)
   }
-  const mdxSource = await serialize(pad ?? 'No content')
+  const mdxSource = await serialize(pad ?? 'No content', {
+    scope: {},
+    mdxOptions: {
+      format: 'mdx',
+    },
+    parseFrontmatter: true,
+  })
   console.log(mdxSource)
   return { props: { source: mdxSource, padId: context.params.id, } }
+}
+
+const isDifferent = (oldPad, newPad) => {
+  return (oldPad.source.compiledSource !== newPad.source.compiledSource);
 }
 
 export default function Pad(props) {
@@ -65,13 +75,14 @@ export default function Pad(props) {
     fetch(`/api/fetch-pad?pad=${props.padId}`)
       .then((res) => res.json())
       .then(data => {
-        setPad(data)
+        if (isDifferent(pad, data)) {
+          // setPad(data)
+        }
       })
       .catch(error => {
         console.log(error)
       })
       .finally(() => {
-        // Update refreshToken after 3 seconds so this event will re-trigger and update the data
         setTimeout(() => setRefreshToken(Math.random()), 5000);
       });
   }, [refreshToken]);

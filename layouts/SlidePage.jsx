@@ -301,10 +301,11 @@ export default function SlidePage({ children, next }) {
   };
 
   useEffect(() => {
-    router.push(
-      `${router.pathname}`,
-      `${router.pathname}?mode=${mode}#${currentSlide}`
-    );
+    // console.log(router)
+    // router.push(
+    //   `${router.asPath}`,
+    //   `${router.asPath}?mode=${mode}#${currentSlide}`
+    // );
   }, [currentSlide, mode, router.pathname]);
 
   useEventListener("keydown", navigate);
