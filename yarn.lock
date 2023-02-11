@@ -3050,6 +3050,11 @@ nanoid@^3.3.4:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
 
+net@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/net/-/net-1.0.2.tgz#d1757ec9a7fb2371d83cf4755ce3e27e10829388"
+  integrity sha512-kbhcj2SVVR4caaVnGLJKmlk2+f+oLkjqdKeQlmUtz6nGzOpbcobwVIeSURNgraV/v3tlmGIX82OcPCl0K6RbHQ==
+
 next-mdx-remote@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/next-mdx-remote/-/next-mdx-remote-4.3.0.tgz#34c5223c8a6465ab4484e8b22efff840c510316a"
@@ -3742,6 +3747,11 @@ tiny-warning@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
   integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
+
+tls@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/tls/-/tls-0.0.1.tgz#0ab2bf5968d71df2f8c0e1515d24a2240b98aac8"
+  integrity sha512-GzHpG+hwupY8VMR6rYsnAhTHqT/97zT45PG8WD5eTT1lq+dFE0nN+1PYpsoBcHJgSmTz5ceK2Cv88IkPmIPOtQ==
 
 to-fast-properties@^2.0.0:
   version "2.0.0"
