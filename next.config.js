@@ -1,6 +1,14 @@
 const withMDX = require("@next/mdx")({
   extension: /\.(md|mdx)$/,
 });
-module.exports = withMDX({
-  pageExtensions: ["js", "jsx", "mdx"],
-});
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  pageExtensions: ["js", "jsx", "mdx", "tsx"],
+  experimental: {
+    appDir: true,
+  },
+};
+
+module.exports = withMDX(nextConfig);
+
