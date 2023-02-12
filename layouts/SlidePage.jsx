@@ -279,6 +279,7 @@ export default function SlidePage({ children, next }) {
         return setCurrentStep((prevStep) => prevStep + 1);
 
       // Otherwise go to next slide
+
       setSlide((prevState) => {
         return prevState + 1;
       });
@@ -290,10 +291,10 @@ export default function SlidePage({ children, next }) {
 
       // Otherwise go to prev slide
       setSlide((prevState) => {
-        // router.push(
-        //   `${router.pathname}`,
-        //   `${router.pathname}?mode=${mode}#${prevState - 1}`
-        // );
+        router.push(
+          `${router.pathname}`,
+          `${router.pathname}?mode=${mode}#${prevState - 1}`
+        );
         return prevState - 1;
       });
       clearSteps();
@@ -301,11 +302,10 @@ export default function SlidePage({ children, next }) {
   };
 
   useEffect(() => {
-    // console.log(router)
-    // router.push(
-    //   `${router.asPath}`,
-    //   `${router.asPath}?mode=${mode}#${currentSlide}`
-    // );
+    router.push(
+      `${router.asPath}`,
+      `${router.asPath}?mode=${mode}#${currentSlide}`
+    );
   }, [currentSlide, mode, router.pathname]);
 
   useEventListener("keydown", navigate);
@@ -324,13 +324,13 @@ export default function SlidePage({ children, next }) {
     // Filter down children by only Slides
     React.Children.map(children, (child) => {
       // Check for <hr> element to separate slides
-      const childType = child && child.props && (child.props.mdxType || []);
-      if (childType && childType.includes("hr")) {
+      const childType = child && child.props && (child.type || []);
+      if (childType && childType === "hr") {
         generatorCount += 1;
         return;
       }
       // Check if it's a SpeakerNotes component
-      if (childType && childType.includes("SpeakerNotes")) {
+      if (childType && !childType === "SpeakerNotes") {
         if (!Array.isArray(generatedNotes[generatorCount])) {
           generatedNotes[generatorCount] = [];
         }
@@ -347,14 +347,15 @@ export default function SlidePage({ children, next }) {
     // Filter down children by only Slides
     React.Children.map(children, (child) => {
       // Check for <hr> element to separate slides
-      const childType = child && child.props && (child.props.mdxType || []);
-      if (childType && childType.includes("hr")) {
+
+      const childType = child && child.props && (child.type || []);
+      if (childType && childType === "hr") {
         generatorCount += 1;
         return;
       }
 
       // Check if it's a SpeakerNotes component
-      if (childType && !childType.includes("SpeakerNotes")) {
+      if (childType && !childType === "SpeakerNotes") {
         // Add slide content to current generated slide
         if (!Array.isArray(generatedSlides[generatorCount])) {
           generatedSlides[generatorCount] = [];
@@ -365,7 +366,6 @@ export default function SlidePage({ children, next }) {
 
     // Get total slide count
     slideCount = generatorCount;
-
     // Return current slide
     if (currentSlide === 999) {
       router.push(
@@ -382,11 +382,7 @@ export default function SlidePage({ children, next }) {
     <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
       <GlobalStyles styles={globalStyles} />
       <Storage />
-      <PresentationMode
-        mode={mode}
-        notes={slideNotes()}
-        currentSlide={currentSlide}
-      >
+      <PresentationMode mode={mode} notes={slideNotes()} currentSlide={currentSlide} >
         <div id="slide" style={{ width: "100%" }}>
           {renderSlide()}
         </div>

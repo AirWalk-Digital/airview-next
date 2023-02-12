@@ -28,7 +28,7 @@ export function CurrentSlideProvider({ children }) {
     setCurrentStep(0);
   };
 
-  console.log("rendering context", currentStep, steps);
+  // console.log("rendering context", currentStep, steps);
   return (
     <CurrentSlideContext.Provider
       value={{

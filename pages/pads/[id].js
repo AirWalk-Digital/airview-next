@@ -3,6 +3,19 @@ import { MDXRemote } from 'next-mdx-remote'
 import { useState, useEffect, } from 'react';
 import { mdComponents } from "../../components/MDXProvider";
 
+// import { ThemeProvider } from '@material-ui/core/styles';
+
+// import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+// import { ThemeProvider } from "@mui/system";
+
+
+
+import { theme } from '../../constants/theme';
+
+
 export async function getStaticPaths() {
   const axios = require('axios');
   const client = axios.create({
@@ -59,7 +72,7 @@ export async function getStaticProps(context) {
     },
     parseFrontmatter: true,
   })
-  console.log(mdxSource)
+  // console.log(mdxSource)
   return { props: { source: mdxSource, padId: context.params.id, } }
 }
 
@@ -88,8 +101,11 @@ export default function Pad(props) {
   }, [refreshToken]);
 
   return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline/>
     <div className="wrapper">
       <MDXRemote {...pad.source} components={mdComponents} />
     </div>
+    </ThemeProvider>
   )
 }
