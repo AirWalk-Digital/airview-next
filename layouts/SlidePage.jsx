@@ -12,16 +12,16 @@ import { Storage } from "../hooks/useStorage";
 import { MODES } from "../constants/modes";
 
 const globalStyles = `
-  :root {
-    --bg: #050505;
-    --meta: #888;
-    --accent: rgb(0, 92, 221);
-    --text: #FAFAFA;
-    --base: 1.5rem;
-    --code: 1rem;
-    --heading-font-family: "Poppins";
-    --heading-font-weight: 800;
-  }
+  // :root {
+  //   --bg: #050505;
+  //   --meta: #888;
+  //   --accent: rgb(0, 92, 221);
+  //   --text: #FAFAFA;
+  //   --base: 1.5rem;
+  //   --code: 1rem;
+  //   --heading-font-family: "Poppins";
+  //   --heading-font-weight: 800;
+  // }
 
   @media (max-width: 600px) {
     :root {
@@ -35,11 +35,11 @@ const globalStyles = `
 
   body,
   html {
-    font-family: "Roboto", -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
-      sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    font-size: var(--base);
+    // font-family: "Roboto", -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
+    //   sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    // font-size: var(--base);
     -webkit-font-smoothing: antialiased;
-    font-feature-settings: 'calt', 'liga', 'hist', 'onum', 'pnum';
+    // font-feature-settings: 'calt', 'liga', 'hist', 'onum', 'pnum';
 
     overflow: auto;
 
@@ -48,8 +48,8 @@ const globalStyles = `
     margin: 0;
     padding: 0;
 
-    color: var(--text);
-    background-color: var(--bg);
+    // color: var(--text);
+    // background-color: var(--bg);
   }
 
   #slide {
@@ -291,10 +291,10 @@ export default function SlidePage({ children, next }) {
 
       // Otherwise go to prev slide
       setSlide((prevState) => {
-        router.push(
-          `${router.pathname}`,
-          `${router.pathname}?mode=${mode}#${prevState - 1}`
-        );
+        // router.push(
+        //   `${router.pathname}`,
+        //   `${router.pathname}?mode=${mode}#${prevState - 1}`
+        // );
         return prevState - 1;
       });
       clearSteps();
@@ -304,7 +304,7 @@ export default function SlidePage({ children, next }) {
   useEffect(() => {
     router.push(
       `${router.asPath}`,
-      `${router.asPath}?mode=${mode}#${currentSlide}`
+      `${router.asPath.split("?")[0]}?mode=${mode}#${currentSlide}`
     );
   }, [currentSlide, mode, router.pathname]);
 
@@ -330,7 +330,7 @@ export default function SlidePage({ children, next }) {
         return;
       }
       // Check if it's a SpeakerNotes component
-      if (childType && !childType === "SpeakerNotes") {
+      if (childType && childType === "SpeakerNotes") {
         if (!Array.isArray(generatedNotes[generatorCount])) {
           generatedNotes[generatorCount] = [];
         }
@@ -354,9 +354,16 @@ export default function SlidePage({ children, next }) {
         return;
       }
 
+      if (childType) {
+        console.log(childType);
+
+      }
+
       // Check if it's a SpeakerNotes component
-      if (childType && !childType === "SpeakerNotes") {
+      if (childType && childType !== "SpeakerNotes") {
         // Add slide content to current generated slide
+        console.log(childType);
+
         if (!Array.isArray(generatedSlides[generatorCount])) {
           generatedSlides[generatorCount] = [];
         }
