@@ -59,7 +59,6 @@ export default function PresentationMode({
         </SlideWindow>
         <Sidebar>
           <div>
-            {/* <NextSlideFrame /> */}
             <SpeakerNotesWindow>
               <div>{notes[currentSlide]}</div>
             </SpeakerNotesWindow>

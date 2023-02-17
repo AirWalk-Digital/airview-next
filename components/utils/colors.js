@@ -1,6 +1,4 @@
-
 function getContrastYIQ(hexcolor){
-
     if (typeof(hexcolor) === 'object') {
       hexcolor = hexcolor.toString(16);
     }

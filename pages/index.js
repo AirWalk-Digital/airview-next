@@ -33,10 +33,11 @@ export default function (props) {
 
           Available pads from Etherpad:
           <br />
+          <h2>Presentations</h2>
           {
             props.pads.map(pad => (
               <>
-                <Link href={`/pads/${pad}`}>{pad}</Link>
+                <Link href={`/pads/ppt/${pad}`}>{pad}</Link>
                 <br />
               </>
             ))

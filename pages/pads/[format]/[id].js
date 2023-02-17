@@ -1,19 +1,11 @@
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
 import { useState, useEffect, } from 'react';
-import { mdComponents } from "../../components/MDXProvider";
-
-// import { ThemeProvider } from '@material-ui/core/styles';
-
-// import { ThemeProvider } from '@material-ui/core/styles';
+import { mdComponents } from "../../../components/MDXProvider";
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-// import { ThemeProvider } from "@mui/system";
-
-
-
-import { theme } from '../../constants/theme';
+import { theme } from '../../../constants/theme';
 
 
 export async function getStaticPaths() {
@@ -28,18 +20,33 @@ export async function getStaticPaths() {
   // http://localhost:9001/api/1.2.1/listAllPads?apikey=f50403c112c30485607554afa2cf37675ef791681ad36001134f55b05a3deca1
   let paths = [];
   try {
-    paths = (await client.get('listAllPads')).data.data.padIDs.map(id => {
-      return {
+    let pads = (await client.get('listAllPads')).data.data.padIDs.map(id => { return id });
+
+    for (const id of pads) {
+      paths.push({
         params: {
+          format: 'print',
           id,
-        }
-      }
-    });
+        },
+      })
+      paths.push({
+        params: {
+          format: 'ppt',
+          id,
+        },
+      })
+      paths.push({
+        params: {
+          format: 'mdx',
+          id,
+        },
+      })
+    }
+
   } catch (error) {
     console.log('Error fetching available pads');
     console.log(error)
   }
-
   return {
     paths,
     fallback: true,
@@ -55,16 +62,25 @@ export async function getStaticProps(context) {
   });
   let pad = null;
   try {
-    // Get text for one pad
-    // http://localhost:9001/api/1/getText?apikey=f50403c112c30485607554afa2cf37675ef791681ad36001134f55b05a3deca1&padID=yXpdXIgw-NSdfaXdXoGQ
+    // Get text for pad
     pad = (await client.get('getText', {
       params: {
         padID: context.params.id,
       }
     })).data.data?.text
+    if (context.params.format === 'ppt') {
+      pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
+    } else if (context.params.format === 'print') {
+      pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
+    } else {
+      pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
+
+    }
+
   } catch (error) {
     console.log(error)
   }
+
   const mdxSource = await serialize(pad ?? 'No content', {
     scope: {},
     mdxOptions: {
@@ -102,10 +118,10 @@ export default function Pad(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline/>
-    <div className="wrapper">
-      <MDXRemote {...pad.source} components={mdComponents} />
-    </div>
+      <CssBaseline />
+      {/* <div className="wrapper" style={{ maxWidth: '100vw', maxHeight: '100vh' }}> */}
+        <MDXRemote {...pad.source} components={mdComponents} />
+      {/* </div> */}
     </ThemeProvider>
   )
 }
