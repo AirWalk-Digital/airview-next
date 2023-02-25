@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import { deepmerge } from "@mui/utils";
+import { getContrastYIQ } from './../components/utils/colors';
 
 // import { createTheme } from '@material-ui/core/styles';
 
@@ -16,11 +17,13 @@ import "@fontsource/roboto-mono";
 
 let palette = createTheme({
 
-  typography: {
-    fontFamily: "Heebo",
-    fontWeight: 200,
-  },
-  
+  // typography: {
+  //   fontFamily: "Heebo",
+  //   fontWeight: 200,
+  //   fontSize: '2rem',
+
+  // },
+
   palette: {
     primary: {
       main: "#002b3d",
@@ -62,77 +65,105 @@ const theme = deepmerge(
         root: {
           fontFamily: "Heebo",
           fontWeight: 200,
+          // fontSize: '2rem',
+          color: palette.palette.text.main
         }
       }
     },
-  typography: {
-    h1:{
-      fontSize: '3rem',
-      fontWeight: 200,
-      lineHeight: 1.2,
-      color: palette.palette.text.main,
+    typography: {
       fontFamily: "Heebo",
-      marginBottom: '1%',
-      marginTop: '1%'
-    },
-    h2:{
-      fontFamily: "Heebo",
-      fontSize: '2rem',
       fontWeight: 200,
-      lineHeight: 1.2,
-      breakAfter: 'avoid-column',
-      my: '1%',
-    },
-    h3: {
-      margin: '0%',
-      marginTop: '1%',
-      marginBottom: '1%',
-      breakAfter: 'avoid',
-      fontSize: 'small'
-    },
-    h4: { margin: '0px', breakAfter: 'avoid'  },
-    h5: { margin: '0px' },
-    h6: { margin: '0px' },
+      fontWeightBold: 400,
+      fontWeightLight: 100,
+      fontWeightRegular: 200,
+      fontSize: 20,
+      h1: {
+        fontSize: '3rem',
+        fontWeight: 200,
+        lineHeight: 1.2,
+        color: getContrastYIQ(palette.palette.background.secondary, palette),
+        fontFamily: "Heebo",
+        marginBottom: '1%',
+        marginTop: '1%',
+        paddingTop: '5px',
+        paddingBottom: '5px',
+        background: palette.palette.background.secondary,
+        marginLeft: '-25px',
+        marginRight: '-25px',
+        paddingLeft: '25px'
+      },
+      h2: {
+        fontFamily: "Heebo",
+        fontSize: '2.5rem',
+        fontWeight: 200,
+        lineHeight: 1.2,
+        breakAfter: 'avoid-column',
+        my: '1%',
+      },
+      h3: {
+        margin: '0%',
+        marginTop: '1%',
+        marginBottom: '1%',
+        breakAfter: 'avoid',
+        fontSize: '2rem'
+      },
+      h4: { margin: '0px', breakAfter: 'avoid', fontSize: '1.8rem' },
+      h5: { margin: '0px' },
+      h6: { margin: '0px' },
+      body1: {
+        color: palette.palette.text.main,
+      },
+      body2: {
+        color: palette.palette.text.main,
+      },
 
-    pre: {
-      fontFamily: 'Roboto Mono',
-      overFlow: 'auto',
-      overflowX: 'visible',
-      overflowY: 'visible',
-      lineHeight: 1,
-      fontSize: '1.2rem',
-      textOverflow: 'ellipsis',
-      backgroundColor: palette.palette.background.muted,
-      pt: '1%',
-      pb: '1%',
-      pl: '1%',
-      pr: '1%'
-    },
-    code: {
-      fontFamily: 'Roboto Mono',
-      lineHeight: 1,
-      overflow: 'visible',
+      pre: {
+        fontFamily: 'Roboto Mono',
+        overFlow: 'visible',
+        overflowX: 'visible',
+        overflowY: 'visible',
+        lineHeight: 1,
+        fontSize: '1.2rem',
+        textOverflow: 'ellipsis',
+        backgroundColor: palette.palette.background.muted,
+        pt: '1%',
+        pb: '1%',
+        pl: '1%',
+        pr: '1%',
+      },
+      code: {
+        fontFamily: 'Roboto Mono',
+        lineHeight: 1,
+        overflow: 'visible',
+
+      },
+      p: {
+        fontFamily: "Heebo",
+        breakInside: 'avoid-column',
+        textAlign: 'left',
+        fontSize: '1.5rem', // 24px
+        lineHeight: 1.2,
+        marginTop: '0.5%',
+        marginBottom: '0.5%',
+        color: palette.palette.text.main
+
+      },
+      strong:{
+        fontWeight: 800
+      },
+      ul: {
+        breakInside: 'avoid-column',
+        listStyleType: 'circle',
+        li: {
+          "::marker": {
+            color: 'tertiary',
+          }
+        }
+      },
+
 
     },
-    p: {
-      breakInside: 'avoid-column',
-      textAlign: 'left',
-      lineHeight: 1.2,
-      my: '0.5%'
-    },
-    ul: {
-      breakInside: 'avoid-column',
-      listStyleType: 'circle',
-      li: {
-        "::marker": {
-           color: 'tertiary',
-         }
-      }
-    },
-
-
-  },
-}));
+  }));
 
 export { theme };
 

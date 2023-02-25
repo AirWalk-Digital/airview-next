@@ -25,10 +25,10 @@ const Icon = ({ children, type = "fal", sx = {}, ...props }) => {
 
   if (children) {
     if (type === 'fak') {
-      icon = <i className={kiticon} style={{ width: "50px", height: "50px", paddingTop: '3%', paddingBottom: '3%', paddingLeft: '2%', paddingRight: '2%' }}></i>;
+      icon = <i className={kiticon} style={{ width: "50px", height: "50px", ...sx }}></i>;
       console.log(icon)
     } else if (faTypes.indexOf(type) > -1) {
-      icon = <FontAwesomeIcon icon={[type, children]} sx={{ pl: "2%", pr: '10px' }} style={{ width: "50px", height: "50px", paddingTop: '3%', paddingBottom: '3%', paddingLeft: '2%', paddingRight: '2%' }} />;
+      icon = <FontAwesomeIcon icon={[type, children]} sx={{ pl: "2%", pr: '10px', ...sx }} style={{ width: "50px", height: "50px" }} />;
     }
   };
   return (icon);

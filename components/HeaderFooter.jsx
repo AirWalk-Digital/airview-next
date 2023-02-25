@@ -1,12 +1,12 @@
 import React from 'react';
-import awLogo from '../assets/logos/airwalk-logo.png';
-import customerLogo from '../assets/logos/customer-logo.png';
+// import awLogo from '../assets/logos/airwalk-logo.png';
+// import customerLogo from '../assets/logos/customer-logo.png';
 import { getContrastYIQ } from './utils/colors.js';
 
 import { useTheme } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
-import Image from 'next/image'
+import Image from 'next/image';
 
 
 export const Banner = ({ text = false, bottom = false, children, sx = {}, ...props }) => {
@@ -17,10 +17,10 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
         px: '2.5%',
         py: '1%',
         margin: '0px',
-        color: getContrastYIQ(theme.palette.background.secondary),
+        color: getContrastYIQ(theme.palette.background.secondary, theme),
         h2: {
             margin: '0px',
-            color: getContrastYIQ(theme.palette.background.secondary)
+            color: getContrastYIQ(theme.palette.background.secondary, theme)
         },
     }
 
@@ -28,17 +28,17 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
 
     if (text && children) {
         return (
-            <Box sx={{ color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary) : getContrastYIQ(sx.backgroundColor), ...sx, ...sxTheme }}>
+            <Box sx={{ color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary, theme) : getContrastYIQ(sx.backgroundColor, theme), ...sx, ...sxTheme }}>
                 <Box>
-                    {children}
+                   {children}
                 </Box>
             </Box>
         )
-    } else if (!children && text) {
+    } else if (!children && text) { // default header
         return (
-            <Box sx={{ color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary) : getContrastYIQ(sx.backgroundColor), ...sx, ...sxTheme }}>
+            <Box sx={{ color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary, theme) : getContrastYIQ(sx.backgroundColor, theme), ...sx, ...sxTheme }}>
                 <Box>
-                    {text}
+                   {text}
                 </Box>
             </Box>
         )
@@ -47,7 +47,7 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
     } else { // banner within the main body (bottom optional)
 
         return (
-            <Box sx={{  color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary) : getContrastYIQ(sx.backgroundColor), display: 'flex', marginTop: bottom,borderRadius: '8px', ...sx, ...sxTheme }}>
+            <Box sx={{  color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary, theme) : getContrastYIQ(sx.backgroundColor, theme), display: 'flex', marginTop: bottom,borderRadius: '8px', ...sx, ...sxTheme }}>
                 <Box>
                     {children}
                 </Box>
@@ -57,7 +57,7 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
 }
 export const Header = ({ heading, sx = {}, ...props }) => {
     return (
-        <Box sx={{ px: "2.5%", pt: "15px", h1: { pt: '0.1%', mt: '0%', mb: '0.5%', pt: "0" } }}>
+        <Box sx={{ height: '80px', px: "2.5%", mt: "15px", h1: { pt: '0.1%', mt: '0%', mb: '0.5%', pt: "0", ...sx } }}>
             {heading && heading}
         </Box>
     )
@@ -65,12 +65,12 @@ export const Header = ({ heading, sx = {}, ...props }) => {
 
 
 export const Footer = ({ children, sx = {}, ...props }) => (
-    <Box
+    <Box  height="60px"
         sx={{
             display: "flex",
             // position: "absolute",
             marginTop: 'auto',
-            height: "60px",
+           
             justifyContent: "space-between",
             // position: "absolute",
             bottom: "5px",
@@ -80,12 +80,12 @@ export const Footer = ({ children, sx = {}, ...props }) => (
             background: "white"
         }}
     >
-        <Box sx={{ display: "flex", height: "80%", alignItems: "flex-end" }}>
-            <Image src={awLogo} height={50} style={{ marginLeft: "5%" }} />
-            <Image src={customerLogo} height={50} style={{ marginLeft: "5%" }} />
+        <Box height='60px' sx={{ display: "flex",  alignItems: "flex-end" }}>
+            <Image alt='airwalk logo' src={'/logos/airwalk-logo.png'}  height={60} width={200} style={{objectFit: 'contain', marginLeft: "5%"}} />
+            <Image alt='customer logo' src={'/logos/customer-logo.png'} height={60} width={200} style={{objectFit: 'contain', marginLeft: "5%"}} />
         </Box>
-        <Box sx={{ variant: "styles.p" }}>technology, done right</Box>
-        <Box sx={{ variant: "styles.p" }}>airwalkreply.com</Box>
+        <Box sx={{  }}>technology, done right</Box>
+        <Box sx={{  }}>airwalkreply.com</Box>
     </Box>
 );
 

@@ -14,9 +14,17 @@ export default async function handler(req, res) {
     let resp = (await client.get('getText', {
       params: {
         padID: req.query.pad,
+        rev: req.query.rev,
       }
     }))
     pad = resp.data.data?.text
+    if (req.query.format === 'ppt') {
+      pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
+    } else if (req.query.format === 'print') {
+      pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
+    } else {
+      pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
+    }
   } catch (error) {
     console.log(error)
   }

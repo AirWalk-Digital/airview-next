@@ -61,11 +61,25 @@ export async function getStaticProps(context) {
     params: { apikey: process.env.ETHERPAD_API_KEY },
   });
   let pad = null;
+  let revision = null;
+  try {
+    // Get text for pad
+    let padData = (await client.get('listSavedRevisions', {
+      params: {
+        padID: context.params.id,
+      }
+    })).data.data?.savedRevisions
+    revision = Math.max(...padData)
+  } catch (error) {
+    console.log(error)
+  }
+
   try {
     // Get text for pad
     pad = (await client.get('getText', {
       params: {
         padID: context.params.id,
+        rev: revision,
       }
     })).data.data?.text
     if (context.params.format === 'ppt') {
@@ -74,7 +88,6 @@ export async function getStaticProps(context) {
       pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
     } else {
       pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
-
     }
 
   } catch (error) {
@@ -89,24 +102,48 @@ export async function getStaticProps(context) {
     parseFrontmatter: true,
   })
   // console.log(mdxSource)
-  return { props: { source: mdxSource, padId: context.params.id, } }
+  return { props: { source: mdxSource, padId: context.params.id, format: context.params.format, revision: revision } }
 }
 
 const isDifferent = (oldPad, newPad) => {
   return (oldPad.source.compiledSource !== newPad.source.compiledSource);
 }
 
+const fetchPad = (padID, format, revision) => {
+  fetch(`/api/fetch-pad?pad=${padID}&format=${format}&rev=${revision}`)
+      .then((res) => res.json())
+      .then(data => {
+          return(data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+}
+
 export default function Pad(props) {
   const [pad, setPad] = useState(props);
+  const [rev, setRev] = useState();
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
   useEffect(() => {
-    fetch(`/api/fetch-pad?pad=${props.padId}`)
-      .then((res) => res.json())
-      .then(data => {
-        if (isDifferent(pad, data)) {
-          // setPad(data)
-        }
+    fetch(`/api/pad-revs?pad=${props.padId}`)
+    .then((res) => res.json())
+    .then(data => {
+      // console.log('rev :', rev, 'newrev : ', data.rev)
+      if (data.rev !== rev) {
+        const newrev = data.rev
+        fetch(`/api/fetch-pad?pad=${props.padId}&format=${props.format}&rev=${data.rev}`)
+        .then((res) => res.json())
+        .then(data => {
+            setPad(data)
+            setRev(newrev);
+
+        })
+        .catch(error => {
+          console.log(error)
+        })        
+      }
+      
       })
       .catch(error => {
         console.log(error)
@@ -114,8 +151,8 @@ export default function Pad(props) {
       .finally(() => {
         setTimeout(() => setRefreshToken(Math.random()), 5000);
       });
-  }, [refreshToken]);
 
+  }, [refreshToken]);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

@@ -19,7 +19,7 @@ const globalStyles = `
     height: 100vw;
     margin: 0;
     padding: 0;
-    background-color: black;
+    background-color: grey;
   }
 
   @media print {
