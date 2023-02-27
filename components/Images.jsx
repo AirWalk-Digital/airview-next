@@ -19,16 +19,21 @@ const FaIcon = ({ children, text = "", sx = {}, ...props }) => {
 
 };
 
-const Icon = ({ children, type = "fal", sx = {}, ...props }) => {
+const Icon = ({ children, type = "fal", size = '75px', sx = {}, ...props }) => {
   let icon = ""
   let kiticon = "fak fa-" + children
 
+  if (children.slice(0, 3) === "fak") {
+    type = "fak"
+    children = children.slice(4)
+  }
+
   if (children) {
     if (type === 'fak') {
-      icon = <i className={kiticon} style={{ width: "50px", height: "50px", ...sx }}></i>;
+      icon = <Box sx={{ ...sx }}><i className={kiticon} style={{ width: size, height: size }}></i></Box>;
       console.log(icon)
     } else if (faTypes.indexOf(type) > -1) {
-      icon = <FontAwesomeIcon icon={[type, children]} sx={{ pl: "2%", pr: '10px', ...sx }} style={{ width: "50px", height: "50px" }} />;
+      icon = <Box sx={{ ...sx }}><FontAwesomeIcon icon={[type, children]} style={{ width: size, height: size }} /></Box>;
     }
   };
   return (icon);

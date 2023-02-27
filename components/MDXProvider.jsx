@@ -19,12 +19,14 @@ import { Typography } from '@mui/material';
 import { Header, Banner, Footer } from './HeaderFooter';
 import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner } from './Playback';
 import {FaIcon, Icon} from './Images.jsx';
+import { ProgressTable } from './Tables.jsx'
+
 
 import {ColumnLayout, Column } from './Layouts';
 
 // Layouts 
 
-import { TitleLayout as TitleSlide } from "../layouts/TitleLayout";
+import { TitleSlide } from "../layouts/TitleLayout";
 
 export const mdComponents = {
   h1: (props) => <Typography variant="h1">{props.children}</Typography>,
@@ -33,7 +35,7 @@ export const mdComponents = {
   h4: (props) => <Typography variant="h4">{props.children}</Typography>,
   h5: (props) => <Typography variant="h5">{props.children}</Typography>,
   p: (props) => <Typography variant="p">{props.children}</Typography>,
-
+  table: (props) => <Typography variant="table">{props.children}</Typography>,
   pre: (props) => props.children,
   code: (props) => {
     const { className } = props;
@@ -43,7 +45,7 @@ export const mdComponents = {
         className={className}
         language={language}
         style={okaidia}
-        customStyle={{overflow:'visible'}}
+        customStyle={{overflow:'clip'}}
         {...props}
       />
     );
@@ -63,6 +65,7 @@ export const mdComponents = {
   Footer,
   InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner,
   FaIcon, Icon,
+  ProgressTable,
   // layouts
   TitleSlide,
   ColumnLayout, Column 

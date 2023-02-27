@@ -22,6 +22,10 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
             margin: '0px',
             color: getContrastYIQ(theme.palette.background.secondary, theme)
         },
+        code: {
+            bgcolor: 'unset',
+
+        }
     }
 
     if (bottom) { bottom = 'auto' } else { bottom = 'unset' };
@@ -38,7 +42,7 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
         return (
             <Box sx={{ color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary, theme) : getContrastYIQ(sx.backgroundColor, theme), ...sx, ...sxTheme }}>
                 <Box>
-                   {text}
+                {text}
                 </Box>
             </Box>
         )

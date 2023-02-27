@@ -39,8 +39,11 @@ function getImageBrightness(imageSrc,callback) {
   }
 };
 
-export const TitleLayout = ({ background = 'image1.jpeg', color = 'white', children, sx = {} }) => {
+export const TitleSlide = ({ background = 'image1.jpeg', color = 'white', children, sx = {} }) => {
   const [textColor, setTextColor] = useState(0)
+  const [awLogo, setAwLogo] = useState('/logos/airwalk-logo-negative.png')
+
+  console.log('background : ', background)
 
   useEffect(() => {
     var imgs = document.body.getElementsByTagName('img');
@@ -49,8 +52,9 @@ export const TitleLayout = ({ background = 'image1.jpeg', color = 'white', child
         setTextColor('text.invtext')
       } else {
         setTextColor('text.main')
+        setAwLogo('/logos/airwalk-logo.png')
       }
-      console.log('brightness : ', brightness);
+      // console.log('brightness : ', brightness);
   }); 
         
   })
@@ -75,7 +79,8 @@ export const TitleLayout = ({ background = 'image1.jpeg', color = 'white', child
       mixBlendMode: 'difference'
     },
     p : {
-    }
+    },
+    pre: {code : { span : {color: 'white'}}}
   };
 
   
@@ -91,7 +96,7 @@ return (
         <Box sx={{ position: "absolute", bottom: "0", display: "flex", height: "15%", width: "50%" }}>
 
           <Box sx={{ mx: "2%" }}>
-          <Image alt='airwalk logo' src={'/logos/airwalk-logo-negative.png'} fill style={{objectFit: 'contain', marginLeft: "5%"}}  />
+          <Image alt='airwalk logo' src={awLogo} fill style={{objectFit: 'contain', marginLeft: "5%"}}  />
             
             
           </Box>

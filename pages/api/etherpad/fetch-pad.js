@@ -1,4 +1,5 @@
 import { serialize } from 'next-mdx-remote/serialize'
+import remarkGfm from "remark-gfm";
 
 export default async function handler(req, res) {
   const axios = require('axios');
@@ -28,6 +29,10 @@ export default async function handler(req, res) {
   } catch (error) {
     console.log(error)
   }
-  const mdxSource = await serialize(pad ?? 'No content')
+  const MDXoptions = {
+    remarkPlugins: [remarkGfm],
+    format: 'mdx',
+  }
+  const mdxSource = await serialize(pad ?? error_message, { scope: {}, mdxOptions : { ...MDXoptions}, parseFrontmatter: true } )
   res.status(200).json({ source: mdxSource, })
 }

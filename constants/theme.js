@@ -7,6 +7,8 @@ import { getContrastYIQ } from './../components/utils/colors';
 // import { Roboto, Heebo } from '@next/font/google';
 
 import "@fontsource/heebo"; // Defaults to weight 400.
+import "@fontsource/heebo/200.css"; // Defaults to weight 400.
+
 import "@fontsource/roboto-mono";
 
 // export const heebo = Heebo({
@@ -158,6 +160,35 @@ const theme = deepmerge(
           "::marker": {
             color: 'tertiary',
           }
+        }
+      },
+      table: {
+        display: "inline-table",
+        border: "1px solid",
+        borderRadius: "10px",
+        borderSpacing: "0",
+        borderCollapse: "separate",
+        overflow: "hidden",
+        marginBottom: '2%',
+        marginTop: '2%',
+        thead: {
+          backgroundColor: palette.palette.background.secondary,
+          tr: {
+            fontSize: '1.5rem',
+            borderRight: "10px solid",
+            th: {
+              ":not(:last-child)": {
+                borderRight: "1px solid"
+              }
+            },
+          },
+        },
+        td: {
+          paddingLeft: '1%',
+          paddingRight: '1%',
+          ":not(:last-child)": {
+            borderRight: "1px solid"
+          },
         }
       },
 

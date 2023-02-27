@@ -1,37 +1,39 @@
 import React from 'react'
 
 import { DefaultLayout } from '../layouts/DefaultLayout'
-import { TitleLayout } from '../layouts/TitleLayout'
+import { TitleSlide } from '../layouts/TitleLayout'
 
 
 const DefaultLayoutType = (<DefaultLayout />).type;
-const TitleLayoutType = (<TitleLayout />).type;
+const TitleSlideType = (<TitleSlide />).type;
 
 let slideType = 'DefaultLayout';
+let slideProps = '';
 
 export default function Slide({ children, id, className }) {
 
   children.forEach(child => {
-    if (child.type === TitleLayout) {
-      slideType = 'TitleLayout';
+    if (child.type === TitleSlide) {
+      slideType = 'TitleSlideType';
+      slideProps = child.props;
       children = child.props.children;
     }
     else {
       slideType = 'DefaultLayout';
     }
   });
-  console.log(children)
+  // console.log(children)
   if (slideType === 'DefaultLayout') {
     return (
       <DefaultLayout sx={{ backgroundColor: 'background.paper' }}>
         {children}
       </DefaultLayout>
     )
-  } else if (slideType === 'TitleLayout') {
+  } else if (slideType === 'TitleSlideType') {
     return (
-      <TitleLayout>
+      <TitleSlide {...slideProps}>
         {children}
-      </TitleLayout>
+      </TitleSlide>
     )
   }
 }

@@ -28,13 +28,16 @@
     "axios": "^1.3.1",
     "eslint-config-next": "^13.1.6",
     "framer-motion": "^4.1.17",
+    "fs": "^0.0.1-security",
     "net": "^1.0.2",
     "next": "^13.1.6",
     "next-mdx-remote": "^4.3.0",
+    "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-swipeable": "^6.1.2",
     "react-syntax-highlighter": "^15.4.4",
+    "remark-gfm": "^3.0.1",
     "tls": "^0.0.1"
   },
   "devDependencies": {

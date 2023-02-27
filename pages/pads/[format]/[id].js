@@ -4,6 +4,7 @@ import { useState, useEffect, } from 'react';
 import { mdComponents } from "../../../components/MDXProvider";
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import remarkGfm from "remark-gfm";
 
 import { theme } from '../../../constants/theme';
 
@@ -16,8 +17,6 @@ export async function getStaticPaths() {
     params: { 'apikey': process.env.ETHERPAD_API_KEY },
   });
 
-  // List all pads
-  // http://localhost:9001/api/1.2.1/listAllPads?apikey=f50403c112c30485607554afa2cf37675ef791681ad36001134f55b05a3deca1
   let paths = [];
   try {
     let pads = (await client.get('listAllPads')).data.data.padIDs.map(id => { return id });
@@ -25,7 +24,7 @@ export async function getStaticPaths() {
     for (const id of pads) {
       paths.push({
         params: {
-          format: 'print',
+          format: 'pdf',
           id,
         },
       })
@@ -71,7 +70,7 @@ export async function getStaticProps(context) {
     })).data.data?.savedRevisions
     revision = Math.max(...padData)
   } catch (error) {
-    console.log(error)
+    console.log('getStaticProps:listSavedRevisions:error: ', error)
   }
 
   try {
@@ -82,21 +81,25 @@ export async function getStaticProps(context) {
         rev: revision,
       }
     })).data.data?.text
+
+    console.log('getStaticProps:pad: ', pad)
+
     if (context.params.format === 'ppt') {
       pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
-    } else if (context.params.format === 'print') {
+    } else if (context.params.format === 'pdf') {
       pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
     } else {
       pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
     }
 
   } catch (error) {
-    console.log(error)
+    console.log('getStaticProps:getText:error: ', error)
   }
 
   const mdxSource = await serialize(pad ?? 'No content', {
     scope: {},
     mdxOptions: {
+      remarkPlugins: [remarkGfm],
       format: 'mdx',
     },
     parseFrontmatter: true,
@@ -110,7 +113,7 @@ const isDifferent = (oldPad, newPad) => {
 }
 
 const fetchPad = (padID, format, revision) => {
-  fetch(`/api/fetch-pad?pad=${padID}&format=${format}&rev=${revision}`)
+  fetch(`/api/etherpad/fetch-pad?pad=${padID}&format=${format}&rev=${revision}`)
       .then((res) => res.json())
       .then(data => {
           return(data)
@@ -126,13 +129,13 @@ export default function Pad(props) {
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
   useEffect(() => {
-    fetch(`/api/pad-revs?pad=${props.padId}`)
+    fetch(`/api/etherpad/pad-revs?pad=${props.padId}`)
     .then((res) => res.json())
     .then(data => {
       // console.log('rev :', rev, 'newrev : ', data.rev)
       if (data.rev !== rev) {
         const newrev = data.rev
-        fetch(`/api/fetch-pad?pad=${props.padId}&format=${props.format}&rev=${data.rev}`)
+        fetch(`/api/ehterpad/fetch-pad?pad=${props.padId}&format=${props.format}&rev=${data.rev}`)
         .then((res) => res.json())
         .then(data => {
             setPad(data)

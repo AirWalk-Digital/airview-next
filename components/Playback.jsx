@@ -1,6 +1,12 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -92,7 +98,7 @@ function getMDXparts(element) {
     }
 }
 
-const Insight = ({ children, row = 0, maxRows = 0, splitter = true, sx = {} }) => {
+const Insight = ({ children, table = false, row = 0, maxRows = 0, splitter = true, sx = {} }) => {
     const theme = useTheme();
 
     let content = getListContent(children);
@@ -123,6 +129,8 @@ const Insight = ({ children, row = 0, maxRows = 0, splitter = true, sx = {} }) =
             return (<></>)
         }
     }
+
+    if (!table) {
     return (
         <>
             <Box sx={{ display: "flex", py: "0", minHeight: "4em", ...sx }}>
@@ -140,7 +148,16 @@ const Insight = ({ children, row = 0, maxRows = 0, splitter = true, sx = {} }) =
             <Splitter row={row} maxRows={maxRows} splitter={splitter} />
         </>
 
-    )
+    )} else {
+        return (
+            <TableRow key={row.name} sx={{ color: 'text.main', '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableCell align="left" sx={{ color: 'text.main', borderBottomWidth: '2px', borderBottomColor: 'background.tertiary'}}><Icon type={type} sx={{ px: "2%" }} style={{ width: "50px", height: "50px" }} >{icon}</Icon></TableCell>
+              <TableCell align="left" sx={{ color: 'text.main', borderBottomWidth: '2px', borderBottomColor: 'background.tertiary'}}>{content.heading}</TableCell>
+              <TableCell align="left" sx={{ color: 'text.main', borderBottomWidth: '2px', borderBottomColor: 'background.tertiary'}}>{content.body}</TableCell>
+            </TableRow>
+            
+        )
+    }
 };
 
 const ChevronProcess = ({ children, minWidth, maxWidth }, key = 0) => {
@@ -281,9 +298,13 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
         backgroundColor: theme.palette.background.secondary,
         px: '2.5%',
         py: '1%',
-      }
-    
+    }
+
     //   console.log(icon, header,text)
+    let padding = '0px';
+    if (icon) {
+        padding = '7px'
+    }
 
     return (
         <Box sx={{ my: "0.5%" }}>
@@ -291,10 +312,10 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
             <Box sx={{ display: "flex", alignItems: "center", breakInside: 'avoid-column' }}>
                 {/* <Box sx={{ display: "flex", alignItems: "left", paddingLeft: "2.5%" }}> */}
                 {/* {faIcon && <FontAwesomeIcon icon={['fal', faIcon]} sx={{ pl: "2%", pr: '10px' }} style={{ width: "50px", height: "50px", paddingTop: '1%', paddingBottom: '1%', paddingLeft: '2%', paddingRight: '2%' }} />} */}
-                {icon && <Box sx={{width: "50px", height: "50px", paddingRight: '2%'}}> <Icon type={type} sx={{ pl: "2%", pr: '10px'  }} style={{ width: "50px", height: "50px", paddingTop: '1%', paddingBottom: '1%', paddingLeft: '2%', paddingRight: '2%' }} >{icon}</Icon></Box>}
+                {icon && <Icon type={type} sx={{  pl: '5px', pr: '1%', pt: '1%' }} >{icon}</Icon>}
 
                 {/* <Box sx={{ variant: "styles.p", paddingLeft: "2.5%", minHeight: "100px", m: '1%' }}> */}
-                <Box sx={{ py: '0', pl: "0px", minHeight: "50px", m: '0.5%', display: "flex", alignItems: "center" }}>
+                <Box sx={{ py: '0', pl: padding, minHeight: "50px", m: '0.5%', display: "flex", alignItems: "center" }}>
                     {text}
                 </Box>
             </Box>
@@ -307,6 +328,37 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
 
 
 const InsightTable = ({ children, sx = {}, splitter = true, ...props }) => {
+    if (children.hasOwnProperty('props')) {
+        let list = React.Children.toArray(children.props.children);
+        list = list.filter(item => item !== "\n") //strip all the empty entries (\n)
+        // console.log(list)
+
+        const insights = list.map((item, i) => (
+            item.type === "li" ? (
+                <Insight row={i} maxRows={list.length} splitter={splitter} key={i} sx={sx}>{React.Children.toArray(item.props.children).filter(item => item !== "\n")}</Insight>
+            ) : (<p>error</p>)
+
+        )
+        )
+        return (
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableBody>
+                    {list.map((item, i) => (
+                <Insight table={true} row={i} maxRows={list.length} splitter={splitter} key={i} sx={sx}>{React.Children.toArray(item.props.children).filter(item => item !== "\n")}</Insight>
+                ))}
+
+                </TableBody>
+            </Table>
+        )
+    } else {
+        return (
+            <p>no content</p>
+        )
+    }
+
+};
+
+const InsightTableOld = ({ children, sx = {}, splitter = true, ...props }) => {
     if (children.hasOwnProperty('props')) {
         let list = React.Children.toArray(children.props.children);
         list = list.filter(item => item !== "\n") //strip all the empty entries (\n)
