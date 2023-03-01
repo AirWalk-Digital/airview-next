@@ -1,6 +1,5 @@
 import React from 'react';
-// import awLogo from '../assets/logos/airwalk-logo.png';
-// import customerLogo from '../assets/logos/customer-logo.png';
+import { siteConfig } from "../site.config.js";
 import { getContrastYIQ } from './utils/colors.js';
 
 import { useTheme } from '@mui/material/styles';
@@ -73,8 +72,6 @@ export const Header = ({ heading, sx = {}, ...props }) => {
 }
 
 export const Footer = ({ children, theme = useTheme(), sx = {}, ...props }) => (
-    // const theme = useTheme();
-
     <TableContainer sx={{ display: 'flex', color: theme.palette.text.main, width: '100%', height: '60px', bottom: '5px' }}>
         <Table sx={{ borderCollapse: "unset", border: "unset", width: '100%', tableLayout: 'fixed' }}>
             <TableBody>
@@ -82,8 +79,8 @@ export const Footer = ({ children, theme = useTheme(), sx = {}, ...props }) => (
                     <Image alt='airwalk logo' src={'/logos/airwalk-logo.png'} height={60} width={200} style={{ objectFit: 'contain', marginLeft: "5%" }} />
                     <Image alt='customer logo' src={'/logos/customer-logo.png'} height={60} width={200} style={{ objectFit: 'contain', marginLeft: "5%" }} />
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center', color: theme.palette.text.main }}>technology, done right</TableCell>
-                <TableCell sx={{ textAlign: 'right', color: theme.palette.text.main }}>airwalkreply.com</TableCell>
+                <TableCell sx={{ textAlign: 'center', color: theme.palette.text.main }}>{siteConfig.tagline}</TableCell>
+                <TableCell sx={{ textAlign: 'right', color: theme.palette.text.main }}>{siteConfig.company}</TableCell>
             </TableBody>
         </Table>
     </TableContainer>
