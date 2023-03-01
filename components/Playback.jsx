@@ -237,7 +237,7 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
     children = children.filter(item => item !== "\n") //strip all the empty entries (\n)
     const theme = useTheme();
 
-    // console.log(children);
+    console.log('StatementBanner:children: ', children);
     // let header = getContent('h3', children); // match any headings
     // let icon = getContent('p', header.children); // match any headings
     let faIcon = "";
@@ -286,10 +286,27 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
     } else if (children.length == 1) { // can only be text
         let p0 = getMDXparts(children[0]);
         text = p0.text
-    } else {
+    } 
 
+    // new handler
 
+    if (children[0] && children[0].type === 'h3' && children[0].props.children) { // first part is a header
+        header = children[0].props.children
+        children = children.filter(function(obj, index) { // remove the header
+            return index !== 0;
+          });
     }
+    if (children[0] && children[0].props.children && typeof children[0].props.children === 'string' && children[0].props.children.split(" ").length == 1) // the next element is an icon
+    {
+        faIcon = children[0].props.children
+        children = children.filter(function(obj, index) { // remove the icon
+            return index !== 0;
+          });
+    }
+    text = children
+
+
+
     let type = "fal";
     let icon = faIcon;
     if (faTypes.indexOf(faIcon.slice(0, 3)) > -1) {
@@ -306,7 +323,7 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
         py: '1%',
     }
 
-    //   console.log(icon, header,text)
+      console.log(icon, header,text)
     let padding = '0px';
     if (icon) {
         padding = '7px'
@@ -321,7 +338,7 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
                 {icon && <Icon type={type} sx={{  pl: '5px', pr: '1%', pt: '1%' }} >{icon}</Icon>}
 
                 {/* <Box sx={{ variant: "styles.p", paddingLeft: "2.5%", minHeight: "100px", m: '1%' }}> */}
-                <Box sx={{ py: '0', pl: padding, minHeight: "50px", m: '0.5%', display: "flex", alignItems: "center" }}>
+                <Box sx={{ py: '0', pl: padding, minHeight: "50px", m: '0.5%', display: "flex", flexDirection: 'column', alignItems: "left" }}>
                     {text}
                 </Box>
             </Box>

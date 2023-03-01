@@ -42,6 +42,7 @@ let palette = createTheme({
     text: {
       main: '#004857', // text when the background is light
       invtext: '#F2F2F2', // text if the background is dark
+      highlight: '#4AC7F0', // highlighted text
     },
     muted: {
       main: '#BDBDBD'
@@ -80,7 +81,7 @@ const theme = deepmerge(
       fontWeightRegular: 200,
       fontSize: 20,
       h1: {
-        fontSize: '3rem',
+        fontSize: '2.5rem',
         fontWeight: 200,
         lineHeight: 1.2,
         color: getContrastYIQ(palette.palette.background.secondary, palette),
@@ -148,11 +149,13 @@ const theme = deepmerge(
         lineHeight: 1.2,
         marginTop: '0.5%',
         marginBottom: '0.5%',
-        color: palette.palette.text.main
+        color: palette.palette.text.main,
+        display: 'block',
 
       },
       strong:{
-        fontWeight: 800
+        fontWeight: 400,
+        color: palette.palette.text.highlight,
       },
       ul: {
         breakInside: 'avoid-column',
