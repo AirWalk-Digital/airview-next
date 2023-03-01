@@ -181,39 +181,45 @@ const ChevronProcess = ({ children, minWidth, maxWidth }, key = 0) => {
     return (
         <Box key={key} sx={{ display: "flex", py: "1%", fontSize: 'xsmall', minHeight: "5em", maxHeight: '10em' }}>
             <Box id='0' sx={{
-                px: "2%", display: "flex", alignItems: "center", backgroundColor: 'tertiary', borderTopLeftRadius: "20px", borderBottomLeftRadius: "20px", color: getContrastYIQ(theme.colors.tertiary, theme)
+                height: '100%', py: '0.5%', pl: "2%", display: "flex", alignItems: "center", backgroundColor: 'background.tertiary', borderTopLeftRadius: "20px", borderBottomLeftRadius: "20px", color: getContrastYIQ(theme.palette.background.tertiary, theme)
             }}>
 
-                {/* <FontAwesomeIcon icon={['fal', content.icon]} sx={{ px: "2%" }} style={{ width: "50px", height: "50px" }} /> */}
                 <Icon type={type} sx={{ px: "2%" }} style={{ width: "50px", height: "50px" }} >{icon}</Icon>
 
             </Box>
 
             <Box id='1' sx={{
-                variant: "styles.p", px: "1%", backgroundColor: 'tertiary',
+                variant: "styles.p", px: "1%", backgroundColor: 'background.tertiary',
                 pr: '80px',
+                py: '0.5%', 
                 minWidth: minWidth,
                 maxWidth: maxWidth,
-                padding: '15px 0',
+                // padding: '15px 0',
+                display: 'flex',
+                alignItems: 'center',
                 my: '0',
                 marginRight: '-30px',
-                color: getContrastYIQ(theme.colors.tertiary, theme),
+                color: getContrastYIQ(theme.palette.background.tertiary, theme),
                 clipPath: 'polygon(0 0, calc(100% - 70px) 0, 100% 50%, calc(100% - 70px) 100%, 0 100%)',
 
             }}>
                 {content.heading}
             </Box>
             <Box id='2' sx={{
-                variant: "styles.p", px: "1%", backgroundColor: 'muted',
+                variant: "styles.p", px: "1%", backgroundColor: 'background.muted',
                 pr: '80px',
-                pl: '80px',
+                pl: '90px',
+                py: '0.5%', 
                 minWidth: '150px',
                 width: '100%',
-                padding: '15px 0',
+                // padding: '15px 0',
                 my: '0',
-                marginRight: '-30px',
-                color: getContrastYIQ(theme.colors.secondary, theme),
-                background: 'secondary',
+                // marginRight: '-30px',
+                // display: 'inline', verticleAlign : 'middle',
+                display: 'flex',
+                alignItems: 'center',
+                color: getContrastYIQ(theme.palette.background.secondary, theme),
+                background: 'background.secondary',
                 clipPath: 'polygon(0 0, calc(100% - 70px) 0, 100% 50%, calc(100% - 70px) 100%, 0 100%, 70px 50%);',
 
             }}>
@@ -385,13 +391,18 @@ const InsightTableOld = ({ children, sx = {}, splitter = true, ...props }) => {
 
 const ChevronProcessTable = ({ children, minWidth = '20%', maxWidth = '30em', sx = {}, ...props }) => {
     let renderlist = "";
+
     if (children.hasOwnProperty('props')) {
         let list = React.Children.toArray(children.props.children);
+        list = list.filter(item => item !== "\n") //strip all the empty entries (\n)
+
+        console.log('ChevronProcessTable : ', list);
+        
         return (
 
             list.map(function (item, i) {
-                if (item.hasOwnProperty('props') && item.props.hasOwnProperty('originalType')) {
-                    if (item.props['originalType'] == "li") {
+                if (item.hasOwnProperty('props') && item.hasOwnProperty('type')) {
+                    if (item.type == "li") {
                         let li = React.Children.toArray(item.props.children); // list item
                         return (
                             <>
@@ -404,12 +415,6 @@ const ChevronProcessTable = ({ children, minWidth = '20%', maxWidth = '30em', sx
 
             })
         )
-        return (
-            <Box sx={{ display: "flex", flexDirection: "column", px: "2.5%", py: "1%", height: "65%" }}>
-                {list.map(function (item) { <div>{item}</div> })}
-            </Box>
-        )
-
 
     } else {
         return (

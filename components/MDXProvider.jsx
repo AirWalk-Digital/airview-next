@@ -12,6 +12,11 @@ import Step from "./Step";
 import Steps from "./Steps";
 import { motion } from "framer-motion";
 
+// MUI Components
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import { Typography } from '@mui/material';
 
 // Custom components
@@ -20,12 +25,10 @@ import { Header, Banner, Footer } from './HeaderFooter';
 import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner } from './Playback';
 import {FaIcon, Icon} from './Images.jsx';
 import { ProgressTable } from './Tables.jsx'
-
-
-import {ColumnLayout, Column } from './Layouts';
+import { HeaderCard } from './Cards'
 
 // Layouts 
-
+import {Layout, Column, Item } from './Layouts';
 import { TitleSlide } from "../layouts/TitleLayout";
 
 export const mdComponents = {
@@ -45,7 +48,7 @@ export const mdComponents = {
         className={className}
         language={language}
         style={okaidia}
-        customStyle={{overflow:'clip'}}
+        customStyle={{overflow:'clip', fontSize: '0.75rem'}}
         {...props}
       />
     );
@@ -59,6 +62,10 @@ export const mdComponents = {
   Steps,
   Cover,
   motion,
+  // MUI Components
+  CardHeader,
+  CardContent,
+  Card,
   // custom component
   Header,
   Banner,
@@ -66,9 +73,10 @@ export const mdComponents = {
   InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner,
   FaIcon, Icon,
   ProgressTable,
+  HeaderCard,
   // layouts
   TitleSlide,
-  ColumnLayout, Column 
+  Layout, Column, Item
 };
 
 export default ({ children }) => (

@@ -12,6 +12,7 @@ let slideProps = '';
 
 export default function Slide({ children, id, className }) {
 
+  if (children) {
   children.forEach(child => {
     if (child.type === TitleSlide) {
       slideType = 'TitleSlideType';
@@ -22,6 +23,7 @@ export default function Slide({ children, id, className }) {
       slideType = 'DefaultLayout';
     }
   });
+};
   // console.log(children)
   if (slideType === 'DefaultLayout') {
     return (

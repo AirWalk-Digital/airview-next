@@ -18,7 +18,7 @@ export const DefaultLayout = ({ children, sx = {} }) => {
   const [height, setHeight] = useState(0)
   let divHeight = 1024 - 80 + 15 - 60 + 20
 
-  if (!header.element) {divHeight = divHeight + 80}
+  if (!header.element) {divHeight = divHeight + 80 + 15}
   
   useLayoutEffect(() => {
     setHeight(ref.current?.clientHeight || 0);

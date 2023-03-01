@@ -12,7 +12,7 @@ import TableRow from '@mui/material/TableRow';
 
 const ProgressTable = ({ children, headercolumn = false, width = '100%', sx = {}, ...props }) => {
   const theme = useTheme();
-
+  if (!children.props) {return( <TableRow></TableRow>)}
   const topLeft = (children) => { // by default, hide the top left header
     if (Array.isArray(children.props.children)) { //multiple rows in the table
       children = children.props.children[0]
@@ -240,7 +240,7 @@ const ProgressTable = ({ children, headercolumn = false, width = '100%', sx = {}
 
 
   return (
-    <TableContainer sx={{ display: 'flex', color: theme.palette.text.main }}>
+    <TableContainer sx={{ display: 'flex', color: theme.palette.text.main, width: width }}>
       <Table sx={{ borderCollapse: "unset", border: "unset", width: props.width, tableLayout: 'fixed', minWidth: 650 }}>
         <TableHead sx={{ background: "unset", border: "unset" }}>
           <HeadingRow>{children.props.children}</HeadingRow>

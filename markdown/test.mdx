@@ -83,40 +83,58 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 # Column Layout (Defined Columns)
 
-<ColumnLayout>
-<Column>
+Default is 2 columns (a width of 6 each).
+
+```mdx
+<Layout>
+<Column width={4}>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+</Column>
+<Column width={4}>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+</Column>
+<Column width={4}>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+</Column>
+</Layout>
+```
+
+<Layout>
+<Column width={4}>
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 </Column>
-<Column>
+<Column width={4}>
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 </Column>
-<Column>
+<Column width={4}>
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 </Column>
 
-</ColumnLayout>
+</Layout>
 
 
 ---
 
 # Column Layout (Overflow)
 
+spill = the number of columns to spill across. The text will spread evenly. 
+
 ```mdx
-<ColumnLayout spill={3} centre={false}>
+<Layout spill={3} centre={false}>
 Lorem ipsum
-</ColumnLayout>
+</Layout>
 ```
 
-<ColumnLayout spill={3}>
+<Layout spill={3}>
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -128,26 +146,26 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 
-</ColumnLayout>
+</Layout>
 
 ---
 
-# Split Layout
+# Column Layout for Images
 
-<ColumnLayout>
+<Layout>
 <Column width={4}>
 
 Column width is out of 12 with a default of 6. Overflow will go onto another row.
 
 ```mdx
-<ColumnLayout>
+<Layout>
 <Column width={4}>
 Lorem ipsum
 </Column>
 <Column width={8}>
 ![Rendered Image](https://myoctocat.com/assets/images/base-octocat.svg)
 </Column>
-</ColumnLayout>
+</Layout>
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
@@ -160,7 +178,46 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 ![Rendered Image](https://myoctocat.com/assets/images/base-octocat.svg)
 
 </Column>
-</ColumnLayout>
+</Layout>
+
+---
+
+
+# Tile Layout
+
+```mdx
+<Layout>
+<HeaderCard>
+# Title
+## Subtitle
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+</HeaderCard>
+</Layout>
+```
+
+<Layout>
+<HeaderCard>
+# Title
+## Subtitle
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+</HeaderCard>
+<HeaderCard>
+# Title, no subtitle
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+</HeaderCard>
+<HeaderCard>
+# Long title, no subtitle | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+</HeaderCard>
+<HeaderCard>
+# Title Only | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+</HeaderCard>
+
+</Layout>
 
 ---
 
@@ -207,9 +264,8 @@ example 3 - icon and body only.. Lorem ipsum dolor sit amet, consectetur adipisc
 
 # Table Styles
 
-<ColumnLayout>
-<Column>
-
+<Layout>
+<Item width='6'>
 ### Standard Table
 
 ```md
@@ -219,49 +275,51 @@ example 3 - icon and body only.. Lorem ipsum dolor sit amet, consectetur adipisc
 | Content Cell  | Content Cell  | Content |
 
 ```
-### Progress Table
-
-```md
-<ProgressTable>
-
-|               | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
-| Content Cell  | Content Cell  | Content    | Content    | 
-
-</ProgressTable>
-```
-</Column>
-
-<Column>
+</Item>
+<Item width='6'>
 
 | First Header  | Second Header | 3rd header |
 | ------------- | ------------- | ---------- |
 | Content Cell  | Content Cell  | Content |
+| Content Cell  | Content Cell  | Content |
+| Content Cell  | Content Cell  | Content |
+| Content Cell  | Content Cell  | Content |
+| Content Cell  | Content Cell  | Content |
+
+</Item>
+<Item width='6'>
 
 ### Progress Table
 
+```md
 <ProgressTable>
 
-|               | Second Header | 3rd header | 4th header |
+| First Header  | Second Header | 3rd header | 4th header |
 | ------------- | ------------- | ---------- | ---------- |
 | Content Cell  | Content Cell  | Content    | Content    | 
 
 </ProgressTable>
+```
 
-</Column>
-</ColumnLayout>
+</Item>
+<Item width='6'>
 
----
+<ProgressTable>
+| First Header  | Second Header | 3rd header | 4th header |
+| ------------- | ------------- | ---------- | ---------- |
+| Content Cell  | Content Cell  | Content    | Content    | 
+| Content Cell  | Content Cell  | Content    | Content    | 
+| Content Cell  | Content Cell  | Content    | Content    | 
 
-# Table Styles
+</ProgressTable>
 
-<ColumnLayout>
-<Column>
+</Item>
+<Item width='6'>
 
 ### With header column
 
 ```md
-<ProgressTable headercolumn={true} width='50%'>
+<ProgressTable>
 
 |               | Second Header | 3rd header | 4th header |
 | ------------- | ------------- | ---------- | ---------- |
@@ -270,10 +328,10 @@ example 3 - icon and body only.. Lorem ipsum dolor sit amet, consectetur adipisc
 </ProgressTable>
 
 ```
-</Column>
-<Column>
+</Item>
+<Item width='6'>
 
-<ProgressTable headercolumn={true} width='50%'>
+<ProgressTable>
 
 |               | Second Header | 3rd header | 4th header |
 | ------------- | ------------- | ---------- | ---------- |
@@ -281,36 +339,35 @@ example 3 - icon and body only.. Lorem ipsum dolor sit amet, consectetur adipisc
 | Content Cell  | Content Cell  | more content | Content    | 
 </ProgressTable>
 
-</Column>
-</ColumnLayout>
+</Item>
+
+</Layout>
 
 ---
 
-# Examples
+# Chevron Process Table
 
-|               | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
-| Content Cell 1 | Content Cell 2 | Content 3 | Content 4 | 
+```mdx
+<ChevronProcessTable>
+- star
+  - Lorem ipsum dolor sit amet
+  - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. 
+</ChevronProcessTable>
+```
 
-<ProgressTable>
+<ChevronProcessTable>
 
-|               | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
-| Content Cell 1| Content Cell 2| Content 3  | Content  4 | 
+- star
+  - Lorem ipsum dolor sit amet
+  - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. 
 
-</ProgressTable>
+- user-secret
+  - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+  - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
 
-<ProgressTable>
+- chart-pie
+  - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+  - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
 
-| First Header  | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
+</ChevronProcessTable>
 
-</ProgressTable>
-
-<ProgressTable headercolumn={true} width='50%'>
-
-|               | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
-|  <FaIcon sx={{p: '5px', m: '5px'}}>cloud</FaIcon> | Content Cell  | Content    | Content    | 
-| Content Cell  | Content Cell  | more content | Content    | 
-</ProgressTable>

@@ -33,6 +33,13 @@ export default async function handler(req, res) {
     remarkPlugins: [remarkGfm],
     format: 'mdx',
   }
+  const error_message = `
+  <SlidePage>
+  # Error
+  
+  Content formatted incorrectly
+  </SlidePage>
+  `
   const mdxSource = await serialize(pad ?? error_message, { scope: {}, mdxOptions : { ...MDXoptions}, parseFrontmatter: true } )
   res.status(200).json({ source: mdxSource, })
 }

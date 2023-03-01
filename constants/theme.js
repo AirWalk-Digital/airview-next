@@ -125,7 +125,7 @@ const theme = deepmerge(
         overflowX: 'visible',
         overflowY: 'visible',
         lineHeight: 1,
-        fontSize: '1.2rem',
+        fontSize: '1rem',
         textOverflow: 'ellipsis',
         backgroundColor: palette.palette.background.muted,
         pt: '1%',
@@ -136,6 +136,7 @@ const theme = deepmerge(
       code: {
         fontFamily: 'Roboto Mono',
         lineHeight: 1,
+        fontSize: '1rem',
         overflow: 'visible',
 
       },
@@ -164,6 +165,7 @@ const theme = deepmerge(
       },
       table: {
         display: "inline-table",
+        width: '100%',
         border: "1px solid",
         borderRadius: "10px",
         borderSpacing: "0",
@@ -173,6 +175,8 @@ const theme = deepmerge(
         marginTop: '2%',
         thead: {
           backgroundColor: palette.palette.background.secondary,
+          fontWeight: '200',
+          color: getContrastYIQ(palette.palette.background.secondary, palette),
           tr: {
             fontSize: '1.5rem',
             borderRight: "10px solid",
@@ -189,6 +193,7 @@ const theme = deepmerge(
           ":not(:last-child)": {
             borderRight: "1px solid"
           },
+          color: palette.palette.text.main
         }
       },
 
