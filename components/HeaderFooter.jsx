@@ -65,7 +65,7 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
 }
 export const Header = ({ heading, sx = {}, ...props }) => {
     return (
-        <Box sx={{ height: '80px', px: "2.5%", mt: "15px", h1: { pt: '0.1%', mt: '0%', mb: '0.5%', pt: "0", ...sx } }}>
+        <Box sx={{ height: '80px', px: "0px", mt: "15px", h1: { ml: '0', pt: '0.1%', mt: '0%', mb: '0.5%', pt: "0", ...sx } }}>
             {heading && heading}
         </Box>
     )
