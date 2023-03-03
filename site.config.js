@@ -1,6 +1,6 @@
 export const siteConfig = {
   title: `NextJS MDX Deck`,
-  company: `airwalkconsulting.com`,
+  company: `airwalkreply.com`,
   tagline: `technology, done right`
 }
 

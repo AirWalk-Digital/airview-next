@@ -24,8 +24,6 @@ export const DefaultLayout = ({ children, sx = {} }) => {
     setHeight(ref.current?.clientHeight || 0);
   });
   
-  //, []); //empty dependency array so it only runs once at render
-
   return (
     <>
       <Image alt='background' src={'/backgrounds/' + background} fill style={{zIndex: '-1'}}/>

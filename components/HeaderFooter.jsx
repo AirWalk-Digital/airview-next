@@ -75,12 +75,12 @@ export const Footer = ({ children, theme = useTheme(), sx = {}, ...props }) => (
     <TableContainer sx={{ display: 'flex', color: theme.palette.text.main, width: '100%', height: '60px', bottom: '5px' }}>
         <Table sx={{ borderCollapse: "unset", border: "unset", width: '100%', tableLayout: 'fixed' }}>
             <TableBody>
-                <TableCell>
+                <TableCell sx={{p: '0'}}>
                     <Image alt='airwalk logo' src={'/logos/airwalk-logo.png'} height={60} width={200} style={{ objectFit: 'contain', marginLeft: "5%" }} />
                     <Image alt='customer logo' src={'/logos/customer-logo.png'} height={60} width={200} style={{ objectFit: 'contain', marginLeft: "5%" }} />
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center', color: theme.palette.text.main }}>{siteConfig.tagline}</TableCell>
-                <TableCell sx={{ textAlign: 'right', color: theme.palette.text.main }}>{siteConfig.company}</TableCell>
+                <TableCell sx={{ textAlign: 'center', color: theme.palette.text.main, p: '0'}}>{siteConfig.tagline}</TableCell>
+                <TableCell sx={{ textAlign: 'right', color: theme.palette.text.highlight, pr: '2.5%' }}>{siteConfig.company}</TableCell>
             </TableBody>
         </Table>
     </TableContainer>

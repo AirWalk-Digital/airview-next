@@ -26,7 +26,7 @@ import { Header, Banner, Footer } from './HeaderFooter';
 import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner } from './Playback';
 import {FaIcon, Icon} from './Images.jsx';
 import { ProgressTable } from './Tables.jsx';
-import { HeaderCard } from './Cards';
+import { HeaderCard, Nest } from './Cards';
 import { Font } from './Styling';
 // Layouts 
 import {Layout, Column, Item } from './Layouts';
@@ -76,7 +76,7 @@ export const mdComponents = {
   InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner,
   FaIcon, Icon,
   ProgressTable,
-  HeaderCard,
+  HeaderCard, Nest,
   Font,
   // layouts
   TitleSlide,

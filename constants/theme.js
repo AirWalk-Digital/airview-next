@@ -93,7 +93,7 @@ const theme = deepmerge(
         background: palette.palette.background.secondary,
         marginLeft: '-25px',
         marginRight: '-25px',
-        paddingLeft: '25px'
+        paddingLeft: '2.5%'
       },
       h2: {
         fontFamily: "Heebo",

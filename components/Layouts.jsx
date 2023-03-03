@@ -23,7 +23,7 @@ const Layout = ({ children, spill = 0, centre = false, sx = {} }) => {
     }
     else {
     return (
-        <Grid container justifyContent="center" spacing={2} sx={{px:'2%', height:'100%', h1: {backgroundColor: 'unset'}, overflow:'hidden', ...sx}}>
+        <Grid container justifyContent="center" spacing={2} sx={{px:'1%', height:'100%', h1: {backgroundColor: 'unset'}, overflow:'hidden', ...sx}}>
             {children}
         </Grid>
     )}

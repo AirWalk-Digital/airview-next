@@ -37,10 +37,11 @@ const Font = ({ children, size='medium', color = 'text.main', sx }) => {
           break;
         case 'xlarge':
             fontsize = '2.2rem';
+            margin = '2%';
             break;
         case 'large':
             fontsize = '2rem';
-            margin = '1%';
+            margin = '1.5%';
             break;
     }
 
