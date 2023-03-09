@@ -38,6 +38,7 @@
     "react-swipeable": "^6.1.2",
     "react-syntax-highlighter": "^15.4.4",
     "remark-gfm": "^3.0.1",
+    "remark-unwrap-images": "^3.0.1",
     "tls": "^0.0.1"
   },
   "devDependencies": {

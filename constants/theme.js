@@ -153,6 +153,9 @@ const theme = deepmerge(
         display: 'block',
 
       },
+      img: {
+        height: '100%'
+      },
       strong:{
         fontWeight: 400,
         color: palette.palette.text.highlight,

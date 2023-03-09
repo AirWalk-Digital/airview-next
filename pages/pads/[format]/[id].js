@@ -11,20 +11,27 @@ export default function Pad() {
   const router = useRouter()
   const { id, format } = router.query
   const [pad, setPad] = useState();
-  const [rev, setRev] = useState();
+  const [rev, setRev] = useState(0);
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
   useEffect(() => {
     fetch(`/api/etherpad/pad-revs?pad=${id}`)
     .then((res) => res.json())
     .then(data => {
-      if (data.rev !== rev) {
+      console.log('data.rev : ', data.rev , 'rev : ', rev)
+      if (data.rev && data.rev > rev) {
+        console.log('new revision :', data.rev)
         const newrev = data.rev
-        fetch(`/api/etherpad/fetch-pad?pad=${id}&format=${format}&rev=${data.rev}`)
+        fetch(`/api/etherpad/fetch-pad?pad=${id}&format=${format}&rev=${newrev}`)
         .then((res) => res.json())
         .then(data => {
-            setPad(data)
-            setRev(newrev);
+            if (data.source && !data.error) { 
+              console.log(data.source)
+
+              setPad(data)
+              setRev(newrev);
+            };
+            // setRev(newrev);
 
         })
         .catch(error => {

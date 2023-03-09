@@ -18,7 +18,10 @@ export default async function handler(req, res) {
         rev: req.query.rev,
       }
     }))
-    pad = resp.data.data?.text
+    pad = resp.data.data?.text.text
+    // console.log('fetch-pad.js : rev: ', req.query.rev, ' | pad : ', pad)
+
+    // console.log('pad : ', pad)
     if (req.query.format === 'ppt') {
       pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
     } else if (req.query.format === 'print') {
@@ -33,6 +36,9 @@ export default async function handler(req, res) {
     remarkPlugins: [remarkGfm],
     format: 'mdx',
   }
+  let errorcode = false;
+  if (!pad) {errorcode = true}
+  // console.log('fetch-pad.js : ', pad)
   const error_message = `
   <SlidePage>
   # Error
@@ -41,5 +47,5 @@ export default async function handler(req, res) {
   </SlidePage>
   `
   const mdxSource = await serialize(pad ?? error_message, { scope: {}, mdxOptions : { ...MDXoptions}, parseFrontmatter: true } )
-  res.status(200).json({ source: mdxSource, })
+  res.status(200).json({ source: mdxSource, error: errorcode })
 }

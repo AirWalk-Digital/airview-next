@@ -35,7 +35,7 @@ const Column = ({ children, width=6, sx = {} }) => {
     return (
 
         <Grid item xs={width} sx={{height: '100%', overflow:'hidden', ...sx}}>
-            <Paper elevation={0} sx={{px:'2%', py:'2%', height:'100%', img: { width: '100%', height: '100%'}}}>
+            <Paper elevation={0} sx={{px:'2%', py:'2%', height:'100%', objectFit:'contain'}}>
             {children}
             </Paper>
         </Grid>

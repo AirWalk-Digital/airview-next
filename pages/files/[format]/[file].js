@@ -4,7 +4,7 @@ import { mdComponents } from "../../../components/MDXProvider";
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import remarkGfm from "remark-gfm";
-
+import remarkUnwrapImages from 'remark-unwrap-images';
 import { theme } from '../../../constants/theme';
 import fs from 'fs'
 import path from 'path'
@@ -46,7 +46,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
   const MDXoptions = {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkUnwrapImages],
     format: 'mdx',
   }
   let pad = null;

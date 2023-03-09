@@ -5,6 +5,8 @@ import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
 import SlidePage from "../layouts/SlidePage";
 import PrintSlide from "../layouts/PrintSlide";
 import MDXViewer from "../layouts/MDXViewer";
+import Image from "next/image";
+
 
 import Cover from "./Cover";
 import SpeakerNotes from "./SpeakerNotes";
@@ -39,6 +41,8 @@ export const mdComponents = {
   h4: (props) => <Typography variant="h4">{props.children}</Typography>,
   h5: (props) => <Typography variant="h5">{props.children}</Typography>,
   p: (props) => <Typography variant="p">{props.children}</Typography>,
+  img: (props) => (<div style={{position: "relative", objectFit: 'contain', height: '100%'}}><Image {...props} fill loading="lazy" /></div>),
+  // img: (props) => (<Image {...props} fill loading="lazy" style={{position: 'relative'}}/>),
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
   table: (props) => <Typography variant="table">{props.children}</Typography>,
   pre: (props) => props.children,

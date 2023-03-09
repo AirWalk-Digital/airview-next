@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       }
     })).data.data?.savedRevisions
     if (padData) {revision = Math.max(...padData)}
-    // console.log('pad : ', req.query.pad, 'revision :', revision)
+    // console.log('revision :', revision, ' data : ', padData)
 
   } catch (error) {
     console.log(error)
