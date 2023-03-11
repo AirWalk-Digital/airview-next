@@ -25,7 +25,7 @@ import Alert from '@mui/material/Alert';
 // Custom components
 
 import { Header, Banner, Footer } from './HeaderFooter';
-import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner } from './Playback';
+import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
 import {FaIcon, Icon} from './Images.jsx';
 import { ProgressTable } from './Tables.jsx';
 import { HeaderCard, Nest } from './Cards';
@@ -42,7 +42,6 @@ export const mdComponents = {
   h5: (props) => <Typography variant="h5">{props.children}</Typography>,
   p: (props) => <Typography variant="p">{props.children}</Typography>,
   img: (props) => (<div style={{position: "relative", objectFit: 'contain', height: '100%'}}><Image {...props} fill loading="lazy" /></div>),
-  // img: (props) => (<Image {...props} fill loading="lazy" style={{position: 'relative'}}/>),
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
   table: (props) => <Typography variant="table">{props.children}</Typography>,
   pre: (props) => props.children,
@@ -77,7 +76,7 @@ export const mdComponents = {
   Header,
   Banner,
   Footer,
-  InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner,
+  InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap,
   FaIcon, Icon,
   ProgressTable,
   HeaderCard, Nest,

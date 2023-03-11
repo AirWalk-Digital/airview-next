@@ -18,7 +18,7 @@ export default function Pad() {
     fetch(`/api/etherpad/pad-revs?pad=${id}`)
     .then((res) => res.json())
     .then(data => {
-      console.log('data.rev : ', data.rev , 'rev : ', rev)
+      // console.log('data.rev : ', data.rev , 'rev : ', rev)
       if (data.rev && data.rev > rev) {
         console.log('new revision :', data.rev)
         const newrev = data.rev
