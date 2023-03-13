@@ -5,7 +5,8 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
     npm config set "@fortawesome:registry" https://npm.fontawesome.com/ && \
-    npm config set "//npm.fontawesome.com/:_authToken" $(cat /run/secrets/FONTAWESOME_NPM_AUTH_TOKEN) && \
+    export FONTAWESOME_NPM_AUTH_TOKEN=$(cat /run/secrets/FONTAWESOME_NPM_AUTH_TOKEN) && \
+    npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME_NPM_AUTH_TOKEN && \
     yarn
 
 
