@@ -1,33 +1,35 @@
 import Link from 'next/link'
+import { useState, useEffect, } from 'react';
 
-export async function getStaticProps() {
-  const axios = require('axios');
-  const client = axios.create({
-    baseURL: process.env.ETHERPAD_BASE_URL,
-    timeout: 1000,
-    params: { 'apikey': process.env.ETHERPAD_API_KEY },
-  });
+import Box from '@mui/material/Box';
 
-  // List all pads
-  // http://localhost:9001/api/1.2.1/listAllPads?apikey=f50403c112c30485607554afa2cf37675ef791681ad36001134f55b05a3deca1
-  let pads = null;
-  try {
-    pads = (await client.get('listAllPads')).data.data.padIDs;
-  } catch (error) {
-    console.log('Error fetching available pads');
-    console.log(error.message)
-  }
 
-  return { props: { pads, } }
-}
+export default function () {
+  const [padList, setPadList] = useState(0);
+  const [refreshToken, setRefreshToken] = useState(Math.random());
 
-export default function (props) {
+  useEffect(() => {
+    fetch(`/api/etherpad/listAllPads`)
+    .then((res) => res.json())
+    .then(data => {
+      setPadList(data.pads)
+      // console.log('data : ', data )
+      })
+      .catch(error => {
+        console.log(error)
+      })
+      .finally(() => {
+        setTimeout(() => setRefreshToken(Math.random()), 5000);
+      });
+  
+  }, [refreshToken]);
+
+
   return (
     <>
-      To view static .mdx click
-      <Link href='/pad'>here</Link>
+      
       <br />
-      {props.pads ? (
+      {padList ? (
         <>
 
 
@@ -35,11 +37,10 @@ export default function (props) {
           <br />
           <h2>Presentations</h2>
           {
-            props.pads.map(pad => (
-              <>
-                <Link href={`/pads/ppt/${pad}`}>{pad}</Link>
-                <br />
-              </>
+            padList.map((pad, i) => (
+              <Box key={i}>
+                <Link  href={`/pads/ppt/${pad}`}>{pad}</Link>
+              </Box>
             ))
           }
         </>

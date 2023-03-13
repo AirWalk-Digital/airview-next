@@ -1,17 +1,13 @@
-import { ThemeProvider, createTheme } from '@mui/system';
 import Head from "next/head";
 import { siteConfig } from "../site.config.js";
-import Header from "../components/Header";
 import MDXProvider from "../components/MDXProvider";
 import { AnimatePresence } from "framer-motion";
 import { CurrentSlideProvider } from "../context/CurrentSlideContext";
 import { ModeProvider } from "../context/ModeContext";
 import TransitionPage from "../layouts/TransitionPage";
 
-import Script from 'next/script'
 
 
-import { theme } from '../constants/theme';
 
 export default function App({ Component, pageProps }) {
   return (
