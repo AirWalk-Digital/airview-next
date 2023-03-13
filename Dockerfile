@@ -7,7 +7,7 @@ RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
     npm config set "@fortawesome:registry" https://npm.fontawesome.com/ && \
     export FONTAWESOME_NPM_AUTH_TOKEN=$(cat /run/secrets/FONTAWESOME_NPM_AUTH_TOKEN) && \
     npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME_NPM_AUTH_TOKEN && \
-    yarn
+    yarn install --frozen-lockfile --network-timeout 1000000
 
 
 
