@@ -1,15 +1,20 @@
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
-import { useState, useEffect, } from 'react';
 import { mdComponents } from "../../../components/MDXProvider";
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import remarkGfm from "remark-gfm";
-
+import remarkUnwrapImages from 'remark-unwrap-images';
 import { theme } from '../../../constants/theme';
-const glob = require('glob')
 import fs from 'fs'
 import path from 'path'
+const glob = require('glob')
+
+
+function removeSection(pad, tagName) {
+  const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");  
+  return (pad.replace(re, ""));
+}
 
 export async function getStaticPaths() {
   let paths = [];
@@ -39,7 +44,6 @@ export async function getStaticPaths() {
     })
     return paths;
   });
-
   return {
     paths,
     fallback: true,
@@ -48,7 +52,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
   const MDXoptions = {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkUnwrapImages],
     format: 'mdx',
   }
   let pad = null;
@@ -56,15 +60,15 @@ export async function getStaticProps(context) {
     const filePath = path.join(process.cwd(), 'markdown', context.params.file)
     const fileData = fs.readFileSync(filePath, "utf8")
 
-    // console.log('fileData : ', fileData)
-
     pad = fileData
     if (context.params.format === 'ppt') {
       pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
     } else if (context.params.format === 'pdf') {
       pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
     } else {
-      pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
+      pad = removeSection(pad, 'TitleSlide');
+
+      pad = '<MDXViewer>\n' + pad.replace('---','') + '\n</MDXViewer>'
     }
   } catch (error) {
     console.log(error)
@@ -88,19 +92,16 @@ export async function getStaticProps(context) {
     </SlidePage>
     `
     console.log('serialize error : ', error)
-    mdxSource = await serialize(pad ?? error_message, { scope: {}, mdxOptions : { ...MDXoptions}, parseFrontmatter: true } )
+    mdxSource = await serialize(error_message, { scope: {}, mdxOptions : { ...MDXoptions}, parseFrontmatter: true } )
   }
-  // console.log('mdxSource : ', mdxSource)
   return { props: { source: mdxSource, file: context.params.file, format: context.params.format } }
 }
 
 export default function Pad(props) {
-  const [pad, setPad] = useState(props);
-  // console.log(props);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <MDXRemote {...pad.source} components={mdComponents} />
+      {props.source && <MDXRemote {...props.source} components={mdComponents} />}
     </ThemeProvider>
   )
 }

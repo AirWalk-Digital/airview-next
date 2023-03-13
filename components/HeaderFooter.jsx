@@ -1,13 +1,17 @@
 import React from 'react';
-// import awLogo from '../assets/logos/airwalk-logo.png';
-// import customerLogo from '../assets/logos/customer-logo.png';
+import { siteConfig } from "../site.config.js";
 import { getContrastYIQ } from './utils/colors.js';
 
 import { useTheme } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
 import Image from 'next/image';
-
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 export const Banner = ({ text = false, bottom = false, children, sx = {}, ...props }) => {
     const theme = useTheme();
@@ -34,7 +38,7 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
         return (
             <Box sx={{ color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary, theme) : getContrastYIQ(sx.backgroundColor, theme), ...sx, ...sxTheme }}>
                 <Box>
-                   {children}
+                    {children}
                 </Box>
             </Box>
         )
@@ -42,7 +46,7 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
         return (
             <Box sx={{ color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary, theme) : getContrastYIQ(sx.backgroundColor, theme), ...sx, ...sxTheme }}>
                 <Box>
-                {text}
+                    {text}
                 </Box>
             </Box>
         )
@@ -51,7 +55,7 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
     } else { // banner within the main body (bottom optional)
 
         return (
-            <Box sx={{  color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary, theme) : getContrastYIQ(sx.backgroundColor, theme), display: 'flex', marginTop: bottom,borderRadius: '8px', ...sx, ...sxTheme }}>
+            <Box sx={{ color: (sx.backgroundColor === undefined) ? getContrastYIQ(theme.palette.background.secondary, theme) : getContrastYIQ(sx.backgroundColor, theme), display: 'flex', marginTop: bottom, borderRadius: '8px', ...sx, ...sxTheme }}>
                 <Box>
                     {children}
                 </Box>
@@ -61,37 +65,23 @@ export const Banner = ({ text = false, bottom = false, children, sx = {}, ...pro
 }
 export const Header = ({ heading, sx = {}, ...props }) => {
     return (
-        <Box sx={{ height: '80px', px: "2.5%", mt: "15px", h1: { pt: '0.1%', mt: '0%', mb: '0.5%', pt: "0", ...sx } }}>
+        <Box sx={{ height: '80px', px: "0px", mt: "15px", h1: { ml: '0', pt: '0.1%', mt: '0%', mb: '0.5%', pt: "0", ...sx } }}>
             {heading && heading}
         </Box>
     )
 }
 
-
-export const Footer = ({ children, sx = {}, ...props }) => (
-    <Box  height="60px"
-        sx={{
-            display: "flex",
-            // position: "absolute",
-            marginTop: 'auto',
-           
-            justifyContent: "space-between",
-            // position: "absolute",
-            bottom: "5px",
-            width: "100%",
-            alignItems: "center",
-            px: "1%",
-            background: "white"
-        }}
-    >
-        <Box height='60px' sx={{ display: "flex",  alignItems: "flex-end" }}>
-            <Image alt='airwalk logo' src={'/logos/airwalk-logo.png'}  height={60} width={200} style={{objectFit: 'contain', marginLeft: "5%"}} />
-            <Image alt='customer logo' src={'/logos/customer-logo.png'} height={60} width={200} style={{objectFit: 'contain', marginLeft: "5%"}} />
-        </Box>
-        <Box sx={{  }}>technology, done right</Box>
-        <Box sx={{  }}>airwalkreply.com</Box>
-    </Box>
+export const Footer = ({ children, theme = useTheme(), sx = {}, ...props }) => (
+    <TableContainer sx={{ display: 'flex', color: theme.palette.text.main, width: '100%', height: '60px', bottom: '5px' }}>
+        <Table sx={{ borderCollapse: "unset", border: "unset", width: '100%', tableLayout: 'fixed' }}>
+            <TableBody>
+                <TableCell sx={{p: '0'}}>
+                    <Image alt='airwalk logo' src={'/logos/airwalk-logo.png'} height={60} width={200} style={{ objectFit: 'contain', marginLeft: "5%" }} />
+                    <Image alt='customer logo' src={'/logos/customer-logo.png'} height={60} width={200} style={{ objectFit: 'contain', marginLeft: "5%" }} />
+                </TableCell>
+                <TableCell sx={{ textAlign: 'center', color: theme.palette.text.main, p: '0'}}>{siteConfig.tagline}</TableCell>
+                <TableCell sx={{ textAlign: 'right', color: theme.palette.text.highlight, pr: '2.5%' }}>{siteConfig.company}</TableCell>
+            </TableBody>
+        </Table>
+    </TableContainer>
 );
-
-
-// export { Header, Banner, Footer };

@@ -42,6 +42,7 @@ let palette = createTheme({
     text: {
       main: '#004857', // text when the background is light
       invtext: '#F2F2F2', // text if the background is dark
+      highlight: '#4AC7F0', // highlighted text
     },
     muted: {
       main: '#BDBDBD'
@@ -80,7 +81,7 @@ const theme = deepmerge(
       fontWeightRegular: 200,
       fontSize: 20,
       h1: {
-        fontSize: '3rem',
+        fontSize: '2.5rem',
         fontWeight: 200,
         lineHeight: 1.2,
         color: getContrastYIQ(palette.palette.background.secondary, palette),
@@ -92,7 +93,7 @@ const theme = deepmerge(
         background: palette.palette.background.secondary,
         marginLeft: '-25px',
         marginRight: '-25px',
-        paddingLeft: '25px'
+        paddingLeft: '2.5%'
       },
       h2: {
         fontFamily: "Heebo",
@@ -125,7 +126,7 @@ const theme = deepmerge(
         overflowX: 'visible',
         overflowY: 'visible',
         lineHeight: 1,
-        fontSize: '1.2rem',
+        fontSize: '1rem',
         textOverflow: 'ellipsis',
         backgroundColor: palette.palette.background.muted,
         pt: '1%',
@@ -136,6 +137,7 @@ const theme = deepmerge(
       code: {
         fontFamily: 'Roboto Mono',
         lineHeight: 1,
+        fontSize: '1rem',
         overflow: 'visible',
 
       },
@@ -147,11 +149,16 @@ const theme = deepmerge(
         lineHeight: 1.2,
         marginTop: '0.5%',
         marginBottom: '0.5%',
-        color: palette.palette.text.main
+        color: palette.palette.text.main,
+        display: 'block',
 
       },
+      img: {
+        height: '100%'
+      },
       strong:{
-        fontWeight: 800
+        fontWeight: 400,
+        color: palette.palette.text.highlight,
       },
       ul: {
         breakInside: 'avoid-column',
@@ -164,6 +171,7 @@ const theme = deepmerge(
       },
       table: {
         display: "inline-table",
+        width: '100%',
         border: "1px solid",
         borderRadius: "10px",
         borderSpacing: "0",
@@ -173,6 +181,8 @@ const theme = deepmerge(
         marginTop: '2%',
         thead: {
           backgroundColor: palette.palette.background.secondary,
+          fontWeight: '200',
+          color: getContrastYIQ(palette.palette.background.secondary, palette),
           tr: {
             fontSize: '1.5rem',
             borderRight: "10px solid",
@@ -189,6 +199,7 @@ const theme = deepmerge(
           ":not(:last-child)": {
             borderRight: "1px solid"
           },
+          color: palette.palette.text.main
         }
       },
 

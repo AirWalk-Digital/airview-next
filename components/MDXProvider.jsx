@@ -5,6 +5,8 @@ import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
 import SlidePage from "../layouts/SlidePage";
 import PrintSlide from "../layouts/PrintSlide";
 import MDXViewer from "../layouts/MDXViewer";
+import Image from "next/image";
+
 
 import Cover from "./Cover";
 import SpeakerNotes from "./SpeakerNotes";
@@ -12,20 +14,24 @@ import Step from "./Step";
 import Steps from "./Steps";
 import { motion } from "framer-motion";
 
+// MUI Components
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import { Typography } from '@mui/material';
+import Alert from '@mui/material/Alert';
 
 // Custom components
 
 import { Header, Banner, Footer } from './HeaderFooter';
-import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner } from './Playback';
+import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
 import {FaIcon, Icon} from './Images.jsx';
-import { ProgressTable } from './Tables.jsx'
-
-
-import {ColumnLayout, Column } from './Layouts';
-
+import { ProgressTable } from './Tables.jsx';
+import { HeaderCard, Nest } from './Cards';
+import { Font } from './Styling';
 // Layouts 
-
+import {Layout, Column, Item } from './Layouts';
 import { TitleSlide } from "../layouts/TitleLayout";
 
 export const mdComponents = {
@@ -35,6 +41,8 @@ export const mdComponents = {
   h4: (props) => <Typography variant="h4">{props.children}</Typography>,
   h5: (props) => <Typography variant="h5">{props.children}</Typography>,
   p: (props) => <Typography variant="p">{props.children}</Typography>,
+  img: (props) => (<div style={{position: "relative", objectFit: 'contain', height: '100%'}}><Image {...props} fill loading="lazy" /></div>),
+  strong: (props) => <Typography variant="strong">{props.children}</Typography>,
   table: (props) => <Typography variant="table">{props.children}</Typography>,
   pre: (props) => props.children,
   code: (props) => {
@@ -45,7 +53,7 @@ export const mdComponents = {
         className={className}
         language={language}
         style={okaidia}
-        customStyle={{overflow:'clip'}}
+        customStyle={{overflow:'clip', fontSize: '0.75rem'}}
         {...props}
       />
     );
@@ -59,16 +67,23 @@ export const mdComponents = {
   Steps,
   Cover,
   motion,
+  // MUI Components
+  CardHeader,
+  CardContent,
+  Card,
+  Alert,
   // custom component
   Header,
   Banner,
   Footer,
-  InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner,
+  InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap,
   FaIcon, Icon,
   ProgressTable,
+  HeaderCard, Nest,
+  Font,
   // layouts
   TitleSlide,
-  ColumnLayout, Column 
+  Layout, Column, Item
 };
 
 export default ({ children }) => (

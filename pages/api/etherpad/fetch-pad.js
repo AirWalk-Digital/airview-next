@@ -1,6 +1,12 @@
 import { serialize } from 'next-mdx-remote/serialize'
 import remarkGfm from "remark-gfm";
 
+
+function removeSection(pad, tagName) {
+  const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");  
+  return (pad.replace(re, ""));
+}
+
 export default async function handler(req, res) {
   const axios = require('axios');
   const client = axios.create({
@@ -18,12 +24,18 @@ export default async function handler(req, res) {
         rev: req.query.rev,
       }
     }))
-    pad = resp.data.data?.text
+    pad = resp.data.data?.text.text
+    // console.log('fetch-pad.js : rev: ', req.query.rev, ' | pad : ', pad)
+
+    // console.log('pad : ', pad)
     if (req.query.format === 'ppt') {
       pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
     } else if (req.query.format === 'print') {
       pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
     } else {
+      
+      pad = removeSection(pad, 'TitleSlide')
+
       pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
     }
   } catch (error) {
@@ -33,6 +45,16 @@ export default async function handler(req, res) {
     remarkPlugins: [remarkGfm],
     format: 'mdx',
   }
+  let errorcode = false;
+  if (!pad) {errorcode = true}
+  // console.log('fetch-pad.js : ', pad)
+  const error_message = `
+  <SlidePage>
+  # Error
+  
+  Content formatted incorrectly
+  </SlidePage>
+  `
   const mdxSource = await serialize(pad ?? error_message, { scope: {}, mdxOptions : { ...MDXoptions}, parseFrontmatter: true } )
-  res.status(200).json({ source: mdxSource, })
+  res.status(200).json({ source: mdxSource, error: errorcode })
 }

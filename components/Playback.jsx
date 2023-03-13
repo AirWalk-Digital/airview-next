@@ -7,6 +7,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Grid from '@mui/material/Grid'; 
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -181,39 +182,45 @@ const ChevronProcess = ({ children, minWidth, maxWidth }, key = 0) => {
     return (
         <Box key={key} sx={{ display: "flex", py: "1%", fontSize: 'xsmall', minHeight: "5em", maxHeight: '10em' }}>
             <Box id='0' sx={{
-                px: "2%", display: "flex", alignItems: "center", backgroundColor: 'tertiary', borderTopLeftRadius: "20px", borderBottomLeftRadius: "20px", color: getContrastYIQ(theme.colors.tertiary, theme)
+                height: '100%', py: '0.5%', pl: "2%", display: "flex", alignItems: "center", backgroundColor: 'background.tertiary', borderTopLeftRadius: "20px", borderBottomLeftRadius: "20px", color: getContrastYIQ(theme.palette.background.tertiary, theme)
             }}>
 
-                {/* <FontAwesomeIcon icon={['fal', content.icon]} sx={{ px: "2%" }} style={{ width: "50px", height: "50px" }} /> */}
                 <Icon type={type} sx={{ px: "2%" }} style={{ width: "50px", height: "50px" }} >{icon}</Icon>
 
             </Box>
 
             <Box id='1' sx={{
-                variant: "styles.p", px: "1%", backgroundColor: 'tertiary',
+                variant: "styles.p", px: "1%", backgroundColor: 'background.tertiary',
                 pr: '80px',
+                py: '0.5%', 
                 minWidth: minWidth,
                 maxWidth: maxWidth,
-                padding: '15px 0',
+                // padding: '15px 0',
+                display: 'flex',
+                alignItems: 'center',
                 my: '0',
                 marginRight: '-30px',
-                color: getContrastYIQ(theme.colors.tertiary, theme),
+                color: getContrastYIQ(theme.palette.background.tertiary, theme),
                 clipPath: 'polygon(0 0, calc(100% - 70px) 0, 100% 50%, calc(100% - 70px) 100%, 0 100%)',
 
             }}>
                 {content.heading}
             </Box>
             <Box id='2' sx={{
-                variant: "styles.p", px: "1%", backgroundColor: 'muted',
+                variant: "styles.p", px: "1%", backgroundColor: 'background.muted',
                 pr: '80px',
-                pl: '80px',
+                pl: '90px',
+                py: '0.5%', 
                 minWidth: '150px',
                 width: '100%',
-                padding: '15px 0',
+                // padding: '15px 0',
                 my: '0',
-                marginRight: '-30px',
-                color: getContrastYIQ(theme.colors.secondary, theme),
-                background: 'secondary',
+                // marginRight: '-30px',
+                // display: 'inline', verticleAlign : 'middle',
+                display: 'flex',
+                alignItems: 'center',
+                color: getContrastYIQ(theme.palette.background.secondary, theme),
+                background: 'background.secondary',
                 clipPath: 'polygon(0 0, calc(100% - 70px) 0, 100% 50%, calc(100% - 70px) 100%, 0 100%, 70px 50%);',
 
             }}>
@@ -231,7 +238,7 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
     children = children.filter(item => item !== "\n") //strip all the empty entries (\n)
     const theme = useTheme();
 
-    // console.log(children);
+    console.log('StatementBanner:children: ', children);
     // let header = getContent('h3', children); // match any headings
     // let icon = getContent('p', header.children); // match any headings
     let faIcon = "";
@@ -280,10 +287,27 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
     } else if (children.length == 1) { // can only be text
         let p0 = getMDXparts(children[0]);
         text = p0.text
-    } else {
+    } 
 
+    // new handler
 
+    if (children[0] && children[0].type === 'h3' && children[0].props.children) { // first part is a header
+        header = children[0].props.children
+        children = children.filter(function(obj, index) { // remove the header
+            return index !== 0;
+          });
     }
+    if (children[0] && children[0].props.children && typeof children[0].props.children === 'string' && children[0].props.children.split(" ").length == 1) // the next element is an icon
+    {
+        faIcon = children[0].props.children
+        children = children.filter(function(obj, index) { // remove the icon
+            return index !== 0;
+          });
+    }
+    text = children
+
+
+
     let type = "fal";
     let icon = faIcon;
     if (faTypes.indexOf(faIcon.slice(0, 3)) > -1) {
@@ -300,7 +324,7 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
         py: '1%',
     }
 
-    //   console.log(icon, header,text)
+      console.log(icon, header,text)
     let padding = '0px';
     if (icon) {
         padding = '7px'
@@ -315,7 +339,7 @@ const StatementBanner = ({ children, sx = {}, ...props }) => {
                 {icon && <Icon type={type} sx={{  pl: '5px', pr: '1%', pt: '1%' }} >{icon}</Icon>}
 
                 {/* <Box sx={{ variant: "styles.p", paddingLeft: "2.5%", minHeight: "100px", m: '1%' }}> */}
-                <Box sx={{ py: '0', pl: padding, minHeight: "50px", m: '0.5%', display: "flex", alignItems: "center" }}>
+                <Box sx={{ py: '0', pl: padding, minHeight: "50px", m: '0.5%', display: "flex", flexDirection: 'column', alignItems: "left" }}>
                     {text}
                 </Box>
             </Box>
@@ -385,13 +409,18 @@ const InsightTableOld = ({ children, sx = {}, splitter = true, ...props }) => {
 
 const ChevronProcessTable = ({ children, minWidth = '20%', maxWidth = '30em', sx = {}, ...props }) => {
     let renderlist = "";
+
     if (children.hasOwnProperty('props')) {
         let list = React.Children.toArray(children.props.children);
+        list = list.filter(item => item !== "\n") //strip all the empty entries (\n)
+
+        console.log('ChevronProcessTable : ', list);
+        
         return (
 
             list.map(function (item, i) {
-                if (item.hasOwnProperty('props') && item.props.hasOwnProperty('originalType')) {
-                    if (item.props['originalType'] == "li") {
+                if (item.hasOwnProperty('props') && item.hasOwnProperty('type')) {
+                    if (item.type == "li") {
                         let li = React.Children.toArray(item.props.children); // list item
                         return (
                             <>
@@ -404,12 +433,6 @@ const ChevronProcessTable = ({ children, minWidth = '20%', maxWidth = '30em', sx
 
             })
         )
-        return (
-            <Box sx={{ display: "flex", flexDirection: "column", px: "2.5%", py: "1%", height: "65%" }}>
-                {list.map(function (item) { <div>{item}</div> })}
-            </Box>
-        )
-
 
     } else {
         return (
@@ -420,4 +443,93 @@ const ChevronProcessTable = ({ children, minWidth = '20%', maxWidth = '30em', sx
 };
 
 
-export { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner };
+const Roadmap = ({ children, minWidth = '20%', maxWidth = '30em', sx = {}, ...props }) => {
+    let renderlist = "";
+
+    console.log('Roadmap:children : ', children)
+
+    let roadmap = [];
+
+    if (Array.isArray(children)) {
+        children.map(function (item, i) {
+            if (item.type === 'ol') {
+                if (Array.isArray(item.props.children)) { roadmap[roadmap.length] = {title: item.props.children.filter(item => item !== "\n") }} else {roadmap[roadmap.length] = {title: item.props.children}}
+            } else if (item.type === 'ul') {
+                if (Array.isArray(item.props.children)) { roadmap[roadmap.length - 1].content =  item.props.children.filter(item => item !== "\n") } else {roadmap[roadmap.length - 1].content = item.props.children}
+            } else if (item.type === 'p') {
+                if (Array.isArray(item.props.children)) { roadmap[roadmap.length - 1].subtitle =  item.props.children.filter(item => item !== "\n") } else {roadmap[roadmap.length - 1].subtitle = item.props.children}
+        }});
+    } else {
+        return (
+            <p>no content</p>
+        )
+    }
+    console.log('Roadmap:roadmap : ', roadmap)
+
+    const roadmapitems = roadmap.map((item, i) => (
+        <Grid item xs={3} sx={{ overflow:'hidden', ...sx}}>
+            <RoadmapItem title={item.title[0].props.children} content={item.content[0].props.children}/>
+        </Grid>
+    ));
+
+
+    return (
+        <Grid container justifyContent="center" spacing={2} sx={{px:'1%', height:'100%', h1: {backgroundColor: 'unset'}, overflow:'hidden', ...sx}}>
+            {roadmapitems}
+        </Grid>
+
+    );
+
+
+
+};
+
+
+const RoadmapItem = ({ title, content, minWidth, maxWidth }, key = 0) => {
+
+    // console.log(content.icon.toString());
+    const theme = useTheme();
+
+    
+    // let iconimage = fas(icon);
+    return (
+        <Box key={key} sx={{ display: "flex", flexDirection: 'column', py: "1%", fontSize: 'xsmall', minHeight: "5em", maxHeight: '10em' }}>
+            
+
+            <Box id='1' sx={{
+                backgroundColor: 'background.tertiary', borderTopLeftRadius: "20px", borderBottomLeftRadius: "20px",
+                pr: '60px',
+                pl: '2%', 
+                py: '0.5%', 
+                minWidth: '200px',
+                maxWidth: maxWidth,
+                minHeight: '100px',
+                // padding: '15px 0',
+                display: 'flex',
+                alignItems: 'center',
+                textAlign: 'center',
+                my: '0',
+                // marginRight: '-30px',
+                color: getContrastYIQ(theme.palette.background.tertiary, theme),
+                clipPath: 'polygon(0 0, calc(100% - 40px) 0, 100% 50%, calc(100% - 40px) 100%, 0 100%)',
+                em: {'&:before': {content: '"\\a "',whiteSpace: 'pre'}}
+
+            }}>
+                <Box width={'100%'} sx={{fontWeight: '400', em: {fontWeight: '200'}}}>{title}</Box>
+            </Box>
+            <Box sx={{
+                pt: '10px',
+                pl: '30px',
+                pr: '50px', fontSize: '1rem'
+            }}>{content}</Box>
+        </Box >
+
+    )
+}
+
+
+
+
+
+
+export { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap };

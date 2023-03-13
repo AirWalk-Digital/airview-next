@@ -86,14 +86,14 @@ export const TitleSlide = ({ background = 'image1.jpeg', color = 'white', childr
   
 
 return (
-  <>
+  <Box>
 <Image alt='background' src={'/backgrounds/' + background} fill/>
-  <Box sx={{ display: "flex", flexDirection: "column", height: "80%", width: "75%", alignItems: "left", position: "absolute", top: "5%", left: "5%" }}>
+  <Box sx={{ display: "flex", flexDirection: "column", height: "80%", width: "50%", alignItems: "left", position: "absolute", top: "5%", left: "5%" }}>
         <Box sx={{ filter: 'grayscale(1)', ...titleSlideSX , ...sx }}>
           {children}
         </Box>
 
-        <Box sx={{ position: "absolute", bottom: "0", display: "flex", height: "15%", width: "50%" }}>
+        <Box sx={{ position: "absolute", bottom: "0", display: "flex", height: "15%", width: "40%" }}>
 
           <Box sx={{ mx: "2%" }}>
           <Image alt='airwalk logo' src={awLogo} fill style={{objectFit: 'contain', marginLeft: "5%"}}  />
@@ -107,7 +107,7 @@ return (
         </Box>
 
       </Box>
-      </>
+      </Box>
 );
 
 };

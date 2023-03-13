@@ -31,7 +31,7 @@ const Icon = ({ children, type = "fal", size = '75px', sx = {}, ...props }) => {
   if (children) {
     if (type === 'fak') {
       icon = <Box sx={{ ...sx }}><i className={kiticon} style={{ width: size, height: size }}></i></Box>;
-      console.log(icon)
+      // console.log(icon)
     } else if (faTypes.indexOf(type) > -1) {
       icon = <Box sx={{ ...sx }}><FontAwesomeIcon icon={[type, children]} style={{ width: size, height: size }} /></Box>;
     }
