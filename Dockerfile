@@ -2,10 +2,13 @@ FROM node:18.14-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json yarn.lock .npmrc ./
+COPY package.json yarn.lock ./
 RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
-   export FONTAWESOME_NPM_AUTH_TOKEN=$(cat /run/secrets/FONTAWESOME_NPM_AUTH_TOKEN) && \
-   yarn
+    npm config set "@fortawesome:registry" https://npm.fontawesome.com/ && \
+    npm config set "//npm.fontawesome.com/:_authToken" $(cat /run/secrets/FONTAWESOME_NPM_AUTH_TOKEN) && \
+    yarn
+
+
 
 FROM node:18.14-alpine AS builder
 WORKDIR /app
