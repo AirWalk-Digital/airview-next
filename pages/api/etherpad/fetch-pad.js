@@ -1,6 +1,12 @@
 import { serialize } from 'next-mdx-remote/serialize'
 import remarkGfm from "remark-gfm";
 
+
+function removeSection(pad, tagName) {
+  const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");  
+  return (pad.replace(re, ""));
+}
+
 export default async function handler(req, res) {
   const axios = require('axios');
   const client = axios.create({
@@ -27,6 +33,9 @@ export default async function handler(req, res) {
     } else if (req.query.format === 'print') {
       pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
     } else {
+      
+      pad = removeSection(pad, 'TitleSlide')
+
       pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
     }
   } catch (error) {

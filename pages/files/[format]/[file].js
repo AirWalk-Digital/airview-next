@@ -10,6 +10,12 @@ import fs from 'fs'
 import path from 'path'
 const glob = require('glob')
 
+
+function removeSection(pad, tagName) {
+  const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");  
+  return (pad.replace(re, ""));
+}
+
 export async function getStaticPaths() {
   let paths = [];
 
@@ -60,7 +66,9 @@ export async function getStaticProps(context) {
     } else if (context.params.format === 'pdf') {
       pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
     } else {
-      pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
+      pad = removeSection(pad, 'TitleSlide');
+
+      pad = '<MDXViewer>\n' + pad.replace('---','') + '\n</MDXViewer>'
     }
   } catch (error) {
     console.log(error)

@@ -86,7 +86,7 @@ export const TitleSlide = ({ background = 'image1.jpeg', color = 'white', childr
   
 
 return (
-  <>
+  <Box>
 <Image alt='background' src={'/backgrounds/' + background} fill/>
   <Box sx={{ display: "flex", flexDirection: "column", height: "80%", width: "50%", alignItems: "left", position: "absolute", top: "5%", left: "5%" }}>
         <Box sx={{ filter: 'grayscale(1)', ...titleSlideSX , ...sx }}>
@@ -107,7 +107,7 @@ return (
         </Box>
 
       </Box>
-      </>
+      </Box>
 );
 
 };
