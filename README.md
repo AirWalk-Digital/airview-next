@@ -1,4 +1,3 @@
-![Presentation Mode](./screenshots/next-mdx-deck-example.gif)
 
 # Next MDX Deck
 
@@ -8,18 +7,36 @@ Create presentation decks using MDX, React, and [Next.js](https://nextjs.org/).
 
 - 📽 React-based Slideshow
 - ✍️ Write using Markdown, React components, even HTML!
-- 🎨 Themeable with CSS vars or Styled Components
+- 🎨 Themeable with CSS
 - 👉 Swipe to change slides
 - ♻️ Sync slides between browser tabs
 - 👨‍💻 Presentation Mode
 - 📝 Speaker Notes
+- ✍️ MDX mode for use within a website (Airview)
 
 ## Getting Started
 
-1. Clone the project: `git clone https://github.com/whoisryosuke/next-mdx-deck`
-2. Install dependencies: `npm i` or `yarn`
+1. Clone the project: `git clone https://github.com/AirWalk-Digital/airview-mdx-deck`
+2. Install dependencies: `yarn`
 3. Run the dev server: `npm run dev` or `yarn dev`
-4. Edit the first slide in `/pages/index.mdx` and save to [**see changes**](http://localhost:3000/)!
+4. Edit the first slide in `/markdwon/test.mdx` and save to [**see changes**](http://localhost:3000/files/ppt/test.mdx)!
+
+*or*
+
+1. Browse to Etherpad [here](https://pad.airview.airwalkconsulting.io)
+2. Create a new pad
+3. [**browse pads**](http://localhost:3000/
+
+*or*
+
+use the docker image with Etherpad:
+
+```bash
+docker run -d --env ETHERPAD_API_KEY=def6c27ae8b97bc681c1654cf3e47cd70ebb056c8cbd97f369f01669dba1d61a --env ETHERPAD_BASE_URL=https://pad.airview.airwalkconsulting.io/api/1.2.11/ -p 8080:3000 --name mdx-deck ghcr.io/airwalk-digital/mdx-deck:main
+```
+
+[**browse pads**](http://localhost:8080/
+
 
 When you're done, run `npm run build && npm run export` or `yarn build && yarn export` will create a static app you can deploy anywhere (or use locally). See below for more details.
 
@@ -49,13 +66,13 @@ You can use JSX in [a few ways](https://mdxjs.com/getting-started) in your MDX f
 
 ### 📃 Creating Slide Pages
 
-You can create new slide pages by making new `.mdx` files inside the `/pages/` directory. Each slide is separated by a markdown divider (`---`).
+You can create new slide pages by making new `.mdx` files inside the `/markdown/` directory. Each slide is separated by a markdown divider (`---`).
 
-> **You have to wrap the contents of each `.mdx` file with a `<SlidePage>` component.** This is what breaks up each slide page into individual slides using the markdown dividers.
+> **You have to wrap the contents of each `.mdx` file with a `<SlidePage>` component.** This is what breaks up each slide page into individual slides using the markdown dividers. [Note: this isn't required now] 
 
 ### 🗺 Navigation
 
-Slide pages represent real pages - so `page-2.mdx` == `your-site.com/page-2`. By using the `next` prop on the `<SlidePage>` component you can control the next page you navigate to (after you go through all the slides).
+[Note: this isn't implemented yet] Slide pages represent real pages - so `page-2.mdx` == `your-site.com/page-2`. By using the `next` prop on the `<SlidePage>` component you can control the next page you navigate to (after you go through all the slides).
 
 ```js
 // Navigates to your-site.com/your-custom-page after all slides complete
@@ -74,7 +91,7 @@ When the Markdown is parsed into HTML, you can replace HTML with React component
 
 ## Presentation Mode
 
-![Presentation Mode](./screenshots/next-mdx-deck-presentation.png)
+[Note: this isn't implemented yet]
 
 Presentation mode allows you to view the current slide alongside any **"speaker notes"** included inside the slide.
 
