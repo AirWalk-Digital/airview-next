@@ -67,7 +67,6 @@ export async function getStaticProps(context) {
       pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
     } else {
       pad = removeSection(pad, 'TitleSlide');
-
       pad = '<MDXViewer>\n' + pad.replace('---','') + '\n</MDXViewer>'
     }
   } catch (error) {

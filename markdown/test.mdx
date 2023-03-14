@@ -4,10 +4,31 @@
 # Test Document
 
 ```mdx
+....
 <TitleSlide background='image1.jpeg' >
+# Title
+
+subtitle
+
+</TitleSlide>
 ```
 
 </TitleSlide>
+
+---
+
+# Title Slide
+## Title Slides aren't shown in MDX view
+
+```mdx
+....
+<TitleSlide background='image1.jpeg' >
+# Title
+
+subtitle
+
+</TitleSlide>
+```
 
 ---
 
@@ -405,3 +426,63 @@ example 3 - icon and body only.. Lorem ipsum dolor sit amet, consectetur adipisc
   - something else
 
 </Roadmap>
+
+---
+
+# Nested Boxes
+
+Nest boxes within boxes to display a heirachy.
+
+Each box, supports a h1, h2 and then content.
+<Alert severity="info">Dont mix nested items with conent.</Alert>
+
+
+```mdx
+<Layout>
+<Nest color='primary'>
+# Infrastructure
+## Infrastructure components
+<Nest>Compute</Nest>
+</Nest>
+</Layout>
+```
+
+
+<Layout>
+<Nest color='primary'>
+# Infrastructure
+## Infrastructure components
+<Nest>Compute</Nest>
+<Nest>
+# Storage
+<Nest>Object</Nest>
+<Nest>Standard Block</Nest>
+<Nest>High Performance Block</Nest>
+<Nest>File</Nest>
+</Nest>
+<Nest>
+# Network
+## Network Services
+<Nest>Load Balancer</Nest>
+<Nest>Application Delivery Controller</Nest>
+<Nest>Firewall</Nest>
+</Nest>
+
+</Nest>
+
+</Layout>
+
+---
+
+# Simple Components
+
+Out of the box components from Material UI.
+Full documentation [here](https://mui.com/material-ui)
+
+```mdx
+
+<Alert severity="info">text</Alert>
+
+```
+
+<Alert severity="info">text</Alert>

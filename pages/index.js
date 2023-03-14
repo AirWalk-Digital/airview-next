@@ -61,7 +61,7 @@ return (
     <CardActions>
       <Button href={`/pads/ppt/${children}`} size="small">PPT</Button>
       <Button href={`/pads/print/${children}`}size="small">Print</Button>
-      <Button href={`/pads/mdx/${children}`} size="small">MDX</Button>
+      <Button href={`https://pad.airview.airwalkconsulting.io/p/${children}`} size="small">Edit</Button>
     </CardActions>
   </Card>
 </Grid>
@@ -137,8 +137,8 @@ export default function Home() {
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained">Create New</Button>
-              {/* <Button variant="outlined">Secondary action</Button> */}
+              <Button href={'https://pad.airview.airwalkconsulting.io'} variant="contained">Create New</Button>
+              <Button href={`/files/mdx/test.mdx`} variant="outlined">Documentation</Button>
             </Stack>
           </Container>
         </Box>
