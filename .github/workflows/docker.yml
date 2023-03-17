@@ -68,14 +68,19 @@ jobs:
             json.dump(package_json, f, indent=2)
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
             print(f'{"version"}={new_version}', file=fh)
-        
-      - name: Commit and tag new version
+
+      - name: Create version update branch
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@github.com"
-          git diff-index --quiet HEAD || git commit -am "Bump version to ${{ steps.version_bump.outputs.version }}"
+          git checkout -b version-update-${{ steps.version_bump.outputs.version }}
+
+      - name: Commit and tag new version
+        run: |
+          git add .
+          git commit -m "Automatic version update to ${{ steps.version_bump.outputs.version }}"
           git tag "v${{ steps.version_bump.outputs.version }}"
-          git push origin main --follow-tags --force
+          git push -u origin version-update-${{ steps.version_bump.outputs.version }} --follow-tags
 
       - name: Create Release
         uses: actions/create-release@v1
