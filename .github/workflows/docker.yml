@@ -16,7 +16,7 @@ permissions:
 jobs: 
 
   version_bump:
-    name: Build and publish Docker images
+    name: Bump Version
     runs-on: ubuntu-latest
     # if: github.event.pull_request.merged == true
     steps:
@@ -50,26 +50,25 @@ jobs:
 
       - name: Bump version based on PR info (package.json)
         id: version_bump
-        run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_BODY="${{ github.event.pull_request.body }}"
-          VERSION_TYPE="patch"
-          if [[ "$PR_TITLE" == *"[major]"* ]] || [[ "$PR_BODY" == *"[major]"* ]]; then
-            VERSION_TYPE="major"
-          fi
-          echo "Bumping $VERSION_TYPE version"
-          NEW_VERSION=$(python -c "import json, semver ;\
-with open('./package.json', 'r') as f: ;\
-  package_json = json.load(f) ;\
-  current_version = package_json['version'] ;\
-  new_version = semver.bump_$VERSION_TYPE(current_version) ;\
-  package_json['version'] = new_version ;\
-with open('./package.json', 'w') as f: ;\
-  json.dump(package_json, f, indent=2) ;\
-print(new_version)")
-          echo "::set-output name=version::$NEW_VERSION"
-
-
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        shell: python
+        run: |          
+          import json, semver, os \
+          with open('./package.json', 'r') as f:\
+            package_json = json.load(f)
+            current_version = package_json['version']
+            if '[major]' in os.env.PR_TITLE:
+              new_version = semver.bump_major(current_version)
+            else:
+              new_version = semver.bump_patch(current_version)
+            package_json['version'] = new_version
+          with open('./package.json', 'w') as f:
+            json.dump(package_json, f, indent=2)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            print(f'{'version'}={new_version}', file=fh)
+        
       - name: Commit and tag new version
         run: |
           git config user.name "GitHub Actions"
