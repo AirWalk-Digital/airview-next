@@ -115,7 +115,7 @@ jobs:
           }
 
           headers = {
-            "Authorization": f"token {os.environ["GITHUB_TOKEN"]}",
+            "Authorization": f"token {os.environ['GITHUB_TOKEN']}",
             "Accept": "application/vnd.github+json"
           }
 
