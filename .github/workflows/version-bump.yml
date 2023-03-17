@@ -31,7 +31,7 @@ jobs:
           python-version: 3.9
 
       - name: Install dependencies
-        run: pip install semver
+        run: pip install semver requests
 
       # - name: Bump version based on PR info (version.txt)
       #   id: version_bump
