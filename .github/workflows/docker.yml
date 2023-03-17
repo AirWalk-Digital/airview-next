@@ -75,7 +75,7 @@ jobs:
           git config user.email "github-actions@github.com"
           git checkout -b version-update-${{ steps.version_bump.outputs.version }}
 
-      - name: Commit and push new version
+      - name: Commit and tag new version
         run: |
           git add .
           git commit -m "Automatic version update to ${{ steps.version_bump.outputs.version }}"
