@@ -80,7 +80,7 @@ jobs:
           git add .
           git commit -m "Automatic version update to ${{ steps.version_bump.outputs.version }}"
           git tag "v${{ steps.version_bump.outputs.version }}"
-          git push --set-upstream origin version-update-${{ steps.version_bump.outputs.version }}
+          git push -u origin version-update-${{ steps.version_bump.outputs.version }} --follow-tags --force
 
       - name: Create Release
         uses: actions/create-release@v1
