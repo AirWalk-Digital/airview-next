@@ -1,0 +1,79 @@
+name: Auto Version Bump
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  version_bump:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: pip install semver
+
+      # - name: Bump version based on PR info (version.txt)
+      #   id: version_bump
+      #   run: |
+      #     PR_TITLE="${{ github.event.pull_request.title }}"
+      #     PR_BODY="${{ github.event.pull_request.body }}"
+      #     VERSION_TYPE="patch"
+      #     if [[ "$PR_TITLE" == *"[major]"* ]] || [[ "$PR_BODY" == *"[major]"* ]]; then
+      #       VERSION_TYPE="major"
+      #     fi
+      #     echo "Bumping $VERSION_TYPE version"
+      #     CURRENT_VERSION=$(cat version.txt)
+      #     NEW_VERSION=$(python -c "import semver; print(semver.bump_$VERSION_TYPE('$CURRENT_VERSION'))")
+      #     echo $NEW_VERSION > version.txt
+      #     echo "::set-output name=version::$NEW_VERSION"
+
+      - name: Bump version based on PR info (package.json)
+        id: version_bump
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+          VERSION_TYPE="patch"
+          if [[ "$PR_TITLE" == *"[major]"* ]] || [[ "$PR_BODY" == *"[major]"* ]]; then
+            VERSION_TYPE="major"
+          fi
+          echo "Bumping $VERSION_TYPE version"
+          NEW_VERSION=$(python -c "import json, semver; \
+            with open('./package.json', 'r') as f: \
+              package_json = json.load(f); \
+              current_version = package_json['version']; \
+              new_version = semver.bump_$VERSION_TYPE(current_version); \
+              package_json['version'] = new_version; \
+            with open('./package.json', 'w') as f: \
+              json.dump(package_json, f, indent=2); \
+            print(new_version)")
+          echo "::set-output name=version::$NEW_VERSION"
+
+
+      - name: Commit and tag new version
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          git add version.txt
+          git commit -m "Bump version to ${{ steps.version_bump.outputs.version }}"
+          git tag "v${{ steps.version_bump.outputs.version }}"
+          git push origin main --follow-tags
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version_bump.outputs.version }}
+          release_name: Release ${{ steps.version_bump.outputs.version }}
+          body: "Automatic version bump: ${{ steps.version_bump.outputs.version }}"
