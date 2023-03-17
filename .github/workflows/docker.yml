@@ -55,11 +55,11 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         shell: python
         run: |          
-          import json, semver, os \
-          with open('./package.json', 'r') as f:\
+          import json, semver, os
+          with open('./package.json', 'r') as f:
             package_json = json.load(f)
             current_version = package_json['version']
-            if '[major]' in os.env.PR_TITLE:
+            if '[major]' in os.environ.get('PR_TITLE'):
               new_version = semver.bump_major(current_version)
             else:
               new_version = semver.bump_patch(current_version)
@@ -67,16 +67,20 @@ jobs:
           with open('./package.json', 'w') as f:
             json.dump(package_json, f, indent=2)
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-            print(f'{'version'}={new_version}', file=fh)
-        
-      - name: Commit and tag new version
+            print(f'{"version"}={new_version}', file=fh)
+
+      - name: Create version update branch
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@github.com"
-          git add version.txt
-          git commit -m "Bump version to ${{ steps.version_bump.outputs.version }}"
+          git checkout -b version-update-${{ steps.version_bump.outputs.version }}
+
+      - name: Commit and push new version
+        run: |
+          git add .
+          git commit -m "Automatic version update to ${{ steps.version_bump.outputs.version }}"
           git tag "v${{ steps.version_bump.outputs.version }}"
-          git push origin main --follow-tags
+          git push -u origin version-update-${{ steps.version_bump.outputs.version }} --follow-tags
 
       - name: Create Release
         uses: actions/create-release@v1
