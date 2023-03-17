@@ -91,13 +91,41 @@ jobs:
           release_name: Release ${{ steps.version_bump.outputs.version }}
           body: "Automatic version bump: ${{ steps.version_bump.outputs.version }}"
       
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: version-update-${{ steps.increment_version.outputs.version }}
-          title: "Automatic version update to ${{ steps.increment_version.outputs.version }}"
-          labels: auto-version-update
-          base: main
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: version-update-${{ steps.version_bump.outputs.version }}
+      #     title: "Automatic version update to ${{ steps.version_bump.outputs.version }}"
+      #     labels: auto-version-update
+      #     base: main
           
-  
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE: ${{ steps.version_bump.outputs.version }}
+        shell: python
+        run: |          
+          import requests, os
+
+          data = {
+            "title": "version-update-" + os.environ["RELEASE"],
+            "head": "version-update-" + os.environ["RELEASE"],
+            "base": "main"
+          }
+
+          headers = {
+            "Authorization": f"token {os.environ["GITHUB_TOKEN"]}",
+            "Accept": "application/vnd.github+json"
+          }
+
+          response = requests.post(
+            f"https://api.github.com/repos/{os.environ["GITHUB_REPOSITORY"]}/pulls",
+            json=data,
+            headers=headers
+          )
+
+          if response.status_code != 201:
+            print(f"Error creating pull request: {response.status_code} - {response.text}")
+          else:
+            print("Pull request created successfully")  
