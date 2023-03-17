@@ -120,7 +120,7 @@ jobs:
           }
 
           response = requests.post(
-            f"https://api.github.com/repos/{os.environ["GITHUB_REPOSITORY"]}/pulls",
+            f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/pulls",
             json=data,
             headers=headers
           )
