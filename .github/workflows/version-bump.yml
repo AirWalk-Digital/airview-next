@@ -82,16 +82,6 @@ jobs:
           git commit -m "Automatic version update to ${{ steps.version_bump.outputs.version }}"
           git tag "v${{ steps.version_bump.outputs.version }}"
           git push -u origin version-update-${{ steps.version_bump.outputs.version }} --follow-tags --force
-
-      - name: Create Release
-        uses: actions/create-release@v1
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.version_bump.outputs.version }}
-          release_name: Release ${{ steps.version_bump.outputs.version }}
-          body: "Automatic version bump: ${{ steps.version_bump.outputs.version }}"
       
       # - name: Create Pull Request
       #   uses: peter-evans/create-pull-request@v3

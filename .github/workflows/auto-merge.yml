@@ -50,14 +50,43 @@ jobs:
           secrets: |
             "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
 
+      # - name: Create Release
+      #   uses: actions/create-release@v1
+      #   continue-on-error: true
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ steps.version_bump.outputs.version }}
+      #     release_name: Release ${{ steps.version_bump.outputs.version }}
+      #     body: "Automatic version bump: ${{ steps.version_bump.outputs.version }}"
+
+      # - name: Merge pull request
+      #   run: |
+      #     echo "Merging pull request #${{ github.event.pull_request.number }} created by ${{ github.event.pull_request.user.login }}"
+      #     curl --request PUT \
+      #     --url ${{ github.event.pull_request._links.merge.href }} \
+      #     --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+      #     --header 'content-type: application/json' \
+      #     --data '{
+      #       "commit_title": "Automatically merge version update",
+      #       "sha": "${{ github.event.pull_request.head.sha }}"
+      #     }'
+
       - name: Merge pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Merging pull request #${{ github.event.pull_request.number }} created by ${{ github.event.pull_request.user.login }}"
-          curl --request PUT \
-          --url ${{ github.event.pull_request._links.merge.href }} \
-          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-          --header 'content-type: application/json' \
-          --data '{
-            "commit_title": "Automatically merge version update",
-            "sha": "${{ github.event.pull_request.head.sha }}"
-          }'
+          curl -sSL -X PUT \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -d '{"commit_title": "Automatically merge pull request"}' \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge"
+
+      - name: Delete branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -sSL -X DELETE \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}"
