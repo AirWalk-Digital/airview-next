@@ -454,7 +454,7 @@ const Roadmap = ({ children, minWidth = '20%', maxWidth = '30em', sx = {}, ...pr
         children.map(function (item, i) {
             if (item.type === 'ol') {
                 if (Array.isArray(item.props.children)) { roadmap[roadmap.length] = {title: item.props.children.filter(item => item !== "\n") }} else {roadmap[roadmap.length] = {title: item.props.children}}
-            } else if (item.type === 'ul') {
+            } else if (item.type.name && item.type.name === 'ul') {
                 if (Array.isArray(item.props.children)) { roadmap[roadmap.length - 1].content =  item.props.children.filter(item => item !== "\n") } else {roadmap[roadmap.length - 1].content = item.props.children}
             } else if (item.type === 'p') {
                 if (Array.isArray(item.props.children)) { roadmap[roadmap.length - 1].subtitle =  item.props.children.filter(item => item !== "\n") } else {roadmap[roadmap.length - 1].subtitle = item.props.children}
@@ -487,7 +487,7 @@ const Roadmap = ({ children, minWidth = '20%', maxWidth = '30em', sx = {}, ...pr
 
 const RoadmapItem = ({ title, content, minWidth, maxWidth }, key = 0) => {
 
-    // console.log(content.icon.toString());
+    // console.log(content.toString());
     const theme = useTheme();
 
     

@@ -43,6 +43,7 @@ export const mdComponents = {
   p: (props) => <Typography variant="p">{props.children}</Typography>,
   img: (props) => (<div style={{position: "relative", objectFit: 'contain', height: '100%'}}><Image {...props} fill loading="lazy" /></div>),
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
+  ul: (props) => <Typography variant="ul">{props.children}</Typography>,
   table: (props) => <Typography variant="table">{props.children}</Typography>,
   pre: (props) => props.children,
   code: (props) => {
