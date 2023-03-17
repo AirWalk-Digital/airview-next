@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
   pages: write
   id-token: write
   packages: write
@@ -31,7 +32,7 @@ jobs:
           python-version: 3.9
 
       - name: Install dependencies
-        run: pip install semver
+        run: pip install semver requests
 
       # - name: Bump version based on PR info (version.txt)
       #   id: version_bump
@@ -84,6 +85,7 @@ jobs:
 
       - name: Create Release
         uses: actions/create-release@v1
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -115,12 +117,12 @@ jobs:
           }
 
           headers = {
-            "Authorization": f"token {os.environ["GITHUB_TOKEN"]}",
+            "Authorization": f"token {os.environ['GITHUB_TOKEN']}",
             "Accept": "application/vnd.github+json"
           }
 
           response = requests.post(
-            f"https://api.github.com/repos/{os.environ["GITHUB_REPOSITORY"]}/pulls",
+            f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/pulls",
             json=data,
             headers=headers
           )
