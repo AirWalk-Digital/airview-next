@@ -67,7 +67,7 @@ jobs:
           with open('./package.json', 'w') as f:
             json.dump(package_json, f, indent=2)
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-            print(f'{'version'}={new_version}', file=fh)
+            print(f'{"version"}={new_version}', file=fh)
         
       - name: Commit and tag new version
         run: |
