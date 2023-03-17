@@ -18,7 +18,7 @@ jobs:
   version_bump:
     name: Bump Version
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     steps:
       - name: Check out code
         uses: actions/checkout@v2
