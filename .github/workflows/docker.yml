@@ -18,7 +18,7 @@ jobs:
   version_bump:
     name: Build and publish Docker images
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -58,17 +58,15 @@ jobs:
             VERSION_TYPE="major"
           fi
           echo "Bumping $VERSION_TYPE version"
-          NEW_VERSION=$(python -c "
-import json, semver
-with open('./package.json', 'r') as f:
-  package_json = json.load(f)
-  current_version = package_json['version']
-  new_version = semver.bump_$VERSION_TYPE(current_version)
-  package_json['version'] = new_version
-with open('./package.json', 'w') as f:
-  json.dump(package_json, f, indent=2)
-print(new_version)
-            ")
+          NEW_VERSION=$(python -c "import json, semver ;\
+with open('./package.json', 'r') as f: ;\
+  package_json = json.load(f) ;\
+  current_version = package_json['version'] ;\
+  new_version = semver.bump_$VERSION_TYPE(current_version) ;\
+  package_json['version'] = new_version ;\
+with open('./package.json', 'w') as f: ;\
+  json.dump(package_json, f, indent=2) ;\
+print(new_version)")
           echo "::set-output name=version::$NEW_VERSION"
 
 
