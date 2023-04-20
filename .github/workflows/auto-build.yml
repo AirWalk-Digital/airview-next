@@ -8,7 +8,7 @@ on:
 jobs:
   auto_merge_version_update:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.author_association == 'COLLABORATOR' && contains(github.event.pull_request.labels.*.name, 'auto-version-update')
+#     if: github.event.pull_request.author_association == 'COLLABORATOR' && contains(github.event.pull_request.labels.*.name, 'auto-version-update')
     
     steps:
       - name: Checkout
