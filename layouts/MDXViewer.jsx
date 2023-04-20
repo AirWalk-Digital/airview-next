@@ -16,7 +16,6 @@ const globalStyles = `
   html {
     overflow: auto;
     width: 100vw;
-    height: 100vw;
     margin: 0;
     padding: 0;
     background-color: grey;
