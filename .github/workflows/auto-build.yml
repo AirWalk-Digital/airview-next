@@ -1,11 +1,9 @@
 name: Build and publish Docker images
 
 on:
-  - workflow_dispatch
-  - pull_request:
-    types:
-      - opened
-      - synchronize
+  workflow_dispatch:
+  pull_request:
+    types: [closed]
 
 jobs:
   auto_merge_version_update:
