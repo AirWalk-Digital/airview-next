@@ -1,6 +1,7 @@
 import React, { useState, useLayoutEffect, useRef } from 'react'
 import { getContent } from '../components/utils/mdxContent';
-import { Header, Banner, Footer } from '../components/HeaderFooter';
+// import { Header, Banner, Footer } from '../components/HeaderFooter';
+import { Header, Banner, Footer } from 'airview-mdx';
 import Box from '@mui/material/Box';
 import Image from 'next/image';
 

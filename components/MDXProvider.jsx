@@ -7,6 +7,8 @@ import PrintSlide from "../layouts/PrintSlide";
 import MDXViewer from "../layouts/MDXViewer";
 import Image from "next/image";
 
+// fix for Roadmap, Nest
+import { TitleSlide, Header, Banner, Footer, Insights, Chevrons, Layout, Column, Item } from 'airview-mdx'
 
 import Cover from "./Cover";
 import SpeakerNotes from "./SpeakerNotes";
@@ -24,15 +26,15 @@ import Alert from '@mui/material/Alert';
 
 // Custom components
 
-import { Header, Banner, Footer } from './HeaderFooter';
-import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
-import {FaIcon, Icon} from './Images.jsx';
+import { Insight, InsightTable, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
+// import {FaIcon, Icon} from './Images.jsx';
+import {FaIcon, Icon} from 'airview-mdx';
 import { ProgressTable } from './Tables.jsx';
 import { HeaderCard, Nest } from './Cards';
+// import { HeaderCard } from './Cards';
 import { Font } from './Styling';
 // Layouts 
-import {Layout, Column, Item } from './Layouts';
-import { TitleSlide } from "../layouts/TitleLayout";
+// import {Layout, Column, Item } from './Layouts';
 
 export const mdComponents = {
   h1: (props) => <Typography variant="h1">{props.children}</Typography>,
@@ -77,7 +79,7 @@ export const mdComponents = {
   Header,
   Banner,
   Footer,
-  InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap,
+  InsightTable, Insight, Chevrons, ChevronProcessTable, StatementBanner, Roadmap,
   FaIcon, Icon,
   ProgressTable,
   HeaderCard, Nest,

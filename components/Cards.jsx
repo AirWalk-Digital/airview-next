@@ -1,3 +1,4 @@
+// import {Nest} from 'airview-mdx'
 import React from 'react';
 // import cx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -40,42 +41,42 @@ const useStyles = makeStyles(() => ({
 }));
 
 const HeaderCard = ({ children, color = 'secondary', sx }) => {
-    const theme = useTheme();
-    const classes = useStyles();
-    let heading = '';
-    let subheading = '';
-    if (children && Object.keys(children).length === 0 && children.constructor === Object) { children = '' } else {
-        if (Array.isArray(children)) { // multiple lines
-            if (children[0].type.name === 'h1') {
-                heading = children[0].props.children;
-                children = children.filter(function(obj, index) {
-                    return index !== 0; // return false for index 1
-                  });
-                if (children[0].type.name === 'h2') {
-                    subheading = children[0].props.children;
-                    children = children.filter(function(obj, index) {
-                        return index !== 0; // return false for index 1
-                      });
-                };
-            };
-        } 
-    };
-    // console.log('HeaderCard:children : ', children)
-    return (
-        <Grid item xs={3} sx={{ paddingLeft: '10px', paddingRight: '10px', overFlow: 'hidden', maxHeight: '100%' }}>
-            <Card variant="outlined" className={classes.card} sx={{ ...sx }}>
-                {heading && <CardHeader
-                    title={heading}
-                    titleTypographyProps={{ color: getContrastYIQ(theme.palette.background[color], theme), fontSize: '2rem' }}
-                    subheader={subheading}
-                    subheaderTypographyProps={{ color: getContrastYIQ(theme.palette.background[color], theme), fontSize: '1.8rem' }}
-                    sx={{ backgroundColor: 'background.' + color, color: getContrastYIQ(theme.palette.background[color], theme) }} />}
-                <CardContent className={classes.content}>
-                    {children && children}
-                </CardContent>
-            </Card>
-        </Grid>
-    );
+//     const theme = useTheme();
+//     const classes = useStyles();
+//     let heading = '';
+//     let subheading = '';
+//     if (children && Object.keys(children).length === 0 && children.constructor === Object) { children = '' } else {
+//         if (Array.isArray(children)) { // multiple lines
+//             if (children[0].type.name === 'h1') {
+//                 heading = children[0].props.children;
+//                 children = children.filter(function(obj, index) {
+//                     return index !== 0; // return false for index 1
+//                   });
+//                 if (children[0].type.name === 'h2') {
+//                     subheading = children[0].props.children;
+//                     children = children.filter(function(obj, index) {
+//                         return index !== 0; // return false for index 1
+//                       });
+//                 };
+//             };
+//         } 
+//     };
+//     // console.log('HeaderCard:children : ', children)
+//     return (
+//         <Grid item xs={3} sx={{ paddingLeft: '10px', paddingRight: '10px', overFlow: 'hidden', maxHeight: '100%' }}>
+//             <Card variant="outlined" className={classes.card} sx={{ ...sx }}>
+//                 {heading && <CardHeader
+//                     title={heading}
+//                     titleTypographyProps={{ color: getContrastYIQ(theme.palette.background[color], theme), fontSize: '2rem' }}
+//                     subheader={subheading}
+//                     subheaderTypographyProps={{ color: getContrastYIQ(theme.palette.background[color], theme), fontSize: '1.8rem' }}
+//                     sx={{ backgroundColor: 'background.' + color, color: getContrastYIQ(theme.palette.background[color], theme) }} />}
+//                 <CardContent className={classes.content}>
+//                     {children && children}
+//                 </CardContent>
+//             </Card>
+//         </Grid>
+//     );
 };
 
 const Nest = ({ children, color = 'secondary', width=3, level=0, sx }) => {
@@ -110,11 +111,11 @@ const Nest = ({ children, color = 'secondary', width=3, level=0, sx }) => {
             <Card variant="outlined" className={classes.pill} sx={{ ...sx }}>
                 {heading && <CardHeader
                     title={heading}
-                    titleTypographyProps={{ color: getContrastYIQ(theme.palette.background[color], theme), fontSize: '1rem' }}
+                    titleTypographyProps={{ color: 'black', fontSize: '1rem' }}
                     subheader={subheading}
-                    subheaderTypographyProps={{ color: getContrastYIQ(theme.palette.background[color], theme), fontSize: '0.8rem' }}
-                    sx={{ backgroundColor: 'background.' + color, color: getContrastYIQ(theme.palette.background[color], theme) }} />}
-                <CardContent className={classes.content}sx={{fontSize: '0.8rem', backgroundColor: 'background.' + bgColor, color: getContrastYIQ(theme.palette.background[bgColor], theme)}}>
+                    subheaderTypographyProps={{ color: 'black', fontSize: '0.8rem' }}
+                    sx={{ backgroundColor: 'background.' + color, color: 'black' }} />}
+                <CardContent className={classes.content}sx={{fontSize: '0.8rem', backgroundColor: 'background.' + bgColor, color: 'black'}}>
                     {children && <Wrapper color={color} level={level+1} width={width} sx={{mt:'5px'}}>{children}</Wrapper>}
                 </CardContent>
             </Card>
@@ -135,7 +136,7 @@ function Wrapper({children, ...props}) {
         })}
      </>
     );
-  }
+}
 
 
 export { HeaderCard, Nest }
