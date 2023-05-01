@@ -43,8 +43,12 @@ const nextConfig = {
     // Add the alias configuration to the webpack config
     config.resolve.alias = {
       ...config.resolve.alias,
-      react: path.resolve("./node_modules/react"),
-      '@mui/material': path.resolve('./node_modules/@mui/material')
+      react: path.join(__dirname, 'node_modules/react'),
+      '@mui/material': path.join(__dirname, '/node_modules/@mui/material'),
+      // '@mui/material/styles': path.resolve('./node_modules/@mui/material/styles'),
+      // '@emotion/core': path.resolve('./node_modules/@emotion/react'),
+      // 'emotion-theming': path.resolve('./node_modules/@emotion/react'),
+
     };
     return config;
   },
