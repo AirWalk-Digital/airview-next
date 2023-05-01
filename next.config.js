@@ -2,6 +2,8 @@ const withMDX = require("@next/mdx")({
   extension: /\.(md|mdx)$/,
 });
 
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "tsx"],
@@ -36,6 +38,15 @@ const nextConfig = {
   },
   experimental: {
     appDir: true,
+  },
+  webpack: (config) => {
+    // Add the alias configuration to the webpack config
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      react: path.resolve("./node_modules/react"),
+      '@mui/material': path.resolve('./node_modules/@mui/material')
+    };
+    return config;
   },
 };
 

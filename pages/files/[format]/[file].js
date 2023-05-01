@@ -123,7 +123,7 @@ export async function getStaticProps(context) {
   }
 }
 
-export default function Pad({source}) {
+export default function Pad({source, format}) {
   const [hydrated, setHydrated] = useState(false);
   const mdxContainer = useRef(null);
 
@@ -132,7 +132,7 @@ export default function Pad({source}) {
   }, []);
 
   useEffect(() => {
-    if (hydrated) {
+    if (hydrated && format === 'pdf') {
       const paged = new Previewer();
       paged
         .preview(mdxContainer.current.innerHTML, [], document.body)
@@ -142,6 +142,8 @@ export default function Pad({source}) {
     }
   }, [hydrated]);
 
+  if (format === 'pdf') {
+
   return (
     <div ref={mdxContainer} style={{ display: 'none' }}>
       <ThemeProvider theme={theme}>
@@ -150,4 +152,15 @@ export default function Pad({source}) {
       </ThemeProvider>
       </div>
   )
+  } else {
+    return (
+     
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {hydrated && <MDXRemote {...source} components={mdComponents} />}
+        </ThemeProvider>
+    
+    )
+
+  }
 }
