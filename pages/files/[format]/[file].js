@@ -1,5 +1,6 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useLayoutEffect } from 'react';
 import { Previewer } from 'pagedjs'
+// import paged from 'pagedjs';
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
 import { mdComponents } from "../../../components/MDXProvider";
@@ -13,7 +14,7 @@ import { theme } from '../../../constants/theme';
 import fs from 'fs'
 import path from 'path'
 
-// import pageStyle from '../../../styles/pdf.module.css'
+import pageStyle from './pdf.module.css'
 
 const glob = require('glob')
 
@@ -129,23 +130,33 @@ export default function Pad({source, format}) {
   const [hydrated, setHydrated] = useState(false);
   const mdxContainer = useRef(null);
 
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
+  // useEffect(() => {
+  //   setHydrated(true);
+  // }, []);
 
-  useEffect(() => {
-    if (hydrated && format === 'pdf') {
-      const paged = new Previewer();
-      let flow = paged.preview(mdxContainer.current.innerHTML, ['../../../styles/pdf.css'], document.body).then((flow) => {
-        console.log("Rendered", flow.total, "pages.");
-      })
-      // paged
-      //   .preview(mdxContainer.current.innerHTML, [], document.body)
-      //   .then((flow) => {
-      //     console.log('Rendered', flow.total, 'pages.');
-      //   });
-    }
-  }, [hydrated, mdxContainer]);
+  // useLayoutEffect(() => {
+  //   if (hydrated && format === 'pdf') {
+  //     const paged = new Previewer();
+  //     let flow = paged.preview(mdxContainer.current.innerHTML, [], document.body).then((flow) => {
+  //       console.log("Rendered", flow.total, "pages.");
+  //     })
+  //     // paged
+  //     //   .preview(mdxContainer.current.innerHTML, [], document.body)
+  //     //   .then((flow) => {
+  //     //     console.log('Rendered', flow.total, 'pages.');
+  //     //   });
+  //   }
+  // }, [hydrated, mdxContainer]);
+  useLayoutEffect(() => {
+    if (source && format === 'pdf') {
+    const element = document.querySelector('#pdf-element');
+    const paged = new Previewer();
+    let flow = paged.preview(mdxContainer.current.innerHTML, [pageStyle], document.body).then((flow) => {
+             console.log("Rendered", flow.total, "pages.");
+           })
+          }
+  }, [source]);
+
 
   if (format === 'pdf') {
     console.log('Rendering PDF View')
@@ -154,7 +165,7 @@ export default function Pad({source, format}) {
        {/* style={{ display: 'none' }}> */}
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {hydrated && <MDXRemote {...source} components={mdComponents} />}
+        {source && <MDXRemote {...source} components={mdComponents} />}
       </ThemeProvider>
       </div>
   )
@@ -163,7 +174,7 @@ export default function Pad({source, format}) {
      
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {hydrated && <MDXRemote {...source} components={mdComponents} />}
+          {source && <MDXRemote {...source} components={mdComponents} />}
         </ThemeProvider>
     
     )
