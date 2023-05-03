@@ -13,6 +13,8 @@ import { theme } from '../../../constants/theme';
 import fs from 'fs'
 import path from 'path'
 
+// import pageStyle from '../../../styles/pdf.module.css'
+
 const glob = require('glob')
 
 
@@ -134,18 +136,22 @@ export default function Pad({source, format}) {
   useEffect(() => {
     if (hydrated && format === 'pdf') {
       const paged = new Previewer();
-      paged
-        .preview(mdxContainer.current.innerHTML, [], document.body)
-        .then((flow) => {
-          console.log('Rendered', flow.total, 'pages.');
-        });
+      let flow = paged.preview(mdxContainer.current.innerHTML, ['../../../styles/pdf.css'], document.body).then((flow) => {
+        console.log("Rendered", flow.total, "pages.");
+      })
+      // paged
+      //   .preview(mdxContainer.current.innerHTML, [], document.body)
+      //   .then((flow) => {
+      //     console.log('Rendered', flow.total, 'pages.');
+      //   });
     }
-  }, [hydrated]);
+  }, [hydrated, mdxContainer]);
 
   if (format === 'pdf') {
-
+    console.log('Rendering PDF View')
   return (
-    <div ref={mdxContainer} style={{ display: 'none' }}>
+    <div ref={mdxContainer} style={{backgroundColor: 'lightgrey'}}>
+       {/* style={{ display: 'none' }}> */}
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {hydrated && <MDXRemote {...source} components={mdComponents} />}
