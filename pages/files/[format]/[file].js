@@ -1,6 +1,11 @@
+import { useRef, useEffect, useState, useLayoutEffect } from 'react';
+import { Previewer } from 'pagedjs'
+// import paged from 'pagedjs';
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
 import { mdComponents } from "../../../components/MDXProvider";
+import PrintSlide from '../../../layouts/PrintSlide'
+import SlidePage from '../../../layouts/SlidePage'
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import remarkGfm from "remark-gfm";
@@ -8,6 +13,9 @@ import remarkUnwrapImages from 'remark-unwrap-images';
 import { theme } from '../../../constants/theme';
 import fs from 'fs'
 import path from 'path'
+
+import pageStyle from './pdf.module.css'
+
 const glob = require('glob')
 
 
@@ -51,20 +59,30 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
+  
   const MDXoptions = {
     remarkPlugins: [remarkGfm, remarkUnwrapImages],
     format: 'mdx',
   }
   let pad = null;
+
   try {
+
     const filePath = path.join(process.cwd(), 'markdown', context.params.file)
     const fileData = fs.readFileSync(filePath, "utf8")
 
-    pad = fileData
+    if (context.params.file === 'test.mdx') {
+      pad = fileData
+    } else {
+      const filePath = path.join(process.cwd(), 'markdown', context.params.file)
+      const fileData = fs.readFileSync(filePath, 'utf-8')
+      pad = fileData
+    }
+
     if (context.params.format === 'ppt') {
       pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
     } else if (context.params.format === 'pdf') {
-      pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
+      pad = '<div>'+pad+'</div>'
     } else {
       pad = removeSection(pad, 'TitleSlide');
       pad = '<MDXViewer>\n' + pad.replace('---','') + '\n</MDXViewer>'
@@ -72,16 +90,21 @@ export async function getStaticProps(context) {
   } catch (error) {
     console.log(error)
   }
+
   let mdxSource = '';
+
   try {
+
     const error_message = `
     <SlidePage>
     # Error
     
     Content not loaded
     </SlidePage>
-    `
+    `;
+
     mdxSource = await serialize(pad ?? error_message, { scope: {}, mdxOptions : { ...MDXoptions}, parseFrontmatter: true } )
+
   } catch (error) {
     const error_message = `
     <SlidePage>
@@ -93,14 +116,68 @@ export async function getStaticProps(context) {
     console.log('serialize error : ', error)
     mdxSource = await serialize(error_message, { scope: {}, mdxOptions : { ...MDXoptions}, parseFrontmatter: true } )
   }
-  return { props: { source: mdxSource, file: context.params.file, format: context.params.format } }
+
+  return { 
+    props: { 
+      source: mdxSource, 
+      file: context.params.file, 
+      format: context.params.format 
+    } 
+  }
 }
 
-export default function Pad(props) {
+export default function Pad({source, format}) {
+  const [hydrated, setHydrated] = useState(false);
+  const mdxContainer = useRef(null);
+
+  // useEffect(() => {
+  //   setHydrated(true);
+  // }, []);
+
+  // useLayoutEffect(() => {
+  //   if (hydrated && format === 'pdf') {
+  //     const paged = new Previewer();
+  //     let flow = paged.preview(mdxContainer.current.innerHTML, [], document.body).then((flow) => {
+  //       console.log("Rendered", flow.total, "pages.");
+  //     })
+  //     // paged
+  //     //   .preview(mdxContainer.current.innerHTML, [], document.body)
+  //     //   .then((flow) => {
+  //     //     console.log('Rendered', flow.total, 'pages.');
+  //     //   });
+  //   }
+  // }, [hydrated, mdxContainer]);
+  useLayoutEffect(() => {
+    if (source && format === 'pdf') {
+    const element = document.querySelector('#pdf-element');
+    const paged = new Previewer();
+    let flow = paged.preview(mdxContainer.current.innerHTML, [pageStyle], document.body).then((flow) => {
+             console.log("Rendered", flow.total, "pages.");
+           })
+          }
+  }, [source]);
+
+
+  if (format === 'pdf') {
+    console.log('Rendering PDF View')
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {props.source && <MDXRemote {...props.source} components={mdComponents} />}
-    </ThemeProvider>
+    <div ref={mdxContainer} style={{backgroundColor: 'lightgrey'}}>
+       {/* style={{ display: 'none' }}> */}
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {source && <MDXRemote {...source} components={mdComponents} />}
+      </ThemeProvider>
+      </div>
   )
+  } else {
+    return (
+     
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {source && <MDXRemote {...source} components={mdComponents} />}
+        </ThemeProvider>
+    
+    )
+
+  }
 }

@@ -7,6 +7,8 @@ import PrintSlide from "../layouts/PrintSlide";
 import MDXViewer from "../layouts/MDXViewer";
 import Image from "next/image";
 
+// fix for Roadmap, Nest
+import { TitleSlide, Header, Banner, Footer, Insights, Chevrons, Nest, Roadmap, Layout, Column, Item, Slide, HeaderCard } from 'airview-mdx'
 
 import Cover from "./Cover";
 import SpeakerNotes from "./SpeakerNotes";
@@ -16,23 +18,23 @@ import { motion } from "framer-motion";
 
 // MUI Components
 
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
+// import Card from '@material-ui/core/Card';
+// import CardContent from '@material-ui/core/CardContent';
+// import CardHeader from '@material-ui/core/CardHeader';
 import { Typography } from '@mui/material';
 import Alert from '@mui/material/Alert';
 
 // Custom components
 
-import { Header, Banner, Footer } from './HeaderFooter';
-import { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
-import {FaIcon, Icon} from './Images.jsx';
+// import { Insight, InsightTable, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
+// import {FaIcon, Icon} from './Images.jsx';
+import {FaIcon, Icon} from 'airview-mdx';
 import { ProgressTable } from './Tables.jsx';
-import { HeaderCard, Nest } from './Cards';
-import { Font } from './Styling';
+// import { HeaderCard, Nest } from './Cards';
+// import { HeaderCard } from './Cards';
+// import { Font } from './Styling';
 // Layouts 
-import {Layout, Column, Item } from './Layouts';
-import { TitleSlide } from "../layouts/TitleLayout";
+// import {Layout, Column, Item } from './Layouts';
 
 export const mdComponents = {
   h1: (props) => <Typography variant="h1">{props.children}</Typography>,
@@ -69,19 +71,20 @@ export const mdComponents = {
   Cover,
   motion,
   // MUI Components
-  CardHeader,
-  CardContent,
-  Card,
+  // CardHeader,
+  // CardContent,
+  // Card,
   Alert,
   // custom component
   Header,
   Banner,
   Footer,
-  InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap,
+  Insights, Chevrons, Nest, Roadmap,
+  // InsightTable, Insight, Chevrons, ChevronProcessTable, StatementBanner, Roadmap,
   FaIcon, Icon,
   ProgressTable,
   HeaderCard, Nest,
-  Font,
+  // Font,
   // layouts
   TitleSlide,
   Layout, Column, Item

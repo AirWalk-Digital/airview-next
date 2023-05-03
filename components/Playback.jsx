@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-
+import {Insights, Chevrons } from 'airview-mdx'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -161,75 +161,75 @@ const Insight = ({ children, table = false, row = 0, maxRows = 0, splitter = tru
     }
 };
 
-const ChevronProcess = ({ children, minWidth, maxWidth }, key = 0) => {
+// const ChevronProcess = ({ children, minWidth, maxWidth }, key = 0) => {
 
-    let content = getListContent(children, key);
-    // console.log(content.icon.toString());
-    const theme = useTheme();
+//     let content = getListContent(children, key);
+//     // console.log(content.icon.toString());
+//     const theme = useTheme();
 
-    let type = "fal";
-    let icon = content.icon
+//     let type = "fal";
+//     let icon = content.icon
 
-    if (faTypes.indexOf(content.icon.slice(0, 3)) > -1) {
-        type = content.icon.slice(0, 3)
-        icon = content.icon.slice(4)
-    } else if (content.icon.slice(0, 3) === "fak") {
-        type = "fak"
-        icon = content.icon.slice(4)
-    }
+//     if (faTypes.indexOf(content.icon.slice(0, 3)) > -1) {
+//         type = content.icon.slice(0, 3)
+//         icon = content.icon.slice(4)
+//     } else if (content.icon.slice(0, 3) === "fak") {
+//         type = "fak"
+//         icon = content.icon.slice(4)
+//     }
 
-    // let iconimage = fas(icon);
-    return (
-        <Box key={key} sx={{ display: "flex", py: "1%", fontSize: 'xsmall', minHeight: "5em", maxHeight: '10em' }}>
-            <Box id='0' sx={{
-                height: '100%', py: '0.5%', pl: "2%", display: "flex", alignItems: "center", backgroundColor: 'background.tertiary', borderTopLeftRadius: "20px", borderBottomLeftRadius: "20px", color: getContrastYIQ(theme.palette.background.tertiary, theme)
-            }}>
+//     // let iconimage = fas(icon);
+//     return (
+//         <Box key={key} sx={{ display: "flex", py: "1%", fontSize: 'xsmall', minHeight: "5em", maxHeight: '10em' }}>
+//             <Box id='0' sx={{
+//                 height: '100%', py: '0.5%', pl: "2%", display: "flex", alignItems: "center", backgroundColor: 'background.tertiary', borderTopLeftRadius: "20px", borderBottomLeftRadius: "20px", color: getContrastYIQ(theme.palette.background.tertiary, theme)
+//             }}>
 
-                <Icon type={type} sx={{ px: "2%" }} style={{ width: "50px", height: "50px" }} >{icon}</Icon>
+//                 <Icon type={type} sx={{ px: "2%" }} style={{ width: "50px", height: "50px" }} >{icon}</Icon>
 
-            </Box>
+//             </Box>
 
-            <Box id='1' sx={{
-                variant: "styles.p", px: "1%", backgroundColor: 'background.tertiary',
-                pr: '80px',
-                py: '0.5%', 
-                minWidth: minWidth,
-                maxWidth: maxWidth,
-                // padding: '15px 0',
-                display: 'flex',
-                alignItems: 'center',
-                my: '0',
-                marginRight: '-30px',
-                color: getContrastYIQ(theme.palette.background.tertiary, theme),
-                clipPath: 'polygon(0 0, calc(100% - 70px) 0, 100% 50%, calc(100% - 70px) 100%, 0 100%)',
+//             <Box id='1' sx={{
+//                 variant: "styles.p", px: "1%", backgroundColor: 'background.tertiary',
+//                 pr: '80px',
+//                 py: '0.5%', 
+//                 minWidth: minWidth,
+//                 maxWidth: maxWidth,
+//                 // padding: '15px 0',
+//                 display: 'flex',
+//                 alignItems: 'center',
+//                 my: '0',
+//                 marginRight: '-30px',
+//                 color: getContrastYIQ(theme.palette.background.tertiary, theme),
+//                 clipPath: 'polygon(0 0, calc(100% - 70px) 0, 100% 50%, calc(100% - 70px) 100%, 0 100%)',
 
-            }}>
-                {content.heading}
-            </Box>
-            <Box id='2' sx={{
-                variant: "styles.p", px: "1%", backgroundColor: 'background.muted',
-                pr: '80px',
-                pl: '90px',
-                py: '0.5%', 
-                minWidth: '150px',
-                width: '100%',
-                // padding: '15px 0',
-                my: '0',
-                // marginRight: '-30px',
-                // display: 'inline', verticleAlign : 'middle',
-                display: 'flex',
-                alignItems: 'center',
-                color: getContrastYIQ(theme.palette.background.secondary, theme),
-                background: 'background.secondary',
-                clipPath: 'polygon(0 0, calc(100% - 70px) 0, 100% 50%, calc(100% - 70px) 100%, 0 100%, 70px 50%);',
+//             }}>
+//                 {content.heading}
+//             </Box>
+//             <Box id='2' sx={{
+//                 variant: "styles.p", px: "1%", backgroundColor: 'background.muted',
+//                 pr: '80px',
+//                 pl: '90px',
+//                 py: '0.5%', 
+//                 minWidth: '150px',
+//                 width: '100%',
+//                 // padding: '15px 0',
+//                 my: '0',
+//                 // marginRight: '-30px',
+//                 // display: 'inline', verticleAlign : 'middle',
+//                 display: 'flex',
+//                 alignItems: 'center',
+//                 color: getContrastYIQ(theme.palette.background.secondary, theme),
+//                 background: 'background.secondary',
+//                 clipPath: 'polygon(0 0, calc(100% - 70px) 0, 100% 50%, calc(100% - 70px) 100%, 0 100%, 70px 50%);',
 
-            }}>
-                {content.body}
-            </Box>
-        </Box >
+//             }}>
+//                 {content.body}
+//             </Box>
+//         </Box >
 
-    )
-}
+//     )
+// }
 
 
 
@@ -424,7 +424,7 @@ const ChevronProcessTable = ({ children, minWidth = '20%', maxWidth = '30em', sx
                         let li = React.Children.toArray(item.props.children); // list item
                         return (
                             <>
-                                <ChevronProcess key={i} minWidth={minWidth} maxWidth={maxWidth}>{li}</ChevronProcess>
+                                <Chevrons key={i} minWidth={minWidth} maxWidth={maxWidth}>{li}</Chevrons>
                                 {/* <Box sx={{display: "flex",backgroundColor: "primary" ,width: "100%", height: "1px",}} /> */}
                             </>
                         );
@@ -510,7 +510,7 @@ const RoadmapItem = ({ title, content, minWidth, maxWidth }, key = 0) => {
                 textAlign: 'center',
                 my: '0',
                 // marginRight: '-30px',
-                color: getContrastYIQ(theme.palette.background.tertiary, theme),
+                // color: getContrastYIQ(theme.palette.background.tertiary, theme),
                 clipPath: 'polygon(0 0, calc(100% - 40px) 0, 100% 50%, calc(100% - 40px) 100%, 0 100%)',
                 em: {'&:before': {content: '"\\a "',whiteSpace: 'pre'}}
 
@@ -527,9 +527,4 @@ const RoadmapItem = ({ title, content, minWidth, maxWidth }, key = 0) => {
     )
 }
 
-
-
-
-
-
-export { InsightTable, Insight, ChevronProcess, ChevronProcessTable, StatementBanner, Roadmap };
+export { InsightTable, Insight, Chevrons, ChevronProcessTable, StatementBanner, Roadmap };

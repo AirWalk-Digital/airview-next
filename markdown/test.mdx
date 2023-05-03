@@ -3,15 +3,9 @@
 
 # Test Document
 
-```mdx
-....
-<TitleSlide background='image1.jpeg' >
 # Title
 
 subtitle
-
-</TitleSlide>
-```
 
 </TitleSlide>
 
@@ -57,18 +51,18 @@ code
 
 # h1
 
-## h2 | InsightTable component.
+## h2 | Insights component.
 
 ```react
-<InsightTable>
+<Insights>
 - icon (from fontawesome)
   - 1st column
   - 2nd column
-</InsightTable>
+</Insights>
 ```
 
 
-<InsightTable>
+<Insights>
 
 - star
   - star Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
@@ -82,7 +76,7 @@ code
   - chart-pie Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
   - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
 
-</InsightTable>
+</Insights>
 
 ---
 
@@ -248,16 +242,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
 # Statements
 
 ```mdx
-<StatementBanner>
+<Banner>
 ### h3 [optional] banner
 
 icon
 
 body
-</StatementBanner>
+</Banner>
 ```
 
-<StatementBanner>
+<Banner>
 
 ### example 1
 
@@ -265,121 +259,38 @@ fak-terraform
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit
 
-</StatementBanner>
+</Banner>
 
-<StatementBanner>
+<Banner>
 
 ### example 2
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
 
-</StatementBanner>
+</Banner>
 
-<StatementBanner>
+<Banner>
 
 shield-halved
 
 example 3 - icon and body only.. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
 
-</StatementBanner>
-
----
-
-# Table Styles
-
-<Layout>
-<Item width='6'>
-### Standard Table
-
-```md
-
-| First Header  | Second Header | 3rd header |
-| ------------- | ------------- | ---------- |
-| Content Cell  | Content Cell  | Content |
-
-```
-</Item>
-<Item width='6'>
-
-| First Header  | Second Header | 3rd header |
-| ------------- | ------------- | ---------- |
-| Content Cell  | Content Cell  | Content |
-| Content Cell  | Content Cell  | Content |
-| Content Cell  | Content Cell  | Content |
-| Content Cell  | Content Cell  | Content |
-| Content Cell  | Content Cell  | Content |
-
-</Item>
-<Item width='6'>
-
-### Progress Table
-
-```md
-<ProgressTable>
-
-| First Header  | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
-| Content Cell  | Content Cell  | Content    | Content    | 
-
-</ProgressTable>
-```
-
-</Item>
-<Item width='6'>
-
-<ProgressTable>
-| First Header  | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
-| Content Cell  | Content Cell  | Content    | Content    | 
-| Content Cell  | Content Cell  | Content    | Content    | 
-| Content Cell  | Content Cell  | Content    | Content    | 
-
-</ProgressTable>
-
-</Item>
-<Item width='6'>
-
-### With header column
-
-```md
-<ProgressTable>
-
-|               | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
-|  <FaIcon sx={{p: '5px', m: '5px'}}>cloud</FaIcon> | Content Cell  | Content    | Content    | 
-| Content Cell  | Content Cell  | more content | Content    | 
-</ProgressTable>
-
-```
-</Item>
-<Item width='6'>
-
-<ProgressTable>
-
-|               | Second Header | 3rd header | 4th header |
-| ------------- | ------------- | ---------- | ---------- |
-|  <FaIcon sx={{p: '5px', m: '5px'}}>cloud</FaIcon> | Content Cell  | Content    | Content    | 
-| Content Cell  | Content Cell  | more content | Content    | 
-</ProgressTable>
-
-</Item>
-
-</Layout>
+</Banner>
 
 ---
 
 # Chevron Process Table
 
 ```mdx
-<ChevronProcessTable>
+<Chevrons>
 - star
   - Lorem ipsum dolor sit amet
   - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. 
-</ChevronProcessTable>
+</Chevrons>
 ```
 
-<ChevronProcessTable>
+<Chevrons>
 
 - star
   - Lorem ipsum dolor sit amet
@@ -393,7 +304,7 @@ example 3 - icon and body only.. Lorem ipsum dolor sit amet, consectetur adipisc
   - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
   - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
 
-</ChevronProcessTable>
+</Chevrons>
 
 ---
 
@@ -476,16 +387,3 @@ Each box, supports a h1, h2 and then content.
 </Layout>
 
 ---
-
-# Simple Components
-
-Out of the box components from Material UI.
-Full documentation [here](https://mui.com/material-ui)
-
-```mdx
-
-<Alert severity="info">text</Alert>
-
-```
-
-<Alert severity="info">text</Alert>

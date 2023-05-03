@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import GlobalStyles from '@mui/material/GlobalStyles';
-import Slide from "../components/Slide";
+// import Slide from "../components/Slide";
+import { Slide } from 'airview-mdx';
 import PresentationMode from "../components/PresentationMode";
 import Swipeable from "../components/Swipeable";
 import useEventListener from "../hooks/useEventListener";
@@ -219,6 +220,8 @@ function SlidePage({ children, next }) {
       );
       setSlide(slideCount);
     }
+
+    console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
     return <Slide>{generatedSlides[currentSlide]}</Slide>;
   };
   

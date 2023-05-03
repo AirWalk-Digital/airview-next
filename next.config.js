@@ -2,6 +2,8 @@ const withMDX = require("@next/mdx")({
   extension: /\.(md|mdx)$/,
 });
 
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "tsx"],
@@ -15,6 +17,7 @@ const nextConfig = {
     // path: '/_next/image',
     // loader can be 'default', 'imgix', 'cloudinary', 'akamai', or 'custom'
     loader: 'default',
+    // loaderFile: './components/utils/nextImageLoader.js',
     // file with `export default function loader({src, width, quality})`
     // loaderFile: '',
     // disable static imports for image files
@@ -36,6 +39,19 @@ const nextConfig = {
   },
   experimental: {
     appDir: true,
+  },
+  webpack: (config) => {
+    // Add the alias configuration to the webpack config
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      react: path.join(__dirname, 'node_modules/react'),
+      '@mui/material': path.join(__dirname, 'node_modules/@mui/material'),
+      // '@mui/material/styles': path.resolve('./node_modules/@mui/material/styles'),
+      '@emotion/react': path.join(__dirname, 'node_modules/@emotion/react'),
+      // 'emotion-theming': path.resolve('./node_modules/@emotion/react'),
+
+    };
+    return config;
   },
 };
 
