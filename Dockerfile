@@ -2,12 +2,12 @@ FROM node:18.14-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+COPY package.json package.lock ./
 RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
     npm config set "@fortawesome:registry" https://npm.fontawesome.com/ && \
     export FONTAWESOME_NPM_AUTH_TOKEN=$(cat /run/secrets/FONTAWESOME_NPM_AUTH_TOKEN) && \
     npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME_NPM_AUTH_TOKEN && \
-    yarn install --frozen-lockfile --network-timeout 1000000
+    npm install
 
 FROM node:18.14-alpine AS builder
 WORKDIR /app
