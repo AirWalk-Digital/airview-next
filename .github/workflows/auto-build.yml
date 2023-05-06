@@ -20,7 +20,7 @@ jobs:
           node-version: 18.x
       
       - name: Install semantic-release extra plugins
-        run: npm install --save-dev @semantic-release/changelog
+        run: mv package.json package.json.bak && npm install --no-save @semantic-release/changelog @semantic-release-plus/docker
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
