@@ -1,17 +1,28 @@
+// release.config.js
 module.exports = {
-    branches: ['main']
-    plugins: [
-      ['@codedependant/semantic-release-docker', {
-        dockerTags: ['latest', '{{version}}', '{{major}}-latest', '{{major}}.{{minor}}'],
-        dockerImage: 'mdx-deck',
-        dockerFile: 'Dockerfile',
-        dockerRegistry: 'ghcr.io',
-        dockerProject: 'airwalk-digital',
-        dockerArgs: {
-          API_TOKEN: true
-        , RELEASE_DATE: new Date().toISOString()
-        , RELEASE_VERSION: '{{next.version}}'
-        }
-      }]
-    ]
-  }
+  branches: [
+    'main',
+    {
+      name: 'beta',
+      prerelease: true
+    }
+  ],
+  plugins: [
+    '@semantic-release/commit-analyzer',
+    '@semantic-release/release-notes-generator',
+    [
+      '@semantic-release/changelog',
+      {
+        changelogFile: 'CHANGELOG.md'
+      },
+    ],
+    "@semantic-release-plus/docker",
+
+    {
+      "name": "ghcr.io/airwalk-digital/airview-mdx-deck",
+      skipLogin: true,
+    },
+    '@semantic-release/github',
+  ]
+}
+
