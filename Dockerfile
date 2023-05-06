@@ -2,7 +2,7 @@ FROM node:18.14-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json package.lock ./
+COPY package.json package.lock.json ./
 RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
     npm config set "@fortawesome:registry" https://npm.fontawesome.com/ && \
     export FONTAWESOME_NPM_AUTH_TOKEN=$(cat /run/secrets/FONTAWESOME_NPM_AUTH_TOKEN) && \
