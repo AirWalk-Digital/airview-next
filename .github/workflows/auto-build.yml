@@ -6,15 +6,21 @@ on:
     branches: [main, beta]
 
 jobs:
-  auto_merge_version_update:
-    runs-on: ubuntu-latest
-#     if: github.event.pull_request.author_association == 'COLLABORATOR' && contains(github.event.pull_request.labels.*.name, 'auto-version-update')
-    
+  release:
+    runs-on: ubuntu-latest    
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+      
+      - name: Install semantic-release extra plugins
+        run: npm install --save-dev @semantic-release/changelog
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -31,24 +37,23 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Docker metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ghcr.io/airwalk-digital/mdx-deck
-
-      - name: Build and push
+    
+      - name: Build Docker Image
         uses: docker/build-push-action@v3
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          push: false
+          tags: ghcr.io/airwalk-digital/airview-mdx-deck
           secrets: |
             "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
 
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+      
+      
       # - name: Create Release
       #   uses: actions/create-release@v1
       #   continue-on-error: true
