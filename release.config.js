@@ -19,7 +19,11 @@ module.exports = {
     "@semantic-release-plus/docker",
 
     {
-      "name": "ghcr.io/airwalk-digital/airview-mdx-deck",
+      name: {
+        namespace: "airwalk-digital",
+        repository: "airview-mdx-deck",
+      },
+      "registry": "ghcr.io",
       skipLogin: true,
     },
     '@semantic-release/github',
