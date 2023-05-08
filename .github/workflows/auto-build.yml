@@ -44,7 +44,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: false
-          tags: ghcr.io/airwalk-digital/airview-mdx-deck
+          tags: airwalk-digital/airview-mdx-deck
           secrets: |
             "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
 
