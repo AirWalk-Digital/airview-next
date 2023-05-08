@@ -44,6 +44,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: false
+          load: true
           tags: airwalk-digital/airview-mdx-deck
           secrets: |
             "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
