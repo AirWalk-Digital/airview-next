@@ -22,14 +22,14 @@ jobs:
       - name: Install semantic-release extra plugins
         run: mv package.json package.json.bak && npm install --no-save @semantic-release/changelog @semantic-release-plus/docker && mv package.json.bak package.json
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-        with:
-          driver-opts: |
-            image=moby/buildkit:v0.10.6
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v2
+      #   with:
+      #     driver-opts: |
+      #       image=moby/buildkit:v0.10.6
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -42,7 +42,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64,linux/arm64
           push: false
           load: true
           tags: airwalk-digital/airview-mdx-deck
