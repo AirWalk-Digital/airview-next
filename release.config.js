@@ -16,16 +16,17 @@ module.exports = {
         changelogFile: 'CHANGELOG.md'
       },
     ],
-    "@semantic-release-plus/docker",
-
-    {
-      name: {
-        namespace: "airwalk-digital",
-        repository: "airview-mdx-deck",
+    [
+      "@semantic-release-plus/docker",
+      {
+        name: {
+          namespace: "airwalk-digital",
+          repository: "airview-mdx-deck",
+        },
+        "registry": "ghcr.io",
+        skipLogin: true,
       },
-      "registry": "ghcr.io",
-      skipLogin: true,
-    },
+    ],
     '@semantic-release/github',
   ]
 }
