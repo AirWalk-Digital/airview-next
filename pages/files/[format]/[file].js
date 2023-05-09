@@ -83,7 +83,7 @@ export async function getStaticProps(context) {
     if (context.params.format === 'ppt') {
       pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
     } else if (context.params.format === 'pdf') {
-      pad = '<div>' + pad + '</div>'
+      pad = '<div>' + pad.replace(/---/g, '') + '</div>'
     } else {
       pad = removeSection(pad, 'TitleSlide');
       pad = '<MDXViewer>\n' + pad.replace('---', '') + '\n</MDXViewer>'

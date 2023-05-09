@@ -44,74 +44,105 @@
     box-shadow: 0 0 0 1px inset var(--color-marginBox);
 } */
 
-
+@page :first {
+    /* background: url(./backgrounds/image17-bg.jpeg) no-repeat; */
+    /* background: url(/backgrounds/cover.jpg) no-repeat; */
+    /* background-size: cover; */
+    margin: 0;
+}
 
 @page {
     background: url(/logos/airwalk-logo.png) no-repeat;
     background-position: left 30px bottom 10px;
     background-size: 100px;
-    padding-top: 20px;
-    padding-bottom: 15px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
     z-index: -1000;
     size: A4;
     margin-left: 25px;
     margin-right: 25px;
+    margin-top: 10px;
     margin-bottom: 50px;
     /* width: 100%; */
     /* counter-reset: page; */
-    @top-left {
+    @top-left-corner {
         background: #4AC7F0;
         content: '';
         display: block;
         height: .05cm;
         opacity: .5;
-        width: 100%;
+        /* width: 100%; */
     }
 
     @top-center {
         background: #4AC7F0;
+        content: string(heading);
+        font-size: 9pt;
+        display: block;
+        height: .05cm;
+        opacity: .5;
+        /* width: 100%; */
+    }
+
+    @top-right-corner {
+        background: #4AC7F0;
         content: '';
         display: block;
         height: .05cm;
         opacity: .5;
-        width: 100%;
-    }
-
-    @top-right {
-        content: string(heading);
-        font-size: 9pt;
-        height: 1cm;
-        vertical-align: middle;
-        width: 100%;
+        /* width: 100%; */
     }
     
+    @bottom-left-corner {
+        background: #4AC7F0;
+        content: '';
+        height: .05cm;
+        opacity: .5;
+    }
     @bottom-left {
         background: #4AC7F0;
         content: '';
         height: .05cm;
         opacity: .5;
-        /* text-align: center; */
-        /* width: 1cm; */
     }
     @bottom-center {
         background: #4AC7F0;
         content: 'Technology, done right.';
+        vertical-align: middle;
         font-size: 16px;
         display: block;
         height: .05cm;
         opacity: .5;
-        width: 100%;
+        /* width: 100%; */
     }
     @bottom-right {
         background: #4AC7F0;
         content: counter(page);
+        font-size: 16px;
         color: white;
         height: 1cm;
+        opacity: .5;
         text-align: center;
         width: 1cm;
-        /* counter-increment: page; */
+    }
+    @bottom-right-corner {
+        background: #4AC7F0;
+        content: '';
+        height: .05cm;
+        opacity: .5;
     }
 }
+
+h1 {
+    break-before: always;
+}
+
+h2 {
+    break-after: avoid;
+}
+
 
 /* Add the page counter to the pagedjs_margin-bottom-right-corner-holder */
 /* .pagedjs_margin-content::after {
