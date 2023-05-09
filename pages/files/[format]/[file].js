@@ -86,7 +86,7 @@ export async function getStaticProps(context) {
       pad = '<div>' + pad.replace(/---/g, '') + '</div>'
     } else {
       pad = removeSection(pad, 'TitleSlide');
-      pad = '<MDXViewer>\n' + pad.replace('---', '') + '\n</MDXViewer>'
+      pad = '<MDXViewer>\n' + pad.replace(/---/g, '') + '\n</MDXViewer>'
     }
   } catch (error) {
     console.log(error)
