@@ -147,9 +147,6 @@ function Pad({ source, format }) {
         .then((flow) => {
           console.log('====flow====')
           console.log(flow)
-          const pagedjs_pages = document.getElementsByClassName('pagedjs_pages');
-          console.log(pagedjs_pages);
-
         });
       return () => {
         document.head
