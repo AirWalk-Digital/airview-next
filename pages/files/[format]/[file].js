@@ -15,6 +15,7 @@ import fs from 'fs'
 import path from 'path'
 import Head from 'next/head';
 import Script from 'next/script';
+import dynamic from 'next/dynamic'
 
 const glob = require('glob')
 
@@ -82,10 +83,10 @@ export async function getStaticProps(context) {
     if (context.params.format === 'ppt') {
       pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
     } else if (context.params.format === 'pdf') {
-      pad = '<div>' + pad + '</div>'
+      pad = '<div>' + pad.replace(/---/g, '') + '</div>'
     } else {
       pad = removeSection(pad, 'TitleSlide');
-      pad = '<MDXViewer>\n' + pad.replace('---', '') + '\n</MDXViewer>'
+      pad = '<MDXViewer>\n' + pad.replace(/---/g, '') + '\n</MDXViewer>'
     }
   } catch (error) {
     console.log(error)
@@ -126,7 +127,11 @@ export async function getStaticProps(context) {
   }
 }
 
-export default function Pad({ source, format }) {
+export default dynamic(() => Promise.resolve(Pad), {
+  ssr: false,
+});
+
+function Pad({ source, format }) {
   const mdxContainer = useRef(null);
   const previewContainer = useRef(null);
   let contentMdx = ``;
@@ -136,7 +141,7 @@ export default function Pad({ source, format }) {
       contentMdx = `${mdxContainer.current?.innerHTML}`;
       paged
         .preview(contentMdx,
-          [],
+          ['/pdf.css'],
           previewContainer.current
         )
         .then((flow) => {
@@ -159,7 +164,7 @@ export default function Pad({ source, format }) {
     return (
       <>
         <Head>
-          <Script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></Script>
+          {/* <Script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></Script> */}
         </Head>
         <div ref={mdxContainer} style={{ display: 'none' }}>
           {/* style={{ display: 'none' }}> */}

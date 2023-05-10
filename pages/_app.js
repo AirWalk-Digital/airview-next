@@ -5,7 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import { CurrentSlideProvider } from "../context/CurrentSlideContext";
 import { ModeProvider } from "../context/ModeContext";
 import TransitionPage from "../layouts/TransitionPage";
-import '../styles/pdf.css'
+// import '../styles/pdf.css'
 
 
 
