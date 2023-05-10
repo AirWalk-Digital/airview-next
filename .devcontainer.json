@@ -3,11 +3,9 @@
 {
   "name": "MDXP Development",
   "dockerFile": "Dockerfile.vscode",
-  "extensions": ["ms-python.python"],
   "remoteUser": "vscode",
   "mounts": [
-    // "source=/home/ubuntu/vscode/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
-    // "source=/Users/robe/GitHub/airwalk_patterns,target=/workspaces/mdxp2/src/pages/files,type=bind,consistency=cached"
+    "source=/home/ubuntu/vscode/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
   ],
   "forwardPorts": [8080],
 
@@ -25,6 +23,6 @@
   },
   "postCreateCommand": "",
   "postAttachCommand": {
-    // "fix npm" : "rm -Rf /workspaces/mdx-deck-etherpad/node_modules && ln -s /tmp/npm/node_modules /workspaces/mdx-deck-etherpad/node_modules"
+    "fix npm" : "rm -Rf /workspaces/mdx-deck-etherpad/node_modules && ln -s /tmp/npm/node_modules /workspaces/mdx-deck-etherpad/node_modules"
   }
 }
