@@ -3,16 +3,15 @@
     margin: 0 auto;
 } */
 
-
 .pagedjs_page {
-    background-color: white;
-    box-shadow: 10px 12px 30px 0 rgba(0, 0, 0, 0.1);
-    margin: 0in;
-    flex-shrink: 0;
-    flex-grow: 0;
-    margin-top: 10mm;
-    margin-left: auto;
-    margin-right: auto;
+  background-color: white;
+  box-shadow: 10px 12px 30px 0 rgba(0, 0, 0, 0.1);
+  margin: 0in;
+  flex-shrink: 0;
+  flex-grow: 0;
+  margin-top: 10mm;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* .pagedjs_ .pagedjs_page:last-of-type {
@@ -45,104 +44,103 @@
 } */
 
 @page :first {
-    /* background: url(./backgrounds/image17-bg.jpeg) no-repeat; */
-    /* background: url(/backgrounds/cover.jpg) no-repeat; */
-    /* background-size: cover; */
-    margin: 0;
+  /* background: url(./backgrounds/image17-bg.jpeg) no-repeat; */
+  /* background: url(/backgrounds/cover.jpg) no-repeat; */
+  /* background-size: cover; */
+  margin: 0;
 }
 
 @page {
-    background: url(/logos/airwalk-logo.png) no-repeat;
-    background-position: left 30px bottom 10px;
-    background-size: 100px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-    z-index: -1000;
-    size: A4;
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-top: 10px;
-    margin-bottom: 50px;
+  background: url(/logos/airwalk-logo.png) no-repeat;
+  background-position: left 30px bottom 10px;
+  background-size: 100px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  z-index: -1000;
+  size: A4;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-top: 10px;
+  margin-bottom: 50px;
+  /* width: 100%; */
+  /* counter-reset: page; */
+  @top-left-corner {
+    background: #4ac7f0;
+    content: "";
+    display: block;
+    height: 0.05cm;
+    opacity: 0.5;
     /* width: 100%; */
-    /* counter-reset: page; */
-    @top-left-corner {
-        background: #4AC7F0;
-        content: '';
-        display: block;
-        height: .05cm;
-        opacity: .5;
-        /* width: 100%; */
-    }
+  }
 
-    @top-center {
-        background: #4AC7F0;
-        content: string(heading);
-        font-size: 9pt;
-        display: block;
-        height: .05cm;
-        opacity: .5;
-        /* width: 100%; */
-    }
+  @top-center {
+    background: #4ac7f0;
+    content: string(heading);
+    font-size: 9pt;
+    display: block;
+    height: 0.05cm;
+    opacity: 0.5;
+    /* width: 100%; */
+  }
 
-    @top-right-corner {
-        background: #4AC7F0;
-        content: '';
-        display: block;
-        height: .05cm;
-        opacity: .5;
-        /* width: 100%; */
-    }
-    
-    @bottom-left-corner {
-        background: #4AC7F0;
-        content: '';
-        height: .05cm;
-        opacity: .5;
-    }
-    @bottom-left {
-        background: #4AC7F0;
-        content: '';
-        height: .05cm;
-        opacity: .5;
-    }
-    @bottom-center {
-        background: #4AC7F0;
-        content: 'Technology, done right.';
-        vertical-align: middle;
-        font-size: 16px;
-        display: block;
-        height: .05cm;
-        opacity: .5;
-        /* width: 100%; */
-    }
-    @bottom-right {
-        background: #4AC7F0;
-        content: counter(page);
-        font-size: 16px;
-        color: white;
-        height: 1cm;
-        opacity: .5;
-        text-align: center;
-        width: 1cm;
-    }
-    @bottom-right-corner {
-        background: #4AC7F0;
-        content: '';
-        height: .05cm;
-        opacity: .5;
-    }
+  @top-right-corner {
+    background: #4ac7f0;
+    content: "";
+    display: block;
+    height: 0.05cm;
+    opacity: 0.5;
+    /* width: 100%; */
+  }
+
+  @bottom-left-corner {
+    background: #4ac7f0;
+    content: "";
+    height: 0.05cm;
+    opacity: 0.5;
+  }
+  @bottom-left {
+    background: #4ac7f0;
+    content: "";
+    height: 0.05cm;
+    opacity: 0.5;
+  }
+  @bottom-center {
+    background: #4ac7f0;
+    content: "Technology, done right.";
+    vertical-align: middle;
+    font-size: 16px;
+    display: block;
+    height: 0.05cm;
+    opacity: 0.5;
+    /* width: 100%; */
+  }
+  @bottom-right {
+    background: #4ac7f0;
+    content: counter(page);
+    font-size: 16px;
+    color: white;
+    height: 1cm;
+    opacity: 0.5;
+    text-align: center;
+    width: 1cm;
+  }
+  @bottom-right-corner {
+    background: #4ac7f0;
+    content: "";
+    height: 0.05cm;
+    opacity: 0.5;
+  }
 }
 
 h1 {
-    break-before: always;
+  break-before: always;
 }
 
 h2 {
-    break-after: avoid;
+  break-after: avoid;
 }
-
 
 /* Add the page counter to the pagedjs_margin-bottom-right-corner-holder */
 /* .pagedjs_margin-content::after {
@@ -154,3 +152,7 @@ h2 {
     padding: 5px;
     color: red;
 } */
+.pagedjs_margin.pagedjs_margin-bottom-center.hasContent
+  .pagedjs_margin-content {
+  margin-top: 15px;
+}
