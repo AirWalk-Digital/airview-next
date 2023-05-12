@@ -1,18 +1,49 @@
-import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
-import { useState, useEffect, } from 'react';
+import { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { mdComponents } from "../../../components/MDXProvider";
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { theme } from '../../../constants/theme';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+import { Previewer } from 'pagedjs';
 
-export default function Pad() {
+
+export default dynamic(() => Promise.resolve(Pad), {
+  ssr: false,
+});
+
+function Pad() {
   const router = useRouter()
   const { id, format } = router.query
   const [pad, setPad] = useState();
   const [rev, setRev] = useState(0);
   const [refreshToken, setRefreshToken] = useState(Math.random());
+  const mdxContainer = useRef(null);
+  const previewContainer = useRef(null);
+  let contentMdx = ``;
+
+  useLayoutEffect(() => {
+    if (pad && pad.source && format === 'pdf') {
+      const paged = new Previewer();
+      contentMdx = `${mdxContainer.current?.innerHTML}`;
+      paged
+        .preview(contentMdx,
+          ['/pdf.css'],
+          previewContainer.current
+        )
+        .then((flow) => {
+          console.log('====flow====')
+          console.log(flow)
+        });
+      return () => {
+        document.head
+          .querySelectorAll("[data-pagedjs-inserted-styles]")
+          .forEach((e) => e.parentNode?.removeChild(e));
+      };
+    }
+
+  }, [pad])
 
   useEffect(() => {
     fetch(`/api/etherpad/pad-revs?pad=${id}`)
@@ -48,10 +79,32 @@ export default function Pad() {
       });
 
   }, [refreshToken]);
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-        {pad && <MDXRemote {...pad.source} components={mdComponents} /> }
-    </ThemeProvider>
-  )
+
+
+  if (format === 'pdf') {
+    return (
+      <>
+        <div ref={mdxContainer} style={{ display: 'none' }}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {pad && pad.source && <MDXRemote {...pad.source} components={mdComponents} />}
+          </ThemeProvider>
+        </div>
+        <div className="pagedjs_page" ref={previewContainer}></div>
+      </>
+    )
+  } else {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {pad && pad.source && <MDXRemote {...pad.source} components={mdComponents} />}
+      </ThemeProvider>
+    )
+  }
+  // return (
+  //   <ThemeProvider theme={theme}>
+  //     <CssBaseline />
+  //       {pad && <MDXRemote {...pad.source} components={mdComponents} /> }
+  //   </ThemeProvider>
+  // )
 }
