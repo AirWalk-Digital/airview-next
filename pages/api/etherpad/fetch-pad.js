@@ -32,10 +32,10 @@ export default async function handler(req, res) {
       pad = '<SlidePage>\n' + pad + '\n</SlidePage>'
     } else if (req.query.format === 'print') {
       pad = '<PrintSlide>\n' + pad + '\n</PrintSlide>'
+    } else if (req.query.format === 'pdf') {
+      pad = '<div>\n' + pad.replace(/---/g, '') + '\n</div>'
     } else {
-      
       pad = removeSection(pad, 'TitleSlide')
-
       pad = '<MDXViewer>\n' + pad + '\n</MDXViewer>'
     }
   } catch (error) {
