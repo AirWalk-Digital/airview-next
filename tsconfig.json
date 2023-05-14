@@ -22,7 +22,8 @@
         "name": "next"
       }
     ],
-    "incremental": true
+    "incremental": true,
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
