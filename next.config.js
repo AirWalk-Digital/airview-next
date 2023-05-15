@@ -1,5 +1,8 @@
 const withMDX = require("@next/mdx")({
   extension: /\.(md|mdx)$/,
+  options: {
+    providerImportSource: "@mdx-js/react",
+  }
 });
 
 const path = require('path');
