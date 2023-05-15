@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { VFile } from 'vfile'
 import { VFileMessage } from 'vfile-message'
 import * as provider from '@mdx-js/react'
@@ -19,7 +19,8 @@ import { theme } from '../../constants/theme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { mdComponents } from "../../components/MDXProvider";
-import { MDXProvider } from '@mdx-js/react'
+
+import { Previewer } from 'pagedjs'
 
 function removeSection(pad, tagName) {
   const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");
@@ -67,7 +68,7 @@ function useMdx(defaults) {
 
         message.fatal = true
       }
-
+      console.log('output:evalutate:Success: ', file)
       setState({ ...config, file })
     },
     { leading: true, trailing: true, wait: 500 }
@@ -192,8 +193,8 @@ function Page() {
 
   if (format === 'pdf') {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      {/* {state.file && state.file.result ? <PrintView><Preview components={mdComponents} /></PrintView> : null} */}
-      <PrintView><Preview components={mdComponents} /></PrintView>
+      {state.file && state.file.result ? <PrintView><Preview components={mdComponents} /></PrintView> : null}
+      {/* <PrintView><Preview components={mdComponents} /></PrintView> */}
     </ErrorBoundary>
   } else {
     if (state.file && state.file.result) { console.log('output:state.file.result: ', state.file.result) }
