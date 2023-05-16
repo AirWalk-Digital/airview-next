@@ -59,6 +59,7 @@ function useMdx(defaults) {
         ).default
       } catch (error) {
         console.log('output:evalutate:Error: ', error)
+        console.log('output:evalutate:Error/Content: ', file)
         const message =
           error instanceof VFileMessage ? error : new VFileMessage(error)
 
@@ -68,7 +69,7 @@ function useMdx(defaults) {
 
         message.fatal = true
       }
-      console.log('output:evalutate:Success: ', file)
+      console.log('output:evalutate:Success/Content: ', file)
       setState({ ...config, file })
     },
     { leading: true, trailing: true, wait: 500 }
@@ -101,9 +102,14 @@ function FallbackComponent({ error }) {
 
 
 export default dynamic(() => Promise.resolve(Page), {
-  ssr: false,
+  ssr: true,
 });
 
+const fetchFileContent = async (filePath) => {
+  return await fetch(
+    `/api/files/file?filePath=${filePath}`
+  ).then((res) => res.json());
+};
 
 function Page() {
   const router = useRouter();
@@ -127,7 +133,7 @@ function Page() {
 
   const defaultValue = `
     # No Content Loaded
-    `
+    `;
   // const extensions = useMemo(() => [basicSetup, oneDark, langMarkdown()], [])
   const [state, setConfig] = useMdx({
     gfm: true,
@@ -141,7 +147,8 @@ function Page() {
     if (format === 'ppt') {
       mdx = '<SlidePage>\n' + mdx + '\n</SlidePage>'
     } else if (format === 'pdf') {
-      mdx = '<div>' + mdx.replace(/---/g, '') + '</div>'
+      mdx = mdx;
+      // mdx = '<div>\n' + mdx.replace(/---/g, '') + '\n</div>'
     } else if (format === 'print') {
       mdx = '<PrintSlide>\n' + mdx + '\n</PrintSlide>'
     } else {
@@ -159,6 +166,8 @@ function Page() {
           .then((res) => res.json())
           .then(data => {
             if (data.content) {
+              console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content))
+
               setConfig({ ...state, value: String(mdxContent(format, data.content)) })
             } else if (error) {
               console.log('output:error: ', error)
@@ -177,7 +186,7 @@ function Page() {
     }
     fetchFileContent()
 
-  }, [] // Empty dependency array ensures it only runs once on mount
+  }, [source] // Empty dependency array ensures it only runs once on mount
   );
 
 
@@ -187,20 +196,21 @@ function Page() {
     try {
       return state.file.result()
     } catch (error) {
+      console.log('/output:Preview:useCallback:Error: ', error)
       return <FallbackComponent error={error} />
     }
   }, [state])
 
   if (format === 'pdf') {
+    if (state.file && state.file.result) { console.log('/output:PrintView:file: ', state.file.result) }
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      {state.file && state.file.result ? <PrintView><Preview components={mdComponents} /></PrintView> : null}
-      {/* <PrintView><Preview components={mdComponents} /></PrintView> */}
+      {state.file && state.file.result ? (<DefaultView><Preview components={mdComponents} /></DefaultView>) : null}
     </ErrorBoundary>
   } else {
-    if (state.file && state.file.result) { console.log('output:state.file.result: ', state.file.result) }
+    if (state.file && state.file.result) { console.log('/output:DefaultView:file: ', state.file.result) }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        {state.file && state.file.result ? <DefaultView><Preview components={mdComponents} /></DefaultView> : null}
+        {state.file && state.file.result ? (<DefaultView><Preview components={mdComponents} /></DefaultView>) : null}
       </ErrorBoundary>
     )
   };
@@ -210,11 +220,14 @@ function Page() {
 
 // PDF Print View component
 function PrintView({ children }) {
+  console.log('/output:PrintView:children: ', children);
+
   const mdxContainer = useRef(null);
   const previewContainer = useRef(null);
   let contentMdx = ``;
-  useLayoutEffect(() => {
-    if (source && format === 'pdf') {
+
+  useEffect(() => {
+    if (mdxContainer.current !== null) {
       const paged = new Previewer();
       contentMdx = `${mdxContainer.current?.innerHTML}`;
       paged
@@ -233,22 +246,23 @@ function PrintView({ children }) {
       };
     }
 
-  }, [])
+  }, [children])
 
   return (
     <>
-      <div ref={mdxContainer} style={{ display: 'none' }}>
-        {/* style={{ display: 'none' }}> */}
+      {/* <div ref={mdxContainer} style={{ display: 'none' }}> */}
+
         <ThemeProvider theme={theme}>
           <CssBaseline />
             {children && children}
         </ThemeProvider>
-      </div>
+      {/* </div> */}
       <div className="pagedjs_page" ref={previewContainer}></div>
     </>
 
   )
 };
+
 // Normal View component
 function DefaultView({ children }) {
 
@@ -256,9 +270,7 @@ function DefaultView({ children }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {/* <MDXProvider components={mdComponents}> */}
         {children && children}
-      {/* </MDXProvider> */}
     </ThemeProvider>
   )
 };
