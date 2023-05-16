@@ -11,9 +11,10 @@ export default async function handler(req, res) {
     // Resolve the absolute path of the file
     // const absolutePath = path.resolve(filePath);
     const absolutePath = path.join(process.cwd(), '/', req.query.filePath)
-    console.log('absolutePath: ', absolutePath)
+    // console.log('api:/files/file:absolutePath: ', absolutePath)
     // Read the file from the filesystem
     const fileContent = fs.readFileSync(absolutePath, 'utf-8');
+    // console.log('api:/files/file:fileContent: ', fileContent)
 
     // Return the file content as the response
     res.status(200).json({ content: fileContent });
