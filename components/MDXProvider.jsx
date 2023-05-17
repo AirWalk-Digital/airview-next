@@ -10,7 +10,7 @@ import Image from "next/image";
 // fix for Roadmap, Nest
 import { TitleSlide, Header, Banner, Footer, Insights, Chevrons, Nest, Roadmap, Layout, Column, Item, Slide, HeaderCard } from 'airview-mdx'
 
-import Cover from "./Cover";
+// import Cover from "./Cover";
 import SpeakerNotes from "./SpeakerNotes";
 import Step from "./Step";
 import Steps from "./Steps";
@@ -68,7 +68,7 @@ export const mdComponents = {
   SpeakerNotes,
   Step,
   Steps,
-  Cover,
+  // Cover,
   motion,
   // MUI Components
   // CardHeader,
