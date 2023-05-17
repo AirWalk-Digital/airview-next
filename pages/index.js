@@ -59,8 +59,10 @@ return (
       </Typography>
     </CardContent>
     <CardActions>
-      <Button href={`/pads/ppt/${children}`} size="small">PPT</Button>
-      <Button href={`/pads/print/${children}`}size="small">Print</Button>
+      {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
+      {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
+      <Button href={`/output/pad/${children}?format=ppt`} size="small">PPT</Button>
+      <Button href={`/output/pad/${children}?format=doc`}size="small">Doc</Button>
       <Button href={`https://pad.airview.airwalkconsulting.io/p/${children}`} size="small">Edit</Button>
     </CardActions>
   </Card>
@@ -138,7 +140,8 @@ export default function Home() {
               justifyContent="center"
             >
               <Button href={'https://pad.airview.airwalkconsulting.io'} variant="contained">Create New</Button>
-              <Button href={`/files/mdx/test.mdx`} variant="outlined">Documentation</Button>
+              <Button href={`/output/files/test.mdx?format=doc`} variant="outlined">Documentation (Doc)</Button>
+              <Button href={`/output/files/test.mdx?format=ppt`} variant="outlined">Documentation (PPT)</Button>
             </Stack>
           </Container>
         </Box>

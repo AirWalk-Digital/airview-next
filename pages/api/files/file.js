@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     console.log('api:file Error: ', error)
 
     // Return an error response if the file couldn't be read
-    res.status(500).json({ error: 'Failed to read the file.' });
+    res.status(500).json({ error: 'Failed to read the file. :' + error });
   }
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { VFile } from 'vfile'
 import { VFileMessage } from 'vfile-message'
 import * as provider from '@mdx-js/react'
@@ -30,7 +30,7 @@ function removeSection(pad, tagName) {
 
 function useMdx(defaults) {
   const [state, setState] = useState({ ...defaults, file: null })
-  
+
   const { run: setConfig } = useDebounceFn(
     async (config) => {
       const file = new VFile({ basename: 'example.mdx', value: config.value })
@@ -58,7 +58,7 @@ function useMdx(defaults) {
             remarkPlugins,
             // rehypePlugins: [capture('hast')],
             // recmaPlugins: [capture('esast')],
-            
+
           })
         ).default
       } catch (error) {
@@ -111,6 +111,9 @@ export default dynamic(() => Promise.resolve(Page), {
 
 function Page() {
   const router = useRouter();
+  const [refreshToken, setRefreshToken] = useState(Math.random());
+  const [rev, setRev] = useState(0);
+
   let format = 'default';
 
   if (router.query.format) {
@@ -128,7 +131,7 @@ function Page() {
     # No Content Loaded
     `;
 
-    const [state, setConfig] = useMdx({
+  const [state, setConfig] = useMdx({
     gfm: true,
     frontmatter: true,
     math: false,
@@ -138,14 +141,14 @@ function Page() {
 
   const mdxContent = (format, mdx, pageParms) => {
     console.log('pageParms: ', pageParms)
-    if (pageParms && pageParms.parms) { delete pageParms.parms};
-    const {content, data} = matter(mdx);
-    let frontmatter = {...data, ...pageParms};
+    if (pageParms && pageParms.parms) { delete pageParms.parms };
+    const { content, data } = matter(mdx);
+    let frontmatter = { ...data, ...pageParms };
     if (format === 'ppt') {
       mdx = '<SlidePage>\n' + content + '\n</SlidePage>'
     } else if (format === 'pdf') {
       mdx = '<div>\n' + content.replace(/---/g, '') + '\n</div>'
-      mdx = matter.stringify(mdx, {...frontmatter});
+      mdx = matter.stringify(mdx, { ...frontmatter });
     } else if (format === 'print') {
       mdx = '<PrintSlide>\n' + content + '\n</PrintSlide>'
     } else {
@@ -154,6 +157,7 @@ function Page() {
     }
     return mdx
   }
+  
 
   // const stats = state.file ? statistics(state.file) : {}
   useEffect(() => {
@@ -177,15 +181,49 @@ function Page() {
           .catch(error => {
             console.log(error)
             return { fileData: null, error: error }
+          })
+          .finally(() => {
+            setTimeout(() => setRefreshToken(Math.random()), 0);
           });
       } else {
         console.log('output:error: no source defined')
       }
 
     }
-    fetchFileContent()
 
-  }, [source] 
+    const fetchPadContent = async () => {
+      fetch(`/api/etherpad/pad-revs?pad=${location}`)
+        .then((res) => res.json())
+        .then(data => {
+          // console.log('data.rev : ', data.rev , 'rev : ', rev)
+          if (data.rev && data.rev > rev) {
+            console.log('new revision :', data.rev)
+            const newrev = data.rev
+            fetch(`/api/etherpad/pad?pad=${location}&format=${format}&rev=${newrev}`)
+              .then((res) => res.json())
+              .then(data => {
+                if (data.content) {
+                  setConfig({ ...state, value: String(mdxContent(format, data.content, router.query)) });
+                  setRev(newrev); // update the revision after successful fetch
+                }
+              })
+              .catch(error => {
+                console.log(error)
+              })
+          }
+
+        })
+        .catch(error => {
+          console.log(error)
+        })
+        .finally(() => {
+          setTimeout(() => setRefreshToken(Math.random()), 5000);
+        });
+    }
+
+    if (source === 'file') {fetchFileContent()} else if (source === 'pad') {fetchPadContent()}
+
+  }, [refreshToken, source]
   );
 
 
@@ -203,9 +241,9 @@ function Page() {
   if (format === 'pdf') {
     if (state.file && state.file.result) { console.log('/output:PrintView:file: ', state.file.result) }
     return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
-      {state.file && state.file.result ? (<PrintView><Preview components={mdComponents} /></PrintView>) : null}
-    </ErrorBoundary>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        {state.file && state.file.result ? (<PrintView><Preview components={mdComponents} /></PrintView>) : null}
+      </ErrorBoundary>
     )
   } else {
 
@@ -256,7 +294,7 @@ function PrintView({ children }) {
 
         <ThemeProvider theme={theme}>
           <CssBaseline />
-            {children && children}
+          {children && children}
         </ThemeProvider>
       </div>
       <div className="pagedjs_page" ref={previewContainer}></div>
@@ -272,7 +310,7 @@ function DefaultView({ children }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-        {children && children}
+      {children && children}
     </ThemeProvider>
   )
 };
