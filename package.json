@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "export": "next build && next export",
     "rebuild": "cp package* /tmp/npm/ && cd /tmp/npm && npm i",
     "pull-packages": "cp /tmp/npm/package* /workspaces/mdx-deck-etherpad/"
