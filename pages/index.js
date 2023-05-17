@@ -63,7 +63,7 @@ return (
       {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
       <Button href={`/output/pad/${children}?format=ppt`} size="small">PPT</Button>
       <Button href={`/output/pad/${children}?format=doc`}size="small">Doc</Button>
-      <Button href={`https://pad.airview.airwalkconsulting.io/p/${children}`} size="small">Edit</Button>
+      <Button href={`https://pad.airview.airwalkconsulting.io/p/${children}`} rel="noopener noreferrer" target="_blank" size="small">Edit</Button>
     </CardActions>
   </Card>
 </Grid>

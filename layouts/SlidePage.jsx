@@ -73,14 +73,14 @@ function SlidePage({ children, next }) {
           setMode(MODES.SLIDESHOW);
           router.push(
             router.pathname,
-            `${router.asPath.split("?")[0]}?mode=${MODES.SLIDESHOW}#${currentSlide}`,
+            `${router.asPath.split("?")[0]}?format=ppt&mode=${MODES.SLIDESHOW}#${currentSlide}`,
             { shallow: true }
           );
         } else {
           setMode(MODES.SPEAKER);
           router.push(
             router.pathname,
-            `${router.asPath.split("?")[0]}?mode=${MODES.SPEAKER}#${currentSlide}`,
+            `${router.asPath.split("?")[0]}?format=ppt&mode=${MODES.SPEAKER}#${currentSlide}`,
             { shallow: true }
           );
         }
@@ -138,7 +138,7 @@ function SlidePage({ children, next }) {
   useEffect(() => {
     router.push(
       `${router.asPath}`,
-      `${router.asPath.split("?")[0]}?mode=${mode}#${currentSlide}`
+      `${router.asPath.split("?")[0]}?format=ppt&mode=${mode}#${currentSlide}`
     );
   }, [currentSlide, mode, router.pathname]);
 
