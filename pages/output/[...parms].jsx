@@ -8,6 +8,7 @@ import * as runtime from 'react/jsx-runtime'
 import { evaluate } from '@mdx-js/mdx'
 import remarkGfm from 'remark-gfm'
 import remarkFrontmatter from 'remark-frontmatter'
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import remarkUnwrapImages from 'remark-unwrap-images';
 
 // import remarkMath from 'remark-math'
@@ -19,7 +20,7 @@ import { theme } from '../../constants/theme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { mdComponents } from "../../components/MDXProvider";
-
+import * as matter from 'gray-matter';
 import { Previewer } from 'pagedjs'
 
 function removeSection(pad, tagName) {
@@ -29,6 +30,7 @@ function removeSection(pad, tagName) {
 
 function useMdx(defaults) {
   const [state, setState] = useState({ ...defaults, file: null })
+  
   const { run: setConfig } = useDebounceFn(
     async (config) => {
       const file = new VFile({ basename: 'example.mdx', value: config.value })
@@ -40,7 +42,10 @@ function useMdx(defaults) {
       const remarkPlugins = []
 
       if (config.gfm) remarkPlugins.push(remarkGfm)
-      if (config.frontmatter) remarkPlugins.push(remarkFrontmatter)
+      if (config.frontmatter) {
+        remarkPlugins.push(remarkFrontmatter);
+        remarkPlugins.push(remarkMdxFrontmatter);
+      }
       if (config.unwrapImages) remarkPlugins.push(remarkUnwrapImages)
       // remarkPlugins.push(capture('mdast'))
 
@@ -51,7 +56,6 @@ function useMdx(defaults) {
             ...runtime,
             useDynamicImport: true,
             remarkPlugins,
-            // useMDXComponents: true,
             // rehypePlugins: [capture('hast')],
             // recmaPlugins: [capture('esast')],
             
@@ -72,7 +76,7 @@ function useMdx(defaults) {
       console.log('output:evalutate:Success/Content: ', file)
       setState({ ...config, file })
     },
-    { leading: true, trailing: true, wait: 500 }
+    { leading: true, trailing: true, wait: 0 }
   )
 
   return [state, setConfig]
@@ -105,12 +109,6 @@ export default dynamic(() => Promise.resolve(Page), {
   ssr: true,
 });
 
-const fetchFileContent = async (filePath) => {
-  return await fetch(
-    `/api/files/file?filePath=${filePath}`
-  ).then((res) => res.json());
-};
-
 function Page() {
   const router = useRouter();
   let format = 'default';
@@ -118,7 +116,6 @@ function Page() {
   if (router.query.format) {
     format = router.query.format;
   }
-  console.log('output:format: ', format);
 
   let source = null;
   let location = null;
@@ -126,16 +123,12 @@ function Page() {
     source = router.query.parms[0];
     location = router.query.parms.slice(1).join('/');
   }
-  console.log('output:source: ', source);
-  console.log('output:location: ', location);
-
-
 
   const defaultValue = `
     # No Content Loaded
     `;
-  // const extensions = useMemo(() => [basicSetup, oneDark, langMarkdown()], [])
-  const [state, setConfig] = useMdx({
+
+    const [state, setConfig] = useMdx({
     gfm: true,
     frontmatter: true,
     math: false,
@@ -143,17 +136,21 @@ function Page() {
     value: defaultValue
   })
 
-  const mdxContent = (format, mdx) => {
+  const mdxContent = (format, mdx, pageParms) => {
+    console.log('pageParms: ', pageParms)
+    if (pageParms && pageParms.parms) { delete pageParms.parms};
+    const {content, data} = matter(mdx);
+    let frontmatter = {...data, ...pageParms};
     if (format === 'ppt') {
-      mdx = '<SlidePage>\n' + mdx + '\n</SlidePage>'
+      mdx = '<SlidePage>\n' + content + '\n</SlidePage>'
     } else if (format === 'pdf') {
-      mdx = mdx;
-      // mdx = '<div>\n' + mdx.replace(/---/g, '') + '\n</div>'
+      mdx = '<div>\n' + content.replace(/---/g, '') + '\n</div>'
+      mdx = matter.stringify(mdx, {...frontmatter});
     } else if (format === 'print') {
-      mdx = '<PrintSlide>\n' + mdx + '\n</PrintSlide>'
+      mdx = '<PrintSlide>\n' + content + '\n</PrintSlide>'
     } else {
       mdx = removeSection(mdx, 'TitleSlide');
-      mdx = '<MDXViewer>\n' + mdx.replace(/---/g, '') + '\n</MDXViewer>'
+      mdx = '<MDXViewer>\n' + content.replace(/---/g, '') + '\n</MDXViewer>'
     }
     return mdx
   }
@@ -166,9 +163,11 @@ function Page() {
           .then((res) => res.json())
           .then(data => {
             if (data.content) {
-              console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content))
+              console.log('/output/[...params].jsx:useEffect:router.query: ', router.query)
 
-              setConfig({ ...state, value: String(mdxContent(format, data.content)) })
+              console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content, router.query))
+
+              setConfig({ ...state, value: String(mdxContent(format, data.content, router.query)) })
             } else if (error) {
               console.log('output:error: ', error)
             } else {
@@ -186,7 +185,7 @@ function Page() {
     }
     fetchFileContent()
 
-  }, [source] // Empty dependency array ensures it only runs once on mount
+  }, [source] 
   );
 
 
@@ -203,10 +202,13 @@ function Page() {
 
   if (format === 'pdf') {
     if (state.file && state.file.result) { console.log('/output:PrintView:file: ', state.file.result) }
+    return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      {state.file && state.file.result ? (<DefaultView><Preview components={mdComponents} /></DefaultView>) : null}
+      {state.file && state.file.result ? (<PrintView><Preview components={mdComponents} /></PrintView>) : null}
     </ErrorBoundary>
+    )
   } else {
+
     if (state.file && state.file.result) { console.log('/output:DefaultView:file: ', state.file.result) }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -250,13 +252,13 @@ function PrintView({ children }) {
 
   return (
     <>
-      {/* <div ref={mdxContainer} style={{ display: 'none' }}> */}
+      <div ref={mdxContainer} style={{ display: 'none' }}>
 
         <ThemeProvider theme={theme}>
           <CssBaseline />
             {children && children}
         </ThemeProvider>
-      {/* </div> */}
+      </div>
       <div className="pagedjs_page" ref={previewContainer}></div>
     </>
 
