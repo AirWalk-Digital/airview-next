@@ -24,15 +24,5 @@ export default async function handler(req, res) {
     // Return an error response if the file couldn't be read
     res.status(500).json({ error: 'Failed to read the file. :' + error });
   }
-
-
-  // try {
-  //       const filePath = path.join(process.cwd(), '/', req.query.path)
-  //       console.log('api:files/file: ', filePath)
-  //       const fileData = fs.readFileSync(filePath, "utf8")
-  //       return { fileData, error: false }
-  //   } catch (error) {
-  //       return { fileData: null, error: error }
-  //   }
 };
 

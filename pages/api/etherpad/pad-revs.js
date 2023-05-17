@@ -1,5 +1,3 @@
-import { serialize } from 'next-mdx-remote/serialize'
-
 export default async function handler(req, res) {
   const axios = require('axios');
   const client = axios.create({

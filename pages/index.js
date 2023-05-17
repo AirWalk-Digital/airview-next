@@ -76,7 +76,7 @@ export default function Home() {
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
   useEffect(() => {
-    fetch(`/api/etherpad/listAllPads`)
+    fetch(`/api/etherpad/all-pads`)
       .then((res) => res.json())
       .then(data => {
         setPadList(data.pads)
