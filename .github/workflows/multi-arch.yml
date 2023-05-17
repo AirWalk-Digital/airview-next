@@ -39,3 +39,15 @@ jobs:
           tags: ghcr.io/airwalk-digital/airview-mdx-deck:main
           secrets: |
             "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::307532178757:role/mdx_github_actions_ecr_push_role
+          aws-region: eu-west-2
+      - name: Publish image to ECR
+        run: |
+          aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 307532178757.dkr.ecr.eu-west-2.amazonaws.com
+          docker tag ghcr.io/airwalk-digital/airview-mdx-deck:main 307532178757.dkr.ecr.eu-west-2.amazonaws.com/mdx_repo
+          docker push 307532178757.dkr.ecr.eu-west-2.amazonaws.com/mdx_repo
+      
