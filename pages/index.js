@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState, useEffect, } from 'react';
-
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -8,7 +7,6 @@ import SlideshowIcon from '@mui/icons-material/Slideshow';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
@@ -17,8 +15,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { ThemeProvider } from '@mui/material/styles';
-// import { useTheme } from '@mui/material/styles';
-
 import { theme } from '../constants/theme';
 
 function Copyright() {
@@ -34,14 +30,14 @@ function Copyright() {
   );
 }
 
-function Pad({children}) {
+function Pad({ children }) {
 
-return (
-  <Grid item xs={12} sm={6} md={4}>
-  <Card
-    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-  >
-    {/* <CardMedia
+  return (
+    <Grid item xs={12} sm={6} md={4}>
+      <Card
+        sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        {/* <CardMedia
       component="img"
       sx={{
         // 16:9
@@ -50,24 +46,24 @@ return (
       image="https://source.unsplash.com/random"
       alt="random"
     /> */}
-    <CardContent sx={{ flexGrow: 1 }}>
-      <Typography gutterBottom variant="h5" component="h2">
-        Etherpad
-      </Typography>
-      <Typography variant="p" sx={{fontSize: '1rem'}}>
-        {children}
-      </Typography>
-    </CardContent>
-    <CardActions>
-      {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
-      {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
-      <Button href={`/output/pad/${children}?format=ppt`} size="small">PPT</Button>
-      <Button href={`/output/pad/${children}?format=doc`}size="small">Doc</Button>
-      <Button href={`https://pad.airview.airwalkconsulting.io/p/${children}`} rel="noopener noreferrer" target="_blank" size="small">Edit</Button>
-    </CardActions>
-  </Card>
-</Grid>
-);
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Typography gutterBottom variant="h5" component="h2">
+            Etherpad
+          </Typography>
+          <Typography variant="p" sx={{ fontSize: '1rem' }}>
+            {children}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
+          {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
+          <Button href={`/output/pad/${children}?format=ppt`} size="small">PPT</Button>
+          <Button href={`/output/pad/${children}?format=doc`} size="small">Doc</Button>
+          <Button href={`https://pad.airview.airwalkconsulting.io/p/${children}`} rel="noopener noreferrer" target="_blank" size="small">Edit</Button>
+        </CardActions>
+      </Card>
+    </Grid>
+  );
 
 
 }
@@ -81,9 +77,9 @@ export default function Home() {
 
   useEffect(() => {
     fetch(`/api/etherpad/listAllPads`)
-    .then((res) => res.json())
-    .then(data => {
-      setPadList(data.pads)
+      .then((res) => res.json())
+      .then(data => {
+        setPadList(data.pads)
       })
       .catch(error => {
         console.log(error)
@@ -91,7 +87,7 @@ export default function Home() {
       .finally(() => {
         setTimeout(() => setRefreshToken(Math.random()), 5000);
       });
-  
+
   }, [refreshToken]);
 
 
@@ -145,9 +141,9 @@ export default function Home() {
 
           <Grid container spacing={4}>
             {padList ? padList.map((pad, i) => (
-                <Pad key={i}>{pad}</Pad>
-              )) : <Pad>Etherpad Error</Pad>
-            } 
+              <Pad key={i}>{pad}</Pad>
+            )) : <Pad>Etherpad Error</Pad>
+            }
           </Grid>
 
 
