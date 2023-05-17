@@ -89,7 +89,7 @@ export default function Home() {
       // console.log('data : ', data )
       })
       .catch(error => {
-        console.log(error)
+        // console.log(error)
       })
       .finally(() => {
         setTimeout(() => setRefreshToken(Math.random()), 5000);
@@ -241,7 +241,7 @@ export default function Home() {
 //       // console.log('data : ', data )
 //       })
 //       .catch(error => {
-//         console.log(error)
+//         // console.log(error)
 //       })
 //       .finally(() => {
 //         setTimeout(() => setRefreshToken(Math.random()), 5000);

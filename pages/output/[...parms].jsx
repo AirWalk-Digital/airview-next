@@ -62,8 +62,8 @@ function useMdx(defaults) {
           })
         ).default
       } catch (error) {
-        console.log('output:evalutate:Error: ', error)
-        console.log('output:evalutate:Error/Content: ', file)
+        // console.log('output:evalutate:Error: ', error)
+        // console.log('output:evalutate:Error/Content: ', file)
         const message =
           error instanceof VFileMessage ? error : new VFileMessage(error)
 
@@ -73,7 +73,7 @@ function useMdx(defaults) {
 
         message.fatal = true
       }
-      console.log('output:evalutate:Success/Content: ', file)
+      // console.log('output:evalutate:Success/Content: ', file)
       setState({ ...config, file })
     },
     { leading: true, trailing: true, wait: 0 }
@@ -140,7 +140,7 @@ function Page() {
   })
 
   const mdxContent = (format, mdx, pageParms) => {
-    console.log('pageParms: ', pageParms)
+    // console.log('pageParms: ', pageParms)
     if (pageParms && pageParms.parms) { delete pageParms.parms };
     const { content, data } = matter(mdx);
     let frontmatter = { ...data, ...pageParms };
@@ -167,26 +167,26 @@ function Page() {
           .then((res) => res.json())
           .then(data => {
             if (data.content) {
-              console.log('/output/[...params].jsx:useEffect:router.query: ', router.query)
+              // console.log('/output/[...params].jsx:useEffect:router.query: ', router.query)
 
-              console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content, router.query))
+              // console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content, router.query))
 
               setConfig({ ...state, value: String(mdxContent(format, data.content, router.query)) })
             } else if (error) {
-              console.log('output:error: ', error)
+              // console.log('output:error: ', error)
             } else {
-              console.log('output:error: unknown error')
+              // console.log('output:error: unknown error')
             }
           })
           .catch(error => {
-            console.log(error)
+            // console.log(error)
             return { fileData: null, error: error }
           })
           .finally(() => {
-            console.log('no timeout')
+            // console.log('no timeout')
           });
       } else {
-        console.log('output:error: no source defined')
+        // console.log('output:error: no source defined')
       }
 
     }
@@ -197,7 +197,7 @@ function Page() {
         .then(data => {
           // console.log('data.rev : ', data.rev , 'rev : ', rev)
           if (data.rev && data.rev > rev) {
-            console.log('new revision :', data.rev)
+            // console.log('new revision :', data.rev)
             const newrev = data.rev
             fetch(`/api/etherpad/pad?pad=${location}&rev=${newrev}`)
               .then((res) => res.json())
@@ -208,13 +208,13 @@ function Page() {
                 }
               })
               .catch(error => {
-                console.log(error)
+                // console.log(error)
               })
           }
 
         })
         .catch(error => {
-          console.log(error)
+          // console.log(error)
         })
         .finally(() => {
           setTimeout(() => setRefreshToken(Math.random()), 5000);
@@ -233,13 +233,13 @@ function Page() {
     try {
       return state.file.result()
     } catch (error) {
-      console.log('/output:Preview:useCallback:Error: ', error)
+      // console.log('/output:Preview:useCallback:Error: ', error)
       return <FallbackComponent error={error} />
     }
   }, [state])
 
   if (format === 'doc') {
-    if (state.file && state.file.result) { console.log('/output:PrintView:file: ', state.file.result) }
+    if (state.file && state.file.result) { // console.log('/output:PrintView:file: ', state.file.result) }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         {state.file && state.file.result ? (<PrintView><Preview components={mdComponents} /></PrintView>) : null}
@@ -247,7 +247,7 @@ function Page() {
     )
   } else {
 
-    if (state.file && state.file.result) { console.log('/output:DefaultView:file: ', state.file.result) }
+    if (state.file && state.file.result) { // console.log('/output:DefaultView:file: ', state.file.result) }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         {state.file && state.file.result ? (<DefaultView><Preview components={mdComponents} /></DefaultView>) : null}
@@ -260,7 +260,7 @@ function Page() {
 
 // PDF Print View component
 function PrintView({ children }) {
-  console.log('/output:PrintView:children: ', children);
+  // console.log('/output:PrintView:children: ', children);
 
   const mdxContainer = useRef(null);
   const previewContainer = useRef(null);
@@ -276,8 +276,8 @@ function PrintView({ children }) {
           previewContainer.current
         )
         .then((flow) => {
-          console.log('====flow====')
-          console.log(flow)
+          // console.log('====flow====')
+          // console.log(flow)
         });
       return () => {
         document.head
@@ -306,7 +306,7 @@ function PrintView({ children }) {
 // Normal View component
 function DefaultView({ children }) {
 
-  console.log('DefaultView:children: ', children)
+  // console.log('DefaultView:children: ', children)
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

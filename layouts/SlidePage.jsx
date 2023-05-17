@@ -221,7 +221,7 @@ function SlidePage({ children, next }) {
       setSlide(slideCount);
     }
 
-    console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
+    // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
     return <Slide>{generatedSlides[currentSlide]}</Slide>;
   };
   
