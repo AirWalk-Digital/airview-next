@@ -146,7 +146,7 @@ function Page() {
     let frontmatter = { ...data, ...pageParms };
     if (format === 'ppt') {
       mdx = '<SlidePage>\n' + content + '\n</SlidePage>'
-    } else if (format === 'pdf') {
+    } else if (format === 'doc') {
       mdx = '<div>\n' + content.replace(/---/g, '') + '\n</div>'
       mdx = matter.stringify(mdx, { ...frontmatter });
     } else if (format === 'print') {
@@ -183,7 +183,7 @@ function Page() {
             return { fileData: null, error: error }
           })
           .finally(() => {
-            setTimeout(() => setRefreshToken(Math.random()), 0);
+            console.log('no timeout')
           });
       } else {
         console.log('output:error: no source defined')
@@ -199,7 +199,7 @@ function Page() {
           if (data.rev && data.rev > rev) {
             console.log('new revision :', data.rev)
             const newrev = data.rev
-            fetch(`/api/etherpad/pad?pad=${location}&format=${format}&rev=${newrev}`)
+            fetch(`/api/etherpad/pad?pad=${location}&rev=${newrev}`)
               .then((res) => res.json())
               .then(data => {
                 if (data.content) {
@@ -238,7 +238,7 @@ function Page() {
     }
   }, [state])
 
-  if (format === 'pdf') {
+  if (format === 'doc') {
     if (state.file && state.file.result) { console.log('/output:PrintView:file: ', state.file.result) }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>

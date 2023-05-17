@@ -131,8 +131,8 @@ export default function Home() {
               justifyContent="center"
             >
               <Button href={'https://pad.airview.airwalkconsulting.io'} variant="contained">Create New</Button>
-              <Button href={`/output/files/test.mdx?format=doc`} variant="outlined">Documentation (Doc)</Button>
-              <Button href={`/output/files/test.mdx?format=ppt`} variant="outlined">Documentation (PPT)</Button>
+              <Button href={`/output/file/markdown/test.mdx?format=doc`} variant="outlined">Documentation (Doc)</Button>
+              <Button href={`/output/file/markdown/test.mdx?format=ppt`} variant="outlined">Documentation (PPT)</Button>
             </Stack>
           </Container>
         </Box>

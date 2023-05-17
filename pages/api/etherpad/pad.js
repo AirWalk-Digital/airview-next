@@ -15,10 +15,9 @@ export default async function handler(req, res) {
       }
     }))
     pad = resp.data.data?.text.text
+    res.status(200).json({ content: pad })
   } catch (error) {
     console.log(error)
     res.status(500).json({error: 'error fetching pad: ' + error})
   }
-      
-  res.status(200).json({ content: pad })
 }

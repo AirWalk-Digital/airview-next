@@ -19,8 +19,7 @@ export default async function handler(req, res) {
     // Return the file content as the response
     res.status(200).json({ content: fileContent });
   } catch (error) {
-    console.log('api:file Error: ', error)
-
+    // console.log('api:file Error: ', error)
     // Return an error response if the file couldn't be read
     res.status(500).json({ error: 'Failed to read the file. :' + error });
   }
