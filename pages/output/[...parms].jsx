@@ -148,49 +148,64 @@ function Page() {
       mdx = '<SlidePage>\n' + content + '\n</SlidePage>'
     } else if (format === 'doc') {
       mdx = '<div>\n' + content.replace(/---/g, '') + '\n</div>'
-      mdx = matter.stringify(mdx, { ...frontmatter });
     } else if (format === 'print') {
       mdx = '<PrintSlide>\n' + content + '\n</PrintSlide>'
     } else {
       mdx = removeSection(mdx, 'TitleSlide');
       mdx = '<MDXViewer>\n' + content.replace(/---/g, '') + '\n</MDXViewer>'
     }
+    mdx = matter.stringify(mdx, { ...frontmatter });
     return mdx
   }
-  
+
+
+  // Create a preview component that can handle errors with try-catch block; for catching invalid JS expressions errors that ErrorBoundary cannot catch.
+  const Preview = useCallback(() => {
+    try {
+      return state.file.result()
+    } catch (error) {
+      // console.log('/output:Preview:useCallback:Error: ', error)
+      return <FallbackComponent error={error} />
+    }
+  }, [state])
 
   // const stats = state.file ? statistics(state.file) : {}
   useEffect(() => {
     const fetchFileContent = async () => {
-      if (source === 'file') {
-        fetch(`/api/files/file?filePath=${location}`)
-          .then((res) => res.json())
-          .then(data => {
-            if (data.content) {
-              // console.log('/output/[...params].jsx:useEffect:router.query: ', router.query)
+      fetch(`/api/files/file?filePath=${location}`)
+        .then((res) => res.json())
+        .then(data => {
+          if (data.content) {
+            // console.log('/output/[...params].jsx:useEffect:router.query: ', router.query)
 
-              // console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content, router.query))
+            // console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content, router.query))
 
-              setConfig({ ...state, value: String(mdxContent(format, data.content, router.query)) })
-            } else if (error) {
-              // console.log('output:error: ', error)
-            } else {
-              // console.log('output:error: unknown error')
-            }
-          })
-          .catch(error => {
-            // console.log(error)
-            return { fileData: null, error: error }
-          })
-          .finally(() => {
-            // console.log('no timeout')
-          });
-      } else {
-        // console.log('output:error: no source defined')
-      }
+            setConfig({ ...state, value: String(mdxContent(format, data.content, router.query)) })
+          } else if (error) {
+            // console.log('output:error: ', error)
+          } else {
+            // console.log('output:error: unknown error')
+          }
+        })
+        .catch(error => {
+          // console.log(error)
+          return { fileData: null, error: error }
+        })
+        .finally(() => {
+          console.log('timeout: ', refreshToken);
+        });
+    };
 
+    console.log('effectloading file', router)
+    if (source === 'file') { 
+      fetchFileContent()
+      setTimeout(() => setRefreshToken(Math.random()), 50000);
+    } else if (!source) {
+      setTimeout(() => setRefreshToken(Math.random()), 500);
     }
+  }, [refreshToken]);
 
+  useEffect(() => {
     const fetchPadContent = async () => {
       fetch(`/api/etherpad/pad-revs?pad=${location}`)
         .then((res) => res.json())
@@ -221,45 +236,39 @@ function Page() {
         });
     }
 
-    if (source === 'file') {fetchFileContent()} else if (source === 'pad') {fetchPadContent()}
+    if (source === 'pad') { fetchPadContent() }
 
-  }, [refreshToken, source]
-  );
+  }, [refreshToken]);
 
-
-
-  // Create a preview component that can handle errors with try-catch block; for catching invalid JS expressions errors that ErrorBoundary cannot catch.
-  const Preview = useCallback(() => {
-    try {
-      return state.file.result()
-    } catch (error) {
-      // console.log('/output:Preview:useCallback:Error: ', error)
-      return <FallbackComponent error={error} />
-    }
-  }, [state])
 
   if (format === 'doc') {
-    if (state.file && state.file.result) { // console.log('/output:PrintView:file: ', state.file.result) }
+    if (state.file && state.file.result) { 
+      // console.log('/output:PrintView:file: ', state.file.result) 
+    }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        {state.file && state.file.result ? (<PrintView><Preview components={mdComponents} /></PrintView>) : null}
+        {state.file && state.file.result ? (<DocumentView><Preview components={mdComponents} /></DocumentView>) : null}
       </ErrorBoundary>
     )
   } else {
 
-    if (state.file && state.file.result) { // console.log('/output:DefaultView:file: ', state.file.result) }
+    if (state.file && state.file.result) { 
+      // console.log('/output:DefaultView:file: ', state.file.result) 
+    }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         {state.file && state.file.result ? (<DefaultView><Preview components={mdComponents} /></DefaultView>) : null}
       </ErrorBoundary>
     )
   };
+};
 
 
-}
+
+
 
 // PDF Print View component
-function PrintView({ children }) {
+function DocumentView({ children }) {
   // console.log('/output:PrintView:children: ', children);
 
   const mdxContainer = useRef(null);

@@ -101,7 +101,7 @@ function SlidePage({ children, next }) {
     // Handle next page
     if (NEXT.indexOf(keyCode) !== -1 && currentSlide === slideCount) {
       if (router.query && router.pathname && next) {
-        router.push(`${next}?mode=${mode}`);
+        router.push(`${next}?format=ppt&mode=${mode}`);
       }
       return false;
     }
