@@ -32,7 +32,7 @@ Create presentation decks using MDX, React, and [Next.js](https://nextjs.org/).
 use the docker image with Etherpad:
 
 ```bash
-source .env* && docker run -d --env ETHERPAD_API_KEY=$ETHERPAD_API_KEY --env ETHERPAD_BASE_URL=$ETHERPAD_BASE_URL -p 8080:3000 --name mdx-deck ghcr.io/airwalk-digital/mdx-deck:local
+source .env* && docker run -d --env ETHERPAD_API_KEY=$ETHERPAD_API_KEY --env ETHERPAD_BASE_URL=$ETHERPAD_BASE_URL -p 8080:3000 --name mdx-deck ghcr.io/airwalk-digital/airview-mdx-deck:local
 ```
 
 [**browse pads**](http://localhost:8080/

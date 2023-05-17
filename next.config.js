@@ -7,7 +7,6 @@ const withMDX = require("@next/mdx")({
 
 const path = require('path');
 
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "tsx"],
   images: {
@@ -40,18 +39,14 @@ const nextConfig = {
     // when true, every image will be unoptimized
     unoptimized: false,
   },
-  experimental: {
-    appDir: true,
-  },
   webpack: (config) => {
     // Add the alias configuration to the webpack config
     config.resolve.alias = {
       ...config.resolve.alias,
-      react: path.join(__dirname, 'node_modules/react'),
-      '@mui/material': path.join(__dirname, 'node_modules/@mui/material'),
-      // '@mui/material/styles': path.resolve('./node_modules/@mui/material/styles'),
-      '@emotion/react': path.join(__dirname, 'node_modules/@emotion/react'),
-      // 'emotion-theming': path.resolve('./node_modules/@emotion/react'),
+      // react: path.join(__dirname, 'node_modules/react'),
+      // '@mui/material': path.join(__dirname, 'node_modules/@mui/material'),
+      // '@emotion/react': path.join(__dirname, 'node_modules/@emotion/react'),
+      
 
     };
     return config;
