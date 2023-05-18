@@ -148,7 +148,7 @@ function Page() {
       mdx = '<SlidePage>\n' + content + '\n</SlidePage>'
     } else if (format === 'doc') {
       mdx = '<div>\n' + content.replace(/---/g, '') + '\n</div>'
-    } else if (format === 'print') {
+    } else if (format === 'ppt-print') {
       mdx = '<PrintSlide>\n' + content + '\n</PrintSlide>'
     } else {
       mdx = removeSection(mdx, 'TitleSlide');
