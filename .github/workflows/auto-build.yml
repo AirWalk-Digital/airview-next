@@ -2,28 +2,25 @@ name: Build and publish Docker images
 
 on:
   workflow_dispatch:
-  pull_request:
-    types: [closed]
+  push:
+    branches: [main, beta]
 
 jobs:
-  auto_merge_version_update:
-    runs-on: ubuntu-latest
-#     if: github.event.pull_request.author_association == 'COLLABORATOR' && contains(github.event.pull_request.labels.*.name, 'auto-version-update')
-    
+  release:
+    runs-on: ubuntu-latest    
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
         with:
-          driver-opts: |
-            image=moby/buildkit:v0.10.6
+          node-version: 18.x
+      
+      - name: Install semantic-release extra plugins
+        run: mv package.json package.json.bak && npm install --no-save @semantic-release/changelog @semantic-release-plus/docker && mv package.json.bak package.json
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -31,44 +28,20 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Docker metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ghcr.io/airwalk-digital/mdx-deck
-
-      - name: Build and push
+    
+      - name: Build Docker Image
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          # platforms: linux/amd64,linux/arm64
+          push: false
+          load: true
+          tags: airwalk-digital/airview-mdx-deck
           secrets: |
             "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
 
-      # - name: Create Release
-      #   uses: actions/create-release@v1
-      #   continue-on-error: true
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ steps.version_bump.outputs.version }}
-      #     release_name: Release ${{ steps.version_bump.outputs.version }}
-      #     body: "Automatic version bump: ${{ steps.version_bump.outputs.version }}"
-
-      # - name: Merge pull request
-      #   run: |
-      #     echo "Merging pull request #${{ github.event.pull_request.number }} created by ${{ github.event.pull_request.user.login }}"
-      #     curl --request PUT \
-      #     --url ${{ github.event.pull_request._links.merge.href }} \
-      #     --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-      #     --header 'content-type: application/json' \
-      #     --data '{
-      #       "commit_title": "Automatically merge version update",
-      #       "sha": "${{ github.event.pull_request.head.sha }}"
-      #     }'
-
-    
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+      
