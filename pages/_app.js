@@ -15,7 +15,8 @@ export default function App({ Component, pageProps }) {
   return (
     // <ThemeProvider theme={theme}>
     // <ErrorBoundary>
-    <MDXProvider>
+    <MDXProvider components={mdComponents}>
+      {/* <MDXProvider> */}
       <CurrentSlideProvider>
         <ModeProvider>
           <AnimatePresence exitBeforeEnter>

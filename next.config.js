@@ -9,12 +9,7 @@ const path = require('path');
 
 const nextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "tsx"],
-  env: {
-    ETHERPAD_BASE_URL:
-      "https://pad.airview-s44.airwalkconsulting.io/api/1.2.11/",
-    ETHERPAD_API_KEY:
-      "uebds1bpt4aihwivgmvd0az0n8thppgi8yk4tjeshaixm20itaw7bfqobxadoqs3",
-  },
+  swcMinify: false,
   images: {
     // limit of 25 deviceSizes values
     // deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -75,8 +70,8 @@ module.exports = withSentryConfig(
     // Suppresses source map uploading logs during build
     silent: true,
 
-    org: "dmv-mr",
-    project: "javascript-nextjs",
+    org: "airwalk-digital",
+    project: "airview-mdx-deck",
   },
   {
     // For all available options, see:
@@ -98,3 +93,4 @@ module.exports = withSentryConfig(
     disableLogger: true,
   }
 );
+

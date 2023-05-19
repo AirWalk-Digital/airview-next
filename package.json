@@ -56,6 +56,7 @@
     "@codedependant/semantic-release-docker": "^4.3.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^9.0.2",
+    "@sentry/wizard": "^3.2.2",
     "@types/node": "18.11.18",
     "@types/react": "^17.0.16",
     "babel-plugin-styled-components": "^1.12.0",
