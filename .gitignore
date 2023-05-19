@@ -35,3 +35,6 @@ yarn-error.log*
 
 # npmrc
 .npmrc
+
+# Sentry Auth Token
+.sentryclirc

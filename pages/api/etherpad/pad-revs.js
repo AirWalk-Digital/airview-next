@@ -3,7 +3,7 @@ export default async function handler(req, res) {
   const client = axios.create({
     baseURL: process.env.ETHERPAD_BASE_URL,
     timeout: 1000,
-    params: { 'apikey': process.env.ETHERPAD_API_KEY },
+    params: { apikey: process.env.ETHERPAD_API_KEY },
   });
   let revision = null;
   try {
