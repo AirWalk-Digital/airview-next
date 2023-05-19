@@ -1,5 +1,5 @@
 import React from "react";
-import { MDXProvider } from "@mdx-js/react";
+// import { MDXProvider } from "@mdx-js/react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
 import SlidePage from "../layouts/SlidePage";
@@ -10,10 +10,10 @@ import Image from "next/image";
 // fix for Roadmap, Nest
 import { TitleSlide, Header, Banner, Footer, Insights, Chevrons, Nest, Roadmap, Layout, Column, Item, Slide, HeaderCard } from 'airview-mdx'
 
-import Cover from "./Cover";
-import SpeakerNotes from "./SpeakerNotes";
-import Step from "./Step";
-import Steps from "./Steps";
+// import Cover from "./Cover";
+import SpeakerNotes from "../components/SpeakerNotes";
+import Step from "../components/Step";
+import Steps from "../components/Steps";
 import { motion } from "framer-motion";
 
 // MUI Components
@@ -29,7 +29,7 @@ import Alert from '@mui/material/Alert';
 // import { Insight, InsightTable, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
 // import {FaIcon, Icon} from './Images.jsx';
 import {FaIcon, Icon} from 'airview-mdx';
-import { ProgressTable } from './Tables.jsx';
+import { ProgressTable } from '../components/Tables.jsx';
 // import { HeaderCard, Nest } from './Cards';
 // import { HeaderCard } from './Cards';
 // import { Font } from './Styling';
@@ -68,7 +68,7 @@ export const mdComponents = {
   SpeakerNotes,
   Step,
   Steps,
-  Cover,
+  // Cover,
   motion,
   // MUI Components
   // CardHeader,
@@ -90,6 +90,6 @@ export const mdComponents = {
   Layout, Column, Item
 };
 
-export default ({ children }) => (
-  <MDXProvider components={mdComponents}>{children}</MDXProvider>
-);
+// export default ({ children }) => (
+//   <MDXProvider components={mdComponents}>{children}</MDXProvider>
+// );

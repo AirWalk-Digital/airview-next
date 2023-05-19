@@ -8,14 +8,14 @@ export default async function handler(req, res) {
 
     glob(targetDir + '/**/*.md*', (err, files) => {
       if (err) {
-        console.log('Error', err)
+        // console.log('Error', err)
       } else {
-        console.log(files)
+        // console.log(files)
         res.status(200).json({ files: files, })
       }
     })
 
   } catch (error) {
-    console.log(error)
+    // console.log(error)
   }
 };

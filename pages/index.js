@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState, useEffect, } from 'react';
-
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -8,7 +7,6 @@ import SlideshowIcon from '@mui/icons-material/Slideshow';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
@@ -17,8 +15,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { ThemeProvider } from '@mui/material/styles';
-// import { useTheme } from '@mui/material/styles';
-
 import { theme } from '../constants/theme';
 
 function Copyright() {
@@ -34,14 +30,11 @@ function Copyright() {
   );
 }
 
-function Pad({children}) {
-
-return (
-  <Grid item xs={12} sm={6} md={4}>
-  <Card
-    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-  >
-    {/* <CardMedia
+function Pad({ children }) {
+  return (
+    <Grid item xs={12} sm={6} md={4}>
+      <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+        {/* <CardMedia
       component="img"
       sx={{
         // 16:9
@@ -50,58 +43,59 @@ return (
       image="https://source.unsplash.com/random"
       alt="random"
     /> */}
-    <CardContent sx={{ flexGrow: 1 }}>
-      <Typography gutterBottom variant="h5" component="h2">
-        Etherpad
-      </Typography>
-      <Typography variant="p" sx={{fontSize: '1rem'}}>
-        {children}
-      </Typography>
-    </CardContent>
-    <CardActions>
-      <Button href={`/pads/ppt/${children}`} size="small">PPT</Button>
-      <Button href={`/pads/print/${children}`}size="small">Print</Button>
-      <Button href={`https://pad.airview.airwalkconsulting.io/p/${children}`} size="small">Edit</Button>
-    </CardActions>
-  </Card>
-</Grid>
-);
-
-
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Typography gutterBottom variant="h5" component="h2">
+            Etherpad
+          </Typography>
+          <Typography variant="p" sx={{ fontSize: "1rem" }}>
+            {children}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
+          {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
+          <Button href={`/result/pad/${children}?format=ppt`} size="small">
+            PPT
+          </Button>
+          <Button href={`/result/pad/${children}?format=doc`} size="small">
+            Doc
+          </Button>
+          <Button
+            href={`https://pad.airview.airwalkconsulting.io/p/${children}`}
+            rel="noopener noreferrer"
+            target="_blank"
+            size="small"
+          >
+            Edit
+          </Button>
+        </CardActions>
+      </Card>
+    </Grid>
+  );
 }
 
-
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-// const theme = createTheme();
-
 export default function Home() {
-  // const theme = useTheme();
   const [padList, setPadList] = useState(0);
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
   useEffect(() => {
-    fetch(`/api/etherpad/listAllPads`)
-    .then((res) => res.json())
-    .then(data => {
-      setPadList(data.pads)
-      // console.log('data : ', data )
+    fetch(`/api/etherpad/all-pads`)
+      .then((res) => res.json())
+      .then((data) => {
+        setPadList(data.pads);
       })
-      .catch(error => {
-        console.log(error)
+      .catch((error) => {
+        // console.log(error)
       })
       .finally(() => {
         setTimeout(() => setRefreshToken(Math.random()), 5000);
       });
-  
   }, [refreshToken]);
-
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar color='primary' position="relative">
+      <AppBar color="primary" position="relative">
         <Toolbar>
           <SlideshowIcon sx={{ mr: 2 }} />
           <Typography variant="h6" color="inherit" noWrap>
@@ -113,7 +107,7 @@ export default function Home() {
         {/* Hero unit */}
         <Box
           sx={{
-            bgcolor: 'background.paper',
+            bgcolor: "background.paper",
             pt: 8,
             pb: 6,
           }}
@@ -128,7 +122,12 @@ export default function Home() {
             >
               Presentations as Code
             </Typography>
-            <Typography variant="h5" align="center" color="text.highlight" paragraph>
+            <Typography
+              variant="h5"
+              align="center"
+              color="text.highlight"
+              paragraph
+            >
               Create Presentations using Markdown or MDX.
             </Typography>
             <Stack
@@ -137,8 +136,24 @@ export default function Home() {
               spacing={2}
               justifyContent="center"
             >
-              <Button href={'https://pad.airview.airwalkconsulting.io'} variant="contained">Create New</Button>
-              <Button href={`/files/mdx/test.mdx`} variant="outlined">Documentation</Button>
+              <Button
+                href={"https://pad.airview.airwalkconsulting.io"}
+                variant="contained"
+              >
+                Create New
+              </Button>
+              <Button
+                href={`/result/file/markdown/test.mdx?format=doc`}
+                variant="outlined"
+              >
+                Documentation (Doc)
+              </Button>
+              <Button
+                href={`/result/file/markdown/test.mdx?format=ppt`}
+                variant="outlined"
+              >
+                Documentation (PPT)
+              </Button>
             </Stack>
           </Container>
         </Box>
@@ -146,116 +161,19 @@ export default function Home() {
           {/* End hero unit */}
 
           <Grid container spacing={4}>
-            {padList ? padList.map((pad, i) => (
-                <Pad key={i}>{pad}</Pad>
-              )) : <Pad>Etherpad Error</Pad>
-            } 
+            {padList ? (
+              padList.map((pad, i) => <Pad key={i}>{pad}</Pad>)
+            ) : (
+              <Pad>Etherpad Error</Pad>
+            )}
           </Grid>
-
-
-          {/* <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <Card
-                  sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                >
-                  <CardMedia
-                    component="img"
-                    sx={{
-                      // 16:9
-                      pt: '56.25%',
-                    }}
-                    image="https://source.unsplash.com/random"
-                    alt="random"
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Heading
-                    </Typography>
-                    <Typography>
-                      This is a media card. You can use this section to describe the
-                      content.
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small">View</Button>
-                    <Button size="small">Edit</Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid> */}
         </Container>
       </main>
       {/* Footer */}
-      <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-        {/* <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
-        >
-          Something here to give the footer a purpose!
-        </Typography> */}
+      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
         <Copyright />
       </Box>
       {/* End footer */}
     </ThemeProvider>
   );
 }
-
-
-
-
-
-
-
-
-// export default function () {
-//   const [padList, setPadList] = useState(0);
-//   const [refreshToken, setRefreshToken] = useState(Math.random());
-
-//   useEffect(() => {
-//     fetch(`/api/etherpad/listAllPads`)
-//     .then((res) => res.json())
-//     .then(data => {
-//       setPadList(data.pads)
-//       // console.log('data : ', data )
-//       })
-//       .catch(error => {
-//         console.log(error)
-//       })
-//       .finally(() => {
-//         setTimeout(() => setRefreshToken(Math.random()), 5000);
-//       });
-  
-//   }, [refreshToken]);
-
-
-//   return (
-//     <>
-      
-//       <br />
-//       {padList ? (
-//         <>
-
-
-//           Available pads from Etherpad:
-//           <br />
-//           <h2>Presentations</h2>
-//           {
-//             padList.map((pad, i) => (
-//               <Box key={i}>
-//                 <Link  href={`/pads/ppt/${pad}`}>{pad}</Link>
-//               </Box>
-//             ))
-//           }
-//         </>
-//       ) : 'Etherpad is not running'
-//       }
-//     </>
-//   )
-// }
