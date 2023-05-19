@@ -7,7 +7,10 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest 
+    permissions:
+      id-token: write
+      contents: read    
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -39,3 +42,24 @@ jobs:
           tags: ghcr.io/airwalk-digital/airview-mdx-deck:main
           secrets: |
             "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::307532178757:role/mdx_github_actions_ecr_push_role
+          aws-region: eu-west-2
+      - name: Publish image to ECR
+        run: |
+          aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 307532178757.dkr.ecr.eu-west-2.amazonaws.com
+          docker tag ghcr.io/airwalk-digital/airview-mdx-deck:main 307532178757.dkr.ecr.eu-west-2.amazonaws.com/mdx_repo
+          docker push 307532178757.dkr.ecr.eu-west-2.amazonaws.com/mdx_repo
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::307532178757:role/mdx_execution_role
+          aws-region: eu-west-2
+      - name: Deploy latest mdx image 
+        run: |
+          aws ecs update-service --cluster mdx --service mdx_service --force-new-deployment --region eu-west-2    
+          
