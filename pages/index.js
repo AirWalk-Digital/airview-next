@@ -31,12 +31,9 @@ function Copyright() {
 }
 
 function Pad({ children }) {
-
   return (
     <Grid item xs={12} sm={6} md={4}>
-      <Card
-        sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-      >
+      <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
         {/* <CardMedia
       component="img"
       sx={{
@@ -50,51 +47,55 @@ function Pad({ children }) {
           <Typography gutterBottom variant="h5" component="h2">
             Etherpad
           </Typography>
-          <Typography variant="p" sx={{ fontSize: '1rem' }}>
+          <Typography variant="p" sx={{ fontSize: "1rem" }}>
             {children}
           </Typography>
         </CardContent>
         <CardActions>
           {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
           {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
-          <Button href={`/output/pad/${children}?format=ppt`} size="small">PPT</Button>
-          <Button href={`/output/pad/${children}?format=doc`} size="small">Doc</Button>
-          <Button href={`https://pad.airview.airwalkconsulting.io/p/${children}`} rel="noopener noreferrer" target="_blank" size="small">Edit</Button>
+          <Button href={`/result/pad/${children}?format=ppt`} size="small">
+            PPT
+          </Button>
+          <Button href={`/result/pad/${children}?format=doc`} size="small">
+            Doc
+          </Button>
+          <Button
+            href={`https://pad.airview.airwalkconsulting.io/p/${children}`}
+            rel="noopener noreferrer"
+            target="_blank"
+            size="small"
+          >
+            Edit
+          </Button>
         </CardActions>
       </Card>
     </Grid>
   );
-
-
 }
 
-
-
 export default function Home() {
-
   const [padList, setPadList] = useState(0);
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
   useEffect(() => {
     fetch(`/api/etherpad/all-pads`)
       .then((res) => res.json())
-      .then(data => {
-        setPadList(data.pads)
+      .then((data) => {
+        setPadList(data.pads);
       })
-      .catch(error => {
+      .catch((error) => {
         // console.log(error)
       })
       .finally(() => {
         setTimeout(() => setRefreshToken(Math.random()), 5000);
       });
-
   }, [refreshToken]);
-
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar color='primary' position="relative">
+      <AppBar color="primary" position="relative">
         <Toolbar>
           <SlideshowIcon sx={{ mr: 2 }} />
           <Typography variant="h6" color="inherit" noWrap>
@@ -106,7 +107,7 @@ export default function Home() {
         {/* Hero unit */}
         <Box
           sx={{
-            bgcolor: 'background.paper',
+            bgcolor: "background.paper",
             pt: 8,
             pb: 6,
           }}
@@ -121,7 +122,12 @@ export default function Home() {
             >
               Presentations as Code
             </Typography>
-            <Typography variant="h5" align="center" color="text.highlight" paragraph>
+            <Typography
+              variant="h5"
+              align="center"
+              color="text.highlight"
+              paragraph
+            >
               Create Presentations using Markdown or MDX.
             </Typography>
             <Stack
@@ -130,9 +136,24 @@ export default function Home() {
               spacing={2}
               justifyContent="center"
             >
-              <Button href={'https://pad.airview.airwalkconsulting.io'} variant="contained">Create New</Button>
-              <Button href={`/output/file/markdown/test.mdx?format=doc`} variant="outlined">Documentation (Doc)</Button>
-              <Button href={`/output/file/markdown/test.mdx?format=ppt`} variant="outlined">Documentation (PPT)</Button>
+              <Button
+                href={"https://pad.airview.airwalkconsulting.io"}
+                variant="contained"
+              >
+                Create New
+              </Button>
+              <Button
+                href={`/result/file/markdown/test.mdx?format=doc`}
+                variant="outlined"
+              >
+                Documentation (Doc)
+              </Button>
+              <Button
+                href={`/result/file/markdown/test.mdx?format=ppt`}
+                variant="outlined"
+              >
+                Documentation (PPT)
+              </Button>
             </Stack>
           </Container>
         </Box>
@@ -140,17 +161,16 @@ export default function Home() {
           {/* End hero unit */}
 
           <Grid container spacing={4}>
-            {padList ? padList.map((pad, i) => (
-              <Pad key={i}>{pad}</Pad>
-            )) : <Pad>Etherpad Error</Pad>
-            }
+            {padList ? (
+              padList.map((pad, i) => <Pad key={i}>{pad}</Pad>)
+            ) : (
+              <Pad>Etherpad Error</Pad>
+            )}
           </Grid>
-
-
         </Container>
       </main>
       {/* Footer */}
-      <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
         <Copyright />
       </Box>
       {/* End footer */}
