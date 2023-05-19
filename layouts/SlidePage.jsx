@@ -228,6 +228,7 @@ function SlidePage({ children, next }) {
   const pageSize = { width:1920, height:1080}
 
   return (
+    
     <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{maxWidth: '100vw', maxHeight: '100vh'}}>
     <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
       <GlobalStyles styles={globalStyles} />
@@ -239,5 +240,6 @@ function SlidePage({ children, next }) {
       </PresentationMode>
     </Swipeable>
     </Zoom>
+   
   );
 }
