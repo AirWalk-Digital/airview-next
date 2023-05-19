@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { VFile } from 'vfile'
 import { VFileMessage } from 'vfile-message'
@@ -20,7 +19,7 @@ import { useRouter } from 'next/router';
 import { theme } from '../../constants/theme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { mdComponents } from "../../constants/mdxProvider";
+import { mdComponents } from "../../constants/MDXProvider";
 import * as matter from 'gray-matter';
 import { Previewer } from 'pagedjs'
 
@@ -191,10 +190,13 @@ function Page() {
         .catch(error => {
           // console.log(error)
           return { fileData: null, error: error }
+        })
+        .finally(() => {
+          console.log('timeout: ', refreshToken);
         });
     };
 
-    // console.log('effectloading file', router)
+    console.log('effectloading file', router)
     if (source === 'file') { 
       fetchFileContent()
       setTimeout(() => setRefreshToken(Math.random()), 50000);
