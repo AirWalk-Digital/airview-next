@@ -164,9 +164,6 @@ function ErrorFallback({ error, resetErrorBoundary }) {
     <div role="alert">
       <p>Something went wrong:</p>
       <pre>{error.message}</pre>
-      <button type="button" onClick={resetErrorBoundary}>
-        Try again
-      </button>
     </div>
   )
 }
@@ -186,7 +183,7 @@ function FallbackComponent({ error }) {
 export default function Page(content) {
   const router = useRouter();
   let format = 'default';
-
+  const context = {source: 'local', router: router }
   const defaultValue = `
     # No Content Loaded
     `;
@@ -219,7 +216,7 @@ export default function Page(content) {
 
 
   return (
-    <DefaultView frontmatter={state && state.file && state.file.frontmatter ? state.file.frontmatter : {}} >
+    <DefaultView frontmatter={state && state.file && state.file.frontmatter ? state.file.frontmatter : {}} context={context}>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         {/* <Preview components={mdComponents} /> */}
         {state && state.file && state.file.result ? (<Preview components={mdComponents} />) : null}
@@ -233,7 +230,8 @@ export default function Page(content) {
 
 function DefaultView({
   children, // will be a page or nested layout
-  frontmatter = null // frontmatter collected from the page and the mdx file
+  frontmatter = null, // frontmatter collected from the page and the mdx file
+  context = null // the context from the page to help with relative files and links
 }) {
 
   const navItemsControls = [
@@ -294,7 +292,6 @@ function DefaultView({
   const [menuOpen, setMenuOpen] = useState(true);
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
-  console.log(frontmatter);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -329,7 +326,7 @@ function DefaultView({
         }}
       ><Box sx={{ px: '5%' }}>
           {frontmatter.title && <Typography variant="h1" component="h1">{frontmatter.title}</Typography>}
-          <MDXProvider components={mdComponents}>
+          <MDXProvider components={mdComponents(context)}>
             {children}
           </MDXProvider>
         </Box>

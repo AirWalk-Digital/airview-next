@@ -105,7 +105,7 @@ const LandingPage = () => {
               link='/frameworks' />
             <SiteSection title='Services'
               description='View the catalogue of Services available, complete with patterns, implementation guides and secuity controls.'
-              link='/controls' />
+              link='/services' />
             <SiteSection title='Applications'
               description='Browse the Applications within the Organisation'
               link='/applications' />
