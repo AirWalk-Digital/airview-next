@@ -39,56 +39,6 @@ import {
 
 import Topbar from '../components/TopBar';
 
-// const Logo = styled("img")({
-//   display: "block",
-//   width: "auto",
-//   height: 30,
-// });
-
-// const HeroSection = styled('section')(({ theme }) => ({
-//   position: 'relative',
-//   minHeight: '100vh',
-//   display: 'flex',
-//   alignItems: 'center',
-//   justifyContent: 'center',
-//   textAlign: 'center',
-//   color: '#fff',
-//   '&::before': {
-//     content: '""',
-//     position: 'absolute',
-//     top: 0,
-//     left: 0,
-//     right: 0,
-//     bottom: 0,
-//     backgroundImage: 'url("/backgrounds/sheffield.jpg")',
-//     backgroundSize: 'cover',
-//     backgroundPosition: 'center',
-//     opacity: 0.6,
-//   },
-// }));
-
-// const Overlay = styled('div')({
-//   position: 'absolute',
-//   top: 0,
-//   left: 0,
-//   right: 0,
-//   bottom: 0,
-//   display: 'flex',
-//   alignItems: 'center',
-//   justifyContent: 'center',
-//   flexDirection: 'column',
-// });
-
-// const Section = styled('div')(({ theme }) => ({
-//   padding: theme.spacing(8),
-// }));
-
-// const Icon = styled('span')(({ theme }) => ({
-//   fontSize: 48,
-//   marginBottom: theme.spacing(2),
-// }));
-
-
 
 const SiteSection = ({ title, description, link }) => {
 
@@ -122,7 +72,8 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section
         style={{
-          // position: 'relative',
+          marginTop: '50px',
+          // // position: 'relative',
           minHeight: '100vh',
           display: 'flex',
           // alignItems: 'center',

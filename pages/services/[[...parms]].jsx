@@ -198,10 +198,10 @@ export default function Page(content) {
     unwrapImages: true,
     value: defaultValue
   })
-  
+
 
   useEffect(() => {
-    setConfig({ ...state, value: String(content.content) , pageParms: router.query })
+    setConfig({ ...state, value: String(content.content), pageParms: router.query })
 
   }, []);
 
@@ -340,19 +340,33 @@ function DefaultView({
 
 
 export async function getStaticPaths() {
-  let paths = [];
+  let pages = [];
   let location = 'services';
   try {
     const files = await getAllFiles(location)
+
+    const pages = files.map((file) => {
+
+      if (file.endsWith('index.md') || file.endsWith('index.mdx')) {
+        const filepath = file.split('/');
+        filepath.pop();
+        const joinedPath = filepath.join('/');
+        return joinedPath;
+              } else {
+        return file
+      }
+    })
+
+    // console.log('getStaticPaths: ',pages )
     return {
       fallback: true,
-      paths: files
+      paths: pages
     }
   } catch (error) {
     console.error(error)
     return {
       fallback: true,
-      paths: files
+      paths: pages
     }
   }
 
@@ -360,7 +374,10 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
+
   const location = 'services/' + context.params.parms.join('/') + '/index.mdx';
+  // console.log('getStaticProps: ',location )
+
   try {
     const content = await getFileContent(location) // Pass null or an empty string for filePath
     return {

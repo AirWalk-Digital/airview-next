@@ -14,11 +14,8 @@ export async function getAllFiles(filePath) {
         } else {
           const relativeFiles = files.map((file) => {
             const relativePath = path.relative(process.cwd(), file)
-            if (path.basename(file) === 'index.md') {
-                return path.dirname(relativePath.replace(contentDir , ""))
-            } else {
             return relativePath.replace(contentDir , "")
-            }
+        
           })
           resolve(relativeFiles.filter(Boolean))
         }
