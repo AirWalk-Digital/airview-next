@@ -43,7 +43,7 @@ function useMdx(defaults) {
       // process frontmatter
       try {
         if (config.pageParms && config.pageParms.parms) { delete config.pageParms.parms };
-        const { content, data } = matter(mdx);
+        const { content, data } = matter(config.value);
         frontmatter = { ...data, ...config.pageParms };
         config.value = matter.stringify(content, { ...frontmatter });
       } catch (error) {
@@ -51,6 +51,7 @@ function useMdx(defaults) {
       }
 
       const file = new VFile({ basename: 'example.mdx', value: config.value })
+      if (frontmatter) { file.frontmatter = frontmatter };
 
       const capture = (name) => () => (tree) => {
         file.data[name] = tree
@@ -197,12 +198,7 @@ export default function Page(content) {
     unwrapImages: true,
     value: defaultValue
   })
-  // useEffect(() => {
-  //   if (content.content) {
-  //     useMdx(content.content, router.query, setState)
-  //   };
-  //   console.log('useEffect:state :', state)
-  // }, [content]);
+  
 
   useEffect(() => {
     setConfig({ ...state, value: String(content.content) , pageParms: router.query })
@@ -215,18 +211,15 @@ export default function Page(content) {
   // Create a preview component that can handle errors with try-catch block; for catching invalid JS expressions errors that ErrorBoundary cannot catch.
   const Preview = () => {
     try {
-      console.log('/output:Preview:useCallback:state: ', state)
-
       return state.file.result()
     } catch (error) {
-      console.log('/output:Preview:useCallback:Error: ', error)
       return <FallbackComponent error={error} />
     }
   };
 
 
   return (
-    <DefaultView>
+    <DefaultView frontmatter={state && state.file && state.file.frontmatter ? state.file.frontmatter : {}} >
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         {/* <Preview components={mdComponents} /> */}
         {state && state.file && state.file.result ? (<Preview components={mdComponents} />) : null}
@@ -240,9 +233,10 @@ export default function Page(content) {
 
 function DefaultView({
   children, // will be a page or nested layout
+  frontmatter = null // frontmatter collected from the page and the mdx file
 }) {
 
-  const navItems = [
+  const navItemsControls = [
     {
       groupTitle: "Menu Group Title One",
       links: [
@@ -270,12 +264,37 @@ function DefaultView({
       ],
     },
   ];
+
+  const navItemsDocs = [
+    {
+      groupTitle: "Infrastructure-as-Code",
+      links: [
+        {
+          label: "terraform-azure-storage",
+          url: "",
+        },
+      ],
+    },
+    {
+      groupTitle: "Designs",
+      links: [
+        {
+          label: "Static Content Website",
+          url: "",
+        },
+        {
+          label: "Data Lakes",
+          url: "",
+        },
+      ],
+    },
+  ];
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
-
+  console.log(frontmatter);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -289,8 +308,15 @@ function DefaultView({
         drawerWidth={navDrawerWidth}
       >
         <Menu
-          menuTitle="Main Navigation"
-          menuItems={navItems}
+          menuTitle="Controls"
+          menuItems={navItemsControls}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+        />
+        <Menu
+          menuTitle="Documentation"
+          menuItems={navItemsDocs}
           initialCollapsed={false}
           loading={false}
           fetching={false}
@@ -301,8 +327,8 @@ function DefaultView({
           marginTop: topBarHeight,
           paddingLeft: menuOpen ? navDrawerWidth : 0,
         }}
-      ><Box sx={{ p: '5%' }}>
-          <Typography variant="h1" component="h1">Title</Typography>
+      ><Box sx={{ px: '5%' }}>
+          {frontmatter.title && <Typography variant="h1" component="h1">{frontmatter.title}</Typography>}
           <MDXProvider components={mdComponents}>
             {children}
           </MDXProvider>
@@ -337,7 +363,6 @@ export async function getStaticProps(context) {
   const location = 'services/' + context.params.parms.join('/') + '/index.mdx';
   try {
     const content = await getFileContent(location) // Pass null or an empty string for filePath
-    console.log('getStaticProps:content: ', content)
     return {
       props: {
         content: content,

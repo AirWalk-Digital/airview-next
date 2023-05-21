@@ -82,7 +82,7 @@ const theme = deepmerge(
       fontWeightBold: 400,
       fontWeightLight: 100,
       fontWeightRegular: 200,
-      fontSize: 20,
+      fontSize: 14,
       h1: {
         fontWeight: 200,
         lineHeight: 1.2,
@@ -95,8 +95,9 @@ const theme = deepmerge(
         marginRight: '-25px',
         paddingLeft: '25px',
         page: 'no-chapter',
-        breakBefore: 'always'
-    
+        breakBefore: 'always',
+        fontSize: '4rem'
+
       },
       h2: {
         fontFamily: "Heebo",
@@ -104,6 +105,8 @@ const theme = deepmerge(
         lineHeight: 1.2,
         breakAfter: 'avoid-column',
         my: '1%',
+        fontSize: '3rem'
+
       },
       h3: {
         margin: '0%',
