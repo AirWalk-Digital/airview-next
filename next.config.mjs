@@ -1,15 +1,27 @@
-const withMDX = require("@next/mdx")({
-  extension: /\.(md|mdx)$/,
-  // options: {
-  //   providerImportSource: "@mdx-js/react",
-  // }
-});
+import remarkGfm from 'remark-gfm'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
+import remarkUnwrapImages from 'remark-unwrap-images';
+import createMDX from "@next/mdx";
+import { withSentryConfig } from "@sentry/nextjs";
 
-const path = require('path');
+const remarkPlugins = [remarkGfm,remarkFrontmatter, remarkMdxFrontmatter,remarkUnwrapImages ]
+// const remarkPlugins = [remarkFrontmatter, remarkMdxFrontmatter,remarkUnwrapImages ]
+/** @type {import('next').NextConfig} */
+
+const withMDX = createMDX({
+// const withMDX = require("@next/mdx")({
+  extension: /\.(md|mdx)$/,
+  options: {
+    providerImportSource: "@mdx-js/react",
+    remarkPlugins: remarkPlugins,
+  }
+});
 
 const nextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "tsx"],
   swcMinify: false,
+  reactStrictMode: true,
   images: {
     // limit of 25 deviceSizes values
     // deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -41,6 +53,7 @@ const nextConfig = {
     unoptimized: false,
   },
   webpack: (config) => {
+    config.resolve.fallback = { fs: false };
     // Add the alias configuration to the webpack config
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -52,16 +65,11 @@ const nextConfig = {
   },
   experimental: {
     appDir: true,
+    mdxRs: false, // <- disabled
   },
 };
 
-// const NextConfig =
-
-// Injected content via Sentry wizard below
-
-const { withSentryConfig } = require("@sentry/nextjs");
-
-module.exports = withSentryConfig(
+export default withSentryConfig(
   withMDX(nextConfig),
   {
     // For all available options, see:
@@ -93,4 +101,3 @@ module.exports = withSentryConfig(
     disableLogger: true,
   }
 );
-

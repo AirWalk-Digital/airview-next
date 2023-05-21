@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState, useEffect, } from 'react';
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,165 +14,352 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { ThemeProvider } from '@mui/material/styles';
-import { theme } from '../constants/theme';
+import { theme } from '../constants/baseTheme';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { Menu as MenuIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.main" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://airwalkreply.com/">
-        airwalkreply.com
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import React, { useState } from "react";
+import Paper from '@mui/material/Paper';
+import { styled } from "@mui/material/styles";
+import { IconButton } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import {
+  TopBar,
+  AsideAndMainContainer,
+  Aside,
+  Main,
+  NavigationDrawer,
+  PageTitle,
+  StyledWysiwyg,
+  Breadcrumb,
+  Search,
+} from "../components/airview-ui";
 
-function Pad({ children }) {
+import Topbar from '../components/TopBar';
+
+// const Logo = styled("img")({
+//   display: "block",
+//   width: "auto",
+//   height: 30,
+// });
+
+// const HeroSection = styled('section')(({ theme }) => ({
+//   position: 'relative',
+//   minHeight: '100vh',
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+//   textAlign: 'center',
+//   color: '#fff',
+//   '&::before': {
+//     content: '""',
+//     position: 'absolute',
+//     top: 0,
+//     left: 0,
+//     right: 0,
+//     bottom: 0,
+//     backgroundImage: 'url("/backgrounds/sheffield.jpg")',
+//     backgroundSize: 'cover',
+//     backgroundPosition: 'center',
+//     opacity: 0.6,
+//   },
+// }));
+
+// const Overlay = styled('div')({
+//   position: 'absolute',
+//   top: 0,
+//   left: 0,
+//   right: 0,
+//   bottom: 0,
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+//   flexDirection: 'column',
+// });
+
+// const Section = styled('div')(({ theme }) => ({
+//   padding: theme.spacing(8),
+// }));
+
+// const Icon = styled('span')(({ theme }) => ({
+//   fontSize: 48,
+//   marginBottom: theme.spacing(2),
+// }));
+
+
+
+const SiteSection = ({ title, description, link }) => {
+
   return (
-    <Grid item xs={12} sm={6} md={4}>
-      <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        {/* <CardMedia
-      component="img"
-      sx={{
-        // 16:9
-        pt: '56.25%',
-      }}
-      image="https://source.unsplash.com/random"
-      alt="random"
-    /> */}
-        <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h5" component="h2">
-            Etherpad
-          </Typography>
-          <Typography variant="p" sx={{ fontSize: "1rem" }}>
-            {children}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
-          {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
-          <Button href={`/result/pad/${children}?format=ppt`} size="small">
-            PPT
-          </Button>
-          <Button href={`/result/pad/${children}?format=doc`} size="small">
-            Doc
-          </Button>
-          <Button
-            href={`https://pad.airview.airwalkconsulting.io/p/${children}`}
-            rel="noopener noreferrer"
-            target="_blank"
-            size="small"
-          >
-            Edit
-          </Button>
-        </CardActions>
-      </Card>
+    <Grid item xs={3} md={3}>
+      <Paper variant='outlined' sx={{ height: '100%', borderRadius: '16px', p: 3, display: 'flex', flexDirection: 'column' }}>
+
+        <Typography variant="h5" component="h5" gutterBottom>
+          {title}
+        </Typography>
+        <Typography variant="body2" gutterBottom>
+          {description}
+        </Typography>
+        <Box sx={{ flex: 1 }} />
+        <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
+          <Link href={link} sx={{ textDecoration: 'none' }}>
+            <Button variant="outlined" color="primary" sx={{ display: 'block', mt: '3%' }}>
+              View
+            </Button>
+          </Link>
+        </Box>
+      </Paper>
     </Grid>
-  );
+  )
 }
-
-export default function Home() {
-  const [padList, setPadList] = useState(0);
-  const [refreshToken, setRefreshToken] = useState(Math.random());
-
-  useEffect(() => {
-    fetch(`/api/etherpad/all-pads`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPadList(data.pads);
-      })
-      .catch((error) => {
-        // console.log(error)
-      })
-      .finally(() => {
-        setTimeout(() => setRefreshToken(Math.random()), 5000);
-      });
-  }, [refreshToken]);
-
+const LandingPage = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar color="primary" position="relative">
-        <Toolbar>
-          <SlideshowIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" color="inherit" noWrap>
-            Presentations as Code
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <main>
-        {/* Hero unit */}
-        <Box
-          sx={{
-            bgcolor: "background.paper",
-            pt: 8,
-            pb: 6,
-          }}
-        >
-          <Container maxWidth="m">
-            <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              color="text.main"
-              gutterBottom
-            >
-              Presentations as Code
-            </Typography>
-            <Typography
-              variant="h5"
-              align="center"
-              color="text.highlight"
-              paragraph
-            >
-              Create Presentations using Markdown or MDX.
-            </Typography>
-            <Stack
-              sx={{ pt: 4 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-            >
-              <Button
-                href={"https://pad.airview.airwalkconsulting.io"}
-                variant="contained"
-              >
-                Create New
+      <Topbar />
+      {/* Hero Section */}
+      <section
+        style={{
+          // position: 'relative',
+          minHeight: '100vh',
+          display: 'flex',
+          // alignItems: 'center',
+          justifyContent: 'flex-end',
+          background: `url("/backgrounds/image17-bg.jpeg") no-repeat`,
+          backgroundSize: 'auto 100%',
+          backgroundPosition: 'right',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        <Container maxWidth="lg" sx={{ height: '100vh' }}>
+          <Grid container spacing={4} alignItems="stretch">
+            <Grid item xs={12} md={12} sx={{ mb: '20px' }}>
+              <Typography variant="h2" component="h2" sx={{ fontWeight: 'bold', mt: '50px' }}>
+                Airview
+              </Typography>
+              <Typography variant="h5" component="h5" gutterBottom>
+                Documentation, Compliance and Control for Cloud.
+              </Typography>
+              <Button variant="contained" color="primary">
+                Get Started
               </Button>
-              <Button
-                href={`/result/file/markdown/test.mdx?format=doc`}
-                variant="outlined"
-              >
-                Documentation (Doc)
-              </Button>
-              <Button
-                href={`/result/file/markdown/test.mdx?format=ppt`}
-                variant="outlined"
-              >
-                Documentation (PPT)
-              </Button>
-            </Stack>
-          </Container>
-        </Box>
-        <Container sx={{ py: 8 }} maxWidth="md">
-          {/* End hero unit */}
+            </Grid>
+          </Grid>
 
-          <Grid container spacing={4}>
-            {padList ? (
-              padList.map((pad, i) => <Pad key={i}>{pad}</Pad>)
-            ) : (
-              <Pad>Etherpad Error</Pad>
-            )}
+          <Grid container spacing={4} alignItems="stretch" sx={{ my: '0px' }}>
+            <SiteSection title='Frameworks'
+              description='View the compliance frameworks that guide your IT policy'
+              link='/frameworks' />
+            <SiteSection title='Services'
+              description='View the catalogue of Services available, complete with patterns, implementation guides and secuity controls.'
+              link='/controls' />
+            <SiteSection title='Applications'
+              description='Browse the Applications within the Organisation'
+              link='/applications' />
           </Grid>
         </Container>
-      </main>
-      {/* Footer */}
-      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
-        <Copyright />
-      </Box>
-      {/* End footer */}
+      </section>
+
+
+
+      {/* Features Section */}
+      <section
+        style={{
+          background: '#f5f5f5',
+          display: 'flex'
+        }}
+      >
+        <Container maxWidth="lg" sx={{ my: '20px' }} >
+          <Grid container spacing={4} alignItems="center">
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="h3" component="h3" gutterBottom>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+              </Typography>
+              <Button variant="outlined" color="primary">
+                Learn More
+              </Button>
+            </Grid>
+          </Grid>
+        </Container>
+      </section>
+
+      {/* Other Sections */}
+      {/* Add more sections with similar structure for the rest of the landing page content */}
     </ThemeProvider>
   );
-}
+};
+
+
+export default LandingPage;
+
+// const pageTitle = "Documentation View";
+
+// const content = null;
+
+
+// const navItems = [
+//   {
+//     groupTitle: "Menu Group Title One",
+//     links: [
+//       {
+//         label: "Menu Item One",
+//         url: "",
+//       },
+//       {
+//         label: "Menu Item Two",
+//         url: "",
+//       },
+//     ],
+//   },
+//   {
+//     groupTitle: "Menu Group Title Two",
+//     links: [
+//       {
+//         label: "Menu Item One",
+//         url: "",
+//       },
+//       {
+//         label: "Menu Item Two",
+//         url: "",
+//       },
+//     ],
+//   },
+// ];
+
+// const tocItems = [
+//   {
+//     groupTitle: null,
+//     links: [
+//       {
+//         label: "Documentation View",
+//         url: "#documentation-view",
+//       },
+//       {
+//         label: "First Level Header",
+//         url: "#first-level-header",
+//       },
+//       {
+//         label: "Second Level Header",
+//         url: "#second-level-header",
+//       },
+//       {
+//         label: "Third Level Header",
+//         url: "#third-level-header",
+//       },
+//       {
+//         label: "Forth Level Header",
+//         url: "#forth-level-header",
+//       },
+//       {
+//         label: "Fifth Level Header",
+//         url: "#fifth-level-header",
+//       },
+//       {
+//         label: "Sixth Level Header",
+//         url: "#sixth-level-header",
+//       },
+//     ],
+//   },
+// ];
+
+// const breadcrumbItems = [{ label: "Home", url: "" }];
+// const isError = false;
+// const error = null;
+// const isUninitialized = false;
+// const isLoading = false;
+// const isFetching = false;
+
+// function DocumentationView() {
+//   const navDrawerWidth = 300;
+//   const topBarHeight = 64;
+//   const [menuOpen, setMenuOpen] = useState(true);
+//   const [searchOpen, setSearchOpen] = useState(false);
+
+//   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
+
+//   const handleOnQueryChange = async () => [];
+
+//   return (
+//     <ThemeProvider theme={theme}>
+//       <CssBaseline />
+
+
+//       {/* <Search
+//         open={searchOpen}
+//         onRequestToClose={() => setSearchOpen(false)}
+//         onQueryChange={handleOnQueryChange}
+//         linkComponent="a"
+//       /> */}
+//       <TopBar
+//         onNavButtonClick={handleOnNavButtonClick}
+//         title="Airview"
+//         navOpen={menuOpen}
+//       >
+//         {/* <Logo src={logo} alt="Logo alt text" /> */}
+//         <IconButton
+//           aria-label="search"
+//           size="large"
+//           edge="end"
+//           sx={{ color: "common.white", marginLeft: "auto" }}
+//           onClick={() => setSearchOpen(true)}
+//         >
+//           <SearchIcon />
+//         </IconButton>
+//       </TopBar>
+//       {/* <NavigationDrawer
+//         open={menuOpen}
+//         top={topBarHeight}
+//         drawerWidth={navDrawerWidth}
+//       >
+//         <Menu
+//           menuTitle="Main Navigation"
+//           menuItems={navItems}
+//           initialCollapsed={false}
+//           loading={isLoading}
+//           fetching={isFetching}
+//         />
+//       </NavigationDrawer>
+//       <div
+//         style={{
+//           marginTop: topBarHeight,
+//           paddingLeft: menuOpen ? navDrawerWidth : 0,
+//         }}
+//       > */}
+//       {/* <AsideAndMainContainer>
+//           <Main>
+//             <Breadcrumb
+//               currentRoute={pageTitle}
+//               loading={isLoading}
+//               fetching={isFetching}
+//               links={breadcrumbItems}
+//               sx={{ marginBottom: 4 }}
+//             />
+//             <PageTitle
+//               title="Documentation View"
+//               loading={isLoading}
+//               fetching={isFetching}
+//             />
+//             <StyledWysiwyg loading={isLoading} fetching={isFetching}>
+//               {content} 
+//             </StyledWysiwyg>
+//           </Main>
+//           <Aside>
+//             <Menu
+//               menuTitle="Table of Contents"
+//               menuItems={tocItems}
+//               initialCollapsed={false}
+//               loading={isLoading}
+//               fetching={isFetching}
+//             />
+//           </Aside>
+//         </AsideAndMainContainer> 
+//       </div> */}
+//     </ThemeProvider>
+//   );
+// };
