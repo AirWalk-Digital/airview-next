@@ -68,7 +68,7 @@ const LandingPage = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Topbar />
+      <Topbar logo={false}/>
       {/* Hero Section */}
       <section
         style={{
