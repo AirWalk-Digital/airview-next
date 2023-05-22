@@ -289,7 +289,7 @@ function DocumentView({ children }) {
           .forEach((e) => e.parentNode?.removeChild(e));
       };
     }
-  }, [children]);
+  }, []);
   let print;
   if (typeof window !== "undefined") {
     var mediaQueryList = window.matchMedia("print");
