@@ -1,0 +1,23 @@
+description = "Enable Defender for Cloud at a subscription level"
+discussion = "Defender for Cloud offers advance threat detection capabilities to be used by the Security Operations Centre"
+id = "SA-LT_4_SA_0010"
+name = "LT_4_SA_0010"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "SIA"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Resource_Configuration = true
+NIST80053_Control_Families = ["Assessment Authorisation and Monitoring"]
+NIST80053_Control_Ids = ["CA-2"]
+References = []
+
+
+[tools]
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "Audit"
+Possible_Implementation = true

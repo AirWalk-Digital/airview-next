@@ -1,0 +1,24 @@
+description = "Disable storage account keys" 
+discussion = "AAD authentication with RBAC and conditional access polices provides superior security"
+id = "SA-IM_1_SA_0005"
+name = "IM_1_SA_0005"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Category = "Access Control"
+Control_Owner = "SIA"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Resource_Configuration = true
+NIST80053_Control_Families = ["Access Control"]
+NIST80053_Control_Ids = ["AC-2"]
+References = []
+
+
+[tools]
+[tools.azurepolicy]
+Builtin_Policy = "/providers/Microsoft.Authorization/policyDefinitions/8c6a50c6-9ffd-4ae7-986f-5fa6111f9a54"
+Default_Effect = "Audit"
+Required_Effect = "Deny"
+Possible_Implementation = true

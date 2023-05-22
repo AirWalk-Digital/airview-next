@@ -1,11 +1,9 @@
-import { serialize } from 'next-mdx-remote/serialize'
-
 export default async function handler(req, res) {
   const axios = require('axios');
   const client = axios.create({
     baseURL: process.env.ETHERPAD_BASE_URL,
     timeout: 1000,
-    params: { 'apikey': process.env.ETHERPAD_API_KEY },
+    params: { apikey: process.env.ETHERPAD_API_KEY },
   });
   let revision = null;
   try {
@@ -17,9 +15,8 @@ export default async function handler(req, res) {
     })).data.data?.savedRevisions
     if (padData) {revision = Math.max(...padData)}
     // console.log('revision :', revision, ' data : ', padData)
-
+    res.status(200).json({ rev: revision, })
   } catch (error) {
-    console.log(error)
+    res.status(500).json({error: 'error fetching revision (listSavedRevisions): ' + error})
   }
-  res.status(200).json({ rev: revision, })
 }

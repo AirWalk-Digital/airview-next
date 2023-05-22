@@ -13,7 +13,7 @@ export const Step = ({ children, order, duration = 0.5 }) => {
       addStep(order);
     }
     // return () => {
-    //   console.log("removing step");
+    //   // console.log("removing step");
     //   removeStep(id.current);
     // };
   }, [order, addStep, removeStep]);

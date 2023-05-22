@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import GlobalStyles from '@mui/material/GlobalStyles';
-import Slide from "../components/Slide";
+import { Slide } from 'airview-mdx';
 import PresentationMode from "../components/PresentationMode";
 import Swipeable from "../components/Swipeable";
 import useEventListener from "../hooks/useEventListener";
@@ -47,7 +47,7 @@ export default dynamic(() => Promise.resolve(PrintSlide), {
 });
 
 function PrintSlide({ children, next }) {
-  console.log('PrintSlide:children : ', children)
+  // console.log('PrintSlide:children : ', children)
   let generatedSlides = [];
   let generatorCount = 0;
   // Filter down children by only Slides
@@ -84,6 +84,7 @@ function PrintSlide({ children, next }) {
       <GlobalStyles styles={globalStyles} />
       {generatedSlides.map(d => (
         <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{ maxWidth: '100vw', maxHeight: '100vh' }}>
+          {/* // <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} > */}
           <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}>
             <Slide>{d}</Slide>
           </div>

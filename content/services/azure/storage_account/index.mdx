@@ -1,0 +1,55 @@
+---
+title: Storage Accounts
+name: "Microsoft.Storage/StorageAccounts - Non Data Lake Features"
+id: "StorageAccounts"
+csp: "Azure"
+Data_At_Rest_Classification: "Highly Restricted"
+Data_At_Rest_Rationale: "Support for Customer Managed Key (CMK), Infrastructure at rest encryption, Blob Client-Side Encryption and Disable Public Access"
+SLA: "99.9%"
+Data_Redundancy: "Geo-Zone-Redundant-Storage"
+---
+
+ 
+**STO-USECASE-1** Client-Side Encryption for Azure Storage Account Blobs and Azure Key Vault for Microsoft Azure Storage (.NET)
+
+The Azure Storage Client Library for .NET see [LINK] supports encrypting data within client applications before uploading to Azure Storage, and decrypting data while downloading to the client. The library also supports integration with Azure Key Vault see [LINK] for Key Vault security requirements.
+
+This use case follows the following sequence, more information can be found here [LINK]
+
+![img](./image001.png)
+
+
+### Encryption 
+
+The  .NET storage library generates a Content Encryption Key (CEK) which is a one-time-use symmetric key.
+	
+The Blob data is encrypted with this CEK
+	
+The Storage .NET library interacts with Key Vault with the wrap and unwrap operations. The application using the library uses its host compute services managed identity to authenticate with the Key Vault
+	
+The CEK is then encrypted (wrapped) with a Key Encryption Key (KEK) asymmetric HSM backed Key that is created and managed by Azure Key Vault.
+	
+The encrypted data is then uploaded to the Azure Storage Account. The wrapped key along with some additional encryption metadata is stored as a blob.
+
+
+### Decryption 
+
+The .Net storage library downloads the encrypted data along with the encryption material from the Storage Account
+	
+The CEK is the unwrapped (decrypted) using the KEK by invoking the Key Vault unwrap operation
+	
+The CEK is then used to decrypt the encrypted data. 
+
+
+
+### Data Classification
+
+| Data Classification | Key Vault Key Type |
+| --- | --- |
+| Highly Restricted | RSA-HSM backed KEK |
+| Internal | No encryption required. |
+| Public | No encryption required. |
+
+
+
+ 

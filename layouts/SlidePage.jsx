@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import GlobalStyles from '@mui/material/GlobalStyles';
-import Slide from "../components/Slide";
+// import Slide from "../components/Slide";
+import { Slide } from 'airview-mdx';
 import PresentationMode from "../components/PresentationMode";
 import Swipeable from "../components/Swipeable";
 import useEventListener from "../hooks/useEventListener";
@@ -72,14 +73,14 @@ function SlidePage({ children, next }) {
           setMode(MODES.SLIDESHOW);
           router.push(
             router.pathname,
-            `${router.asPath.split("?")[0]}?mode=${MODES.SLIDESHOW}#${currentSlide}`,
+            `${router.asPath.split("?")[0]}?format=ppt&mode=${MODES.SLIDESHOW}#${currentSlide}`,
             { shallow: true }
           );
         } else {
           setMode(MODES.SPEAKER);
           router.push(
             router.pathname,
-            `${router.asPath.split("?")[0]}?mode=${MODES.SPEAKER}#${currentSlide}`,
+            `${router.asPath.split("?")[0]}?format=ppt&mode=${MODES.SPEAKER}#${currentSlide}`,
             { shallow: true }
           );
         }
@@ -100,7 +101,7 @@ function SlidePage({ children, next }) {
     // Handle next page
     if (NEXT.indexOf(keyCode) !== -1 && currentSlide === slideCount) {
       if (router.query && router.pathname && next) {
-        router.push(`${next}?mode=${mode}`);
+        router.push(`${next}?format=ppt&mode=${mode}`);
       }
       return false;
     }
@@ -137,7 +138,7 @@ function SlidePage({ children, next }) {
   useEffect(() => {
     router.push(
       `${router.asPath}`,
-      `${router.asPath.split("?")[0]}?mode=${mode}#${currentSlide}`
+      `${router.asPath.split("?")[0]}?format=ppt&mode=${mode}#${currentSlide}`
     );
   }, [currentSlide, mode, router.pathname]);
 
@@ -219,12 +220,15 @@ function SlidePage({ children, next }) {
       );
       setSlide(slideCount);
     }
+
+    // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
     return <Slide>{generatedSlides[currentSlide]}</Slide>;
   };
   
   const pageSize = { width:1920, height:1080}
 
   return (
+    
     <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{maxWidth: '100vw', maxHeight: '100vh'}}>
     <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
       <GlobalStyles styles={globalStyles} />
@@ -236,5 +240,6 @@ function SlidePage({ children, next }) {
       </PresentationMode>
     </Swipeable>
     </Zoom>
+   
   );
 }
