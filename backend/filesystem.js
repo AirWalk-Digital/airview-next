@@ -3,12 +3,12 @@ import path from 'path';
 import glob from 'glob';
 // const glob = require('glob')
 
-export async function getAllFiles(filePath) {
+export async function getAllFiles(filePath, globmatcher = '/**/*.md*') {
     const contentDir = 'content'
     const targetDir = filePath ? path.join(process.cwd(), contentDir, filePath) : path.join(process.cwd(), 'content')
   
     return new Promise((resolve, reject) => {
-      glob(targetDir + '/**/*.md*', (err, files) => {
+      glob(targetDir + globmatcher, (err, files) => {
         if (err) {
           reject(err)
         } else {

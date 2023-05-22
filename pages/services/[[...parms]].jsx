@@ -22,6 +22,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { mdComponents } from "../../constants/mdxProvider";
 import * as matter from 'gray-matter';
+import { parse } from 'toml';
+
 import Topbar from '../../components/TopBar';
 
 import { MDXProvider } from '@mdx-js/react';
@@ -180,10 +182,55 @@ function FallbackComponent({ error }) {
 
 
 
-export default function Page(content) {
+function createControlMenu(controls) {
+  try {
+  const links = controls.map((control) => {
+    const label = control.data.name || control.data.title || ''; // Adjust the property name according to your control data structure
+    const url = control.file.split('/').pop();
+
+    return {
+      label,
+      url,
+    };
+  });
+
+  return [
+    {
+      groupTitle: "Controls",
+      links: links
+    }];
+} catch (error) {
+  return [
+    {
+      groupTitle: "Controls",
+  links: [
+    {
+      label: "CONTROL-00000",
+      url: "",
+    },
+  ],}]
+
+  return [
+    {
+      groupTitle: "Controls",
+      links: []
+    }];
+}};
+
+export default function Page(content, controls, type) {
+  const [pageData, setPageData] = useState(null);
+
+  useEffect(() => {
+    console.log('useEffect: ', pageData)
+    setPageData({ navItemsControls: controls, type: type});
+    console.log('page:controls', controls)
+    console.log('page:type', type)
+  }, [controls, type]);
+
+  
   const router = useRouter();
   let format = 'default';
-  const context = {source: 'local', router: router }
+  const context = { source: 'local', router: router }
   const defaultValue = `
     # No Content Loaded
     `;
@@ -214,54 +261,36 @@ export default function Page(content) {
     }
   };
 
-
+  
   return (
-    <DefaultView frontmatter={state && state.file && state.file.frontmatter ? state.file.frontmatter : {}} context={context}>
+<ServiceView
+  frontmatter={state && state.file && state.file.frontmatter ? state.file.frontmatter : {}}
+  context={context}
+  pageData={pageData ? pageData : {}} >
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         {/* <Preview components={mdComponents} /> */}
         {state && state.file && state.file.result ? (<Preview components={mdComponents} />) : null}
       </ErrorBoundary>
-    </DefaultView>
+    </ServiceView>
   )
 };
 
 
 
 
-function DefaultView({
+function ServiceView({
   children, // will be a page or nested layout
   frontmatter = null, // frontmatter collected from the page and the mdx file
-  context = null // the context from the page to help with relative files and links
+  context = null, // the context from the page to help with relative files and links
+  pageData = null // controls for the menu
 }) {
-
-  const navItemsControls = [
+  let navItemsControls = null;
+  console.log('PageData', pageData);
+  if (pageData && pageData.navItemsControls ) {navItemsControls = createControlMenu(pageData.navItemsControls)} else {navItemsControls = [
     {
-      groupTitle: "Menu Group Title One",
-      links: [
-        {
-          label: "Menu Item One",
-          url: "",
-        },
-        {
-          label: "Menu Item Two",
-          url: "",
-        },
-      ],
-    },
-    {
-      groupTitle: "Menu Group Title Two",
-      links: [
-        {
-          label: "Menu Item One",
-          url: "",
-        },
-        {
-          label: "Menu Item Two",
-          url: "",
-        },
-      ],
-    },
-  ];
+      groupTitle: "Controls",
+      links: []
+    }];}
 
   const navItemsDocs = [
     {
@@ -326,6 +355,8 @@ function DefaultView({
         }}
       ><Box sx={{ px: '5%' }}>
           {frontmatter.title && <Typography variant="h1" component="h1">{frontmatter.title}</Typography>}
+          {pageData.type && <Typography variant="h1" component="h1">{pageData.type}</Typography>}
+
           <MDXProvider components={mdComponents(context)}>
             {children}
           </MDXProvider>
@@ -349,7 +380,7 @@ export async function getStaticPaths() {
         filepath.pop();
         const joinedPath = filepath.join('/');
         return joinedPath;
-              } else {
+      } else {
         return file
       }
     })
@@ -369,25 +400,55 @@ export async function getStaticPaths() {
 
 
 }
-
 export async function getStaticProps(context) {
+  let location = null;
+  let type = 'unknown';
+  let controls = [];
 
-  const location = 'services/' + context.params.parms.join('/') + '/index.mdx';
-  // console.log('getStaticProps: ',location )
+  if (context.params.parms.length === 2) {
+    type = 'service';
+    location = 'services/' + context.params.parms.join('/') + '/index.mdx';
+  } else if (context.params.parms.length === 3) {
+    type = 'control';
+    location = 'services/' + context.params.parms.join('/');
+  }
 
   try {
-    const content = await getFileContent(location) // Pass null or an empty string for filePath
+    if (type === 'service') {
+      const controlLocation = 'services/' + context.params.parms.join('/');
+      const files = await getAllFiles(controlLocation, '/**/*.toml');
+  
+      const controlPromises = files.map(async (file) => {
+        const content = await getFileContent(file);
+        const ext = file.split('.').pop();
+  
+        if (ext === 'toml') {
+          return parse(content);
+        } else if (ext === 'md' || ext === 'mdx') {
+          return matter('---\n' + content + '\n---', { excerpt: true });
+        }
+      });
+  
+      controls = await Promise.all(controlPromises);
+    }
+
+    const content = await getFileContent(location);
+
     return {
       props: {
         content: content,
+        controls: controls,
+        type: type,
       },
-    }
+    };
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return {
       props: {
         content: [],
+        controls: controls,
+        type: type,
       },
-    }
+    };
   }
 }

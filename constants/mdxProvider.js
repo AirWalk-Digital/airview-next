@@ -7,7 +7,7 @@ import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
 import SlidePage from "../layouts/SlidePage";
 import PrintSlide from "../layouts/PrintSlide";
 import MDXViewer from "../layouts/MDXViewer";
-import NextImage from "next/image";
+import Image from "next/image";
 
 // fix for Roadmap, Nest
 import { TitleSlide, Header, Banner, Footer, Insights, Chevrons, Nest, Roadmap, Layout, Column, Item, Slide, HeaderCard } from 'airview-mdx'
@@ -30,7 +30,7 @@ import Alert from '@mui/material/Alert';
 
 // import { Insight, InsightTable, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
 // import {FaIcon, Icon} from './Images.jsx';
-import {FaIcon, Icon} from 'airview-mdx';
+import { FaIcon, Icon } from 'airview-mdx';
 import { ProgressTable } from '../components/Tables.jsx';
 // import { HeaderCard, Nest } from './Cards';
 // import { HeaderCard } from './Cards';
@@ -38,47 +38,87 @@ import { ProgressTable } from '../components/Tables.jsx';
 // Layouts 
 // import {Layout, Column, Item } from './Layouts';
 
-function MdxImage({ props, baseContext }) {
-  let src = props.src
-  if (src.slice(0, 2) === './') { src = src.replace('./','') }
-  if (baseContext.source === 'local' && baseContext.router.asPath) {
-    src = '/api/files/get-binary?filePath=' + baseContext.router.asPath + '/' + src
-  } else {
-    src = '/image-not-found.png'
-  }
-  
-  console.log('MdxImage:props: ', props)
-  console.log('MdxImage:context: ', baseContext)
-  // useEffect(() => {
-  //   const image = new Image();
-  //   image.src = src;
 
-  //   image.onload = () => {
-  //     setWidth(image.width);
-  //     setHeight(image.height);
-  //   };
-  // }, [props.src]);
+
+function MdxImage({ props, baseContext }) {
+  let src = props.src;
+
+  if (baseContext.source === 'local' && baseContext.router.asPath && src.slice(0, 2) === './') { // relative 
+    src = src.replace('./', '/');
+    src = '/api/files/get-binary?filePath=' + baseContext.router.asPath + src;
+  } else if (baseContext.source === 'local' && baseContext.router.asPath && src.slice(0, 1) === '/') { //file is an absolute path (public directory)
+    src = src
+  } else {
+    src = '/image-not-found.png';
+  };
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 
   const handleImageLoad = (event) => {
+    // console.log('handleImageLoad:event', event)
     const { naturalWidth, naturalHeight } = event.target;
     setImageSize({ width: naturalWidth, height: naturalHeight });
   };
 
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen);
+  };
+
   const aspectRatio = imageSize.width / imageSize.height;
+  const maxWidth = '70%';
+  const maxHeight = 'auto';
+  const cursorStyle = { cursor: 'zoom-in' };
+  const objectPosition = isFullScreen ? 'center center' : 'initial';
 
   return (
-    <div style={{ position: 'relative', width: '100%', paddingBottom: `${(1 / aspectRatio) * 100}%` }}>
-      <NextImage src={src} alt={props.alt} fill loading="lazy" objectFit="cover" onLoad={handleImageLoad} />
-      {/* <Image src='/logos/airwalk-logo.png' alt='mdx image' fill loading="lazy" /> */}
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        width: '100%',
+        // maxWidth: isFullScreen ? '100%' : imageSize.width,
+        // maxHeight: isFullScreen ? '100%' : maxHeight,
+      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          width: isFullScreen ? '100%' : imageSize.width,
+          maxWidth: isFullScreen ? imageSize.width : maxWidth,
+          maxHeight: isFullScreen ? '100%' : maxHeight,
+          ...cursorStyle,
+        }}
+        onClick={toggleFullScreen}
+      >
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            paddingBottom: `${(1 / aspectRatio) * 100}%`,
+          }}
+        >
+          <Image
+            src={src}
+            alt={props.alt}
+            fill
+            objectFit="contain"
+            objectPosition={objectPosition}
+            onLoad={handleImageLoad}
+          />
+        </div>
+      </div>
     </div>
   );
-};
-
- 
+}
 
 
-  
+
+
+
 
 
 // export const mdComponents = {
@@ -102,7 +142,7 @@ export const mdComponents = (baseContext) => ({
         className={className}
         language={language}
         style={okaidia}
-        customStyle={{overflow:'clip', fontSize: '0.75rem'}}
+        customStyle={{ overflow: 'clip', fontSize: '0.75rem' }}
         {...props}
       />
     );

@@ -1,0 +1,23 @@
+description = "Use a CMK for encryption persisted in an HSM backed Key Vault for all Storage Account scopes" 
+discussion = "If the Microsoft managed service level key is compromised XXXX can revoke access to data"
+id = "SA-DP_3_SA_0007"
+name = "DP_3_SA_0007"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "SIA"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Resource_Configuration = true
+NIST80053_Control_Families = [ "System and Communication Protection",]
+NIST80053_Control_Ids = [ "SC-1",]
+References = []
+
+
+[tools]
+[tools.azurepolicy]
+Builtin_Policy = "/providers/Microsoft.Authorization/policyDefinitions/6fac406b-40ca-413b-bf8e-0bf964659c25"
+Default_Effect = "Audit"
+Required_Effect = "Deny"
+Possible_Implementation = true

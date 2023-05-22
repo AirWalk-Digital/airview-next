@@ -1,0 +1,23 @@
+description = "Send all diagnostic logs to a central Log Analytics workspace"
+discussion = "To provide logs for possible security investigation and to provide the ability if required to have a custom security alert"
+id = "SA-LT_4_SA_0011"
+name = "LT_4_SA_0011"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "SIA"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Resource_Configuration = true
+NIST80053_Control_Families = [ "Audit and Accountability",]
+NIST80053_Control_Ids = [ "AU-1",]
+References = []
+
+
+[tools]
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "N/A"
+Possible_Implementation = true

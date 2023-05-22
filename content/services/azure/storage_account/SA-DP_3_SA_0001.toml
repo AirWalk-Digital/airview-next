@@ -1,0 +1,24 @@
+description = "Require control plane secure transfer for REST API operations"
+discussion = "Using non encrypted http API calls could allow malicious capture of XXXX sensitive information"
+id = "SA-DP_3_SA_0001"
+name = "DP_3_SA_0001"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Category = "Access Control"
+Control_Owner = "SIA"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = false
+Resource_Configuration = true
+NIST80053_Control_Families = [ "System and Communication Protection",]
+NIST80053_Control_Ids = [ "SC-1",]
+References = []
+
+
+[tools]
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "Deny"
+Possible_Implementation = true

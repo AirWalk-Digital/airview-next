@@ -1,0 +1,23 @@
+description = "Enable Soft Delete for Files"
+discussion = "To enable data recovery in the event of a malicious or accidental deletion"
+id = "SA-BR_2_SA_0013"
+name = "BR_2_SA_0013"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "SIA"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = false
+Resource_Configuration = true
+NIST80053_Control_Families = [ "Configuration Management",]
+NIST80053_Control_Ids = [ "CM-1",]
+References = []
+
+
+[tools]
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "N/A"
+Possible_Implementation = true

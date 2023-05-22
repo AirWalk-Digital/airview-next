@@ -1,0 +1,24 @@
+description = "Use a minimum of TLS version 1.2 with HTTPS"
+discussion = "Previous versions of TLS are vulnerable to being exploited"
+id = "SA-DP_3_SA_0003"
+name = "DP_3_SA_0003"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Category = "Access Control"
+Control_Owner = "SIA"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Resource_Configuration = true
+NIST80053_Control_Families = [ "System and Communication Protection",]
+NIST80053_Control_Ids = [ "SC-1",]
+References = []
+
+
+[tools]
+[tools.azurepolicy]
+Builtin_Policy = "/providers/Microsoft.Authorization/policyDefinitions/fe83a0eb-a853-422d-aac2-1bffd182c5d0"
+Default_Effect = "Audit"
+Required_Effect = "Deny"
+Possible_Implementation = true

@@ -1,0 +1,24 @@
+description = "Require data plane secure data transfer"
+discussion = "HTTPS ensures authentication between the server and the service and protects data in transit from network layer attack"
+id = "SA-DP_3_SA_0002"
+name = "DP_3_SA_0002"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Category = "Access Control"
+Control_Owner = "SIA"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = false
+Resource_Configuration = true
+NIST80053_Control_Families = [ "System and Communication Protection",]
+NIST80053_Control_Ids = [ "SC-1",]
+References = []
+
+
+[tools]
+[tools.azurepolicy]
+Builtin_Policy = "/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9"
+Default_Effect = "Audit"
+Required_Effect = "Deny"
+Possible_Implementation = true
