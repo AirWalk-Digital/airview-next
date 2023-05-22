@@ -268,7 +268,7 @@ function Page() {
 // PDF Print View component
 function DocumentView({ children }) {
   // console.log('/output:PrintView:children: ', children);
-
+  // const [print, setPrint] = useState(false);
   const mdxContainer = useRef(null);
   const previewContainer = useRef(null);
   let contentMdx = ``;
@@ -278,10 +278,7 @@ function DocumentView({ children }) {
       const paged = new Previewer();
       contentMdx = `${mdxContainer.current?.innerHTML}`;
       paged
-        .preview(contentMdx,
-          ['/pdf.css'],
-          previewContainer.current
-        )
+        .preview(contentMdx, ["/pdf.css"], previewContainer.current)
         .then((flow) => {
           // console.log('====flow====')
           // console.log(flow)
@@ -292,22 +289,24 @@ function DocumentView({ children }) {
           .forEach((e) => e.parentNode?.removeChild(e));
       };
     }
-
-  }, [children])
-
+  }, [children]);
+  let print;
+  if (typeof window !== "undefined") {
+    var mediaQueryList = window.matchMedia("print");
+    console.log(mediaQueryList.matches, "medieaquery");
+    print = mediaQueryList.matches;
+  }
   return (
     <>
-      <div ref={mdxContainer} style={{ display: 'none' }}>
-
+      <div ref={mdxContainer} style={{ display: "none" }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           {children && children}
         </ThemeProvider>
       </div>
-      <div className="pagedjs_page" ref={previewContainer}></div>
+      <div className={print ? "" : "pagedjs_page"} ref={previewContainer}></div>
     </>
-
-  )
+  );
 };
 
 // Normal View component
