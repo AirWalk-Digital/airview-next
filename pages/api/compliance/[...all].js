@@ -7,7 +7,7 @@ export const config = {
 }
 
 const proxy = createProxyMiddleware({
-  target: 'http://localhost:5000',
+  target: process.env.AIRVIEW_API_URL,
   secure: false,
   pathRewrite: { "^/api/compliance/": "" }, // remove `/api/proxy` prefix
 });
