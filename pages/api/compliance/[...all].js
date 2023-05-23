@@ -3,6 +3,7 @@ import { createProxyMiddleware } from "http-proxy-middleware"; // @2.0.6
 export const config = {
   api: {
     externalResolver: true,
+    bodyParser: false,
   }
 }
 
