@@ -7,7 +7,7 @@ import { theme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import { getApplications, getApplicationById } from '../../backend/applications';
+import { getBusinessUnits, getBusinessUnitById } from '../../backend/business-units';
 
 import { ComplianceTable } from "../../components/airview-compliance-ui/features/compliance-table";
 import { ControlOverview, useControlOverviewController, } from "../../components/airview-compliance-ui/features/control-overview";
@@ -22,16 +22,16 @@ export default dynamic(() => Promise.resolve(Page), {
     ssr: false,
   });
 
-function Page({app}) {
+function Page({bu}) {
     const topBarHeight = 64;
 
     const noDataMessage={
     title: "No issues",
-    message: "There are no issues to display for this application",
+    message: "There are no issues to display for this Business Unit",
   };
   const invalidPermissionsMessage = {
     title: "Notice",
-    message: "You do not have the required permissions to view the data for this application",
+    message: "You do not have the required permissions to view the data for this Business Unit",
   };
 
     return (
@@ -40,8 +40,8 @@ function Page({app}) {
             <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
             <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}
             ><Box sx={{ px: '5%' }}>
-                    {app && app.name && <Typography variant="h1" component="h1">{app.name}</Typography>}
-                    {app && app.description && <Typography variant="h4" color='text.highlight'>{app.description}</Typography>}
+                    {bu && bu.name && <Typography variant="h1" component="h1">{bu.name}</Typography>}
+                    {bu && bu.description && <Typography variant="h4" color='text.highlight'>{bu.description}</Typography>}
                     {/* <Container maxWidth="lg" sx={{ height: '100vh' }}> */}
                     <Grid container spacing={4} alignItems="stretch">
                         <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
@@ -60,11 +60,10 @@ function Page({app}) {
 
 export async function getStaticPaths() {
     let pages = [];
-    let location = 'services';
     try {
-        const apps = await getApplications()
+        const apps = await getBusinessUnits()
         const pages = apps.map((file) => {
-            return '/applications/' + file.app_id
+            return '/business-units/' + file.bu_id
         })
         return {
             fallback: true,
@@ -82,17 +81,17 @@ export async function getStaticPaths() {
 }
 export async function getStaticProps(context) {
     try {
-        const app = await getApplicationById(context.params.app_id);
+        const bu = await getBusinessUnitById(context.params.bu_id);
         return {
             props: {
-                app: app
+                bu: bu
             },
         };
     } catch (error) {
         console.error(error);
         return {
             props: {
-                app: {}
+                bu: {}
             },
         };
     }

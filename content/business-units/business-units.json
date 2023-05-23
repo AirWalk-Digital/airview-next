@@ -1,0 +1,35 @@
+{
+    "business-units": [
+      {
+        "name": "Central IT",
+        "bu_id": "BU1",
+        "description": "Documentation, Compliance and Control for Cloud.",
+        "applications": {
+          "development": "subscription-1234",
+          "staging": "subscription-5678",
+          "production": "subscription-9012"
+        }
+      },
+      {
+        "name": "Finance",
+        "bu_id": "BU2",
+        "description": "A powerful tool for creative professionals.",
+        "applications": {
+          "development": "subscription-3456",
+          "staging": "subscription-7890",
+          "production": "subscription-2345"
+        }
+      },
+      {
+        "name": "Cloud CoE",
+        "bu_id": "BU3",
+        "description": "A cutting-edge application with advanced features.",
+        "applications": {
+          "development": "subscription-6789",
+          "staging": "subscription-0123",
+          "production": "subscription-4567"
+        }
+      }
+    ]
+  }
+  

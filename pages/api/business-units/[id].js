@@ -1,16 +1,16 @@
 // pages/api/applications/[id].js
 
-import { getApplicationById } from '../../../backend/applications';
+import { getBusinessUnitById } from '../../../backend/business-units';
 
 export default function handler(req, res) {
   if (req.method === 'GET') {
     const { id } = req.query;
-    const application = getApplicationById(id);
+    const application = getBusinessUnitById(id);
 
     if (application) {
       res.status(200).json(application);
     } else {
-      res.status(404).json({ error: 'Application not found' });
+      res.status(404).json({ error: 'Bussiness Unit not found' });
     }
   } else {
     res.setHeader('Allow', ['GET']);
