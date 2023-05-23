@@ -36,6 +36,7 @@
     "framer-motion": "^4.1.17",
     "fs": "^0.0.1-security",
     "gray-matter": "^4.0.3",
+    "http-proxy-middleware": "^2.0.6",
     "mime-types": "^2.1.35",
     "net": "^1.0.2",
     "next": "^13.4.3",
