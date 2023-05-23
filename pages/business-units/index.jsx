@@ -18,11 +18,11 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { getApplications } from '../../backend/applications';
+import { getBusinessUnits } from '../../backend/business-units';
 
 
 export const AppTile = ({ name, app_id }) => {
-    const location = '/applications/' + app_id
+    const location = '/business-units/' + app_id
     return (
         <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
             <ApplicationTile>
@@ -31,7 +31,7 @@ export const AppTile = ({ name, app_id }) => {
                         <ApplicationTileTitle>{name}</ApplicationTileTitle>
                     }
                     rightContent={
-                        <ApplicationTileCallToActionButton href={location} label="View" />
+                        <ApplicationTileCallToActionButton linkprops={{'href': {location}}} label="View" />
                     }
                 />
 
@@ -203,19 +203,21 @@ export const AppTile = ({ name, app_id }) => {
 };
 
 
-export default function Page({ apps }) {
+export default function Page({ businessUnits }) {
+
     const topBarHeight = 64;
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
             <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}
             ><Box sx={{ px: '5%' }}>
-                    <Typography variant="h1" component="h1">Applications</Typography>
+                    <Typography variant="h1" component="h1">Business Units</Typography>
                     <Container maxWidth="lg" sx={{ height: '100vh' }}>
                         <Grid container spacing={4} alignItems="stretch">
-                                {apps ? (
-                                    apps.map((app, i) => <AppTile key={i} name={app.name} app_id={app.app_id} />)
+                                {businessUnits ? (
+                                    businessUnits.map((bu, i) => <AppTile key={i} name={bu.name} app_id={bu.bu_id} />)
                                 ) : (
                                     null
                                 )}
@@ -229,17 +231,17 @@ export default function Page({ apps }) {
 
 export async function getStaticProps() {
     try {
-        const apps = await getApplications();
+        const businessUnits = await getBusinessUnits();
         return {
             props: {
-                apps: apps
+                businessUnits: businessUnits
             },
         };
     } catch (error) {
         console.error(error);
         return {
             props: {
-                apps: {}
+                businessUnits: {}
             },
         };
     }
