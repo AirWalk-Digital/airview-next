@@ -14,7 +14,6 @@ const proxy = createProxyMiddleware({
 });
 
 function addTrailingSlash(url) {
-  // Use regex to check if a trailing slash exists only in the pathname
   var regex = /(\/)(?![?/])$/;
   
   if (regex.test(url)) {
