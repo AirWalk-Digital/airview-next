@@ -1,0 +1,35 @@
+{
+    "applications": [
+      {
+        "name": "Airview",
+        "app_id": "APP1",
+        "description": "Documentation, Compliance and Control for Cloud.",
+        "environments": {
+          "development": "subscription-1234",
+          "staging": "subscription-5678",
+          "production": "subscription-9012"
+        }
+      },
+      {
+        "name": "CoolTool",
+        "app_id": "APP2",
+        "description": "A powerful tool for creative professionals.",
+        "environments": {
+          "development": "subscription-3456",
+          "staging": "subscription-7890",
+          "production": "subscription-2345"
+        }
+      },
+      {
+        "name": "InnovativeApp",
+        "app_id": "APP3",
+        "description": "A cutting-edge application with advanced features.",
+        "environments": {
+          "development": "subscription-6789",
+          "staging": "subscription-0123",
+          "production": "subscription-4567"
+        }
+      }
+    ]
+  }
+  

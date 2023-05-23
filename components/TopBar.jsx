@@ -16,11 +16,11 @@ import logo from '../public/logos/airwalk-logo.png';
 const Logo = styled("img")({
     display: "block",
     width: "auto",
-    height: 30,
+    height: 64,
   });
 
 function Topbar({
-    onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64 }) {
+    onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64, logo=true }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [activeMenu, setActiveMenu] = useState('');
@@ -41,25 +41,17 @@ function Topbar({
     return (
       <AppBar position="fixed" color="white" elevation={0}>
         <Toolbar>
-        {menu &&  <><IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={onNavButtonClick}
-          >
-            {navOpen ? <CloseIcon /> : <MenuIcon />}
-          </IconButton>
-          <Logo src={logo} alt="Airview" /></> }
-        {back && <Link href="/" sx={{ textDecoration: 'none' }}>
-            <ArrowBackIosNewOutlinedIcon color='text'/>
-          </Link>}
+          {/* has menu */}
+        {menu &&  <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={onNavButtonClick}>{navOpen ? <CloseIcon /> : <MenuIcon />}</IconButton>}
+          {logo && <Logo src='/logos/airwalk-logo.png' alt="Airview" />}
+          {/* back button */}
+          {back && <Link href="/" sx={{ textDecoration: 'none' }}><ArrowBackIosNewOutlinedIcon color='text'/></Link>} 
           
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           </Typography>
-          
-          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none' }} onClick={(event) => handleMenuOpen(event, 'content')} >Content</Button>
+          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '20pt'  }} onClick={(event) => handleMenuOpen(event, 'compliance')} >Compliance</Button>
+          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '20pt' }} onClick={(event) => handleMenuOpen(event, 'applications')} >Applications</Button>
+          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '20pt' }} onClick={(event) => handleMenuOpen(event, 'content')} >Collaborate</Button>
           <Menu
             id="menu-content"
             anchorEl={anchorEl}
@@ -73,9 +65,7 @@ function Topbar({
               </MenuItem>
             </Link>
           </Menu>
-          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none' }} onClick={(event) => handleMenuOpen(event, 'compliance')} >Compliance</Button>
-          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none' }} onClick={(event) => handleMenuOpen(event, 'applications')} >Applications</Button>
-  
+          
         </Toolbar>
       </AppBar>
     );

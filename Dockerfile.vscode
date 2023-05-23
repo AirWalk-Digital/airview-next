@@ -6,7 +6,7 @@ ARG USER_GID=$USER_UID
 
 # Create the user
 
-RUN     apk add doas git; \
+RUN     apk add doas git github-cli; \
         adduser $USERNAME -G wheel; \
         echo 'permit nopass :wheel as root' >> /etc/doas.d/doas.conf
 
