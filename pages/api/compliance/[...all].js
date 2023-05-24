@@ -25,6 +25,7 @@ function addTrailingSlash(url) {
 }
 
 
+
 export default function handler(req, res) {
   req.url = addTrailingSlash(req.url);
   proxy(req, res, (err) => {
