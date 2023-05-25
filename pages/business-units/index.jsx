@@ -20,6 +20,8 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { getBusinessUnits } from '../../backend/business-units';
 
+import { MiniStatisticsCard } from "../../components/dashboard";
+
 
 export const AppTile = ({ name, app_id }) => {
     const location = '/business-units/' + app_id
@@ -214,6 +216,47 @@ export default function Page({ businessUnits }) {
             <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}
             ><Box sx={{ px: '5%' }}>
                     <Typography variant="h1" component="h1">Business Units</Typography>
+
+
+                    <Grid container spacing={4} alignItems="stretch" sx={{pt: '2%'}}>
+            <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+              <MiniStatisticsCard
+                color="text.highlight"
+                title="Controls"
+                count="132"
+                percentage={{ value: '55%', text: "coverage" }}
+                icon={{ color: "error", icon: 'check' }}
+              />
+            </Grid>
+            <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+              <MiniStatisticsCard
+                color="text.highlight"
+                title="Sev 1"
+                count="1"
+                percentage={{ value: '', text: "non-compliances" }}
+                icon={{ color: "warning", icon: 'triangle-exclamation' }}
+              />
+            </Grid>
+            <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+              <MiniStatisticsCard
+                color="text.highlight"
+                title="Sev 2"
+                count="3"
+                percentage={{ value: '', text: "non-compliances" }}
+                icon={{ color: "error", icon: 'circle-exclamation' }}
+              />
+            </Grid>
+            <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+              <MiniStatisticsCard
+                color="text.highlight"
+                title="Sev 3"
+                count="34"
+                percentage={{ value: '', text: "non-compliances" }}
+                icon={{ color: "error", icon: 'info' }}
+              />
+            </Grid>
+          </Grid>
+
                     <Container maxWidth="lg" sx={{ height: '100vh' }}>
                         <Grid container spacing={4} alignItems="stretch">
                                 {businessUnits ? (

@@ -49,9 +49,9 @@ function Topbar({
           
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           </Typography>
-          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '20pt'  }} onClick={(event) => handleMenuOpen(event, 'compliance')} >Compliance</Button>
-          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '20pt' }} onClick={(event) => handleMenuOpen(event, 'applications')} >Applications</Button>
-          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '20pt' }} onClick={(event) => handleMenuOpen(event, 'content')} >Collaborate</Button>
+          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt'  }} onClick={(event) => handleMenuOpen(event, 'catalogue')} >Catalogue</Button>
+          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }} onClick={(event) => handleMenuOpen(event, 'applications')} >Applications</Button>
+          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }} onClick={(event) => handleMenuOpen(event, 'content')} >Collaborate</Button>
           <Menu
             id="menu-content"
             anchorEl={anchorEl}
@@ -62,6 +62,37 @@ function Topbar({
             <Link href="/etherpad" sx={{ textDecoration: 'none' }}>
               <MenuItem>
                 Etherpads
+              </MenuItem>
+            </Link>
+          </Menu>
+          <Menu
+            id="menu-catalogue"
+            anchorEl={anchorEl}
+            open={activeMenu === 'catalogue'}
+            onClose={handleMenuClose}
+            onClick={handleMenuClose}
+          >
+            <Link href="/services" sx={{ textDecoration: 'none' }}>
+              <MenuItem>
+              Cloud Services
+              </MenuItem>
+            </Link>
+          </Menu>
+          <Menu
+            id="menu-applications"
+            anchorEl={anchorEl}
+            open={activeMenu === 'applications'}
+            onClose={handleMenuClose}
+            onClick={handleMenuClose}
+          >
+            <Link href="/applications" sx={{ textDecoration: 'none' }}>
+              <MenuItem>
+                Business Applications
+              </MenuItem>
+            </Link>
+            <Link href="/business-units" sx={{ textDecoration: 'none' }}>
+              <MenuItem>
+                Business Units
               </MenuItem>
             </Link>
           </Menu>
