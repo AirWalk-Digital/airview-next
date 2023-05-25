@@ -44,8 +44,16 @@ axios.get(url)
 title: ${serviceName}
 identifier: ${folderName}
 category: ${sectionName}
-approved: false
+csp: Azure
+status: approved|pending|blocked
 description: ${serviceDescription}
+data_classification:
+    - highly_restricted: TBD
+    - internal: TBD
+    - public: TBD
+resilience:
+    - availability: TBA
+    - redundancy: TBA
 auto-generated: true
 ---
 
