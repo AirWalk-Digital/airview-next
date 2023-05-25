@@ -642,6 +642,7 @@ function ServiceView({
           initialCollapsed={false}
           loading={false}
           fetching={false}
+          linkComponent={Link}
         />
         <Menu
           menuTitle="Documentation"
@@ -649,6 +650,8 @@ function ServiceView({
           initialCollapsed={false}
           loading={false}
           fetching={false}
+          linkComponent={Link}
+
         />
       </NavigationDrawer>
       <div

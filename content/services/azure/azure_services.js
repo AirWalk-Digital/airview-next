@@ -1,84 +1,79 @@
-const https = require('https');
 const fs = require('fs');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
-// Fetch the list of Azure services
-function fetchAzureServices() {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'management.azure.com',
-      path: '/providers?api-version=2020-01-01',
-      method: 'GET'
-    };
+// Define the URL for Azure products page
+const url = 'https://azure.microsoft.com/en-us/products/';
 
-    const req = https.request(options, res => {
-      let data = '';
+// Fetch the HTML content of the page
+axios.get(url)
+  .then(response => {
+    // Load the HTML content into Cheerio
+    const $ = cheerio.load(response.data);
 
-      res.on('data', chunk => {
-        data += chunk;
-      });
+    // Find the sections containing Azure services
+    const serviceSections = $('#products-list > .row');
 
-      res.on('end', () => {
-        if (res.statusCode === 200) {
-          const result = JSON.parse(data);
+    let sectionName = '';
 
-          if (result && result.value) {
-            const azureServices = result.value.map(provider => {
-              return provider.resourceTypes.map(resourceType => {
-                return {
-                  name: resourceType.displayName,
-                  identifier: resourceType.resourceType,
-                  description: resourceType.description || '',
-                };
-              });
-            }).flat();
+    serviceSections.each((index, section) => {
+      const $section = $(section);
 
-            resolve(azureServices);
-          } else {
-            reject(new Error('Invalid response format'));
-          }
+      // Extract the section name
+      const sectionNameElement = $section.find('h2.product-category');
+      sectionName = sectionNameElement.length > 0 ? sectionNameElement.text().trim() : sectionName;
+
+      // Find the service cards within the section
+      const serviceCards = $section.find('.column.medium-6.end');
+
+      serviceCards.each((index, card) => {
+        const $card = $(card);
+
+        // Extract the service name and description
+        const serviceName = $card.find('h3.text-heading5 a span').text().trim();
+        const serviceDescription = $card.find('p.text-body4').text().trim();
+
+        // Create a folder for the service
+        const folderName = serviceName.toLowerCase().replace(/ /g, '_');
+        fs.mkdirSync(folderName, { recursive: true });
+
+        // Create the index.mdx file
+        const filePath = `${folderName}/index.mdx`;
+
+        const frontmatter = `---
+title: ${serviceName}
+identifier: ${folderName}
+category: ${sectionName}
+approved: false
+description: ${serviceDescription}
+auto-generated: true
+---
+
+${serviceDescription}`;
+
+
+        // Check if the file already exists
+        if (!fs.existsSync(filePath)) {
+
+          fs.writeFileSync(filePath, frontmatter);
+
+          console.log(`Created ${filePath}`);
         } else {
-          reject(new Error(`Failed to fetch Azure services. Status code: ${res.statusCode}`));
+          // Read the existing file's content
+          const existingContent = fs.readFileSync(filePath, 'utf-8');
+          if (existingContent.includes('auto-generated')) {
+            fs.writeFileSync(filePath, frontmatter);
+            console.log(`Updated ${filePath}`);
+          } else {
+            console.log(`Skipped edited file ${filePath}`);
+          }
+
         }
       });
     });
 
-    req.on('error', error => {
-      reject(error);
-    });
-
-    req.end();
+    console.log('File structure generation completed.');
+  })
+  .catch(error => {
+    console.error('An error occurred:', error);
   });
-}
-
-// Create the file structure
-async function createFileStructure() {
-  const azureServices = await fetchAzureServices();
-
-  azureServices.forEach(service => {
-    const folderName = service.name.toLowerCase().replace(/ /g, '_');
-    const filePath = `${folderName}/index.mdx`;
-
-    // Create the folder
-    fs.mkdirSync(folderName, { recursive: true });
-
-    // Create the index.mdx file
-    const frontmatter = `---
-title: ${service.name}
-identifier: ${service.identifier}
-approved: false
----
-
-${service.description}`;
-
-    fs.writeFileSync(filePath, frontmatter);
-
-    console.log(`Created ${filePath}`);
-  });
-
-  console.log('File structure generation completed.');
-}
-
-// Run the script
-createFileStructure().catch(error => {
-  console.error('An error occurred:', error);
-});
