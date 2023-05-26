@@ -1,0 +1,22 @@
+description = "Disable storage account keys"
+discussion = "Storage Accounts must enforce the disabling of authentication by Keys and Shared Access Strings (What) within its Configuration (How) in order to use modern robust and less prone to compromise authentication methods imbedded within Azure Active Directory (Why)"
+id = "SA-IA_060"
+name = "IA_060"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "Landing Zone Admin Team"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Should_Define_In_MSCB_Rationale = "N/A"
+Technical_Configuration = true
+Non_Technical_Implementation_Rationale = "N/A"
+NIST80053_Control_Families = [ "Identification and Authentication",]
+
+[tools.azurepolicy]
+Builtin_Policy = "/providers/Microsoft.Authorization/policyDefinitions/8c6a50c6-9ffd-4ae7-986f-5fa6111f9a54"
+Default_Effect = "Audit"
+Required_Effect = "Deny"
+Custom_Policy_Possible = "N/A"
+Not_Deny_Rationale = "N/A"

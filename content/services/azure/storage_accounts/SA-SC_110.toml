@@ -1,0 +1,22 @@
+description = "Enable infrastructure encryption"
+discussion = "Storage Accounts must enforce the use of infrastructure encryption (What) within its Encryption settings (How) in order to provide a second guardrail for protecting data encrypted at rest by Microsoft (Why)"
+id = "SA-SC_110"
+name = "SC_110"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "Landing Zone Admin Team"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Should_Define_In_MSCB_Rationale = "N/A"
+Technical_Configuration = true
+Non_Technical_Implementation_Rationale = "N/A"
+NIST80053_Control_Families = [ "System and Communications Protection",]
+
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "Deny"
+Custom_Policy_Possible = "N/A"
+Not_Deny_Rationale = "N/A"

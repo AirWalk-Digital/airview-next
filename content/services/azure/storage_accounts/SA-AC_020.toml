@@ -1,0 +1,22 @@
+description = "Use least privilege RBAC roles for Storage Account authorisation"
+discussion = "Authorisation to Storage Accounts must use RBAC roles following least privilege (What) with service consumers using dedicated Storage Account roles only (How) in order to restrict the blast radius should the authenticating credentials be compromised (Why)"
+id = "SA-AC_020"
+name = "AC_020"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "Landing Zone Admin Team"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Should_Define_In_MSCB_Rationale = "N/A"
+Technical_Configuration = false
+Non_Technical_Implementation_Rationale = "Via LSEG Standard as most cost effective approach"
+NIST80053_Control_Families = [ "Access Control",]
+
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "N/A"
+Custom_Policy_Possible = false
+Not_Deny_Rationale = "N/A"

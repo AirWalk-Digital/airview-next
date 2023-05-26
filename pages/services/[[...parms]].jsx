@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { VFile } from 'vfile'
 import { VFileMessage } from 'vfile-message'
 import * as provider from '@mdx-js/react'
@@ -38,6 +38,7 @@ import { MDXProvider } from '@mdx-js/react';
 
 import { Menu, NavigationDrawer } from '../../components/airview-ui';
 import { getAllFiles, getFileContent } from '../../backend/filesystem';
+
 
 function removeSection(pad, tagName) {
   const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");
@@ -364,6 +365,7 @@ function IndexView({
           initialCollapsed={false}
           loading={false}
           fetching={false}
+          linkComponent={Link}
         />
       </NavigationDrawer>
       <div

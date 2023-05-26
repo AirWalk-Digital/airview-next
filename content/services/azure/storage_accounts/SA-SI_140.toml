@@ -1,0 +1,22 @@
+description = "Enable Soft Delete for Blob with a 30 day retention period"
+discussion = "Storage Accounts must enforce the use of Blob Soft Delete if blobs are being used with a retention period of 30 days (What) within its deployment code settings (How) in order to recover data after an accidental or malicious deletion (Why)"
+id = "SA-SI_140"
+name = "SI_140"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "Landing Zone Admin Team"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Should_Define_In_MSCB_Rationale = "N/A"
+Technical_Configuration = true
+Non_Technical_Implementation_Rationale = "N/A"
+NIST80053_Control_Families = [ "System and Information Integrity",]
+
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "Deny"
+Custom_Policy_Possible = true
+Not_Deny_Rationale = "N/A"

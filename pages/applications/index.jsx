@@ -19,9 +19,19 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { getApplications } from '../../backend/applications';
+import Link from "next/link";
+import { Stack } from '@mui/material'
+import { Chip } from '@mui/material'
 
+const ButtonLink = ({ className, href, hrefAs, children, prefetch }) => (
+    <Link href={href} as={hrefAs} prefetch>
+      <a className={className}>
+        {children}
+      </a>
+    </Link>
+  )
 
-export const AppTile = ({ name, app_id }) => {
+export const AppTile = ({ name, app_id, data_classification='Public', tier=3 }) => {
     const location = '/applications/' + app_id
     return (
         <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
@@ -31,19 +41,26 @@ export const AppTile = ({ name, app_id }) => {
                         <ApplicationTileTitle>{name}</ApplicationTileTitle>
                     }
                     rightContent={
-                        <ApplicationTileCallToActionButton href={location} label="View" />
+                        <ApplicationTileCallToActionButton component={Link} linkProps={{ href: location}} label="View" />
                     }
                 />
 
                 <ApplicationTileContent>
                     <ApplicationTileContentRow>
+                    <Stack direction="row" spacing={1} sx={{ pt: '2%' }}>
+          {data_classification === 'Public' && <Chip label="Data: Public" color="success" />}
+          {data_classification === 'Restricted' && <Chip label="Data: Restricted" color="warning" />}
+          {data_classification === 'Highly Restricted' && <Chip label="Data: Highly Restricted" color="error" />}
+          {tier && <Chip label={`Tier ${tier}`} variant="outlined"/>}
+
+        </Stack>
                         <ApplicationTileTitle size="small" level="h3">
-                            Production
+                            Compliance
                         </ApplicationTileTitle>
 
                         <ProgressBar value={80} color="#2e7d32" />
 
-                        <ApplicationTileTitle size="small" level="h3">
+                        {/* <ApplicationTileTitle size="small" level="h3">
                             UAT
                         </ApplicationTileTitle>
 
@@ -53,7 +70,7 @@ export const AppTile = ({ name, app_id }) => {
                             Development
                         </ApplicationTileTitle>
 
-                        <ProgressBar value={65} color="#d32f2f" />
+                        <ProgressBar value={65} color="#d32f2f" /> */}
                     </ApplicationTileContentRow>
                 </ApplicationTileContent>
 
@@ -212,10 +229,12 @@ export default function Page({ apps }) {
             <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}
             ><Box sx={{ px: '5%' }}>
                     <Typography variant="h1" component="h1">Applications</Typography>
-                    <Container maxWidth="lg" sx={{ height: '100vh' }}>
-                        <Grid container spacing={4} alignItems="stretch">
+
+                    <Typography variant="body1">Welcome to the Cloud Applications section of our internal website, dedicated to providing comprehensive documentation for our IT teams. Here, you will find a wealth of information on our suite of cloud-based applications, designed to enhance efficiency, scalability, and collaboration across our organization. As an IT professional, this section serves as your go-to resource for understanding the ins and outs of our cloud applications, from deployment and configuration to ongoing management and troubleshooting. Explore our extensive documentation to gain valuable insights into the features, integrations, and best practices for leveraging the power of our cloud applications. Let's embark on a journey through the world of cloud technology and equip ourselves with the knowledge needed to drive innovation and success within our organization. </Typography>
+                    <Container maxWidth="lg" sx={{ py:'5%', height: '100vh' }}>
+                        <Grid container spacing={4} alignItems="stretch" justifyContent="center">
                                 {apps ? (
-                                    apps.map((app, i) => <AppTile key={i} name={app.name} app_id={app.app_id} />)
+                                    apps.map((app, i) => <AppTile key={i} name={app.name} app_id={app.app_id} tier={app.tier} data_classification={app.data_classification} />)
                                 ) : (
                                     null
                                 )}
