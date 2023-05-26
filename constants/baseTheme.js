@@ -2,29 +2,13 @@ import { createTheme } from '@mui/material/styles';
 import { deepmerge } from "@mui/utils";
 import { getContrastYIQ } from './../components/utils/colors';
 
-// import { createTheme } from '@material-ui/core/styles';
-
-// import { Roboto, Heebo } from '@next/font/google';
-
 import "@fontsource/heebo"; // Defaults to weight 400.
 import "@fontsource/heebo/200.css"; // Defaults to weight 400.
 
 import "@fontsource/roboto-mono";
 
-// export const heebo = Heebo({
-//   weight: ['300', '400', '500', '700'],
-//   display: 'swap',
-//   fallback: ['Helvetica', 'Arial', 'sans-serif'],
-// });
 
 let palette = createTheme({
-
-  // typography: {
-  //   fontFamily: "Heebo",
-  //   fontWeight: 200,
-  //   fontSize: '2rem',
-
-  // },
 
   palette: {
     primary: {
@@ -64,7 +48,7 @@ let palette = createTheme({
 });
 
 
-const theme = deepmerge(
+const baseTheme = deepmerge(
   palette, createTheme({
     overrides: {
       MuiTypography: {
@@ -208,5 +192,5 @@ const theme = deepmerge(
     },
   }));
 
-export { theme };
+export { baseTheme };
 

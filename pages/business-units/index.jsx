@@ -13,7 +13,7 @@ import {
 } from "../../components/airview-compliance-ui/features/application-tile";
 import { ProgressBar } from "../../components/airview-compliance-ui/features/progress-bar";
 import Topbar from '../../components/TopBar';
-import { theme } from '../../constants/baseTheme';
+import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
@@ -211,7 +211,7 @@ export default function Page({ businessUnits }) {
     const topBarHeight = 64;
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={baseTheme}>
             <CssBaseline />
             <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
             <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}

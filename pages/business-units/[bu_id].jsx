@@ -3,7 +3,7 @@ import React from "react";
 import { Typography, Box } from "@mui/material";
 
 import Topbar from '../../components/TopBar';
-import { theme } from '../../constants/baseTheme';
+import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
@@ -33,9 +33,8 @@ function Page({ bu }) {
     title: "Notice",
     message: "You do not have the required permissions to view the data for this Business Unit",
   };
-  console.log('Theme :', theme)
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
       <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}

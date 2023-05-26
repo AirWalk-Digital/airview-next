@@ -120,10 +120,10 @@ const Zoom = ({
       <Box
         ref={scaleElement}
         sx={{
-          width: '100%',
-          height: '100%',
-          boxSizing: 'border-box',
-          transformOrigin: '0 0'
+          width: "100%",
+          height: "100%",
+          boxSizing: "border-box",
+          transformOrigin: "0 0",
         }}
       >
         {children}

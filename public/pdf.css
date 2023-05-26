@@ -28,6 +28,14 @@
   margin-right: auto;
 }
 
+@media print {
+  .pagedjs_page {
+    box-shadow: none;
+    margin-top: 0;
+  }
+}
+
+
 
 /* .pagedjs_ .pagedjs_page:last-of-type {
     margin-bottom: 10mm;
