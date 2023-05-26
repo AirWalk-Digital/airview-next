@@ -3,6 +3,8 @@
       {
         "name": "Airview",
         "app_id": "APP1",
+        "tier" : 1,
+        "data_classification" : "Restricted",
         "description": "Documentation, Compliance and Control for Cloud.",
         "environments": {
           "development": "subscription-1234",
@@ -11,9 +13,11 @@
         }
       },
       {
-        "name": "CoolTool",
+        "name": "Microsoft Azure AD",
         "app_id": "APP2",
-        "description": "A powerful tool for creative professionals.",
+        "tier" : 1,
+        "data_classification" : "Highly Restricted",
+        "description": "Enterprise Authentication",
         "environments": {
           "development": "subscription-3456",
           "staging": "subscription-7890",
@@ -21,9 +25,11 @@
         }
       },
       {
-        "name": "InnovativeApp",
+        "name": "Observability",
         "app_id": "APP3",
-        "description": "A cutting-edge application with advanced features.",
+        "tier" : 3,
+        "data_classification" : "Restricted",
+        "description": "Observability of Events, Metrics, Logs and Alerts.",
         "environments": {
           "development": "subscription-6789",
           "staging": "subscription-0123",

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { VFile } from 'vfile'
 import { VFileMessage } from 'vfile-message'
 import * as provider from '@mdx-js/react'
@@ -29,12 +29,16 @@ import Link from '@mui/material/Link';
 import { Stack } from '@mui/material'
 import { Chip } from '@mui/material'
 import Topbar from '../../components/TopBar';
-
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { MDXProvider } from '@mdx-js/react';
 
 import { Menu, NavigationDrawer } from '../../components/airview-ui';
 import { getAllFiles, getFileContent } from '../../backend/filesystem';
+
 
 function removeSection(pad, tagName) {
   const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");
@@ -198,26 +202,59 @@ export default function Page({ content, controls, type, menu, frontmatter }) {
 function Tile({ name, url }) {
 
   return (
+    <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
 
-    <Link href={url} underline="none"><Box
-      sx={{
-        bgcolor: 'background.paper',
-        boxShadow: 0,
-        border: 2,
-        borderRadius: 2,
-        p: 2,
-        minWidth: 300,
-      }}
-    >
-      <Box sx={{ color: 'text.primary', fontSize: 34, fontWeight: 'medium' }}>
-        {name}
+      <Link href={url} underline="none"><Box
+        sx={{
+          bgcolor: 'background.paper',
+          boxShadow: 0,
+          borderColor: 'primary', //icon.color,
+          border: 1,
+          borderRadius: 2,
+          p: 2,
+          minWidth: 300,
+          minHeight: 300,
+        }}
+      >
+        <Box sx={{ color: 'text.primary', fontSize: 24, fontWeight: 'medium' }}>
+          {name}
+        </Box>
       </Box>
-    </Box></Link>
+      </Link>
+    </Grid>
+  )
+}
+function ServiceTile({ frontmatter, file }) {
+
+  return (
+    <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+      <Link href={file.replace("/index.mdx", "")} underline="none"><Box
+        sx={{
+          bgcolor: 'background.paper',
+          boxShadow: 0,
+          borderColor: 'primary', //icon.color,
+          border: 1,
+          borderRadius: 2,
+          p: 2,
+          // minWidth: 300,
+        }}
+      >
+        <Box sx={{ color: 'text.primary', fontSize: 18, fontWeight: '400' }}>
+          {frontmatter.title}
+        </Box>
+        <Box sx={{ color: 'text.primary', fontSize: 14, fontWeight: 'light' }}>
+          {frontmatter.description}
+        </Box>
+        <Stack direction="row" spacing={1} sx={{ pt: '2%' }}>
+          {frontmatter.status === 'approved' ? <Chip label="Approved for use" color="success" /> : <Chip label="Unapproved" color="error" />}
+        </Stack>
+      </Box>
+      </Link>
+    </Grid>
   )
 }
 
 function createMenu(menu) {
-  console.log('createMenu:menu: ', menu)
   if (!menu) {
     return [
       {
@@ -233,7 +270,6 @@ function createMenu(menu) {
   // add CSPs
   menu.forEach((x, i) => {
     if (x && x.frontmatter && x.frontmatter.title) {
-      console.log(x.file + ': ' + x.file.split('/').length)
       if (x && x.file.split('/').length === 4) {
         csp.push({ name: x.frontmatter.title, path: x.file.replace("/index.mdx", "") })
         paths.push(x.file.replace("/index.mdx", ""))
@@ -254,7 +290,6 @@ function createMenu(menu) {
     let links = [];
     services.forEach((y, i) => {
       if (x === y.base) {
-        console.log('match: ', y)
         links.push({ label: y.label, url: y.url })
       }
     });
@@ -269,6 +304,26 @@ function createMenu(menu) {
   });
 
   return { navItems, csp }
+
+}
+
+function createMenuLinks(menu) {
+  if (!menu) {
+    return [
+      {
+        groupTitle: "N/A",
+        links: []
+      }]
+  }
+  let links = [];
+  menu.forEach((x, i) => {
+    if (x && x.frontmatter && x.frontmatter.title) {
+
+      links.push({ label: x.frontmatter.title, url: x.file.replace("/index.mdx", "") })
+    }
+  });
+
+  return links
 
 }
 
@@ -310,6 +365,7 @@ function IndexView({
           initialCollapsed={false}
           loading={false}
           fetching={false}
+          linkComponent={Link}
         />
       </NavigationDrawer>
       <div
@@ -346,19 +402,41 @@ function CSPView({
   pageData = null // controls for the menu
 }) {
 
-  console.log('IndexView:menu: ', menu)
+  // console.log('IndexView:menu: ', menu)
 
-  console.log('IndexView:content: ', content)
+  // console.log('IndexView:content: ', content)
 
-  console.log('IndexView:frontmatter: ', frontmatter)
+  // console.log('IndexView:frontmatter: ', frontmatter)
 
-  const { navItems, csp } = createMenu(menu);
+  const approvedServices = menu.filter(obj => obj.frontmatter.status === 'approved');
+  const unapprovedServices = menu.filter(obj => obj.frontmatter.status !== 'approved');
 
-  console.log('IndexView:navItems: ', navItems)
-  let tiles = [];
-  if (frontmatter && frontmatter.title) { tiles = navItems.filter(item => item.groupTitle === frontmatter.title)[0].links; }
-  tiles = navItems.filter(item => item.groupTitle === "Microsoft Azure")[0].links;
-  console.log('IndexView:tiles: ', tiles)
+  console.log('CSPView:approvedServices: ', approvedServices)
+
+
+  const navItemsApproved = createMenuLinks(approvedServices);
+  const navItemsUnapproved = createMenuLinks(unapprovedServices);
+
+  console.log('CSPView:navItemsApproved: ', navItemsApproved)
+
+
+  const serviceMenu = [
+    {
+      groupTitle: "Approved Services",
+      links: navItemsApproved
+    },
+    {
+      groupTitle: "Available Services",
+      links: navItemsUnapproved
+    }
+  ]
+
+
+  // console.log('IndexView:navItems: ', navItems)
+  // let tiles = [];
+  // if (frontmatter && frontmatter.title) { tiles = navItems.filter(item => item.groupTitle === frontmatter.title)[0].links; }
+  // tiles = navItems.filter(item => item.groupTitle === "Microsoft Azure")[0].links;
+  // console.log('IndexView:tiles: ', tiles)
 
   const navDrawerWidth = 300;
   const topBarHeight = 64;
@@ -379,7 +457,7 @@ function CSPView({
       >
         <Menu
           menuTitle="Services"
-          menuItems={navItems}
+          menuItems={serviceMenu}
           initialCollapsed={false}
           loading={false}
           fetching={false}
@@ -393,88 +471,39 @@ function CSPView({
       ><Box sx={{ px: '5%' }}>
           {frontmatter && frontmatter.title && <Typography variant="h1" component="h1">{frontmatter.title} Services</Typography>}
 
-          <Container maxWidth="lg" sx={{ height: '100vh', mt: '10%' }}>
+          <Container maxWidth="lg" sx={{ mt: '3%' }}>
             <Grid container spacing={4} alignItems="stretch">
-              {tiles ? (
-                tiles.map((c, i) => <Tile key={i} name={c.label} url={c.url} />)
+              {approvedServices ? (
+                approvedServices.map((c, i) => <ServiceTile key={i} frontmatter={c.frontmatter} file={c.file} />)
               ) : (
                 null
               )}
             </Grid>
           </Container>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>Unapproved Services</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={4} alignItems="stretch">
+                {unapprovedServices ? (
+                  unapprovedServices.map((c, i) => <ServiceTile key={i} frontmatter={c.frontmatter} file={c.file} />)
+                ) : (
+                  null
+                )}
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
 
         </Box>
       </div>
     </ThemeProvider>
   )
 }
-
-
-
-function OldPage(content, controls, type) {
-  const [pageData, setPageData] = useState(null);
-  console.log('page:type', type)
-
-  useEffect(() => {
-    console.log('useEffect: ', pageData)
-    setPageData({ navItemsControls: controls, type: type });
-    console.log('page:controls', controls)
-    // console.log('page:type', type)
-  }, [controls, type]);
-
-
-  const router = useRouter();
-  let format = 'default';
-  const context = { source: 'local', router: router }
-  const defaultValue = `
-    # No Content Loaded
-    `;
-
-  const [state, setConfig] = useMdx({
-    gfm: true,
-    frontmatter: true,
-    math: false,
-    unwrapImages: true,
-    value: defaultValue
-  })
-
-
-  useEffect(() => {
-    setConfig({ ...state, value: String(content.content), pageParms: router.query })
-
-  }, []);
-
-
-  // setConfig({ ...state, value: String(mdxContent(content, router.query)) })
-
-  // Create a preview component that can handle errors with try-catch block; for catching invalid JS expressions errors that ErrorBoundary cannot catch.
-  const Preview = () => {
-    try {
-      return state.file.result()
-    } catch (error) {
-      return <FallbackComponent error={error} />
-    }
-  };
-
-  if (type === 'service') {
-    return (
-      <ServiceView
-        frontmatter={state && state.file && state.file.frontmatter ? state.file.frontmatter : {}}
-        context={context}
-        pageData={pageData ? pageData : {}} >
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          {/* <Preview components={mdComponents} /> */}
-          {state && state.file && state.file.result ? (<Preview components={mdComponents} />) : null}
-        </ErrorBoundary>
-      </ServiceView>
-    )
-  } else if (type === 'csp') {
-    return <h1>CSP</h1>
-  } else if (type === 'index') {
-    return <h1>index</h1>
-  }
-
-};
 
 function ServicesHeader(frontmatter) {
   if (!frontmatter) { return <></> }
@@ -488,60 +517,16 @@ function ServicesHeader(frontmatter) {
           {frontmatter.status === 'approved' ? <Chip label="Approved for use" color="success" /> : <Chip label="Unapproved" color="error" />}
           {(frontmatter?.resilience?.redundancy) ? <Chip label={`Redundancy: ${frontmatter.resilience.redundancy}`} color="success" /> : <Chip label="No Redundancy info" color="error" />}
           {frontmatter?.resilience?.find(item => item.name === "availability") ? (
-          <Chip
-            label={`Availability: ${frontmatter.resilience.find(item => item.name === "availability").availability}`}
-            color="success"
-          />
-        ) : (
-          <Chip label="No SLA Defined" color="error" />
-        )}
+            <Chip
+              label={`Availability: ${frontmatter.resilience.find(item => item.name === "availability").availability}`}
+              color="success"
+            />
+          ) : (
+            <Chip label="No SLA Defined" color="error" />
+          )}
 
         </Stack>
       </Container>
-      {/* <Container>
-
-        <Grid container spacing={4} alignItems="stretch" sx={{ pt: '2%' }}>
-          <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
-
-            <Box
-              sx={{
-                // bgcolor: 'background.paper',
-                borderColor: 'error', //icon.color,
-                boxShadow: 0,
-                border: 1,
-                borderRadius: 2,
-                p: 2,
-                // minWidth: 300,
-              }}
-            >
-              <Grid item xs={8}>
-                <Box lineHeight={1}>
-
-
-                  <Box sx={{ fontSize: 16, color: 'text.secondary' }}>title</Box>
-                  <Box sx={{ color: 'text.primary', fontSize: 34, fontWeight: 'medium' }}>
-                    count
-                  </Box>
-                  <Box
-                    sx={{
-                      color: iconcolor,
-                      display: 'inline',
-                      fontWeight: 'bold',
-                      mx: 0.5,
-                      fontSize: 14,
-                    }}
-                  >
-                    value 2
-                  </Box>
-                  <Box sx={{ color: iconcolor, display: 'inline', fontSize: 14 }}>
-                    test 3
-                  </Box>
-                </Box>
-              </Grid>
-            </Box>
-          </Grid>
-        </Grid>
-      </Container> */}
     </>
   )
 }
@@ -642,6 +627,7 @@ function ServiceView({
           initialCollapsed={false}
           loading={false}
           fetching={false}
+          linkComponent={Link}
         />
         <Menu
           menuTitle="Documentation"
@@ -649,6 +635,8 @@ function ServiceView({
           initialCollapsed={false}
           loading={false}
           fetching={false}
+          linkComponent={Link}
+
         />
       </NavigationDrawer>
       <div

@@ -1,0 +1,22 @@
+description = "Use System Assigned Managed Identity for CMK Key Vault access"
+discussion = "Storage Accounts must enforce the use of its System Assigned Managed Identity to authenticate to the Key Vault persisting it's CMK (What) within its Encryption settings (How) in order to adhere to the principle of least privilege and have as minimum access as possible to the Storage Accounts CMK protecting its data (Why)"
+id = "SA-IA_050"
+name = "IA_050"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "Landing Zone Admin Team"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = false
+Should_Define_In_MSCB_Rationale = "N/A"
+Technical_Configuration = true
+Non_Technical_Implementation_Rationale = "N/A"
+NIST80053_Control_Families = [ "Identification and Authentication",]
+
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "N/A"
+Custom_Policy_Possible = false
+Not_Deny_Rationale = "N/A"

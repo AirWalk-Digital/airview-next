@@ -1,0 +1,22 @@
+description = "Require control plane secure transfer for REST API operations"
+discussion = "Storage Accounts must enforce TLS for control plane network API calls (What) within its Configuration settings (How) in order to use techniques to establish an encrypted data channels over untrusted networks (Why)"
+id = "SA-SC_070"
+name = "SC_070"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "Landing Zone Admin Team"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = false
+Should_Define_In_MSCB_Rationale = "Yes, as a material control"
+Technical_Configuration = true
+Non_Technical_Implementation_Rationale = "N/A"
+NIST80053_Control_Families = [ "System and Communications Protection",]
+
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "Deny"
+Custom_Policy_Possible = true
+Not_Deny_Rationale = "N/A"

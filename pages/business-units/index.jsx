@@ -19,6 +19,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { getBusinessUnits } from '../../backend/business-units';
+import Link from "next/link";
 
 import { MiniStatisticsCard } from "../../components/dashboard";
 
@@ -33,7 +34,7 @@ export const AppTile = ({ name, app_id }) => {
                         <ApplicationTileTitle>{name}</ApplicationTileTitle>
                     }
                     rightContent={
-                        <ApplicationTileCallToActionButton linkprops={{'href': {location}}} label="View" />
+                        <ApplicationTileCallToActionButton component={Link} linkProps={{ href: location}} label="View" />
                     }
                 />
 
@@ -218,52 +219,52 @@ export default function Page({ businessUnits }) {
                     <Typography variant="h1" component="h1">Business Units</Typography>
 
 
-                    <Grid container spacing={4} alignItems="stretch" sx={{pt: '2%'}}>
-            <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
-              <MiniStatisticsCard
-                color="text.highlight"
-                title="Controls"
-                count="132"
-                percentage={{ value: '55%', text: "coverage" }}
-                icon={{ color: "error", icon: 'check' }}
-              />
-            </Grid>
-            <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
-              <MiniStatisticsCard
-                color="text.highlight"
-                title="Sev 1"
-                count="1"
-                percentage={{ value: '', text: "non-compliances" }}
-                icon={{ color: "warning", icon: 'triangle-exclamation' }}
-              />
-            </Grid>
-            <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
-              <MiniStatisticsCard
-                color="text.highlight"
-                title="Sev 2"
-                count="3"
-                percentage={{ value: '', text: "non-compliances" }}
-                icon={{ color: "error", icon: 'circle-exclamation' }}
-              />
-            </Grid>
-            <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
-              <MiniStatisticsCard
-                color="text.highlight"
-                title="Sev 3"
-                count="34"
-                percentage={{ value: '', text: "non-compliances" }}
-                icon={{ color: "error", icon: 'info' }}
-              />
-            </Grid>
-          </Grid>
+                    <Grid container spacing={4} alignItems="stretch" sx={{ pt: '2%' }} justifyContent="center">
+                        <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+                            <MiniStatisticsCard
+                                color="text.highlight"
+                                title="Controls"
+                                count="132"
+                                percentage={{ value: '55%', text: "coverage" }}
+                                icon={{ color: "error", icon: 'check' }}
+                            />
+                        </Grid>
+                        <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+                            <MiniStatisticsCard
+                                color="text.highlight"
+                                title="Sev 1"
+                                count="1"
+                                percentage={{ value: '', text: "non-compliances" }}
+                                icon={{ color: "warning", icon: 'triangle-exclamation' }}
+                            />
+                        </Grid>
+                        <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+                            <MiniStatisticsCard
+                                color="text.highlight"
+                                title="Sev 2"
+                                count="3"
+                                percentage={{ value: '', text: "non-compliances" }}
+                                icon={{ color: "error", icon: 'circle-exclamation' }}
+                            />
+                        </Grid>
+                        <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+                            <MiniStatisticsCard
+                                color="text.highlight"
+                                title="Sev 3"
+                                count="34"
+                                percentage={{ value: '', text: "non-compliances" }}
+                                icon={{ color: "error", icon: 'info' }}
+                            />
+                        </Grid>
+                    </Grid>
 
                     <Container maxWidth="lg" sx={{ height: '100vh' }}>
-                        <Grid container spacing={4} alignItems="stretch">
-                                {businessUnits ? (
-                                    businessUnits.map((bu, i) => <AppTile key={i} name={bu.name} app_id={bu.bu_id} />)
-                                ) : (
-                                    null
-                                )}
+                        <Grid container spacing={4} alignItems="stretch" justifyContent="center">
+                            {businessUnits ? (
+                                businessUnits.map((bu, i) => <AppTile key={i} name={bu.name} app_id={bu.bu_id} />)
+                            ) : (
+                                null
+                            )}
                         </Grid>
                     </Container>
                 </Box>

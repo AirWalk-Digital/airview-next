@@ -1,0 +1,22 @@
+description = "Require data plane secure data transfer"
+discussion = "Storage Accounts must enforce TLS for network connections to data (What) via its Deployment settings (How) in order to use techniques to establish encrypted data channels over untrusted networks (Why)"
+id = "SA-SC_080"
+name = "SC_080"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "Landing Zone Admin Team"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Should_Define_In_MSCB_Rationale = "N/A"
+Technical_Configuration = true
+Non_Technical_Implementation_Rationale = "N/A"
+NIST80053_Control_Families = [ "System and Communications Protection",]
+
+[tools.azurepolicy]
+Builtin_Policy = "/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9"
+Default_Effect = "Audit"
+Required_Effect = "Deny"
+Custom_Policy_Possible = "N/A"
+Not_Deny_Rationale = "N/A"

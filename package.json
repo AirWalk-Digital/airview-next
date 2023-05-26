@@ -65,6 +65,7 @@
     "@types/node": "18.11.18",
     "@types/react": "^17.0.16",
     "babel-plugin-styled-components": "^1.12.0",
+    "cheerio": "^1.0.0-rc.12",
     "semantic-release": "^21.0.2"
   },
   "engines": {

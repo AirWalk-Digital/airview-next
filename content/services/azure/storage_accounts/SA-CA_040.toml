@@ -1,0 +1,22 @@
+description = "Enable Defender for Cloud at a subscription level"
+discussion = "Defender for Cloud must be enabled on a Storage Accounts associated subscription (What) within Defender for Cloud subscription settings (How) in order to detect and alert on Storage Account usage anomalies and activity that matches malicious signatures (Why)"
+id = "SA-CA_040"
+name = "CA_040"
+
+[tags]
+CSP = "Azure"
+Service = "StorageAccounts"
+Control_Owner = "Landing Zone Admin Team"
+SCF_Sub_Objective = "000-000-00-00"
+Defined_In_MCSB = true
+Should_Define_In_MSCB_Rationale = "N/A"
+Technical_Configuration = true
+Non_Technical_Implementation_Rationale = "N/A"
+NIST80053_Control_Families = [ "Assessment, Authorization, and Monitoring",]
+
+[tools.azurepolicy]
+Builtin_Policy = "N/A"
+Default_Effect = "N/A"
+Required_Effect = "Deny"
+Custom_Policy_Possible = true
+Not_Deny_Rationale = "N/A"
