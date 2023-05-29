@@ -174,7 +174,7 @@ function createControlMenu(controls) {
 
 export default function Page({ content, controls, type, menu, frontmatter }) {
 
-  console.log('Page:menu: ', menu)
+  // console.log('Page:menu: ', menu)
   const router = useRouter();
   const context = { source: 'local', router: router }
 
@@ -336,11 +336,11 @@ function IndexView({
   pageData = null // controls for the menu
 }) {
 
-  console.log('IndexView:menu: ', menu)
+  // console.log('IndexView:menu: ', menu)
 
 
   const { navItems, csp } = createMenu(menu);
-  console.log('IndexView:navItems: ', navItems)
+  // console.log('IndexView:navItems: ', navItems)
 
   const navDrawerWidth = 300;
   const topBarHeight = 64;
@@ -680,7 +680,7 @@ export async function getStaticPaths() {
       }
     })
     pages.push('/services')
-    console.log('getStaticPaths: ', pages)
+    // console.log('getStaticPaths: ', pages)
     return {
       fallback: true,
       paths: pages
@@ -735,7 +735,7 @@ export async function getStaticProps(context) {
       controls = await Promise.all(controlPromises);
 
     } else if (type === 'index') {
-      console.log('getStaticProps:index')
+      // console.log('getStaticProps:index')
 
       // construct menu structure
       const controlLocation = 'services/';
@@ -771,16 +771,16 @@ export async function getStaticProps(context) {
     let pageContent = {};
     if (location) {
       const fileContent = await getFileContent(location);
-      console.log('getStaticProps:fileContent: ', fileContent)
+      // console.log('getStaticProps:fileContent: ', fileContent)
       pageContent = await matter(fileContent);
-      console.log('getStaticProps:pageContent: ', pageContent)
+      // console.log('getStaticProps:pageContent: ', pageContent)
 
       // pageContent = content;
       // frontmatter = data;
     };
 
-    console.log('getStaticProps:pageContent: ', pageContent)
-    console.log('getStaticProps:location: ', location)
+    // console.log('getStaticProps:pageContent: ', pageContent)
+    // console.log('getStaticProps:location: ', location)
 
 
     return {
