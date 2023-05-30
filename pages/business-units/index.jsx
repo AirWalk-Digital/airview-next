@@ -20,6 +20,7 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { getBusinessUnits } from '../../backend/business-units';
 import Link from "next/link";
+import dynamic from 'next/dynamic'
 
 import { MiniStatisticsCard } from "../../components/dashboard";
 
@@ -205,8 +206,11 @@ export const AppTile = ({ name, app_id }) => {
     );
 };
 
+export default dynamic(() => Promise.resolve(Page), {
+    ssr: false,
+  });
 
-export default function Page({ businessUnits }) {
+function Page({ businessUnits }) {
 
     const topBarHeight = 64;
 

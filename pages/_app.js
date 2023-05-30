@@ -6,7 +6,6 @@ import { CurrentSlideProvider } from "../context/CurrentSlideContext";
 import { ModeProvider } from "../context/ModeContext";
 import TransitionPage from "../layouts/TransitionPage";
 import Script from 'next/script';
-import ErrorBoundary from "../components/ErrorBoundary.jsx";
 
 import { MDXProvider } from '@mdx-js/react'
 import { mdComponents } from "../constants/mdxProvider";

@@ -8,7 +8,9 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
-      "@/context/*": ["context/*"]
+      "@/context/*": ["context/*"],
+      "@/constants/*": ["constants/*"]
+
     },
     "allowJs": true,
     "skipLibCheck": true,

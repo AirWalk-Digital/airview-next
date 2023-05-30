@@ -17,7 +17,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { useDebounceFn } from 'ahooks'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router';
-import { theme } from '../../constants/baseTheme';
+import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { mdComponents } from "../../constants/mdxProvider";
@@ -33,12 +33,13 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { MiniStatisticsCard } from "@/components/dashboard";
 
 import { MDXProvider } from '@mdx-js/react';
 
 import { Menu, NavigationDrawer } from '../../components/airview-ui';
 import { getAllFiles, getFileContent } from '../../backend/filesystem';
-
+import { ControlTable } from '@/components/ControlTable';
 
 function removeSection(pad, tagName) {
   const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");
@@ -348,7 +349,7 @@ function IndexView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
@@ -444,7 +445,7 @@ function CSPView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
@@ -512,21 +513,35 @@ function ServicesHeader(frontmatter) {
   const iconcolor = 'primary';
   return (
     <>
-      <Container sx={{ px: '0px', mb: '2%' }}>
-        <Stack direction="row" spacing={1}>
-          {frontmatter.status === 'approved' ? <Chip label="Approved for use" color="success" /> : <Chip label="Unapproved" color="error" />}
-          {(frontmatter?.resilience?.redundancy) ? <Chip label={`Redundancy: ${frontmatter.resilience.redundancy}`} color="success" /> : <Chip label="No Redundancy info" color="error" />}
-          {frontmatter?.resilience?.find(item => item.name === "availability") ? (
-            <Chip
-              label={`Availability: ${frontmatter.resilience.find(item => item.name === "availability").availability}`}
-              color="success"
-            />
-          ) : (
-            <Chip label="No SLA Defined" color="error" />
-          )}
+      {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
+        <Grid container spacing={2} alignItems="center" sx={{mb:'3%'}}>
+          <Grid item xs={8}>
+            <Typography variant="h1" component="h1">{frontmatter.title}</Typography>
+            <Stack direction="row" spacing={1}>
+              {frontmatter.status === 'approved' ? <Chip label="Approved for use" color="success" /> : <Chip label="Unapproved" color="error" />}
+              {(frontmatter?.resilience?.redundancy) ? <Chip label={`Redundancy: ${frontmatter.resilience.redundancy}`} color="success" /> : <Chip label="No Redundancy info" color="error" />}
+              {frontmatter?.resilience?.find(item => item.name === "availability") ? (
+                <Chip
+                  label={`Availability: ${frontmatter.resilience.find(item => item.name === "availability").availability}`}
+                  color="success"
+                />
+              ) : (
+                <Chip label="No SLA Defined" color="error" />
+              )}
 
-        </Stack>
-      </Container>
+            </Stack>
+          </Grid>
+          <Grid item xs={4}>
+          <MiniStatisticsCard
+                                color="text.highlight"
+                                title="Controls"
+                                count="13"
+                                percentage={{ value: '55%', text: "coverage" }}
+                                icon={{ color: "success", icon: 'check' }}
+                            />
+          </Grid>
+        </Grid>
+      {/* </Container> */}
     </>
   )
 }
@@ -610,7 +625,7 @@ function ServiceView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
@@ -645,7 +660,7 @@ function ServiceView({
           paddingLeft: menuOpen ? navDrawerWidth : 0,
         }}
       ><Box sx={{ px: '5%' }}>
-          {frontmatter.title && <Typography variant="h1" component="h1">{frontmatter.title}</Typography>}
+          {/* {frontmatter.title && <Typography variant="h1" component="h1">{frontmatter.title}</Typography>} */}
           {/* {pageData.type && <Typography variant="h1" component="h1">{pageData.type}</Typography>} */}
           {frontmatter && <ServicesHeader frontmatter={frontmatter} />}
           <MDXProvider components={mdComponents(context)}>
@@ -653,8 +668,9 @@ function ServiceView({
               {/* <Preview components={mdComponents} /> */}
               {state && state.file && state.file.result ? (<Preview components={mdComponents} />) : null}
             </ErrorBoundary>
-
           </MDXProvider>
+          <Typography variant="h1" component="h1">Controls</Typography>
+          <ControlTable controls={controls}/>
         </Box>
       </div>
     </ThemeProvider>

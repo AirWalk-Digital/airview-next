@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { ThemeProvider } from '@mui/material/styles';
-import { theme } from '../constants/baseTheme';
+import { baseTheme } from '@/constants/baseTheme';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { Menu as MenuIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
@@ -66,7 +66,7 @@ const SiteSection = ({ title, description, link }) => {
 }
 const LandingPage = () => {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar logo={false}/>
       {/* Hero Section */}
