@@ -8,13 +8,15 @@ quality_model = "Security" # ISO10k Domain
 
 [[frameworks]]
 name = "NIST80053"
-section = "Access Control"
-control = "AC1" # optional control
+[[frameworks.mapping]]
+domain = "Access Control"
+control_id = "AC1" # optional control
 
 [[frameworks]]
 name = "MSCSB"
-section = "Azure security baseline for Storage"
-control = "NS-2"
+[[frameworks.mapping]]
+domain = "Azure security baseline for Storage"
+control_id = "NS-2"
 
 [[methods]]
 system = "Azure Policy"
@@ -26,4 +28,10 @@ type = "Default" # Default | Custom
 ttl = 48 # hours before the control or resources are timed out and deemed to not exist
 is_blocking = true # should or could the control block deployment
 
+[[methods]]
+system = "Checkov"
+reference = "blah"
 
+[[methods]]
+system = "Sentinel"
+reference = "none"

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import WarningIcon from "@mui/icons-material/Warning";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Button } from "@mui/material";
 import {
     ApplicationTile,
     ApplicationTileHeader,
@@ -26,7 +26,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Menu, NavigationDrawer } from '@/components/airview-ui';
+import { Menu, ButtonMenu, NavigationDrawer } from '@/components/airview-ui';
 
 function FrameworkSection({ domain }) {
 
@@ -53,7 +53,7 @@ function FrameworkSection({ domain }) {
 }
 
 function FrameworkControl({ control }) {
-    console.log('control : ', control)
+    // console.log('control : ', control)
 
     return (
         <Box
@@ -78,34 +78,41 @@ function FrameworkControl({ control }) {
 };
 
 export default function Page({ framework }) {
+    console.log('framework : ', framework)
+    const [selectedControl, setControl] = useState('');
+    const controlsNav = framework.domains.map(domain => ({
+        groupTitle: domain.title,
+        links: domain.controls.map(control => ({
+            label: `${control.title} (${control.id})`,
+            url: control.id
+        }))
+    }));
 
-    const navItemsDocs = [
-        {
-            groupTitle: "Infrastructure-as-Code",
-            links: [
-                {
-                    label: "terraform-azure-storage",
-                    url: "",
-                },
-            ],
-        },
-        {
-            groupTitle: "Designs",
-            links: [
-                {
-                    label: "Static Content Website",
-                    url: "",
-                },
-                {
-                    label: "Data Lakes",
-                    url: "",
-                },
-            ],
-        },
-    ];
-    const navDrawerWidth = 300;
+    const navDrawerWidth = 400;
     const topBarHeight = 64;
     const [menuOpen, setMenuOpen] = useState(true);
+
+    function controlDomainNav(nav, setControl) {
+        const handleButtonClick = (url, label) => {
+            // Update the state or perform any other desired actions with the URL
+            console.log("Clicked Label:", label);
+            // Update the 'control' state in your page component
+            setControl({url, label});
+          };
+        return nav.map((domain, i) => {
+            return (
+                <ButtonMenu key={i}
+                    menuTitle={domain.groupTitle}
+                    menuItems={[{ links: domain.links }]}
+                    initialCollapsed={true}
+                    loading={false}
+                    fetching={false}
+                    handleButtonClick={handleButtonClick}
+                />
+            )
+        }
+        )
+    }
 
     const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState); return (
         <ThemeProvider theme={baseTheme}>
@@ -118,20 +125,13 @@ export default function Page({ framework }) {
                 open={menuOpen}
                 top={topBarHeight}
                 drawerWidth={navDrawerWidth}
-            >
-                <Menu
-                    menuTitle="Mapped Frameworks"
-                    menuItems={navItemsDocs}
-                    initialCollapsed={false}
-                    loading={false}
-                    fetching={false}
-                    linkComponent={Link}
+            > {controlDomainNav(controlsNav, setControl)}
 
-                />
             </NavigationDrawer>
             <div style={{ marginTop: topBarHeight, paddingLeft: menuOpen ? navDrawerWidth : 0, }}>
                 <Box sx={{ px: '5%' }}>
-                    <Typography variant="h1" component="h1">{framework.name} ({framework.version})</Typography>
+                    <Typography variant="h2">{ selectedControl ? selectedControl.label : "Framework Coverage"}</Typography>
+                    <Typography variant="p">{framework.name} ({framework.version})</Typography>
                     <Grid container spacing={4} alignItems="stretch" sx={{ pt: '2%' }} justifyContent="center">
                         {/* <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
                             <MiniStatisticsCard
@@ -172,13 +172,13 @@ export default function Page({ framework }) {
                     </Grid>
 
                     {/* <Container maxWidth="lg" sx={{ mx:'0px', px:'0px', height: '100vh' }}> */}
-                    <>
+                    {/* <>
                         {framework.domains ? (
                             framework.domains.map((fr, i) => <FrameworkSection key={i} domain={fr} />)
                         ) : (
                             null
                         )}
-                    </>
+                    </> */}
                     {/* </Container> */}
                 </Box>
             </div>

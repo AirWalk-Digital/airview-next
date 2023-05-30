@@ -34,7 +34,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { MiniStatisticsCard } from "@/components/dashboard";
-
+import ControlDataDisplay from '@/components/ControlData';
 import { MDXProvider } from '@mdx-js/react';
 
 import { Menu, NavigationDrawer } from '../../components/airview-ui';
@@ -173,7 +173,14 @@ function createControlMenu(controls) {
   }
 };
 
-export default function Page({ content, controls, type, menu, frontmatter }) {
+
+export default dynamic(() => Promise.resolve(Page), {
+  ssr: false,
+});
+
+
+
+function Page({ content, controls, type, menu, frontmatter }) {
 
   // console.log('Page:menu: ', menu)
   const router = useRouter();
@@ -186,16 +193,19 @@ export default function Page({ content, controls, type, menu, frontmatter }) {
         content={content ? content : {}}
         context={context}
         controls={controls} />
-      //   <ErrorBoundary FallbackComponent={ErrorFallback}>
-      //     {/* <Preview components={mdComponents} /> */}
-      //     {state && state.file && state.file.result ? (<Preview components={mdComponents} />) : null}
-      //   </ErrorBoundary>
-      // </ServiceView>
     )
   } else if (type === 'csp') {
     return <CSPView menu={menu} content={content} frontmatter={frontmatter} context={context} />
   } else if (type === 'index') {
     return <IndexView menu={menu} />
+  } else if (type === 'control') {
+    return (
+      <ControlView
+        frontmatter={frontmatter ? frontmatter : {}}
+        content={content ? content : {}}
+        context={context}
+        controls={controls} />
+    )
   }
 
 };
@@ -678,6 +688,107 @@ function ServiceView({
 }
 
 
+
+function ControlView({
+  menu, // the menu from staticProps
+  content, // will be a page or nested layout
+  frontmatter = null, // frontmatter collected from the page and the mdx file
+  context = null, // the context from the page to help with relative files and links
+  pageData = null, // controls for the menu
+  controls = null
+}) {
+
+  const { navItems, csp } = createMenu(menu);
+
+  
+
+  let navItemsControls = null;
+  console.log('ControlView:context', context);
+  if (controls) { navItemsControls = createControlMenu(controls) } else {
+    navItemsControls = [
+      {
+        groupTitle: "Controls",
+        links: []
+      }];
+  }
+  console.log('navItemsControls :', navItemsControls)
+  const navItemsDocs = [
+    {
+      groupTitle: "Infrastructure-as-Code",
+      links: [
+        {
+          label: "terraform-azure-storage",
+          url: "",
+        },
+      ],
+    },
+    {
+      groupTitle: "Designs",
+      links: [
+        {
+          label: "Static Content Website",
+          url: "",
+        },
+        {
+          label: "Data Lakes",
+          url: "",
+        },
+      ],
+    },
+  ];
+  const navDrawerWidth = 300;
+  const topBarHeight = 64;
+  const [menuOpen, setMenuOpen] = useState(true);
+
+  const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
+  return (
+    <ThemeProvider theme={baseTheme}>
+      <CssBaseline />
+      <Topbar onNavButtonClick={handleOnNavButtonClick}
+        navOpen={menuOpen}
+        menu={true}
+        topBarHeight={topBarHeight} />
+      <NavigationDrawer
+        open={menuOpen}
+        top={topBarHeight}
+        drawerWidth={navDrawerWidth}
+      >
+        <Menu
+          menuTitle="Controls"
+          menuItems={navItemsControls}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+          linkComponent={Link}
+        />
+        <Menu
+          menuTitle="Documentation"
+          menuItems={navItemsDocs}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+          linkComponent={Link}
+
+        />
+      </NavigationDrawer>
+      <div
+        style={{
+          marginTop: topBarHeight,
+          paddingLeft: menuOpen ? navDrawerWidth : 0,
+        }}
+      ><Box sx={{ px: '5%' }}>
+  
+          <Typography variant="h1" component="h1">Control Overview</Typography>
+          <ControlDataDisplay data={controls.filter(obj => obj.file === context.router.asPath)} />
+        </Box>
+      </div>
+    </ThemeProvider>
+  )
+}
+
+
+
+
 export async function getStaticPaths() {
   let pages = [];
   let location = 'services';
@@ -733,8 +844,9 @@ export async function getStaticProps(context) {
     type = 'index';
   }
   try {
-    if (type === 'service') {
-      const controlLocation = 'services/' + context.params.parms.join('/');
+    if (type === 'service' || type === 'control') {
+      const controlLocation = 'services/' + context.params.parms.slice(0, 2).join('/');
+
       const files = await getAllFiles(controlLocation, '/**/*.toml');
 
       const controlPromises = files.map(async (file) => {
