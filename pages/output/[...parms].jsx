@@ -18,6 +18,10 @@ import { useDebounceFn } from 'ahooks'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router';
 import { theme } from '../../constants/theme';
+import { pdfTheme } from '../../constants/pdfTheme';
+import { baseTheme } from '../../constants/baseTheme';
+
+
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { mdComponents } from "../../constants/mdxProvider";
@@ -195,7 +199,7 @@ function Page() {
     };
 
     // console.log('effectloading file', router)
-    if (source === 'file') { 
+    if (source === 'file') {
       fetchFileContent()
       setTimeout(() => setRefreshToken(Math.random()), 50000);
     } else if (!source) {
@@ -240,7 +244,7 @@ function Page() {
 
 
   if (format === 'doc') {
-    if (state.file && state.file.result) { 
+    if (state.file && state.file.result) {
       // console.log('/output:PrintView:file: ', state.file.result) 
     }
     return (
@@ -250,7 +254,7 @@ function Page() {
     )
   } else {
 
-    if (state.file && state.file.result) { 
+    if (state.file && state.file.result) {
       // console.log('/output:DefaultView:file: ', state.file.result) 
     }
     return (
@@ -261,14 +265,8 @@ function Page() {
   };
 };
 
-
-
-
-
 // PDF Print View component
 function DocumentView({ children }) {
-  // console.log('/output:PrintView:children: ', children);
-
   const mdxContainer = useRef(null);
   const previewContainer = useRef(null);
   let contentMdx = ``;
@@ -278,10 +276,7 @@ function DocumentView({ children }) {
       const paged = new Previewer();
       contentMdx = `${mdxContainer.current?.innerHTML}`;
       paged
-        .preview(contentMdx,
-          ['/pdf.css'],
-          previewContainer.current
-        )
+        .preview(contentMdx, ['/pdf.css'], previewContainer.current)
         .then((flow) => {
           // console.log('====flow====')
           // console.log(flow)
@@ -292,22 +287,19 @@ function DocumentView({ children }) {
           .forEach((e) => e.parentNode?.removeChild(e));
       };
     }
-
-  }, [children])
+  }, []);
 
   return (
     <>
-      <div ref={mdxContainer} style={{ display: 'none' }}>
-
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {children && children}
-        </ThemeProvider>
+      <div ref={mdxContainer} style={{ display: "none" }}>
+      <ThemeProvider theme={pdfTheme}>
+            <CssBaseline />
+            {children && children}
+          </ThemeProvider>
       </div>
       <div className="pagedjs_page" ref={previewContainer}></div>
     </>
-
-  )
+  );
 };
 
 // Normal View component

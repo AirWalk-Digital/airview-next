@@ -13,13 +13,14 @@ import {
 } from "../../components/airview-compliance-ui/features/application-tile";
 import { ProgressBar } from "../../components/airview-compliance-ui/features/progress-bar";
 import Topbar from '../../components/TopBar';
-import { theme } from '../../constants/baseTheme';
+import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { getBusinessUnits } from '../../backend/business-units';
 import Link from "next/link";
+import dynamic from 'next/dynamic'
 
 import { MiniStatisticsCard } from "../../components/dashboard";
 
@@ -205,13 +206,16 @@ export const AppTile = ({ name, app_id }) => {
     );
 };
 
+export default dynamic(() => Promise.resolve(Page), {
+    ssr: false,
+  });
 
-export default function Page({ businessUnits }) {
+function Page({ businessUnits }) {
 
     const topBarHeight = 64;
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={baseTheme}>
             <CssBaseline />
             <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
             <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}

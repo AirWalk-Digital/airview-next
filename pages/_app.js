@@ -6,12 +6,8 @@ import { CurrentSlideProvider } from "../context/CurrentSlideContext";
 import { ModeProvider } from "../context/ModeContext";
 import TransitionPage from "../layouts/TransitionPage";
 import Script from 'next/script';
-import ErrorBoundary from "../components/ErrorBoundary.jsx";
 
 import { MDXProvider } from '@mdx-js/react'
-import { theme } from '../constants/baseTheme';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { mdComponents } from "../constants/mdxProvider";
 
 

@@ -77,6 +77,11 @@ function Topbar({
               Cloud Services
               </MenuItem>
             </Link>
+            <Link href="/frameworks" sx={{ textDecoration: 'none' }}>
+              <MenuItem>
+              Frameworks
+              </MenuItem>
+            </Link>
           </Menu>
           <Menu
             id="menu-applications"

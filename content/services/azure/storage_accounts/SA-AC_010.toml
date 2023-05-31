@@ -4,20 +4,34 @@ id = "SA-010"
 csp = "Azure"
 service = "Microsoft.Storage/StorageAccounts"
 control_owner = "Cloud"
-quality_model = "Security" #
+quality_model = "Security" # ISO10k Domain
 
-[framework."NIST80053"."Access Control"]
-control_id = "AC1"
-[framework."MSCSB"."Azure security baseline for Storage"]
+[[frameworks]]
+name = "NIST80053"
+[[frameworks.mapping]]
+domain = "Access Control"
+control_id = "AC1" # optional control
+
+[[frameworks]]
+name = "MSCSB"
+[[frameworks.mapping]]
+domain = "Azure security baseline for Storage"
 control_id = "NS-2"
 
-[tools.azurepolicy]
+[[methods]]
 system = "Azure Policy"
 reference = "/providers/Microsoft.Authorization/policyDefinitions/b2982f36-99f2-4db5-8eff-283140c09693"
 default_action = "Audit"
+custom = false # is the control an OOTB control or needs to be custom created.
 action = "Deny" # Deny | Audit | None |
 type = "Default" # Default | Custom
 ttl = 48 # hours before the control or resources are timed out and deemed to not exist
 is_blocking = true # should or could the control block deployment
 
+[[methods]]
+system = "Checkov"
+reference = "blah"
 
+[[methods]]
+system = "Sentinel"
+reference = "none"

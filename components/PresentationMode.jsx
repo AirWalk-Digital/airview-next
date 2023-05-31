@@ -24,13 +24,15 @@ const SlideWindow = styled('div')({
   }
 })
 
-const Sidebar = styled('div')({
-  width: '35%',
-
-  '& > div': {
-    padding: '1rem',
+const Sidebar = styled("div")({
+  width: "35%",
+  "@media print": {
+    display: "none",
   },
-})
+  "& > div": {
+    padding: "1rem",
+  },
+});
 
 const SpeakerNotesWindow = styled('div')({
   width: '100%',
@@ -65,7 +67,7 @@ export default function PresentationMode({
           </div>
         </Sidebar>
       </PresentationFrame>
-    )
+    );
   }
   return children
 }

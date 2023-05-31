@@ -3,7 +3,7 @@ import React from "react";
 import { Typography, Box } from "@mui/material";
 
 import Topbar from '../../components/TopBar';
-import { theme } from '../../constants/baseTheme';
+import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
@@ -45,7 +45,7 @@ function Page({ app }) {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
       <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}

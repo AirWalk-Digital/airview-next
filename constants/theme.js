@@ -2,20 +2,11 @@ import { createTheme } from '@mui/material/styles';
 import { deepmerge } from "@mui/utils";
 import { getContrastYIQ } from './../components/utils/colors';
 
-// import { createTheme } from '@material-ui/core/styles';
-
-// import { Roboto, Heebo } from '@next/font/google';
-
 import "@fontsource/heebo"; // Defaults to weight 400.
 import "@fontsource/heebo/200.css"; // Defaults to weight 400.
 
 import "@fontsource/roboto-mono";
 
-// export const heebo = Heebo({
-//   weight: ['300', '400', '500', '700'],
-//   display: 'swap',
-//   fallback: ['Helvetica', 'Arial', 'sans-serif'],
-// });
 
 let palette = createTheme({
 
@@ -212,23 +203,3 @@ const theme = deepmerge(
   }));
 
 export { theme };
-
-
-// fontSizes: {
-//   xxxsmall: '0.8rem',
-//   xxsmall: '1.2rem',
-//   xsmall: '1.5rem', // 24px
-//   small: '1.8rem', // 28.8px
-//   base: '1.2rem', // 36px
-//   medium: '2rem',
-//   large: '3rem', // 48px
-//   xlarge: '4.5rem', // 72px
-//   xxlarge: '6rem', // 96px
-//   xxxlarge: '10rem' // 160px
-// },
-
-// fontWeights: {
-//   default: '200',
-//   light: '200',
-//   strong: '400'
-// },

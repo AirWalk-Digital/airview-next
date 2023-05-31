@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { ThemeProvider } from '@mui/material/styles';
-import { theme } from '../../constants/theme';
+import { baseTheme } from '../../constants/baseTheme';
 
 function Copyright() {
   return (
@@ -93,7 +93,7 @@ export default function Home() {
   }, [refreshToken]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <AppBar color="primary" position="relative">
         <Toolbar>

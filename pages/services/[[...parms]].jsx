@@ -17,7 +17,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { useDebounceFn } from 'ahooks'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router';
-import { theme } from '../../constants/baseTheme';
+import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { mdComponents } from "../../constants/mdxProvider";
@@ -33,12 +33,13 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import { MiniStatisticsCard } from "@/components/dashboard";
+import ControlDataDisplay from '@/components/ControlData';
 import { MDXProvider } from '@mdx-js/react';
 
 import { Menu, NavigationDrawer } from '../../components/airview-ui';
 import { getAllFiles, getFileContent } from '../../backend/filesystem';
-
+import { ControlTable } from '@/components/ControlTable';
 
 function removeSection(pad, tagName) {
   const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");
@@ -172,9 +173,16 @@ function createControlMenu(controls) {
   }
 };
 
-export default function Page({ content, controls, type, menu, frontmatter }) {
 
-  console.log('Page:menu: ', menu)
+export default dynamic(() => Promise.resolve(Page), {
+  ssr: false,
+});
+
+
+
+function Page({ content, controls, type, menu, frontmatter }) {
+
+  // console.log('Page:menu: ', menu)
   const router = useRouter();
   const context = { source: 'local', router: router }
 
@@ -185,16 +193,19 @@ export default function Page({ content, controls, type, menu, frontmatter }) {
         content={content ? content : {}}
         context={context}
         controls={controls} />
-      //   <ErrorBoundary FallbackComponent={ErrorFallback}>
-      //     {/* <Preview components={mdComponents} /> */}
-      //     {state && state.file && state.file.result ? (<Preview components={mdComponents} />) : null}
-      //   </ErrorBoundary>
-      // </ServiceView>
     )
   } else if (type === 'csp') {
     return <CSPView menu={menu} content={content} frontmatter={frontmatter} context={context} />
   } else if (type === 'index') {
     return <IndexView menu={menu} />
+  } else if (type === 'control') {
+    return (
+      <ControlView
+        frontmatter={frontmatter ? frontmatter : {}}
+        content={content ? content : {}}
+        context={context}
+        controls={controls} />
+    )
   }
 
 };
@@ -336,11 +347,11 @@ function IndexView({
   pageData = null // controls for the menu
 }) {
 
-  console.log('IndexView:menu: ', menu)
+  // console.log('IndexView:menu: ', menu)
 
 
   const { navItems, csp } = createMenu(menu);
-  console.log('IndexView:navItems: ', navItems)
+  // console.log('IndexView:navItems: ', navItems)
 
   const navDrawerWidth = 300;
   const topBarHeight = 64;
@@ -348,7 +359,7 @@ function IndexView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
@@ -444,7 +455,7 @@ function CSPView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
@@ -512,21 +523,35 @@ function ServicesHeader(frontmatter) {
   const iconcolor = 'primary';
   return (
     <>
-      <Container sx={{ px: '0px', mb: '2%' }}>
-        <Stack direction="row" spacing={1}>
-          {frontmatter.status === 'approved' ? <Chip label="Approved for use" color="success" /> : <Chip label="Unapproved" color="error" />}
-          {(frontmatter?.resilience?.redundancy) ? <Chip label={`Redundancy: ${frontmatter.resilience.redundancy}`} color="success" /> : <Chip label="No Redundancy info" color="error" />}
-          {frontmatter?.resilience?.find(item => item.name === "availability") ? (
-            <Chip
-              label={`Availability: ${frontmatter.resilience.find(item => item.name === "availability").availability}`}
-              color="success"
-            />
-          ) : (
-            <Chip label="No SLA Defined" color="error" />
-          )}
+      {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
+        <Grid container spacing={2} alignItems="center" sx={{mb:'3%'}}>
+          <Grid item xs={8}>
+            <Typography variant="h1" component="h1">{frontmatter.title}</Typography>
+            <Stack direction="row" spacing={1}>
+              {frontmatter.status === 'approved' ? <Chip label="Approved for use" color="success" /> : <Chip label="Unapproved" color="error" />}
+              {(frontmatter?.resilience?.redundancy) ? <Chip label={`Redundancy: ${frontmatter.resilience.redundancy}`} color="success" /> : <Chip label="No Redundancy info" color="error" />}
+              {frontmatter?.resilience?.find(item => item.name === "availability") ? (
+                <Chip
+                  label={`Availability: ${frontmatter.resilience.find(item => item.name === "availability").availability}`}
+                  color="success"
+                />
+              ) : (
+                <Chip label="No SLA Defined" color="error" />
+              )}
 
-        </Stack>
-      </Container>
+            </Stack>
+          </Grid>
+          <Grid item xs={4}>
+          <MiniStatisticsCard
+                                color="text.highlight"
+                                title="Controls"
+                                count="13"
+                                percentage={{ value: '55%', text: "coverage" }}
+                                icon={{ color: "success", icon: 'check' }}
+                            />
+          </Grid>
+        </Grid>
+      {/* </Container> */}
     </>
   )
 }
@@ -610,7 +635,7 @@ function ServiceView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baseTheme}>
       <CssBaseline />
       <Topbar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
@@ -645,7 +670,7 @@ function ServiceView({
           paddingLeft: menuOpen ? navDrawerWidth : 0,
         }}
       ><Box sx={{ px: '5%' }}>
-          {frontmatter.title && <Typography variant="h1" component="h1">{frontmatter.title}</Typography>}
+          {/* {frontmatter.title && <Typography variant="h1" component="h1">{frontmatter.title}</Typography>} */}
           {/* {pageData.type && <Typography variant="h1" component="h1">{pageData.type}</Typography>} */}
           {frontmatter && <ServicesHeader frontmatter={frontmatter} />}
           <MDXProvider components={mdComponents(context)}>
@@ -653,13 +678,115 @@ function ServiceView({
               {/* <Preview components={mdComponents} /> */}
               {state && state.file && state.file.result ? (<Preview components={mdComponents} />) : null}
             </ErrorBoundary>
-
           </MDXProvider>
+          <Typography variant="h1" component="h1">Controls</Typography>
+          <ControlTable controls={controls}/>
         </Box>
       </div>
     </ThemeProvider>
   )
 }
+
+
+
+function ControlView({
+  menu, // the menu from staticProps
+  content, // will be a page or nested layout
+  frontmatter = null, // frontmatter collected from the page and the mdx file
+  context = null, // the context from the page to help with relative files and links
+  pageData = null, // controls for the menu
+  controls = null
+}) {
+
+  const { navItems, csp } = createMenu(menu);
+
+  
+
+  let navItemsControls = null;
+  console.log('ControlView:context', context);
+  if (controls) { navItemsControls = createControlMenu(controls) } else {
+    navItemsControls = [
+      {
+        groupTitle: "Controls",
+        links: []
+      }];
+  }
+  console.log('navItemsControls :', navItemsControls)
+  const navItemsDocs = [
+    {
+      groupTitle: "Infrastructure-as-Code",
+      links: [
+        {
+          label: "terraform-azure-storage",
+          url: "",
+        },
+      ],
+    },
+    {
+      groupTitle: "Designs",
+      links: [
+        {
+          label: "Static Content Website",
+          url: "",
+        },
+        {
+          label: "Data Lakes",
+          url: "",
+        },
+      ],
+    },
+  ];
+  const navDrawerWidth = 300;
+  const topBarHeight = 64;
+  const [menuOpen, setMenuOpen] = useState(true);
+
+  const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
+  return (
+    <ThemeProvider theme={baseTheme}>
+      <CssBaseline />
+      <Topbar onNavButtonClick={handleOnNavButtonClick}
+        navOpen={menuOpen}
+        menu={true}
+        topBarHeight={topBarHeight} />
+      <NavigationDrawer
+        open={menuOpen}
+        top={topBarHeight}
+        drawerWidth={navDrawerWidth}
+      >
+        <Menu
+          menuTitle="Controls"
+          menuItems={navItemsControls}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+          linkComponent={Link}
+        />
+        <Menu
+          menuTitle="Documentation"
+          menuItems={navItemsDocs}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+          linkComponent={Link}
+
+        />
+      </NavigationDrawer>
+      <div
+        style={{
+          marginTop: topBarHeight,
+          paddingLeft: menuOpen ? navDrawerWidth : 0,
+        }}
+      ><Box sx={{ px: '5%' }}>
+  
+          <Typography variant="h1" component="h1">Control Overview</Typography>
+          <ControlDataDisplay data={controls.filter(obj => obj.file === context.router.asPath)} />
+        </Box>
+      </div>
+    </ThemeProvider>
+  )
+}
+
+
 
 
 export async function getStaticPaths() {
@@ -680,7 +807,7 @@ export async function getStaticPaths() {
       }
     })
     pages.push('/services')
-    console.log('getStaticPaths: ', pages)
+    // console.log('getStaticPaths: ', pages)
     return {
       fallback: true,
       paths: pages
@@ -717,8 +844,9 @@ export async function getStaticProps(context) {
     type = 'index';
   }
   try {
-    if (type === 'service') {
-      const controlLocation = 'services/' + context.params.parms.join('/');
+    if (type === 'service' || type === 'control') {
+      const controlLocation = 'services/' + context.params.parms.slice(0, 2).join('/');
+
       const files = await getAllFiles(controlLocation, '/**/*.toml');
 
       const controlPromises = files.map(async (file) => {
@@ -735,7 +863,7 @@ export async function getStaticProps(context) {
       controls = await Promise.all(controlPromises);
 
     } else if (type === 'index') {
-      console.log('getStaticProps:index')
+      // console.log('getStaticProps:index')
 
       // construct menu structure
       const controlLocation = 'services/';
@@ -771,16 +899,16 @@ export async function getStaticProps(context) {
     let pageContent = {};
     if (location) {
       const fileContent = await getFileContent(location);
-      console.log('getStaticProps:fileContent: ', fileContent)
+      // console.log('getStaticProps:fileContent: ', fileContent)
       pageContent = await matter(fileContent);
-      console.log('getStaticProps:pageContent: ', pageContent)
+      // console.log('getStaticProps:pageContent: ', pageContent)
 
       // pageContent = content;
       // frontmatter = data;
     };
 
-    console.log('getStaticProps:pageContent: ', pageContent)
-    console.log('getStaticProps:location: ', location)
+    // console.log('getStaticProps:pageContent: ', pageContent)
+    // console.log('getStaticProps:location: ', location)
 
 
     return {
