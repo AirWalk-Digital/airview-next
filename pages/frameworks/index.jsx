@@ -26,7 +26,9 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Menu, ButtonMenu, NavigationDrawer } from '@/components/airview-ui';
+import { ButtonMenu, NavigationDrawer } from '@/components/airview-ui';
+import { FrameworkCoverageTable } from '@/components/ControlFrameworkTables'
+
 
 function FrameworkSection({ domain }) {
 
@@ -114,7 +116,17 @@ export default function Page({ framework }) {
         )
     }
 
-    const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState); return (
+
+
+    const rows = [
+        { id: 1, appName: 'Airview', businessUnit: 'Cloud CoE', exemptions: 35, controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
+        { id: 2, appName: 'Microsoft Teams', businessUnit: 'Central IT', exemptions: 42,controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
+        { id: 3, appName: 'Public Website', businessUnit: 'Marketing', exemptions: 45, controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
+      ];
+
+    const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState); 
+    
+    return (
         <ThemeProvider theme={baseTheme}>
             <CssBaseline />
             <Topbar onNavButtonClick={handleOnNavButtonClick}
@@ -180,6 +192,7 @@ export default function Page({ framework }) {
                         )}
                     </> */}
                     {/* </Container> */}
+                    <FrameworkCoverageTable rows={rows} sx={{ mt: '5%'}} />
                 </Box>
             </div>
         </ThemeProvider>

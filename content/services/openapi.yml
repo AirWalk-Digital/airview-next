@@ -1,0 +1,102 @@
+openapi: 3.0.0
+info:
+  title: Control API
+  version: 1.0.0
+paths:
+  /control:
+    get:
+      summary: Get Control by ID
+      description: Retrieve control information by ID
+      operationId: getControlById
+      parameters:
+        - name: controlId
+          in: query
+          description: ID of the control
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Control"
+components:
+  schemas:
+    Control:
+      type: object
+      properties:
+        id:
+          type: string
+          example: SA-010
+        name:
+          type: string
+          example: Disable Public Network Access
+        description:
+          type: string
+          example: Storage Accounts must enforce a network guardrail if persisting data with internal and above data classification (What) within its Network settings (How) in order to prevent data exposure to the internet (Why)
+        csp:
+          type: string
+          example: Azure
+        service:
+          type: string
+          example: Microsoft.Storage/StorageAccounts
+        control_owner:
+          type: string
+          example: Cloud
+        quality_model:
+          type: string
+          example: Security
+        severity:
+          type: string
+          example: High
+        frameworks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Framework"
+        methods:
+          type: array
+          items:
+            $ref: "#/components/schemas/Method"
+    Framework:
+      type: object
+      properties:
+        name:
+          type: string
+        mappings:
+          type: array
+          items:
+            $ref: "#/components/schemas/FrameworkMapping"
+    FrameworkMapping:
+      type: object
+      properties:
+        domain:
+          type: string
+        control_id:
+          type: string
+    Method:
+      type: object
+      properties:
+        system:
+          type: string
+        reference:
+          type: string
+        default_action:
+          type: string
+          enum: [Audit, Deny, None]
+        custom:
+          type: boolean
+        action:
+          type: string
+          enum: [Audit, Deny, None]
+        type:
+          type: string
+          enum: [Default, Custom]
+        ttl:
+          type: integer
+        is_blocking:
+          type: boolean
+        exception_action:
+          type: string
+          enum: [Audit, Incident, Task, Vulnerability]

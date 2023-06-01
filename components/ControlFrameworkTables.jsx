@@ -8,44 +8,213 @@ import Paper from '@mui/material/Paper';
 import { Stack } from '@mui/material'
 import { Chip } from '@mui/material'
 import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+
+// import { DataGrid } from '@mui/x-data-grid';
+
+// import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+
+
+
+
+import { useState } from 'react';
+import { DataGrid, GridCellExpand } from '@mui/x-data-grid';
+import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { Info } from '@mui/icons-material';
+
+export const FrameworkCoverageTable = ({ rows, sx }) => {
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const handleRowClick = (row) => {
+    setSelectedRow(row);
+    setOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpen(false);
+  };
+
+  const renderInfoButton = (params) => {
+    return (
+      <IconButton
+        aria-label="Show Controls"
+        onClick={() => handleRowClick(params.row)}
+        size="small"
+      >
+        <Info />
+      </IconButton>
+    );
+  };
+
+  const columns = [
+    { field: 'appName', headerName: 'Application Name', flex: 1 },
+    { field: 'businessUnit', headerName: 'Business Unit', flex: 1 },
+    {
+      field: 'exemptions',
+      headerName: 'Exemptions',
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          {params.value}
+          {renderInfoButton(params)}
+        </>
+      ),
+    },
+  ];
+
+  const rowsWithId = rows.map((row) => ({ ...row, id: row.id.toString() }));
+
+  return (
+    <>
+        <DataGrid
+          rows={rowsWithId}
+          columns={columns}
+          sx={{...sx}}
+        />
+      <Dialog open={open} onClose={handleDialogClose}>
+        {selectedRow && (
+          <>
+            <DialogTitle>{selectedRow.appName} Controls</DialogTitle>
+            <DialogContent>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Control Name</th>
+                    <th>Issues</th>
+                    <th>Criticality</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedRow.controls.map((control) => (
+                    <tr key={control.name}>
+                      <td>{control.name}</td>
+                      <td>{control.issues}</td>
+                      <td>{control.criticality}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </DialogContent>
+          </>
+        )}
+      </Dialog>
+    </>
+  );
+};
+
+
+
+// export const FrameworkCoverageTable = ({ rows, sx }) => {
+//   const [expandedRows, setExpandedRows] = useState([]);
+
+//   const handleRowExpand = (params) => {
+//     const expandedRowIds = new Set(expandedRows);
+//     if (expandedRowIds.has(params.id)) {
+//       expandedRowIds.delete(params.id);
+//     } else {
+//       expandedRowIds.add(params.id);
+//     }
+//     setExpandedRows(Array.from(expandedRowIds));
+//   };
+
+//   const renderCollapsibleElement = (row) => {
+//     return (
+//       <div>
+//         <Table>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Control Name</TableCell>
+//               <TableCell>Issues</TableCell>
+//               <TableCell>Criticality</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {row.controls.map((control) => (
+//               <TableRow key={control.name}>
+//                 <TableCell>{control.name}</TableCell>
+//                 <TableCell>{control.issues}</TableCell>
+//                 <TableCell>{control.criticality}</TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </div>
+//     );
+//   };
+
+//   const columns = [
+//     { field: 'appName', headerName: 'Application Name', flex: 1 },
+//     { field: 'businessUnit', headerName: 'Business Unit', flex: 1 },
+//     { field: 'exemptions', headerName: 'Exemptions', flex: 1 },
+//   ];
+
+//   const rowsWithCollapsible = rows.map((row) => ({
+//     ...row,
+//     isExpanded: expandedRows.includes(row.id),
+//   }));
+
+//   return (
+//       <DataGrid
+//         rows={rowsWithCollapsible}
+//         columns={columns}
+//         isRowExpandable={(params) => true}
+//         renderRowDetail={(params) => renderCollapsibleElement(params.row)}
+//         onRowExpand={handleRowExpand}
+//         sx={{...sx}}
+
+//       />
+//   );
+// };
+
+// export default CollapsibleTable;
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
+  { field: 'id', headerName: 'APP ID', width: 70 },
+  { field: 'appName', headerName: 'Application', width: 130 },
+  { field: 'businessUnit', headerName: 'Business Unit', width: 130 },
   {
-    field: 'age',
-    headerName: 'Age',
+    field: 'exemptions',
+    headerName: 'Exemptions',
     type: 'number',
     width: 90,
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
+  }
 ];
+
+
+// const columns = [
+//   { field: 'id', headerName: 'APP ID', width: 70 },
+//   { field: 'appName', headerName: 'Application', width: 130 },
+//   { field: 'businessUnit', headerName: 'Business Unit', width: 130 },
+//   {
+//     field: 'age',
+//     headerName: 'Age',
+//     type: 'number',
+//     width: 90,
+//   },
+//   {
+//     field: 'fullName',
+//     headerName: 'Full name',
+//     description: 'This column has a value getter and is not sortable.',
+//     sortable: false,
+//     width: 160,
+//     valueGetter: (params) =>
+//       `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+//   },
+// ];
+
 
 const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+  { id: 1, appName: 'Airview', businessUnit: 'Cloud CoE', exemptions: 35, controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
+  { id: 2, appName: 'Microsoft Teams', businessUnit: 'Central IT', exemptions: 42,controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
+  { id: 3, appName: 'Public Website', businessUnit: 'Marketing', exemptions: 45, controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
 ];
 
-export function FrameworkCoverageTable() {
+
+controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]
+
+export function FrameworkCoverageTableOld({sx}) {
   return (
-    <div style={{ height: 400, width: '100%' }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -56,8 +225,8 @@ export function FrameworkCoverageTable() {
         }}
         pageSizeOptions={[5, 10]}
         checkboxSelection
+        sx={{...sx}}
       />
-    </div>
   );
 }
 
