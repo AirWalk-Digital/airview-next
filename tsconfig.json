@@ -9,7 +9,8 @@
     "paths": {
       "@/components/*": ["components/*"],
       "@/context/*": ["context/*"],
-      "@/constants/*": ["constants/*"]
+      "@/constants/*": ["constants/*"],
+      "@/airview-cms-api": ["lib/airview-cms-api"],
 
     },
     "allowJs": true,
