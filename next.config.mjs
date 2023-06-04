@@ -61,12 +61,12 @@ const nextConfig = {
       // '@mui/material': path.join(__dirname, 'node_modules/@mui/material'),
       // '@emotion/react': path.join(__dirname, 'node_modules/@emotion/react'),
     };
+    config.experiments = { ...config.experiments, topLevelAwait: true };
     return config;
   },
-  experimental: {
-    appDir: true,
-    mdxRs: false, // <- disabled
-  },
+  // experimental: {
+  //   appDir: true,
+  // },
 };
 
 export default withSentryConfig(

@@ -5,15 +5,11 @@ import { MDXProvider } from "@mdx-js/react";
 import { Example } from "@/components/Example";
 import { evaluateSync } from "@mdx-js/mdx";
 import React, { useEffect, useMemo, useState } from "react";
+import { getAllFilesForPath } from "@/lib/github";
 
-const opts = {
-  ...provider,
-  ...runtime,
-};
 
 function useMDX(source) {
   const [exports, setExports] = useState({ default: undefined });
-
   useEffect(() => {
     const processContent = () => {
       const exports = evaluateSync(source, {
@@ -30,34 +26,58 @@ function useMDX(source) {
   return exports.default;
 }
 
-// function MyComponent(props) {
-//   const currentRoute = "knowledge/mdx_demo_simple";
-//   const fileToFetch = `${currentRoute}/${props.file}`;
-//   const [content, setContent] = useState(null);
-//   useEffect(() => {
-//     fetch(`/api/content/airwalk-digital/airview-demo-content/?path=${props.file}`)
-//       .then((res) => res.json())
-//       .then((data) => {
-//         // const parsedContent = JSON.parse(data.content);
-//         setContent(data.content);
-//       });
-//   }, []);
-//   console.log(content);
-//   return content && <>{content.data}</>;
-// }
-
 export default function Home() {
   const [content, setContent] = useState(null);
   const components = { Example };
-//   const mdxStr = '<MyComponent file={"README.md"} />';
+  const [files, setFiles] = useState([]);
+
+
   useEffect(() => {
-    fetch(`/api/content/airwalk-digital/airview-demo-content/?path=README.md`)
-      .then((res) => res.json())
-      .then((data) => {
-        // const parsedContent = JSON.parse(data.content);
-        setContent(data.content);
-      });
+    const fetchData = async () => {
+      try {
+        const repo = 'airview-demo-content';
+        const owner = 'airwalk-digital';
+        const branch = 'main'; // Specify the desired branch here
+        const path = '/'; // Specify the desired path here
+        const response = await fetch(`/api/content/${owner}/${repo}?branch=${branch}&path=${path}`);
+        if (response.ok) {
+          const data = response.json();
+          setFiles(data.files);
+        } else {
+          throw new Error('Error fetching files');
+        }
+      } catch (error) {
+        console.error('Error fetching files:', error);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const repo = 'airview-demo-content';
+        const owner = 'airwalk-digital';
+        const branch = 'main'; // Specify the desired branch here
+        const path = '/'; // Specify the desired path here
+        const response = await fetch(`/api/content/airwalk-digital/airview-demo-content/?path=README.md`);
+        if (response.ok) {
+          const data = await response.json();
+          setContent(data.data);
+        } else {
+          throw new Error('Error fetching file');
+        }
+      } catch (error) {
+        console.error('Error fetching file:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
   const Content = useMDX(content);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -68,4 +88,16 @@ export default function Home() {
       </div>
     </main>
   );
+}
+
+export async function getStaticProps() {
+
+  const data = await getAllFilesForPath('airwalk-digital', 'airview-demo-content', 'main', '/');
+
+  console.log('data', data );
+  return {
+    props: {
+      files: data
+    }
+  }
 }

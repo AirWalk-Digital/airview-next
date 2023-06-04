@@ -11,6 +11,7 @@
       "@/context/*": ["context/*"],
       "@/constants/*": ["constants/*"],
       "@/airview-cms-api": ["lib/airview-cms-api"],
+      "@/lib/*": ["lib/*"],
 
     },
     "allowJs": true,
