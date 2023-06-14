@@ -3,17 +3,18 @@ import { createProxyMiddleware } from "http-proxy-middleware"; // @2.0.6
 export const config = {
   api: {
     externalResolver: true,
+    bodyParser: false,
   }
 }
 
 const proxy = createProxyMiddleware({
   target: process.env.AIRVIEW_API_URL,
   secure: false,
+  changeOrigin: true,
   pathRewrite: { "^/api/compliance/": "" }, // remove `/api/proxy` prefix
 });
 
 function addTrailingSlash(url) {
-  // Use regex to check if a trailing slash exists only in the pathname
   var regex = /(\/)(?![?/])$/;
   
   if (regex.test(url)) {
@@ -22,6 +23,8 @@ function addTrailingSlash(url) {
     return url.replace(/(\/)?(\?|$)/, '/$2'); // Append a trailing slash to the URL
   }
 }
+
+
 
 
 export default function handler(req, res) {
