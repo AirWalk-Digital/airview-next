@@ -2,7 +2,7 @@ import React from "react";
 
 import { Typography, Box } from "@mui/material";
 
-import Topbar from '../../components/TopBar';
+import { TopBar } from '@/components/dashboard';
 import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -31,7 +31,7 @@ export default dynamic(() => Promise.resolve(Page), {
 
 function Page({ app }) {
   const topBarHeight = 64;
-  console.log('Page:app: ', app)
+  // console.log('Page:app: ', app)
   let data_classification = '';
   let tier = '';
 
@@ -47,7 +47,7 @@ function Page({ app }) {
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
-      <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
+      <TopBar menu={false} topBarHeight={topBarHeight} logo={true} />
       <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}
       ><Box sx={{ px: '5%' }}>
 

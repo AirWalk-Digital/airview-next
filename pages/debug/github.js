@@ -5,7 +5,7 @@ import { MDXProvider } from "@mdx-js/react";
 import { Example } from "@/components/Example";
 import { evaluateSync } from "@mdx-js/mdx";
 import React, { useEffect, useMemo, useState } from "react";
-import { getAllFilesForPath } from "@/lib/github";
+import { getAllFiles } from "@/lib/github";
 
 
 function useMDX(source) {
@@ -79,6 +79,8 @@ export default function Home() {
 
 
   const Content = useMDX(content);
+
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -92,9 +94,9 @@ export default function Home() {
 
 export async function getStaticProps() {
 
-  const data = await getAllFilesForPath('airwalk-digital', 'airview-demo-content', 'main', '/');
+  const data = await getAllFiles('airwalk-digital', 'airview-demo-content', 'main', '/');
 
-  console.log('data', data );
+  // // console.log('data', data );
   return {
     props: {
       files: data

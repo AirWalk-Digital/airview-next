@@ -1,6 +1,6 @@
 import React from 'react'
 import { styled } from '@mui/material/styles'
-import { MODES } from '../constants/modes'
+import { MODES } from '../../constants/modes'
 
 const PresentationFrame = styled('div')({
   display: 'flex',

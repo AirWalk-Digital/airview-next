@@ -12,14 +12,14 @@ import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
-import logo from '../public/logos/airwalk-logo.png';
+// import logo from '../../public/logos/airwalk-logo.png';
 const Logo = styled("img")({
     display: "block",
     width: "auto",
     height: 64,
   });
 
-function Topbar({
+export function TopBar({
     onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64, logo=true }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -107,4 +107,3 @@ function Topbar({
     );
   };
 
-  export default Topbar;

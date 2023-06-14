@@ -52,7 +52,7 @@ export async function getAllFiles(filePath, globmatcher = '/**/*.md*') {
 export async function getFileContent(filePath) {
   try {
     const absolutePath = path.join(process.cwd(), 'content', filePath)
-    // console.log('getFileContent:absolutePath: ', absolutePath)
+    // // console.log('getFileContent:absolutePath: ', absolutePath)
     const fileContent = fs.readFileSync(absolutePath, 'utf-8')
     return fileContent
   } catch (error) {

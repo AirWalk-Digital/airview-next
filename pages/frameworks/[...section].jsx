@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Typography, Box } from "@mui/material";
-import Topbar from '../../components/TopBar';
+import { TopBar } from '@/components/dashboard';
 import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -24,7 +24,7 @@ function Page({ framework }) {
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
-      <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
+      <TopBar menu={false} topBarHeight={topBarHeight} logo={true} />
       <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}
       ><Box sx={{ px: '5%' }}>
 
@@ -117,7 +117,7 @@ function controlSections(jsonSection) {
 }
 
 function FrameworkControl({ control }) {
-  // console.log('control : ', control)
+  // // console.log('control : ', control)
   let description = '';
   if (control.parts) { description = controlSections(control.parts) };
   return (

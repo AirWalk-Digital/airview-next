@@ -13,9 +13,9 @@ import Image from "next/image";
 import { TitleSlide, Header, Banner, Footer, Insights, Chevrons, Nest, Roadmap, Layout, Column, Item, Slide, HeaderCard } from 'airview-mdx'
 
 // import Cover from "./Cover";
-import SpeakerNotes from "../components/SpeakerNotes";
-import Step from "../components/Step";
-import Steps from "../components/Steps";
+import SpeakerNotes from "@/components/presentations/SpeakerNotes";
+import Step from "@/components/presentations/Step";
+import Steps from "@/components/presentations/Steps";
 import { motion } from "framer-motion";
 
 // MUI Components
@@ -38,6 +38,7 @@ import { ProgressTable } from '../components/Tables.jsx';
 // Layouts 
 // import {Layout, Column, Item } from './Layouts';
 
+import path from 'path';
 
 
 function MdxImage({ props, baseContext }) {
@@ -48,14 +49,24 @@ function MdxImage({ props, baseContext }) {
     src = '/api/files/get-binary?filePath=' + baseContext.router.asPath + src;
   } else if (baseContext.source === 'local' && baseContext.router.asPath && src.slice(0, 1) === '/') { //file is an absolute path (public directory)
     src = src
-  } else {
+  } else if (baseContext.source === 'github') {
+    // strip off leading / if present
+    src = src.replace('./', '');
+    if (src.slice(0, 1) === '/') { src = src.slice(1) };
+    // get directory from the file path
+    let dir = path.dirname(baseContext.file)
+    src = dir + '/' + src;
+
+    src = '/api/content/' + baseContext.owner + '/' + baseContext.repo + '?path=' + src + '&branch=' + baseContext.branch;
+
+} else {
     src = '/image-not-found.png';
   };
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 
   const handleImageLoad = (event) => {
-    // console.log('handleImageLoad:event', event)
+    // // console.log('handleImageLoad:event', event)
     const { naturalWidth, naturalHeight } = event.target;
     setImageSize({ width: naturalWidth, height: naturalHeight });
   };

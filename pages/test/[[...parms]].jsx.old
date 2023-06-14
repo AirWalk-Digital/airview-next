@@ -1,0 +1,383 @@
+
+import React, { useState, useEffect } from 'react'
+import { VFile } from 'vfile'
+import { VFileMessage } from 'vfile-message'
+import * as provider from '@mdx-js/react'
+import * as runtime from 'react/jsx-runtime'
+// import {statistics} from 'vfile-statistics'
+// import {reporter} from 'vfile-reporter'
+import { evaluate } from '@mdx-js/mdx'
+import remarkGfm from 'remark-gfm'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
+import remarkUnwrapImages from 'remark-unwrap-images';
+import { Box, Typography } from '@mui/material';
+// import remarkMath from 'remark-math'
+import { ErrorBoundary } from 'react-error-boundary'
+import { useDebounceFn } from 'ahooks'
+import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router';
+import { baseTheme } from '../../constants/baseTheme';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { mdComponents } from "../../constants/mdxProvider";
+import * as matter from 'gray-matter';
+import { parse } from 'toml';
+import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
+import { Stack } from '@mui/material'
+import { Chip } from '@mui/material'
+import { TopBar } from '@/components/dashboard';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { MiniStatisticsCard } from "@/components/dashboard";
+import { ControlDataDisplay } from '@/components/compliance/ControlData';
+import { MDXProvider } from '@mdx-js/react';
+
+import { Menu, NavigationDrawer } from '../../components/airview-ui';
+import { getAllFiles, getFileContent } from '../../backend/filesystem';
+import { ControlTable } from '@/components/compliance/ControlTable';
+
+import { Tile, ServiceTile } from '@/components/dashboard/Tiles'
+import { useMdx } from '@/lib/content/mdx'
+
+import { IndexView, CspView, ServiceView } from '@/components/services'
+import { ControlsView } from '@/components/controls'
+
+
+function removeSection(pad, tagName) {
+  const re = new RegExp("<" + tagName + "\\s+[^>]*>(.*?)</" + tagName + ">", "gs");
+  return (pad.replace(re, ""));
+}
+
+
+function ErrorFallback({ error, resetErrorBoundary }) {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+    </div>
+  )
+}
+
+function FallbackComponent({ error }) {
+  const message = new VFileMessage(error)
+  message.fatal = true
+  return (
+    <pre>
+      <code>{String(message)}</code>
+    </pre>
+  )
+}
+
+
+
+function createControlMenu(controls) {
+  // console.log('createControlMenu:controls: ', controls)
+  try {
+    const links = controls.map((control) => {
+      const label = control.data.id || ''; // Adjust the property name according to your control data structure
+      const url = control.file;
+
+      return {
+        label,
+        url,
+      };
+    });
+
+    return [
+      {
+        groupTitle: "Controls",
+        links: links
+      }];
+  } catch (error) {
+    // console.log('createControlMenu:error: ', error)
+
+    return [
+      {
+        groupTitle: "Controls",
+        links: [
+          {
+            label: "CONTROL-00000",
+            url: "",
+          },
+        ],
+      }]
+
+    return [
+      {
+        groupTitle: "Controls",
+        links: []
+      }];
+  }
+};
+
+
+export default dynamic(() => Promise.resolve(Page), {
+  ssr: false,
+});
+
+
+
+function Page({ content, controls, type, menu, frontmatter }) {
+
+  // // console.log('Page:menu: ', menu)
+  const router = useRouter();
+  const context = { source: 'local', router: router }
+
+  if (type === 'service') {
+    return (
+      <ServiceView
+        frontmatter={frontmatter ? frontmatter : {}}
+        content={content ? content : {}}
+        context={context}
+        controls={controls} />
+    )
+  } else if (type === 'csp') {
+    return <CspView menu={menu} content={content} frontmatter={frontmatter} context={context} />
+  } else if (type === 'index') {
+    return <IndexView menu={menu} />
+  } else if (type === 'control') {
+    return (
+      <ControlsView
+        frontmatter={frontmatter ? frontmatter : {}}
+        content={content ? content : {}}
+        context={context}
+        controls={controls} />
+    )
+  }
+
+};
+
+
+function createMenu(menu) {
+  if (!menu) {
+    return [
+      {
+        groupTitle: "N/A",
+        links: []
+      }]
+  }
+  let csp = [];
+  let paths = [];
+  let services = [];
+  let navItems = [];
+
+  // add CSPs
+  menu.forEach((x, i) => {
+    if (x && x.frontmatter && x.frontmatter.title) {
+      if (x && x.file.split('/').length === 4) {
+        csp.push({ name: x.frontmatter.title, path: x.file.replace("/index.mdx", "") })
+        paths.push(x.file.replace("/index.mdx", ""))
+      }
+    }
+  });
+
+  menu.forEach((x, i) => {
+    if (x && x.frontmatter && x.frontmatter.title) {
+      if (x && x.file.split('/').length === 5) {
+        const path = x.file.split("/")
+        services.push({ base: path.slice(0, 3).join("/"), label: x.frontmatter.title, url: x.file.replace("/index.mdx", "") })
+      }
+    }
+  });
+
+  paths.forEach((x, i) => {
+    let links = [];
+    services.forEach((y, i) => {
+      if (x === y.base) {
+        links.push({ label: y.label, url: y.url })
+      }
+    });
+    let rootcsp = '';
+    csp.forEach((z, i) => {
+      if (x === z.path) {
+        rootcsp = z.name
+      }
+    })
+    navItems.push({ groupTitle: rootcsp, links: links })
+
+  });
+
+  return { navItems, csp }
+
+}
+
+function createMenuLinks(menu) {
+  if (!menu) {
+    return [
+      {
+        groupTitle: "N/A",
+        links: []
+      }]
+  }
+  let links = [];
+  menu.forEach((x, i) => {
+    if (x && x.frontmatter && x.frontmatter.title) {
+
+      links.push({ label: x.frontmatter.title, url: x.file.replace("/index.mdx", "") })
+    }
+  });
+
+  return links
+
+}
+
+
+
+
+
+
+
+
+export async function getStaticPaths() {
+  let pages = [];
+  let location = 'services';
+  try {
+    const files = await getAllFiles(location)
+
+    const pages = files.map((file) => {
+
+      if (file.endsWith('index.md') || file.endsWith('index.mdx')) {
+        const filepath = file.split('/');
+        filepath.pop();
+        const joinedPath = filepath.join('/');
+        return joinedPath;
+      } else {
+        return file
+      }
+    })
+    pages.push('/services')
+    // // console.log('getStaticPaths: ', pages)
+    return {
+      fallback: true,
+      paths: pages
+    }
+  } catch (error) {
+    console.error(error)
+    return {
+      fallback: true,
+      paths: pages
+    }
+  }
+
+
+}
+
+
+
+
+export async function getStaticProps2(context) {
+
+  let location = null;
+  let type = 'unknown';
+  let controls = [];
+  let menu = [];
+  let content = '';
+
+
+  if (context.params && context.params.parms && context.params.parms.length === 1) {
+    type = 'csp';
+    location = 'services/' + context.params.parms.join('/') + '/index.mdx';
+  } else if (context.params && context.params.parms && context.params.parms.length === 2) {
+    type = 'service';
+    location = 'services/' + context.params.parms.join('/') + '/index.mdx';
+  } else if (context.params && context.params.parms && context.params.parms.length === 3) {
+    type = 'control';
+    location = 'services/' + context.params.parms.join('/');
+  } else { // index page ?
+    type = 'index';
+  }
+  try {
+    if (type === 'service' || type === 'control') {
+      const controlLocation = 'services/' + context.params.parms.slice(0, 2).join('/');
+
+      const files = await getAllFiles(controlLocation, '/**/*.toml');
+
+      const controlPromises = files.map(async (file) => {
+        const content = await getFileContent(file);
+        const ext = file.split('.').pop();
+
+        if (ext === 'toml') {
+          return { data: parse(content), file: file };
+        } else if (ext === 'md' || ext === 'mdx') {
+          return { data: matter('---\n' + content + '\n---', { excerpt: true }), file: file };
+        }
+      });
+
+      controls = await Promise.all(controlPromises);
+
+    } else if (type === 'index') {
+      // // console.log('getStaticProps:index')
+
+      // construct menu structure
+      const controlLocation = 'services/';
+      const files = await getAllFiles(controlLocation, '/**/*.md*');
+      const pagePromises = files.map(async (file) => {
+        const content = await getFileContent(file);
+        const ext = file.split('.').pop();
+        if (ext === 'md' || ext === 'mdx') {
+          const matterData = matter(content, { excerpt: false }).data;
+          return { file: file, frontmatter: matterData };
+
+        }
+      });
+
+      menu = await Promise.all(pagePromises);
+    } else if (type === 'csp') {
+
+      // construct menu structure
+      const controlLocation = 'services/' + context.params.parms.join('/');
+      const files = await getAllFiles(controlLocation, '/**/*.md*');
+      const pagePromises = files.map(async (file) => {
+        const content = await getFileContent(file);
+        const ext = file.split('.').pop();
+        if (ext === 'md' || ext === 'mdx') {
+          const matterData = matter(content, { excerpt: false }).data;
+          return { file: file, frontmatter: matterData };
+        }
+      });
+
+      menu = await Promise.all(pagePromises);
+    }
+    let frontmatter = [];
+    let pageContent = {};
+    if (location) {
+      const fileContent = await getFileContent(location);
+      // // console.log('getStaticProps:fileContent: ', fileContent)
+      pageContent = await matter(fileContent);
+      // // console.log('getStaticProps:pageContent: ', pageContent)
+
+      // pageContent = content;
+      // frontmatter = data;
+    };
+
+    // // console.log('getStaticProps:pageContent: ', pageContent)
+    // // console.log('getStaticProps:location: ', location)
+
+
+    return {
+      props: {
+        menu,
+        content: pageContent?.content ?? null,
+        frontmatter: pageContent?.data ?? null,
+        controls: controls,
+        type: type,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        menu,
+        content: [],
+        frontmatter: [],
+        controls: controls,
+        type: type,
+      },
+    };
+  }
+}

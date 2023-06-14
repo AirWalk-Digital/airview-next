@@ -22,7 +22,7 @@ import { IconButton, Button, Dialog, DialogTitle, DialogContent, styled } from '
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { Info, Close } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material';
-import { baseTheme } from '../constants/baseTheme';
+import { baseTheme } from '../../constants/baseTheme';
 
 const theme = createTheme({
   components: {
@@ -281,7 +281,7 @@ function Implementation({ methods }) {
 }
 export function ControlTable({ controls, framework = 'NIST80053' }) {
 
-  console.log('ControlTable:controls: ', controls)
+  // console.log('ControlTable:controls: ', controls)
 
   return (
     <TableContainer component={Paper}>

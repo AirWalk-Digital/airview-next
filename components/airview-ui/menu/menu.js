@@ -8,8 +8,8 @@ import {
   Skeleton,
   Link,
 } from "@mui/material";
-// import Link from 'next/link';
-import NextLinkComposed from 'next/link'
+import NextLink from 'next/link';
+// import NextLinkComposed from 'next/link'
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { isLinkInternal } from "../is-link-url-internal";
@@ -124,7 +124,7 @@ export function Menu({
                         <Link
                           underline="hover"
                           style={{ textDecoration: "hover", color: "text.secondary", }}
-                          component={NextLinkComposed}
+                          component={NextLink}
                           href={url}
                           target={isLinkInternal(url) ? "_self" : "_blank"}
                           sx={{
