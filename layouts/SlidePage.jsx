@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import GlobalStyles from '@mui/material/GlobalStyles';
 // import Slide from "../components/Slide";
 import { Slide } from 'airview-mdx';
-import PresentationMode from "../components/PresentationMode";
-import Swipeable from "../components/Swipeable";
+import PresentationMode from "@/components/presentations/PresentationMode";
+import Swipeable from "@/components/presentations/Swipeable";
 import useEventListener from "../hooks/useEventListener";
 import { useTotalPages } from "../context/TotalPagesContext";
 import { useMode } from "../context/ModeContext";
@@ -14,7 +14,7 @@ import { MODES } from "../constants/modes";
 
 import dynamic from 'next/dynamic'
 
-import Zoom from '../components/Zoom';
+import Zoom from '@/components/presentations/Zoom';
 
 const globalStyles = `
 
@@ -221,7 +221,7 @@ function SlidePage({ children, next }) {
       setSlide(slideCount);
     }
 
-    // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
+    // // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
     return <Slide>{generatedSlides[currentSlide]}</Slide>;
   };
   

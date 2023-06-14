@@ -12,7 +12,7 @@ import {
     ApplicationTileChip,
 } from "../../components/airview-compliance-ui/features/application-tile";
 import { ProgressBar } from "../../components/airview-compliance-ui/features/progress-bar";
-import Topbar from '../../components/TopBar';
+import { TopBar } from '@/components/dashboard';
 import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -225,7 +225,7 @@ export default function Page({ apps }) {
     return (
         <ThemeProvider theme={baseTheme}>
             <CssBaseline />
-            <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
+            <TopBar menu={false} topBarHeight={topBarHeight} logo={true} />
             <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}
             ><Box sx={{ px: '5%' }}>
                     <Typography variant="h1" component="h1">Applications</Typography>

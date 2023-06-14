@@ -25,19 +25,8 @@ import Paper from '@mui/material/Paper';
 import { styled } from "@mui/material/styles";
 import { IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import {
-  TopBar,
-  AsideAndMainContainer,
-  Aside,
-  Main,
-  NavigationDrawer,
-  PageTitle,
-  StyledWysiwyg,
-  Breadcrumb,
-  Search,
-} from "../components/airview-ui";
 
-import Topbar from '../components/TopBar';
+import { TopBar } from '@/components/dashboard';
 
 
 const SiteSection = ({ title, description, link }) => {
@@ -68,7 +57,7 @@ const LandingPage = () => {
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
-      <Topbar logo={false}/>
+      <TopBar logo={false}/>
       {/* Hero Section */}
       <section
         style={{

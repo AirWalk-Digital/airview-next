@@ -85,7 +85,7 @@ export default function Home() {
         setPadList(data.pads);
       })
       .catch((error) => {
-        // console.log(error)
+        // // console.log(error)
       })
       .finally(() => {
         setTimeout(() => setRefreshToken(Math.random()), 5000);

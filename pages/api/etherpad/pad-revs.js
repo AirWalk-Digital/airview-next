@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       }
     })).data.data?.savedRevisions
     if (padData) {revision = Math.max(...padData)}
-    // console.log('revision :', revision, ' data : ', padData)
+    // // console.log('revision :', revision, ' data : ', padData)
     res.status(200).json({ rev: revision, })
   } catch (error) {
     res.status(500).json({error: 'error fetching revision (listSavedRevisions): ' + error})

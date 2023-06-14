@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import WarningIcon from "@mui/icons-material/Warning";
 import { Typography, Box, Button } from "@mui/material";
-import {
-    ApplicationTile,
-    ApplicationTileHeader,
-    ApplicationTileTitle,
-    ApplicationTileDivider,
-    ApplicationTileContent,
-    ApplicationTileContentRow,
-    ApplicationTileCallToActionButton,
-    ApplicationTileChip,
-} from "../../components/airview-compliance-ui/features/application-tile";
 import { ProgressBar } from "../../components/airview-compliance-ui/features/progress-bar";
-import Topbar from '../../components/TopBar';
+import { TopBar } from '@/components/dashboard';
 import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -26,7 +16,9 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Menu, ButtonMenu, NavigationDrawer } from '@/components/airview-ui';
+import { ButtonMenu, NavigationDrawer } from '@/components/airview-ui';
+import { FrameworkCoverageTable } from '@/components/compliance/ControlFrameworkTables'
+
 
 function FrameworkSection({ domain }) {
 
@@ -53,7 +45,7 @@ function FrameworkSection({ domain }) {
 }
 
 function FrameworkControl({ control }) {
-    // console.log('control : ', control)
+    // // console.log('control : ', control)
 
     return (
         <Box
@@ -78,7 +70,7 @@ function FrameworkControl({ control }) {
 };
 
 export default function Page({ framework }) {
-    console.log('framework : ', framework)
+    // console.log('framework : ', framework)
     const [selectedControl, setControl] = useState('');
     const controlsNav = framework.domains.map(domain => ({
         groupTitle: domain.title,
@@ -95,7 +87,7 @@ export default function Page({ framework }) {
     function controlDomainNav(nav, setControl) {
         const handleButtonClick = (url, label) => {
             // Update the state or perform any other desired actions with the URL
-            console.log("Clicked Label:", label);
+            // console.log("Clicked Label:", label);
             // Update the 'control' state in your page component
             setControl({url, label});
           };
@@ -114,10 +106,20 @@ export default function Page({ framework }) {
         )
     }
 
-    const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState); return (
+
+
+    const rows = [
+        { id: 1, appName: 'Airview', businessUnit: 'Cloud CoE', exemptions: 35, controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
+        { id: 2, appName: 'Microsoft Teams', businessUnit: 'Central IT', exemptions: 42,controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
+        { id: 3, appName: 'Public Website', businessUnit: 'Marketing', exemptions: 45, controls: [{name: 'AC1', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC2', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  },{name: 'AC3', name: 'Control Storage Accounts', issues: 5, criticality: 'high'  }]},
+      ];
+
+    const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState); 
+    
+    return (
         <ThemeProvider theme={baseTheme}>
             <CssBaseline />
-            <Topbar onNavButtonClick={handleOnNavButtonClick}
+            <TopBar onNavButtonClick={handleOnNavButtonClick}
                 navOpen={menuOpen}
                 menu={true}
                 topBarHeight={topBarHeight} />
@@ -180,6 +182,7 @@ export default function Page({ framework }) {
                         )}
                     </> */}
                     {/* </Container> */}
+                    <FrameworkCoverageTable rows={rows} sx={{ mt: '5%'}} />
                 </Box>
             </div>
         </ThemeProvider>

@@ -2,7 +2,7 @@ import React from "react";
 
 import { Typography, Box } from "@mui/material";
 
-import Topbar from '../../components/TopBar';
+import { TopBar } from '@/components/dashboard';
 import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';

@@ -78,7 +78,7 @@ function MethodsList({ methods }) {
 
   
 
-export default function ControlDataDisplay({ data }) {
+export function ControlDataDisplay({ data }) {
     data = data[0].data
     return (
       <Box>

@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import GlobalStyles from '@mui/material/GlobalStyles';
 import { Slide } from 'airview-mdx';
-import PresentationMode from "../components/PresentationMode";
-import Swipeable from "../components/Swipeable";
+import PresentationMode from "@/components/presentations/PresentationMode";
+import Swipeable from "@/components/presentations/Swipeable";
 import useEventListener from "../hooks/useEventListener";
 import { useTotalPages } from "../context/TotalPagesContext";
 import { useMode } from "../context/ModeContext";
@@ -13,7 +13,7 @@ import { MODES } from "../constants/modes";
 
 import dynamic from 'next/dynamic'
 
-import Zoom from '../components/Zoom';
+import Zoom from '@/components/presentations/Zoom';
 
 
 const globalStyles = `
@@ -47,7 +47,7 @@ export default dynamic(() => Promise.resolve(PrintSlide), {
 });
 
 function PrintSlide({ children, next }) {
-  // console.log('PrintSlide:children : ', children)
+  // // console.log('PrintSlide:children : ', children)
   let generatedSlides = [];
   let generatorCount = 0;
   // Filter down children by only Slides

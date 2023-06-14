@@ -15,10 +15,10 @@ export default async function handler(req, res) {
 
     try {
       const { mime } = await fileTypeFromFile(fileContent);
-      console.log(fileTypeFromFile(fileContent))
+      // console.log(fileTypeFromFile(fileContent))
       contentType = mime;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       const extension = filePath.split('.').pop();
       contentType = mime.lookup(extension);
     }
