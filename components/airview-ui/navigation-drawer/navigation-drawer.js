@@ -26,6 +26,7 @@ export function NavigationDrawer({
         backgroundColor: "common.white",
         zIndex: 1200,
         overflowY: "auto",
+        displayPrint: 'none'
       }}
     >
       {children}

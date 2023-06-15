@@ -26,11 +26,11 @@ Main.propTypes = {
   children: PropTypes.node,
 };
 
-export function Aside({ children }) {
+export function Aside({ children, sx }) {
   return (
     <Box
       component="aside"
-      sx={{ flex: "0 0 auto", width: 300, paddingLeft: 4 }}
+      sx={{ flex: "0 0 auto", width: 300, paddingLeft: 4, displayPrint: 'none', ...sx }}
     >
       {children}
     </Box>

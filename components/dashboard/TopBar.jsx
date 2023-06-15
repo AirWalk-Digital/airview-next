@@ -39,7 +39,7 @@ export function TopBar({
 
   
     return (
-      <AppBar position="fixed" color="white" elevation={0}>
+      <AppBar position="fixed" color="white" elevation={0} sx={{ displayPrint: 'none' }}>
         <Toolbar>
           {/* has menu */}
         {menu &&  <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={onNavButtonClick}>{navOpen ? <CloseIcon /> : <MenuIcon />}</IconButton>}

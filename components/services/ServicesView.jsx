@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Box, Typography } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary'
@@ -27,6 +27,7 @@ import {
 
 } from '@/components/airview-ui';
 
+import { Previewer } from 'pagedjs'
 
 import { Tile } from '@/components/dashboard/Tiles'
 import path from 'path';
@@ -49,12 +50,16 @@ export function ServicesView({
   // const navItems = [];
   // const { navItems, csp } = createMenu(services, providers);
   // // console.log('IndexView:navItems: ', navItems)
+  const mdxContainer = useRef(null);
+  const previewContainer = useRef(null);
 
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [controlUrl, setControlUrl] = useState('');
+  const [print, setPrint] = useState(false);
+
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   const handleControlClick = (url, label) => {
     // Show the dialog box
@@ -69,6 +74,30 @@ export function ServicesView({
     // Update the 'control' state in your page component
     console.log("Clicked Label:", label);
   };
+
+  const handlePrint = () => {
+
+    setPrint(!print);
+    setMenuOpen(print);
+
+    if (mdxContainer.current !== null) {
+      const paged = new Previewer();
+      const contentMdx = `${mdxContainer.current?.innerHTML}`;
+      paged
+        .preview(contentMdx, ['/pdf.css'], previewContainer.current)
+        .then((flow) => {
+          // // console.log('====flow====')
+          // // console.log(flow)
+        });
+      // return () => {
+      //   document.head
+      //     .querySelectorAll("[data-pagedjs-inserted-styles]")
+      //     .forEach((e) => e.parentNode?.removeChild(e));
+      // };
+    }
+  };
+
+
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
@@ -87,18 +116,26 @@ export function ServicesView({
       <div
         style={{
           marginTop: topBarHeight,
-          paddingLeft: menuOpen ? navDrawerWidth : 0,
+          // paddingLeft: menuOpen ? navDrawerWidth : 0,
+          paddingLeft: (print || !menuOpen) ? 0 : navDrawerWidth,
+
         }}
       >
+         <Button onClick={() => handlePrint()} sx={{ displayPrint: 'none' }}>{ print ? 'Exit' : 'Print View'}</Button>
         <Box sx={{ px: '5%' }}>
-          {frontmatter && <ServicesHeader frontmatter={frontmatter} />}
+          {frontmatter && !print && <ServicesHeader frontmatter={frontmatter} />}
 
         </Box>
         <AsideAndMainContainer>
           <Main>
+          <div className="pagedjs_page" ref={previewContainer} style={{ display: print ? 'block' : 'none' }}></div>
+
+          <div ref={mdxContainer} style={{ display: print ? 'none' : 'block' }}>
+            {print && frontmatter && <ServicesHeader frontmatter={frontmatter} />}
             {children && children}
+            </div>
           </Main>
-          <Aside>
+          <Aside sx={{ displayPrint: 'none', display: print ? 'none' : ''}}>
             <ButtonMenu
               menuTitle="Controls"
               menuItems={createControlMenu(controls)}
@@ -196,6 +233,7 @@ function ServiceMenu({ services, providers, open, top, drawerWidth }) {
       open={open}
       top={top}
       drawerWidth={drawerWidth}
+      sx={{ displayPrint: 'none' }}
     >
       {csp && csp.map((x, i) =>
         <Menu
