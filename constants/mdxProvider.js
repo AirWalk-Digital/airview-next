@@ -39,8 +39,8 @@ import { ProgressTable } from '../components/Tables.jsx';
 // import {Layout, Column, Item } from './Layouts';
 
 import path from 'path';
-import { Dialog, DialogContent, IconButton, Box} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogContent, DialogActions, Button, Box} from '@mui/material';
+
 
 
 
@@ -148,7 +148,7 @@ function MdxImage({ props, baseContext }) {
             src={src}
             alt={alt}
             onLoad={handleImageLoad}
-            width={containerSize.width}
+            maxWidth={containerSize.width * 0.7}
             // height={imageSize.height}
           />
         </Box>
@@ -157,20 +157,11 @@ function MdxImage({ props, baseContext }) {
           onClose={handleClose}
           fullWidth={true}
           maxWidth="90%"
-        ><IconButton 
-        edge="end"
-        color="inherit"
-        onClick={handleClose}
-        // aria-label="close"
-        // sx={{
-        //   position: 'absolute',
-        //   right: 8,
-        //   top: 8,
-        //   color: 'white',
-        // }}
-      >
-        <CloseIcon />
-      </IconButton>
+        >
+           <DialogActions>
+          <Button onClick={handleClose}>Close</Button>
+        </DialogActions>
+         
           <DialogContent sx={{
             display: 'flex',
             alignItems: 'center',

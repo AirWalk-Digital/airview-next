@@ -112,17 +112,19 @@ export function ServicesView({
         </AsideAndMainContainer>
       </div>
       {/* Dialog box */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth={true} maxWidth={'lg'}>
+      <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Close</Button>
+        </DialogActions>
         <DialogTitle>Control {controlUrl.label}</DialogTitle>
+       
         <DialogContent>
           {/* Add your control component or content here */}
           {/* For example: */}
           
           {controlUrl.selectedControl && <ControlDataDisplay data={controlUrl.selectedControl} />}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Close</Button>
-        </DialogActions>
+       
       </Dialog>
 
 
