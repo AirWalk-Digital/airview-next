@@ -13,10 +13,19 @@ import { Chip } from '@mui/material'
 import { TopBar } from '@/components/dashboard';
 import { MiniStatisticsCard } from "@/components/dashboard";
 import { MDXProvider } from '@mdx-js/react';
-import { Menu, NavigationDrawer } from '../../components/airview-ui';
+import { Menu, ButtonMenu, NavigationDrawer } from '@/components/airview-ui';
 import { ControlTable } from '@/components/compliance/ControlTable';
+import { ControlDataDisplay } from '@/components/compliance/ControlData';
 import { useMdx } from '@/lib/content/mdx'
 import Container from '@mui/material/Container';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import {
+
+  AsideAndMainContainer,
+  Aside,
+  Main,
+
+} from '@/components/airview-ui';
 
 
 import { Tile } from '@/components/dashboard/Tiles'
@@ -25,113 +34,136 @@ import path from 'path';
 import { siteConfig } from "../../site.config.js";
 
 export function ServicesView({
-    services,
-    providers,
-    children,
-    frontmatter
-  }) {
-  
-    // // console.log('IndexView:menu: ', menu)
+  services,
+  providers,
+  children,
+  frontmatter,
+  controls
+}) {
+
+  // // console.log('IndexView:menu: ', menu)
   // console.log('ServicesView:services: ', services)
   // console.log('ServicesView:providers: ', providers)
   // console.log('ServicesView:frontmatter: ', frontmatter)
   // console.log('ServicesView:children: ', children)
-    // const navItems = [];
-    // const { navItems, csp } = createMenu(services, providers);
-    // // console.log('IndexView:navItems: ', navItems)
-  
-    const navDrawerWidth = 300;
-    const topBarHeight = 64;
-    const [menuOpen, setMenuOpen] = useState(true);
-  
-    const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
-    return (
-      <ThemeProvider theme={baseTheme}>
-        <CssBaseline />
-        <TopBar onNavButtonClick={handleOnNavButtonClick}
-          navOpen={menuOpen}
-          menu={true}
-          topBarHeight={topBarHeight} />
-       
-          <ServiceMenu
-            services={services}
-            providers={providers}
-            open={menuOpen}
-            top={topBarHeight}
-            drawerWidth={navDrawerWidth}
-          />
-        <div
-          style={{
-            marginTop: topBarHeight,
-            paddingLeft: menuOpen ? navDrawerWidth : 0,
-          }}
-        ><Box sx={{ px: '5%' }}>
-            {frontmatter && <ServicesHeader frontmatter={frontmatter} />}
+  // const navItems = [];
+  // const { navItems, csp } = createMenu(services, providers);
+  // // console.log('IndexView:navItems: ', navItems)
+
+  const navDrawerWidth = 300;
+  const topBarHeight = 64;
+  const [menuOpen, setMenuOpen] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [controlUrl, setControlUrl] = useState('');
+  const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
+  const handleControlClick = (url, label) => {
+    // Show the dialog box
+    setDialogOpen(true);
+    const selectedControl = controls.find((control) => control.file === url);
+    setControlUrl({ url, label, selectedControl });
+
+  };
+  const handleButtonClick = (url, label) => {
+    // Update the state or perform any other desired actions with the URL
+    // console.log("Clicked Label:", label);
+    // Update the 'control' state in your page component
+    console.log("Clicked Label:", label);
+  };
+  return (
+    <ThemeProvider theme={baseTheme}>
+      <CssBaseline />
+      <TopBar onNavButtonClick={handleOnNavButtonClick}
+        navOpen={menuOpen}
+        menu={true}
+        topBarHeight={topBarHeight} />
+
+      <ServiceMenu
+        services={services}
+        providers={providers}
+        open={menuOpen}
+        top={topBarHeight}
+        drawerWidth={navDrawerWidth}
+      />
+      <div
+        style={{
+          marginTop: topBarHeight,
+          paddingLeft: menuOpen ? navDrawerWidth : 0,
+        }}
+      >
+        <Box sx={{ px: '5%' }}>
+          {frontmatter && <ServicesHeader frontmatter={frontmatter} />}
+
+        </Box>
+        <AsideAndMainContainer>
+          <Main>
             {children && children}
-          </Box>
-        </div>
-      </ThemeProvider>
-    )
-  }
-  
+          </Main>
+          <Aside>
+            <ButtonMenu
+              menuTitle="Controls"
+              menuItems={createControlMenu(controls)}
+              initialCollapsed={false}
+              loading={false}
+              fetching={false}
+              handleButtonClick={handleControlClick}
+            />
+
+          </Aside>
+        </AsideAndMainContainer>
+      </div>
+      {/* Dialog box */}
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Control {controlUrl.label}</DialogTitle>
+        <DialogContent>
+          {/* Add your control component or content here */}
+          {/* For example: */}
+          
+          {controlUrl.selectedControl && <ControlDataDisplay data={controlUrl.selectedControl} />}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
 
-function createMenu2(menu) {
-  if (!menu) {
-    return [
-      {
-        groupTitle: "N/A",
-        links: []
-      }]
-  }
-  let csp = [];
-  let paths = [];
-  let services = [];
-  let navItems = [];
-
-  // add CSPs
-  menu.forEach((x, i) => {
-    if (x && x.frontmatter && x.frontmatter.title) {
-      if (x && x.file.split('/').length === 4) {
-        csp.push({ name: x.frontmatter.title, path: x.file.replace("/index.mdx", "") })
-        paths.push(x.file.replace("/index.mdx", ""))
-      }
-    }
-  });
-
-  menu.forEach((x, i) => {
-    if (x && x.frontmatter && x.frontmatter.title) {
-      if (x && x.file.split('/').length === 5) {
-        const path = x.file.split("/")
-        services.push({ base: path.slice(0, 3).join("/"), label: x.frontmatter.title, url: x.file.replace("/index.mdx", "") })
-      }
-    }
-  });
-
-  paths.forEach((x, i) => {
-    let links = [];
-    services.forEach((y, i) => {
-      if (x === y.base) {
-        links.push({ label: y.label, url: y.url })
-      }
-    });
-    let rootcsp = '';
-    csp.forEach((z, i) => {
-      if (x === z.path) {
-        rootcsp = z.name
-      }
-    })
-    navItems.push({ groupTitle: rootcsp, links: links })
-
-  });
-
-  return { navItems, csp }
-
+    </ThemeProvider>
+  )
 }
 
 
 
-function ServiceMenu({services, providers, open, top, drawerWidth}) {
+
+function createControlMenu(controls) {
+  console.log('createControlMenu:controls: ', controls)
+  try {
+    const links = controls.map((control) => {
+      const label = control.data.id || ''; // Adjust the property name according to your control data structure
+      const url = control.file;
+
+      return {
+        label,
+        url,
+      };
+    });
+
+    return [
+      {
+        links: links
+      }];
+  } catch (error) {
+    // console.log('createControlMenu:error: ', error)
+
+    return [
+      {
+        groupTitle: "Controls",
+        links: [],
+      }]
+  }
+};
+
+
+
+function ServiceMenu({ services, providers, open, top, drawerWidth }) {
 
   let menu = [];
   let providerPaths = [];
@@ -152,81 +184,72 @@ function ServiceMenu({services, providers, open, top, drawerWidth}) {
     if (!result[provider]) {
       result[provider] = [];
     }
-    result[provider].push({label: obj.frontmatter.title, url: obj.file});
+    result[provider].push({ label: obj.frontmatter.title, url: obj.file });
     return result;
   }, {});
 
-  // services.forEach((x, i) => {
-  //   if (x.frontmatter && x.frontmatter.provider) {
-  //     providerPaths.indexOf(x.frontmatter.provider)['services'].push({ name: x.frontmatter?.title, path: x?.file });
-  //   } 
-  // });
 
-  // console.log('ServiceMenu:groupedData: ', groupedData)
-  // console.log('ServiceMenu:csp: ', csp)
-
-  return (      
+  return (
     <NavigationDrawer
-    open={open}
-    top={top}
-    drawerWidth={drawerWidth}
-  >
-    {csp && csp.map((x, i) =>
-      <Menu
-            key={i}
-            menuTitle={x.name}
-            menuItems={[{links: groupedData[x.path]}]}
-            initialCollapsed={false}
-            loading={false}
-            fetching={false}
-            linkComponent={Link}
-          />
-    )}
-</NavigationDrawer>
+      open={open}
+      top={top}
+      drawerWidth={drawerWidth}
+    >
+      {csp && csp.map((x, i) =>
+        <Menu
+          key={i}
+          menuTitle={x.name}
+          menuItems={[{ links: groupedData[x.path] }]}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+          linkComponent={Link}
+        />
+      )}
+    </NavigationDrawer>
   );
-  }
-  
+}
+
 
 
 
 
 function ServicesHeader(frontmatter) {
-    if (!frontmatter) { return <></> }
-    frontmatter = frontmatter.frontmatter
-    // console.log('ServicesHeader:frontmatter: ', frontmatter)
-    const iconcolor = 'primary';
-    return (
-      <>
-        {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
-          <Grid container spacing={2} alignItems="center" sx={{mb:'3%'}}>
-            <Grid item xs={8}>
-              <Typography variant="h1" component="h1">{frontmatter.title}</Typography>
-              <Stack direction="row" spacing={1}>
-                {frontmatter.status === 'approved' ? <Chip label="Approved for use" color="success" /> : <Chip label="Unapproved" color="error" />}
-                {(frontmatter?.resilience?.redundancy) ? <Chip label={`Redundancy: ${frontmatter.resilience.redundancy}`} color="success" /> : <Chip label="No Redundancy info" color="error" />}
-                {frontmatter?.resilience?.find(item => item.name === "availability") ? (
-                  <Chip
-                    label={`Availability: ${frontmatter.resilience.find(item => item.name === "availability").availability}`}
-                    color="success"
-                  />
-                ) : (
-                  <Chip label="No SLA Defined" color="error" />
-                )}
-  
-              </Stack>
-            </Grid>
-            <Grid item xs={4}>
-            <MiniStatisticsCard
-                                  color="text.highlight"
-                                  title="Controls"
-                                  count="13"
-                                  percentage={{ value: '55%', text: "coverage" }}
-                                  icon={{ color: "success", icon: 'check' }}
-                              />
-            </Grid>
-          </Grid>
-        {/* </Container> */}
-      </>
-    )
-  }
-  
+  if (!frontmatter) { return <></> }
+  frontmatter = frontmatter.frontmatter
+  // console.log('ServicesHeader:frontmatter: ', frontmatter)
+  const iconcolor = 'primary';
+  return (
+    <>
+      {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
+      <Grid container spacing={2} alignItems="center" sx={{ mb: '3%' }}>
+        <Grid item xs={8}>
+          <Typography variant="h1" component="h1">{frontmatter.title}</Typography>
+          <Stack direction="row" spacing={1}>
+            {frontmatter.status === 'approved' ? <Chip label="Approved for use" color="success" /> : <Chip label="Unapproved" color="error" />}
+            {(frontmatter?.resilience?.redundancy) ? <Chip label={`Redundancy: ${frontmatter.resilience.redundancy}`} color="success" /> : <Chip label="No Redundancy info" color="error" />}
+            {frontmatter?.resilience?.find(item => item.name === "availability") ? (
+              <Chip
+                label={`Availability: ${frontmatter.resilience.find(item => item.name === "availability").availability}`}
+                color="success"
+              />
+            ) : (
+              <Chip label="No SLA Defined" color="error" />
+            )}
+
+          </Stack>
+        </Grid>
+        <Grid item xs={4}>
+          <MiniStatisticsCard
+            color="text.highlight"
+            title="Controls"
+            count="13"
+            percentage={{ value: '55%', text: "coverage" }}
+            icon={{ color: "success", icon: 'check' }}
+          />
+        </Grid>
+      </Grid>
+      {/* </Container> */}
+    </>
+  )
+}

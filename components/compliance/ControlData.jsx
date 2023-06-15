@@ -66,7 +66,8 @@ function MethodCard({ method }) {
 function MethodsList({ methods }) {
   return (
     <Box>
-      <Typography variant="h6">Methods</Typography>
+      <Typography variant="h4">Methods</Typography>
+      <Typography variant="body1">Technical or Audit/Manual methods in place to enforce the control</Typography>
       <Box mt={2}>
         {methods.map((method, index) => (
           <MethodCard key={index} method={method} />
@@ -79,7 +80,10 @@ function MethodsList({ methods }) {
   
 
 export function ControlDataDisplay({ data }) {
-    data = data[0].data
+
+  console.log('ControlDataDisplay:data: ', data)
+
+    data = data.data
     return (
       <Box>
         <Typography variant="h4">{data?.name || 'N/A'}</Typography>
@@ -99,6 +103,8 @@ export function ControlDataDisplay({ data }) {
         <Typography variant="body1">
           <strong>Quality Model:</strong> {data?.quality_model || 'N/A'}
         </Typography>
+
+        <Typography variant="h4">Frameworks</Typography>
         {data?.frameworks?.map((framework, index) => (
           <FrameworkSection key={index} framework={framework} />
         ))}

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { siteConfig } from "../../site.config.js";
 import { mdComponents } from "../../constants/mdxProvider";
 import * as matter from 'gray-matter';
+import { parse } from 'toml';
 import { MDXProvider } from '@mdx-js/react';
 import { getAllFiles, getFileContent } from '@/lib/github'
 import { useMDX } from '@/lib/content/mdx'
@@ -10,27 +11,27 @@ import { useMDX } from '@/lib/content/mdx'
 import { ServicesView } from '@/components/services'
 
 import { FullScreenSpinner } from '@/components/dashboard/index.js';
-import { basename } from 'path';
+import { dirname, basename } from 'path';
 
-export default function Page({ providers, services, content, file }) {
+export default function Page({ providers, services, content, file, controls }) {
   const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
 
   useEffect(() => {
     const { mdxContent, frontmatter } = useMDX(content);
     setContent({ content: mdxContent, frontmatter: frontmatter });
-  },[content])
+  }, [content])
 
-  const context = { file: file, ...siteConfig.content.services};
+  const context = { file: file, ...siteConfig.content.services };
 
   if (pageContent.content && pageContent.frontmatter) {
     const Content = pageContent.content;
-    return <ServicesView services={services} providers={providers} frontmatter={pageContent.frontmatter}>
+    return <ServicesView services={services} providers={providers} controls={controls} frontmatter={pageContent.frontmatter}>
       <MDXProvider components={mdComponents(context)}>
         <Content />
       </MDXProvider>
     </ServicesView>
   } else {
-    return <FullScreenSpinner/>
+    return <FullScreenSpinner />
   }
 };
 
@@ -89,7 +90,7 @@ export async function getStaticPaths() {
     // })
     pages = services
       .filter((file) => basename(file) !== 'README.md')
-      .map((file) => {return '/' + file });
+      .map((file) => { return '/' + file });
 
     return {
       fallback: true,
@@ -135,14 +136,27 @@ export async function getStaticProps(context) {
   const pageContent = await getFileContent(siteConfig.content.services.owner, siteConfig.content.services.repo, siteConfig.content.services.branch, file);
   const pageContentText = Buffer.from(pageContent).toString("utf-8")
 
-  // // console.log('pageContentText: ', pageContentText)
-  // menu = await Promise.all(pagePromises);
+  // controls
+  const controlLocation = siteConfig.content.services.path + '/' + dirname(context.params.service.join('/'));
+  console.log('controlLocation: ', controlLocation)
+
+  const controlFiles = await getAllFiles(siteConfig.content.services.owner, siteConfig.content.services.repo, siteConfig.content.services.branch, controlLocation, true, '.toml')
+  // const files = await getAllFiles(controlLocation, '/**/*.toml');
+  console.log('files: ', controlFiles)
+  const controlContent = controlFiles.map(async (file) => {
+    const content = await getFileContent(siteConfig.content.services.owner, siteConfig.content.services.repo, siteConfig.content.services.branch, file);
+    return { data: parse(content), file: file };
+  
+  });
+
+
   return {
     props: {
       providers: await Promise.all(providersContent),
       services: await Promise.all(servicesContent),
       content: pageContentText || null,
-      file: file
+      file: file,
+      controls: await Promise.all(controlContent)
     },
   };
 }

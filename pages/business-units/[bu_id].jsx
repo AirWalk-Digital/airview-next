@@ -36,7 +36,7 @@ function Page({ bu }) {
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
-      <Topbar menu={false} topBarHeight={topBarHeight} logo={true} />
+      <TopBar menu={false} topBarHeight={topBarHeight} logo={true} />
       <div style={{ marginTop: topBarHeight, paddingLeft: 0, }}
       ><Box sx={{ px: '5%' }}>
           {bu && bu.name && <Typography variant="h1" component="h1">{bu.name}</Typography>}
