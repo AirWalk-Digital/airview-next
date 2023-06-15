@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // import { MDXProvider } from "@mdx-js/react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -39,6 +39,9 @@ import { ProgressTable } from '../components/Tables.jsx';
 // import {Layout, Column, Item } from './Layouts';
 
 import path from 'path';
+import { Dialog, DialogContent, IconButton, Box} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+
 
 
 function MdxImage({ props, baseContext }) {
@@ -59,71 +62,135 @@ function MdxImage({ props, baseContext }) {
 
     src = '/api/content/' + baseContext.owner + '/' + baseContext.repo + '?path=' + src + '&branch=' + baseContext.branch;
 
-} else {
+  } else {
     src = '/image-not-found.png';
   };
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 
-  const handleImageLoad = (event) => {
-    // // console.log('handleImageLoad:event', event)
-    const { naturalWidth, naturalHeight } = event.target;
-    setImageSize({ width: naturalWidth, height: naturalHeight });
-  };
 
-  const toggleFullScreen = () => {
-    setIsFullScreen(!isFullScreen);
-  };
+  // Custom hook for getting window size
+  function useWindowSize() {
+    const [size, setSize] = useState([0, 0]);
+    useEffect(() => {
+      function updateSize() {
+        setSize([window.innerWidth, window.innerHeight]);
+      }
+      window.addEventListener('resize', updateSize);
+      updateSize();
+      return () => window.removeEventListener('resize', updateSize);
+    }, []);
+    console.log('useWindowSize:size', size)
+    return size;
+  }
+  function useContainerSize() {
+    const ref = useRef(null);
+    const [size, setSize] = useState({ width: 0, height: 0 });
+  
+    useEffect(() => {
+      function updateSize() {
+        setSize({
+          width: ref.current.offsetWidth,
+          height: ref.current.offsetHeight
+        });
+      }
+      window.addEventListener('resize', updateSize);
+      updateSize();
+  
+      return () => window.removeEventListener('resize', updateSize);
+    }, []);
+    console.log('useContainerSize:ref', ref)
+    return [size, ref];
+  }
 
-  const aspectRatio = imageSize.width / imageSize.height;
-  const maxWidth = '70%';
-  const maxHeight = 'auto';
-  const cursorStyle = { cursor: 'zoom-in' };
-  const objectPosition = isFullScreen ? 'center center' : 'initial';
+
+
+  function ImageComponent({ src, alt }) {
+
+    
+
+    const [open, setOpen] = useState(false);
+    const [width, height] = useWindowSize();
+    const [containerSize, containerRef] = useContainerSize();
+
+    const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+
+    const handleClose = () => {
+      setOpen(false);
+    };
+
+    const handleImageLoad = (event) => {
+      console.log('handleImageLoad:event', event.target)
+      const { naturalWidth, naturalHeight } = event.target;
+      setImageSize({ width: naturalWidth, height: naturalHeight });
+    };
+    
+    return (
+      <>
+ 
+        <Box
+        ref={containerRef}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            width: '70%',
+            maxHeight: '70%',
+            cursor: 'zoom-in',
+            margin: 'auto'
+          }}
+          onClick={handleClickOpen}
+        >
+          <img
+            src={src}
+            alt={alt}
+            onLoad={handleImageLoad}
+            width={containerSize.width}
+            // height={imageSize.height}
+          />
+        </Box>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          fullWidth={true}
+          maxWidth="90%"
+        ><IconButton 
+        edge="end"
+        color="inherit"
+        onClick={handleClose}
+        // aria-label="close"
+        // sx={{
+        //   position: 'absolute',
+        //   right: 8,
+        //   top: 8,
+        //   color: 'white',
+        // }}
+      >
+        <CloseIcon />
+      </IconButton>
+          <DialogContent sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            margin: 'auto'
+          }}>
+            <img src={src} alt={alt}/>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
+
+
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        width: '100%',
-        // maxWidth: isFullScreen ? '100%' : imageSize.width,
-        // maxHeight: isFullScreen ? '100%' : maxHeight,
-      }}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          width: isFullScreen ? '100%' : imageSize.width,
-          maxWidth: isFullScreen ? imageSize.width : maxWidth,
-          maxHeight: isFullScreen ? '100%' : maxHeight,
-          ...cursorStyle,
-        }}
-        onClick={toggleFullScreen}
-      >
-        <div
-          style={{
-            position: 'relative',
-            width: '100%',
-            paddingBottom: `${(1 / aspectRatio) * 100}%`,
-          }}
-        >
-          <Image
-            src={src}
-            alt={props.alt}
-            fill
-            objectFit="contain"
-            objectPosition={objectPosition}
-            onLoad={handleImageLoad}
-          />
-        </div>
-      </div>
-    </div>
-  );
+    <ImageComponent src={src} alt={props.alt} />
+  )
+
 }
 
 
