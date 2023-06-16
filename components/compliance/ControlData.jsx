@@ -31,7 +31,7 @@ function FrameworkSection({ framework }) {
 
 function MethodCard({ method }) {
   return (
-    <Card variant="outlined">
+    <Card variant="outlined" sx={{my: '1%'}}>
       <CardContent>
         <Typography variant="body1">
           <strong>System:</strong> {method.system || 'N/A'}

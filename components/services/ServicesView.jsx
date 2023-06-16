@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Box, Typography } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary'
@@ -27,6 +27,7 @@ import {
 
 } from '@/components/airview-ui';
 
+import { Previewer } from 'pagedjs'
 
 import { Tile } from '@/components/dashboard/Tiles'
 import path from 'path';
@@ -49,12 +50,16 @@ export function ServicesView({
   // const navItems = [];
   // const { navItems, csp } = createMenu(services, providers);
   // // console.log('IndexView:navItems: ', navItems)
+  const mdxContainer = useRef(null);
+  const previewContainer = useRef(null);
 
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [controlUrl, setControlUrl] = useState('');
+  const [print, setPrint] = useState(false);
+
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   const handleControlClick = (url, label) => {
     // Show the dialog box
@@ -69,6 +74,37 @@ export function ServicesView({
     // Update the 'control' state in your page component
     console.log("Clicked Label:", label);
   };
+
+  const handlePrint = () => {
+
+    setPrint(!print);
+    setMenuOpen(print);
+
+    
+  };
+
+  const controlCoverage = createControlCoverage(controls);
+  useEffect(() => {
+    if (print) {
+      if (mdxContainer.current !== null) {
+        const paged = new Previewer();
+        const contentMdx = `${mdxContainer.current?.innerHTML}`;
+        paged
+          .preview(contentMdx, ['/pdf.css'], previewContainer.current)
+          .then((flow) => {
+            // // console.log('====flow====')
+            // // console.log(flow)
+          });
+        // return () => {
+        //   document.head
+        //     .querySelectorAll("[data-pagedjs-inserted-styles]")
+        //     .forEach((e) => e.parentNode?.removeChild(e));
+        // };
+      }
+    }
+  }, [print])
+
+
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
@@ -86,19 +122,27 @@ export function ServicesView({
       />
       <div
         style={{
-          marginTop: topBarHeight,
-          paddingLeft: menuOpen ? navDrawerWidth : 0,
+          marginTop: (print ? 0 : topBarHeight),
+          // paddingLeft: menuOpen ? navDrawerWidth : 0,
+          paddingLeft: (print || !menuOpen) ? 0 : navDrawerWidth,
+
         }}
       >
+        <Button onClick={() => handlePrint()} sx={{ displayPrint: 'none' }}>{print ? 'Exit' : 'Print View'}</Button>
         <Box sx={{ px: '5%' }}>
-          {frontmatter && <ServicesHeader frontmatter={frontmatter} />}
+          {frontmatter && !print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage}/>}
 
         </Box>
         <AsideAndMainContainer>
           <Main>
-            {children && children}
+            <div className="pagedjs_page" ref={previewContainer} style={{ display: print ? 'block' : 'none' }}></div>
+
+            <div ref={mdxContainer} style={{ display: print ? 'none' : 'block' }}>
+              {print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} style={{ display: print ? 'block' : 'none' }} />}
+              {children && children}
+            </div>
           </Main>
-          <Aside>
+          <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '' }}>
             <ButtonMenu
               menuTitle="Controls"
               menuItems={createControlMenu(controls)}
@@ -112,17 +156,19 @@ export function ServicesView({
         </AsideAndMainContainer>
       </div>
       {/* Dialog box */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Control {controlUrl.label}</DialogTitle>
-        <DialogContent>
-          {/* Add your control component or content here */}
-          {/* For example: */}
-          
-          {controlUrl.selectedControl && <ControlDataDisplay data={controlUrl.selectedControl} />}
-        </DialogContent>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth={true} maxWidth={'lg'}>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Close</Button>
         </DialogActions>
+        <DialogTitle>Control {controlUrl.label}</DialogTitle>
+
+        <DialogContent>
+          {/* Add your control component or content here */}
+          {/* For example: */}
+
+          {controlUrl.selectedControl && <ControlDataDisplay data={controlUrl.selectedControl} />}
+        </DialogContent>
+
       </Dialog>
 
 
@@ -131,6 +177,30 @@ export function ServicesView({
 }
 
 
+
+
+function createControlCoverage(controls) {
+  console.log('createControlCoverage:controls: ', controls)
+
+  let controlCountCovered = 0
+  let controlCountUnCovered = 0
+  let controlMethods = 0
+  let controlCoverage = 0
+  
+
+  for (const control of controls) {
+      if (control.data && control.data.methods && control.data.methods.length > 0) {
+        controlMethods += control.data.methods.length
+        controlCountCovered++
+      } else {
+        controlCountUnCovered++
+      }
+  }
+  // calculate the percentage of covered controls vs controls
+  controlCoverage = Math.round((controlCountCovered / controls.length) * 100)
+  console.log('createControlCoverage:controlCoverage: ', controlCoverage)
+  return ({ controlCountCovered, controlCountUnCovered, controlMethods, controlCoverage, controlCount: controls.length })
+};
 
 
 function createControlMenu(controls) {
@@ -194,6 +264,7 @@ function ServiceMenu({ services, providers, open, top, drawerWidth }) {
       open={open}
       top={top}
       drawerWidth={drawerWidth}
+      sx={{ displayPrint: 'none' }}
     >
       {csp && csp.map((x, i) =>
         <Menu
@@ -214,11 +285,22 @@ function ServiceMenu({ services, providers, open, top, drawerWidth }) {
 
 
 
-function ServicesHeader(frontmatter) {
+function ServicesHeader({frontmatter, controlCoverage}) {
   if (!frontmatter) { return <></> }
-  frontmatter = frontmatter.frontmatter
+  // frontmatter = frontmatter.frontmatter
+  console.log('ServicesHeader:controlCoverage: ', controlCoverage)
   // console.log('ServicesHeader:frontmatter: ', frontmatter)
-  const iconcolor = 'primary';
+
+  let icon = {color: 'success', icon: 'check'}
+
+  if (controlCoverage && controlCoverage.controlCoverage < 50) {
+    icon = {color: 'error', icon: 'circle-exclamation'} 
+  } else if (controlCoverage && controlCoverage.controlCoverage < 100) {
+    icon = {color: 'warning', icon: 'triangle-exclamation'}
+  } else if (!controlCoverage.controlCoverage) {
+    icon = {color: 'info', icon: 'circle-exclamation'}
+  }
+
   return (
     <>
       {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
@@ -243,9 +325,9 @@ function ServicesHeader(frontmatter) {
           <MiniStatisticsCard
             color="text.highlight"
             title="Controls"
-            count="13"
-            percentage={{ value: '55%', text: "coverage" }}
-            icon={{ color: "success", icon: 'check' }}
+            count={controlCoverage.controlCount}
+            percentage={{ value: controlCoverage.controlCoverage ? controlCoverage.controlCoverage : '0', text: "% coverage" }}
+            icon={icon}
           />
         </Grid>
       </Grid>

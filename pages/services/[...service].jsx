@@ -38,49 +38,6 @@ export default function Page({ providers, services, content, file, controls }) {
 
 
 
-
-// function useMDX(source) {
-//   const remarkPlugins = []
-
-//   remarkPlugins.push(remarkGfm);
-//   remarkPlugins.push(remarkFrontmatter);
-//   remarkPlugins.push(remarkMdxFrontmatter);
-//   remarkPlugins.push(remarkUnwrapImages);
-//   const exports = evaluateSync(source, {
-//     ...provider,
-//     ...runtime,
-//     useDynamicImport: true,
-//     remarkPlugins,
-//   });
-
-//   return { mdxContent: exports.default, frontmatter: exports.frontmatter };
-// }
-
-
-// function useMDX2(source) {
-//   const [exports, setExports] = useState({ default: undefined });
-//   const remarkPlugins = []
-
-//   remarkPlugins.push(remarkGfm);
-//   remarkPlugins.push(remarkFrontmatter);
-//   remarkPlugins.push(remarkMdxFrontmatter);
-//   remarkPlugins.push(remarkUnwrapImages);
-
-//   useEffect(() => {
-//     const processContent = () => {
-//       const exports = evaluateSync(source, {
-//         ...provider,
-//         ...runtime,
-//         useDynamicImport: true,
-//         remarkPlugins,
-//       });
-//       setExports(exports);
-//     };
-//     processContent();
-//   }, [source]);
-//   return { content: exports.default, frontmatter: exports.frontmatter };
-// }
-
 export async function getStaticPaths() {
   let pages = [];
   try {
