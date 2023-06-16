@@ -80,22 +80,29 @@ export function ServicesView({
     setPrint(!print);
     setMenuOpen(print);
 
-    if (mdxContainer.current !== null) {
-      const paged = new Previewer();
-      const contentMdx = `${mdxContainer.current?.innerHTML}`;
-      paged
-        .preview(contentMdx, ['/pdf.css'], previewContainer.current)
-        .then((flow) => {
-          // // console.log('====flow====')
-          // // console.log(flow)
-        });
-      // return () => {
-      //   document.head
-      //     .querySelectorAll("[data-pagedjs-inserted-styles]")
-      //     .forEach((e) => e.parentNode?.removeChild(e));
-      // };
-    }
+    
   };
+
+  const controlCoverage = createControlCoverage(controls);
+  useEffect(() => {
+    if (print) {
+      if (mdxContainer.current !== null) {
+        const paged = new Previewer();
+        const contentMdx = `${mdxContainer.current?.innerHTML}`;
+        paged
+          .preview(contentMdx, ['/pdf.css'], previewContainer.current)
+          .then((flow) => {
+            // // console.log('====flow====')
+            // // console.log(flow)
+          });
+        // return () => {
+        //   document.head
+        //     .querySelectorAll("[data-pagedjs-inserted-styles]")
+        //     .forEach((e) => e.parentNode?.removeChild(e));
+        // };
+      }
+    }
+  }, [print])
 
 
   return (
@@ -115,27 +122,27 @@ export function ServicesView({
       />
       <div
         style={{
-          marginTop: topBarHeight,
+          marginTop: (print ? 0 : topBarHeight),
           // paddingLeft: menuOpen ? navDrawerWidth : 0,
           paddingLeft: (print || !menuOpen) ? 0 : navDrawerWidth,
 
         }}
       >
-         <Button onClick={() => handlePrint()} sx={{ displayPrint: 'none' }}>{ print ? 'Exit' : 'Print View'}</Button>
+        <Button onClick={() => handlePrint()} sx={{ displayPrint: 'none' }}>{print ? 'Exit' : 'Print View'}</Button>
         <Box sx={{ px: '5%' }}>
-          {frontmatter && !print && <ServicesHeader frontmatter={frontmatter} />}
+          {frontmatter && !print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage}/>}
 
         </Box>
         <AsideAndMainContainer>
           <Main>
-          <div className="pagedjs_page" ref={previewContainer} style={{ display: print ? 'block' : 'none' }}></div>
+            <div className="pagedjs_page" ref={previewContainer} style={{ display: print ? 'block' : 'none' }}></div>
 
-          <div ref={mdxContainer} style={{ display: print ? 'none' : 'block' }}>
-            {print && frontmatter && <ServicesHeader frontmatter={frontmatter} />}
-            {children && children}
+            <div ref={mdxContainer} style={{ display: print ? 'none' : 'block' }}>
+              {print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} style={{ display: print ? 'block' : 'none' }} />}
+              {children && children}
             </div>
           </Main>
-          <Aside sx={{ displayPrint: 'none', display: print ? 'none' : ''}}>
+          <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '' }}>
             <ButtonMenu
               menuTitle="Controls"
               menuItems={createControlMenu(controls)}
@@ -150,18 +157,18 @@ export function ServicesView({
       </div>
       {/* Dialog box */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth={true} maxWidth={'lg'}>
-      <DialogActions>
+        <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Close</Button>
         </DialogActions>
         <DialogTitle>Control {controlUrl.label}</DialogTitle>
-       
+
         <DialogContent>
           {/* Add your control component or content here */}
           {/* For example: */}
-          
+
           {controlUrl.selectedControl && <ControlDataDisplay data={controlUrl.selectedControl} />}
         </DialogContent>
-       
+
       </Dialog>
 
 
@@ -170,6 +177,30 @@ export function ServicesView({
 }
 
 
+
+
+function createControlCoverage(controls) {
+  console.log('createControlCoverage:controls: ', controls)
+
+  let controlCountCovered = 0
+  let controlCountUnCovered = 0
+  let controlMethods = 0
+  let controlCoverage = 0
+  
+
+  for (const control of controls) {
+      if (control.data && control.data.methods && control.data.methods.length > 0) {
+        controlMethods += control.data.methods.length
+        controlCountCovered++
+      } else {
+        controlCountUnCovered++
+      }
+  }
+  // calculate the percentage of covered controls vs controls
+  controlCoverage = Math.round((controlCountCovered / controls.length) * 100)
+  console.log('createControlCoverage:controlCoverage: ', controlCoverage)
+  return ({ controlCountCovered, controlCountUnCovered, controlMethods, controlCoverage, controlCount: controls.length })
+};
 
 
 function createControlMenu(controls) {
@@ -254,11 +285,22 @@ function ServiceMenu({ services, providers, open, top, drawerWidth }) {
 
 
 
-function ServicesHeader(frontmatter) {
+function ServicesHeader({frontmatter, controlCoverage}) {
   if (!frontmatter) { return <></> }
-  frontmatter = frontmatter.frontmatter
+  // frontmatter = frontmatter.frontmatter
+  console.log('ServicesHeader:controlCoverage: ', controlCoverage)
   // console.log('ServicesHeader:frontmatter: ', frontmatter)
-  const iconcolor = 'primary';
+
+  let icon = {color: 'success', icon: 'check'}
+
+  if (controlCoverage && controlCoverage.controlCoverage < 50) {
+    icon = {color: 'error', icon: 'circle-exclamation'} 
+  } else if (controlCoverage && controlCoverage.controlCoverage < 100) {
+    icon = {color: 'warning', icon: 'triangle-exclamation'}
+  } else if (!controlCoverage.controlCoverage) {
+    icon = {color: 'info', icon: 'circle-exclamation'}
+  }
+
   return (
     <>
       {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
@@ -283,9 +325,9 @@ function ServicesHeader(frontmatter) {
           <MiniStatisticsCard
             color="text.highlight"
             title="Controls"
-            count="13"
-            percentage={{ value: '55%', text: "coverage" }}
-            icon={{ color: "success", icon: 'check' }}
+            count={controlCoverage.controlCount}
+            percentage={{ value: controlCoverage.controlCoverage ? controlCoverage.controlCoverage : '0', text: "% coverage" }}
+            icon={icon}
           />
         </Grid>
       </Grid>

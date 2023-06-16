@@ -97,7 +97,7 @@ function MdxImage({ props, baseContext }) {
   
       return () => window.removeEventListener('resize', updateSize);
     }, []);
-    console.log('useContainerSize:ref', ref)
+    console.log('useContainerSize:size', size)
     return [size, ref];
   }
 
@@ -148,8 +148,8 @@ function MdxImage({ props, baseContext }) {
             src={src}
             alt={alt}
             onLoad={handleImageLoad}
-            maxWidth={containerSize.width * 0.7}
-            // height={imageSize.height}
+            // maxWidth={containerSize.width * 0.7}
+            style={{ objectFit: 'contain', maxWidth: containerSize.width }}
           />
         </Box>
         <Dialog
