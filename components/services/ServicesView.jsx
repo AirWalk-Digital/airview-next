@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Box, Typography } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary'
 import { baseTheme } from '../../constants/baseTheme';
@@ -18,7 +17,8 @@ import { ControlTable } from '@/components/compliance/ControlTable';
 import { ControlDataDisplay } from '@/components/compliance/ControlData';
 import { useMdx } from '@/lib/content/mdx'
 import Container from '@mui/material/Container';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton, Typography, Box } from '@mui/material';
 import {
 
   AsideAndMainContainer,
@@ -108,10 +108,10 @@ export function ServicesView({
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
-      <TopBar onNavButtonClick={handleOnNavButtonClick}
+      {!print && <TopBar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
         menu={true}
-        topBarHeight={topBarHeight} />
+        topBarHeight={topBarHeight} />}
 
       <ServiceMenu
         services={services}
@@ -156,21 +156,33 @@ export function ServicesView({
         </AsideAndMainContainer>
       </div>
       {/* Dialog box */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth={true} maxWidth={'lg'}>
+
+      { controlUrl.selectedControl && 
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth={true} maxWidth={'lg'} sx={{
+   "& .MuiDialog-container": {
+     alignItems: "flex-start"
+   }}}
+   scroll='paper'>
+    <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Typography variant="h4">{controlUrl.selectedControl?.data?.name} ({controlUrl.selectedControl?.data?.id || 'N/A'})</Typography>
+    <IconButton edge="end" color="inherit" onClick={() => setDialogOpen(false)} aria-label="close">
+      <CloseIcon />
+    </IconButton>
+  </DialogTitle>
+     
+{/*         
         <DialogActions>
+        <DialogTitle>{controlUrl.selectedControl?.data?.name}
           <Button onClick={() => setDialogOpen(false)}>Close</Button>
-        </DialogActions>
-        <DialogTitle>Control {controlUrl.label}</DialogTitle>
-
+          </DialogTitle>
+        </DialogActions> */}
         <DialogContent>
-          {/* Add your control component or content here */}
-          {/* For example: */}
-
-          {controlUrl.selectedControl && <ControlDataDisplay data={controlUrl.selectedControl} />}
+          
+          <ControlDataDisplay data={controlUrl.selectedControl} />
         </DialogContent>
 
       </Dialog>
-
+}
 
     </ThemeProvider>
   )

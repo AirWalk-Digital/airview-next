@@ -39,7 +39,8 @@ import { ProgressTable } from '../components/Tables.jsx';
 // import {Layout, Column, Item } from './Layouts';
 
 import path from 'path';
-import { Dialog, DialogContent, DialogActions, Button, Box} from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Button, IconButton, Box} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 
@@ -159,7 +160,9 @@ function MdxImage({ props, baseContext }) {
           maxWidth="90%"
         >
            <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
+           <IconButton color="highlight" onClick={handleClose}>
+          <CloseIcon />
+          </IconButton>
         </DialogActions>
          
           <DialogContent sx={{
