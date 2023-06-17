@@ -204,7 +204,7 @@ export const mdComponents = (baseContext) => ({
   img: (props) => (<MdxImage props={props} baseContext={baseContext} fill loading="lazy" />),
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
   ul: (props) => <Typography variant="ul">{props.children}</Typography>,
-  table: (props) => <Typography variant="table">{props.children}</Typography>,
+  // table: (props) => <Typography variant="table">{props.children}</Typography>,
   pre: (props) => props.children,
   code: (props) => {
     const { className } = props;

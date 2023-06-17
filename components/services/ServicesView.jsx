@@ -18,6 +18,7 @@ import { ControlDataDisplay } from '@/components/compliance/ControlData';
 import { useMdx } from '@/lib/content/mdx'
 import Container from '@mui/material/Container';
 import CloseIcon from '@mui/icons-material/Close';
+import { PagedOutput } from '@/components/display/PagedOutput';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton, Typography, Box } from '@mui/material';
 import {
 
@@ -75,117 +76,112 @@ export function ServicesView({
     console.log("Clicked Label:", label);
   };
 
-  const handlePrint = () => {
+  function handlePrint() {
 
     setPrint(!print);
     setMenuOpen(print);
 
-    
+    console.log('handlePrint:print: ', print)
   };
 
   const controlCoverage = createControlCoverage(controls);
-  useEffect(() => {
-    if (print) {
-      if (mdxContainer.current !== null) {
-        const paged = new Previewer();
-        const contentMdx = `${mdxContainer.current?.innerHTML}`;
-        paged
-          .preview(contentMdx, ['/pdf.css'], previewContainer.current)
-          .then((flow) => {
-            // // console.log('====flow====')
-            // // console.log(flow)
-          });
-        // return () => {
-        //   document.head
-        //     .querySelectorAll("[data-pagedjs-inserted-styles]")
-        //     .forEach((e) => e.parentNode?.removeChild(e));
-        // };
-      }
-    }
-  }, [print])
 
 
-  return (
-    <ThemeProvider theme={baseTheme}>
-      <CssBaseline />
-      {!print && <TopBar onNavButtonClick={handleOnNavButtonClick}
-        navOpen={menuOpen}
-        menu={true}
-        topBarHeight={topBarHeight} />}
+  if (!print) {
+    return (
+      <ThemeProvider theme={baseTheme}>
+        <CssBaseline />
+        <TopBar onNavButtonClick={handleOnNavButtonClick}
+          navOpen={menuOpen}
+          menu={true}
+          topBarHeight={topBarHeight} 
+          handlePrint={handlePrint}
+          />
 
-      <ServiceMenu
-        services={services}
-        providers={providers}
-        open={menuOpen}
-        top={topBarHeight}
-        drawerWidth={navDrawerWidth}
-      />
-      <div
-        style={{
-          marginTop: (print ? 0 : topBarHeight),
-          // paddingLeft: menuOpen ? navDrawerWidth : 0,
-          paddingLeft: (print || !menuOpen) ? 0 : navDrawerWidth,
+        <ServiceMenu
+          services={services}
+          providers={providers}
+          open={menuOpen}
+          top={topBarHeight}
+          drawerWidth={navDrawerWidth}
+        />
+        <div
+          style={{
+            marginTop: topBarHeight,
+            paddingLeft: menuOpen ? navDrawerWidth : 0,
+            // paddingLeft: (print || !menuOpen) ? 0 : navDrawerWidth,
 
-        }}
-      >
-        <Button onClick={() => handlePrint()} sx={{ displayPrint: 'none' }}>{print ? 'Exit' : 'Print View'}</Button>
-        <Box sx={{ px: '5%' }}>
-          {frontmatter && !print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage}/>}
+          }}
+        >
+          <Box sx={{ px: '5%' }}>
+            {frontmatter && !print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />}
 
-        </Box>
-        <AsideAndMainContainer>
-          <Main>
-            <div className="pagedjs_page" ref={previewContainer} style={{ display: print ? 'block' : 'none' }}></div>
+          </Box>
+          <AsideAndMainContainer>
+            <Main>
+              <div className="pagedjs_page" ref={previewContainer} style={{ display: print ? 'block' : 'none' }}></div>
 
-            <div ref={mdxContainer} style={{ display: print ? 'none' : 'block' }}>
-              {print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} style={{ display: print ? 'block' : 'none' }} />}
-              {children && children}
-            </div>
-          </Main>
-          <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '' }}>
-            <ButtonMenu
-              menuTitle="Controls"
-              menuItems={createControlMenu(controls)}
-              initialCollapsed={false}
-              loading={false}
-              fetching={false}
-              handleButtonClick={handleControlClick}
-            />
+              <div ref={mdxContainer} style={{ display: print ? 'none' : 'block' }}>
+                {print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} style={{ display: print ? 'block' : 'none' }} />}
+                {children && children}
+              </div>
+            </Main>
+            <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '' }}>
+              <ButtonMenu
+                menuTitle="Controls"
+                menuItems={createControlMenu(controls)}
+                initialCollapsed={false}
+                loading={false}
+                fetching={false}
+                handleButtonClick={handleControlClick}
+              />
 
-          </Aside>
-        </AsideAndMainContainer>
-      </div>
-      {/* Dialog box */}
+            </Aside>
+          </AsideAndMainContainer>
+        </div>
+        {/* Dialog box */}
 
-      { controlUrl.selectedControl && 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth={true} maxWidth={'lg'} sx={{
-   "& .MuiDialog-container": {
-     alignItems: "flex-start"
-   }}}
-   scroll='paper'>
-    <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-    <Typography variant="h4">{controlUrl.selectedControl?.data?.name} ({controlUrl.selectedControl?.data?.id || 'N/A'})</Typography>
-    <IconButton edge="end" color="inherit" onClick={() => setDialogOpen(false)} aria-label="close">
-      <CloseIcon />
-    </IconButton>
-  </DialogTitle>
-     
-{/*         
+        {controlUrl.selectedControl &&
+          <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth={true} maxWidth={'lg'} sx={{
+            "& .MuiDialog-container": {
+              alignItems: "flex-start"
+            }
+          }}
+            scroll='paper'>
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="h4">{controlUrl.selectedControl?.data?.name} ({controlUrl.selectedControl?.data?.id || 'N/A'})</Typography>
+              <IconButton edge="end" color="inherit" onClick={() => setDialogOpen(false)} aria-label="close">
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+
+            {/*         
         <DialogActions>
         <DialogTitle>{controlUrl.selectedControl?.data?.name}
           <Button onClick={() => setDialogOpen(false)}>Close</Button>
           </DialogTitle>
         </DialogActions> */}
-        <DialogContent>
-          
-          <ControlDataDisplay data={controlUrl.selectedControl} />
-        </DialogContent>
+            <DialogContent>
 
-      </Dialog>
-}
+              <ControlDataDisplay data={controlUrl.selectedControl} />
+            </DialogContent>
 
-    </ThemeProvider>
-  )
+          </Dialog>
+        }
+
+      </ThemeProvider>
+    )
+  } else {
+    return (
+      <PagedOutput handlePrint={handlePrint} >
+      <ThemeProvider theme={baseTheme}>
+        <CssBaseline />
+        <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />
+        {children && children}
+      </ThemeProvider>
+      </PagedOutput>
+    )
+  }
 }
 
 
@@ -198,15 +194,15 @@ function createControlCoverage(controls) {
   let controlCountUnCovered = 0
   let controlMethods = 0
   let controlCoverage = 0
-  
+
 
   for (const control of controls) {
-      if (control.data && control.data.methods && control.data.methods.length > 0) {
-        controlMethods += control.data.methods.length
-        controlCountCovered++
-      } else {
-        controlCountUnCovered++
-      }
+    if (control.data && control.data.methods && control.data.methods.length > 0) {
+      controlMethods += control.data.methods.length
+      controlCountCovered++
+    } else {
+      controlCountUnCovered++
+    }
   }
   // calculate the percentage of covered controls vs controls
   controlCoverage = Math.round((controlCountCovered / controls.length) * 100)
@@ -297,20 +293,20 @@ function ServiceMenu({ services, providers, open, top, drawerWidth }) {
 
 
 
-function ServicesHeader({frontmatter, controlCoverage}) {
+function ServicesHeader({ frontmatter, controlCoverage }) {
   if (!frontmatter) { return <></> }
   // frontmatter = frontmatter.frontmatter
   console.log('ServicesHeader:controlCoverage: ', controlCoverage)
   // console.log('ServicesHeader:frontmatter: ', frontmatter)
 
-  let icon = {color: 'success', icon: 'check'}
+  let icon = { color: 'success', icon: 'check' }
 
   if (controlCoverage && controlCoverage.controlCoverage < 50) {
-    icon = {color: 'error', icon: 'circle-exclamation'} 
+    icon = { color: 'error', icon: 'circle-exclamation' }
   } else if (controlCoverage && controlCoverage.controlCoverage < 100) {
-    icon = {color: 'warning', icon: 'triangle-exclamation'}
+    icon = { color: 'warning', icon: 'triangle-exclamation' }
   } else if (!controlCoverage.controlCoverage) {
-    icon = {color: 'info', icon: 'circle-exclamation'}
+    icon = { color: 'info', icon: 'circle-exclamation' }
   }
 
   return (

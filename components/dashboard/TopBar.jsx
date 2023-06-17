@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import CloseIcon from "@mui/icons-material/Close";
+import PrintIcon from '@mui/icons-material/Print';
 import { styled } from "@mui/material/styles";
 // import logo from '../../public/logos/airwalk-logo.png';
 const Logo = styled("img")({
@@ -20,7 +21,7 @@ const Logo = styled("img")({
   });
 
 export function TopBar({
-    onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64, logo=true }) {
+    onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64, logo=true, handlePrint }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [activeMenu, setActiveMenu] = useState('');
@@ -101,7 +102,13 @@ export function TopBar({
               </MenuItem>
             </Link>
           </Menu>
-          
+          {handlePrint && <IconButton
+                size="large"
+                onClick={() => handlePrint()}
+                color="inherit"
+              >
+                <PrintIcon />
+              </IconButton>}
         </Toolbar>
       </AppBar>
     );
