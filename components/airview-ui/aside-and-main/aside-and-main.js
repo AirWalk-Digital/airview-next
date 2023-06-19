@@ -4,7 +4,7 @@ import { Container as MuiContainer, Box } from "@mui/material";
 
 export function AsideAndMainContainer({ children }) {
   return (
-    <MuiContainer maxWidth={false} sx={{ paddingTop: 6, paddingBottom: 6 }}>
+    <MuiContainer maxWidth={false} sx={{ paddingTop: 0, paddingBottom: 6 }}>
       <Box sx={{ display: "flex" }}>{children}</Box>
     </MuiContainer>
   );
@@ -14,9 +14,9 @@ AsideAndMainContainer.propTypes = {
   children: PropTypes.node,
 };
 
-export function Main({ children }) {
+export function Main({ children, sx }) {
   return (
-    <Box component="main" sx={{ flex: "1 1 auto" }}>
+    <Box component="main" sx={{ flex: "1 1 auto", ...sx }}>
       {children}
     </Box>
   );

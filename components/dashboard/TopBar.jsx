@@ -12,6 +12,7 @@ import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import CloseIcon from "@mui/icons-material/Close";
 import PrintIcon from '@mui/icons-material/Print';
+import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { styled } from "@mui/material/styles";
 // import logo from '../../public/logos/airwalk-logo.png';
 const Logo = styled("img")({
@@ -21,7 +22,7 @@ const Logo = styled("img")({
   });
 
 export function TopBar({
-    onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64, logo=true, handlePrint }) {
+    onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64, logo=true, handlePrint, handlePresentation }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [activeMenu, setActiveMenu] = useState('');
@@ -44,7 +45,7 @@ export function TopBar({
         <Toolbar>
           {/* has menu */}
         {menu &&  <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={onNavButtonClick}>{navOpen ? <CloseIcon /> : <MenuIcon />}</IconButton>}
-          {logo && <Logo src='/logos/airwalk-logo.png' alt="Airview" />}
+          {logo && <Link href="/" sx={{ textDecoration: 'none' }}><Logo src='/logos/airwalk-logo.png' alt="Airview" /></Link>}
           {/* back button */}
           {back && <Link href="/" sx={{ textDecoration: 'none' }}><ArrowBackIosNewOutlinedIcon color='text'/></Link>} 
           
@@ -75,12 +76,17 @@ export function TopBar({
           >
             <Link href="/services" sx={{ textDecoration: 'none' }}>
               <MenuItem>
-              Cloud Services
+              Providers & Services
               </MenuItem>
             </Link>
             <Link href="/frameworks" sx={{ textDecoration: 'none' }}>
               <MenuItem>
               Frameworks
+              </MenuItem>
+            </Link>
+            <Link href="/solutions" sx={{ textDecoration: 'none' }}>
+              <MenuItem>
+              Solutions
               </MenuItem>
             </Link>
           </Menu>
@@ -108,6 +114,13 @@ export function TopBar({
                 color="inherit"
               >
                 <PrintIcon />
+              </IconButton>}
+              {handlePresentation && <IconButton
+                size="large"
+                onClick={() => handlePresentation()}
+                color="inherit"
+              >
+                <SlideshowIcon />
               </IconButton>}
         </Toolbar>
       </AppBar>

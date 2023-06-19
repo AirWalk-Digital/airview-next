@@ -19,9 +19,17 @@ export const siteConfig = {
     },
     solutions: {
       source: 'github', // The source of the content
-      repo: 'airview-demo-content', // The name of the repo
+      repo: 'airwalk_patterns', // The name of the repo
       owner: 'airwalk-digital', // The owner of the repo
+      branch: '1-rob-ellison',
       path: 'solutions'  // the base path for the content
+    },
+    knowledge: {
+      source: 'github', // The source of the content
+      repo: 'airwalk_patterns', // The name of the repo
+      owner: 'airwalk-digital', // The owner of the repo
+      branch: 'main',
+      path: 'knowledge'  // the base path for the content
     }
   }
 

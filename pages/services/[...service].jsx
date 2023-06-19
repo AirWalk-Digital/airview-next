@@ -17,7 +17,13 @@ export default function Page({ providers, services, content, file, controls }) {
   const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
 
   useEffect(() => {
-    const { mdxContent, frontmatter } = useMDX(content);
+    let format;
+    if (file.endsWith(".md")) {
+      format = 'md';
+    } else {
+      format = 'mdx';
+    }
+    const { mdxContent, frontmatter } = useMDX(content, format);
     setContent({ content: mdxContent, frontmatter: frontmatter });
   }, [content])
 
@@ -85,13 +91,13 @@ export async function getStaticProps(context) {
   const servicesContent = await services.map(async (file) => {
     const content = await getFileContent(siteConfig.content.providers.owner, siteConfig.content.providers.repo, siteConfig.content.providers.branch, file);
     const matterData = matter(content, { excerpt: false }).data;
-    return { file: file, frontmatter: matterData };
+    return { file: file.replace("services/", "/services/"), frontmatter: matterData };
 
   });
 
   const file = 'services/' + context.params.service.join('/')
   const pageContent = await getFileContent(siteConfig.content.services.owner, siteConfig.content.services.repo, siteConfig.content.services.branch, file);
-  const pageContentText = Buffer.from(pageContent).toString("utf-8")
+  const pageContentText = pageContent ? Buffer.from(pageContent).toString("utf-8") : '';
 
   // controls
   const controlLocation = siteConfig.content.services.path + '/' + dirname(context.params.service.join('/'));

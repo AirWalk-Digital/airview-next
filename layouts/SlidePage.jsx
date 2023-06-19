@@ -16,7 +16,7 @@ import dynamic from 'next/dynamic'
 
 import Zoom from '@/components/presentations/Zoom';
 
-const globalStyles = `
+const globalStyl2es = `
 
   body,
   html {
@@ -25,7 +25,7 @@ const globalStyles = `
     height: 100vw;
     margin: 0;
     padding: 0;
-    background-color: black;
+    background-color: grey;
   }
 
   @media print {
@@ -43,11 +43,27 @@ const globalStyles = `
 
 `;
 
+const globalStyles = `
+
+  body,
+  html {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vw;
+    margin: 0;
+    padding: 0;
+    background-color: grey;
+  }
+`;
+
 export default dynamic(() => Promise.resolve(SlidePage), {
   ssr: false,
 }); 
 
 function SlidePage({ children, next }) {
+
+  console.log('SlidePage:children: ', children)
+
   const {
     currentSlide,
     setSlide,
@@ -182,7 +198,10 @@ function SlidePage({ children, next }) {
     React.Children.map(children, (child) => {
       // Check for <hr> element to separate slides
 
+      console.log('Child: ', child)
+
       const childType = child && child.props && (child.type || []);
+      console.log(childType)
       if (childType && childType === "hr") {
         generatorCount += 1;
         return;
@@ -220,13 +239,11 @@ function SlidePage({ children, next }) {
       );
       setSlide(slideCount);
     }
-
     // // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
     return <Slide>{generatedSlides[currentSlide]}</Slide>;
   };
   
   const pageSize = { width:1920, height:1080}
-
   return (
     
     <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{maxWidth: '100vw', maxHeight: '100vh'}}>
@@ -234,7 +251,8 @@ function SlidePage({ children, next }) {
       <GlobalStyles styles={globalStyles} />
       <Storage />
       <PresentationMode mode={mode} notes={slideNotes()} currentSlide={currentSlide} >
-        <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}>
+        {/* <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}> */}
+        <div id="slide">
           {renderSlide()}
         </div>
       </PresentationMode>

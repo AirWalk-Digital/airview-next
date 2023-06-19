@@ -20,6 +20,8 @@ import Container from '@mui/material/Container';
 import CloseIcon from '@mui/icons-material/Close';
 import { PagedOutput } from '@/components/display/PagedOutput';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton, Typography, Box } from '@mui/material';
+import { Container as MuiContainer } from "@mui/material";
+
 import {
 
   AsideAndMainContainer,
@@ -113,18 +115,10 @@ export function ServicesView({
 
           }}
         >
-          <Box sx={{ px: '5%' }}>
-            {frontmatter && !print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />}
-
-          </Box>
+          {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />}
           <AsideAndMainContainer>
             <Main>
-              <div className="pagedjs_page" ref={previewContainer} style={{ display: print ? 'block' : 'none' }}></div>
-
-              <div ref={mdxContainer} style={{ display: print ? 'none' : 'block' }}>
-                {print && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} style={{ display: print ? 'block' : 'none' }} />}
                 {children && children}
-              </div>
             </Main>
             <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '' }}>
               <ButtonMenu
@@ -310,9 +304,11 @@ function ServicesHeader({ frontmatter, controlCoverage }) {
   }
 
   return (
-    <>
+    <MuiContainer maxWidth={false} sx={{ paddingTop: 0, paddingBottom: 0 }}>
+    {/* <Box sx={{ display: "flex" }}>{children}</Box> */}
+  
       {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
-      <Grid container spacing={2} alignItems="center" sx={{ mb: '3%' }}>
+      <Grid container spacing={2} alignItems="center" sx={{ mb: '3%' }} component="servicesHeader">
         <Grid item xs={8}>
           <Typography variant="h1" component="h1">{frontmatter.title}</Typography>
           <Stack direction="row" spacing={1}>
@@ -340,6 +336,6 @@ function ServicesHeader({ frontmatter, controlCoverage }) {
         </Grid>
       </Grid>
       {/* </Container> */}
-    </>
+      </MuiContainer>
   )
 }

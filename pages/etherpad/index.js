@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, } from 'react';
-import AppBar from '@mui/material/AppBar';
+import { TopBar } from '@/components/dashboard';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
@@ -95,14 +95,7 @@ export default function Home() {
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
-      <AppBar color="primary" position="relative">
-        <Toolbar>
-          <SlideshowIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" color="inherit" noWrap>
-            Presentations as Code
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <TopBar/>
       <main>
         {/* Hero unit */}
         <Box

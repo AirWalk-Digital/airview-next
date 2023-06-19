@@ -23,8 +23,8 @@ import { motion } from "framer-motion";
 // import Card from '@material-ui/core/Card';
 // import CardContent from '@material-ui/core/CardContent';
 // import CardHeader from '@material-ui/core/CardHeader';
-import { Typography } from '@mui/material';
-import Alert from '@mui/material/Alert';
+// import { Typography, Box } from '@mui/material';
+// import Alert from '@mui/material/Alert';
 
 // Custom components
 
@@ -39,7 +39,7 @@ import { ProgressTable } from '../components/Tables.jsx';
 // import {Layout, Column, Item } from './Layouts';
 
 import path from 'path';
-import { Dialog, DialogContent, DialogActions, Button, IconButton, Box} from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Button, IconButton, Box, Typography, Alert} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 
@@ -234,6 +234,7 @@ export const mdComponents = (baseContext) => ({
   // Card,
   Alert,
   // custom component
+  Box,
   Header,
   Banner,
   Footer,
