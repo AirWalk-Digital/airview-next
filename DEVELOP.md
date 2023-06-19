@@ -12,11 +12,11 @@ docker run --name redis -d -p 6379:6379 redis
 docker run -it --rm redis redis-cli -h 172.17.0.1
 ```
 
-## Listing all the keys
+## Commands
 
-```bash
-keys *
-```
+Listing all the keys: `keys *`
+
+Delete everything: `FLUSHALL`
 
 
 # Local build
