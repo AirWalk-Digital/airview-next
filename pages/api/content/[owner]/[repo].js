@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       // // console.log('api:data: ', contentType, data);
       res.setHeader("Content-Type", contentType);
       res.send(data);
-      // res.send(Buffer.from(data, "base64"));
+      // res.end(Buffer.from(data, "base64"));
       // const content = Buffer.from(data.content ?? "", "base64").toString("utf8");
       // res.status(200).json({ data });
     }

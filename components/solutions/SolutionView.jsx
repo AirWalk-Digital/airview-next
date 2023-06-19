@@ -23,7 +23,7 @@ export function SolutionView({
 }) {
 
 
-  console.log('SolutionView:menuStructure: ', menuStructure)
+  // console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
@@ -70,7 +70,7 @@ export function SolutionView({
           }}
         >
           {/* {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />} */}
-          <Typography variant="h1" component="h1" sx={{ mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
+          <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
           {frontmatter?.format === 'presentation' && <Box sx={{ background: 'rgb(229, 246, 253)', px: '10%' }}>
             <Grid container alignItems="center" spacing={1}>
               <Grid item>

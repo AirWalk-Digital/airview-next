@@ -146,15 +146,19 @@ const baseTheme = deepmerge(
         color: palette.palette.text.highlight,
       },
       ul: {
-        display: 'inline',
+        display: 'inline-block',
         breakInside: 'avoid-column',
         listStyleType: 'circle',
         li: {
           listStylePosition: 'inside',
           "::marker": {
             color: 'tertiary',
-          }
-        }
+          },
+          span: {
+            display: 'inline',
+          },
+        },
+        
       },
       table: {
         display: "inline-table",
