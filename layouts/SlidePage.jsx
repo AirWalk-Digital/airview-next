@@ -45,14 +45,14 @@ const globalStyl2es = `
 
 const globalStyles = `
 
-  body,
-  html {
-    overflow: hidden;
+  body
+   {
+    overflow: auto;
     width: 100vw;
-    height: 100vw;
+    height: 100vh;
     margin: 0;
     padding: 0;
-    background-color: grey;
+    background-color: black;
   }
 `;
 
@@ -151,12 +151,12 @@ function SlidePage({ children, next }) {
     }
   };
 
-  useEffect(() => {
-    router.push(
-      `${router.asPath}`,
-      `${router.asPath.split("?")[0]}?format=ppt&mode=${mode}#${currentSlide}`
-    );
-  }, [currentSlide, mode, router.pathname]);
+  // useEffect(() => {
+  //   router.push(
+  //     `${router.asPath}`,
+  //     `${router.asPath.split("?")[0]}?format=ppt&mode=${mode}#${currentSlide}`
+  //   );
+  // }, [currentSlide, mode]);
 
   useEventListener("keydown", navigate);
 
@@ -244,9 +244,10 @@ function SlidePage({ children, next }) {
   };
   
   const pageSize = { width:1920, height:1080}
+  const ratio = pageSize.width / pageSize.height
   return (
     
-    <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{maxWidth: '100vw', maxHeight: '100vh'}}>
+    <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{maxWidth: '100vw', maxHeight: '100%'}}>
     <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
       <GlobalStyles styles={globalStyles} />
       <Storage />

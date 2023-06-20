@@ -71,27 +71,28 @@ export function SolutionView({
         >
           {/* {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />} */}
           <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
-          {frontmatter?.format === 'presentation' && <Box sx={{ background: 'rgb(229, 246, 253)', px: '10%' }}>
-            <Grid container alignItems="center" spacing={1}>
-              <Grid item>
+          {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
+             
+              <Grid xs="auto">
                 <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
               </Grid>
-              <Grid item>
+              <Grid >
                 <IconButton
                   size="medium"
-                  onClick={() => handlePresentation()}
+                  onClick={handlePresentation}
                   color="inherit"
                 >
                   <SlideshowIcon />
                 </IconButton>
               </Grid>
+              <Grid xs/>
             </Grid>
-          </Box>}
+            }
           <AsideAndMainContainer>
-            <Main sx={{ mt: '1%' }}>
+            <Main sx={{}}>
               {children && children}
             </Main>
-            <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '' }}>
+            <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
               <ContentMenu
                 chapters={chapterFiles}
                 knowledge={knowledgeFiles}

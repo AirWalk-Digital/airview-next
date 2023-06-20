@@ -27,12 +27,12 @@ function PresentationOutputPage({ children, handlePresentation, refresh = false,
     return (
       <>
         <Box onClick={() => handlePresentation()} role="presentation" sx={{ position: 'fixed', top: 16, right: 16, displayPrint: 'none', zIndex: 9999 }}>
-          <Fab size="small" aria-label="scroll back to top">
+          <Fab size="small">
             <CloseIcon />
           </Fab>
         </Box>
-        <Box display="flex" alignItems="center" justifyContent="center" style={{ height: '100vh', overflow: 'hidden' }}>
-          <div>
+        <Box display="flex" alignItems="center" justifyContent="center" sx={{maxWidth: '100vw', maxHeight: '100%'}}>
+          {/* <div> */}
             <CurrentSlideProvider>
               <ModeProvider>
                 <ThemeProvider theme={theme}>
@@ -41,7 +41,7 @@ function PresentationOutputPage({ children, handlePresentation, refresh = false,
                 </ThemeProvider>
               </ModeProvider>
             </CurrentSlideProvider>
-          </div>
+          {/* </div> */}
         </Box>
       </>
     )

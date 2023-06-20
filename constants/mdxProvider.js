@@ -205,6 +205,7 @@ export const mdComponents = (baseContext) => ({
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
   ul: (props) => <Typography variant="ul">{props.children}</Typography>,
   // table: (props) => <Typography variant="table">{props.children}</Typography>,
+  hr: (props) => null,
   pre: (props) => props.children,
   code: (props) => {
     const { className } = props;
@@ -246,7 +247,8 @@ export const mdComponents = (baseContext) => ({
   // Font,
   // layouts
   TitleSlide,
-  Layout, Column, Item
+  Layout: (props) => null, 
+  Column, Item
 });
 
 // export default ({ children }) => (
