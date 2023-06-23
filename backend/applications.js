@@ -25,8 +25,22 @@ export async function getApplications() {
   }
 }
 
-export function getApplicationById(id) {
-  const applications = getApplications();
-  const application = applications.find((app) => app.app_id === id);
+export async function getComplianceAggregation(applicationId) {
+  try {
+    const res = await fetch(
+      `${process.env.AIRVIEW_API_URL}/aggregations/compliance/${applicationId}`
+    );
+    const apiData = await res.json();
+    return apiData.map((m) => ({ ...m, instances: [] }));
+    return apiData;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+
+export async function getApplicationById(id) {
+  const applications = await getApplications();
+  const application = applications.find((app) => app.id === Number(id));
   return application;
 }
