@@ -11,6 +11,7 @@ import {
   getApplications,
   getApplicationById,
   getComplianceAggregation,
+  postExclusion,
 } from "../../backend/applications";
 
 import { ComplianceTable } from "../../components/airview-compliance-ui/features/compliance-table";
@@ -21,7 +22,7 @@ import {
 import dynamic from "next/dynamic";
 
 // temporary data
-import { getApplicationsData } from "../../components/airview-compliance-ui/stories/compliance-table/applications-data";
+// import { getApplicationsData } from "../../components/airview-compliance-ui/stories/compliance-table/applications-data";
 import {
   groups,
   controls,
@@ -39,6 +40,23 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 export default dynamic(() => Promise.resolve(Page), {
   ssr: false,
 });
+
+async function complianceOnAcceptOfRisk(data) {
+  try {
+    console.log(data);
+    const exclusion = {
+      controlId: data.controlId.value,
+      summary: data.summary.value,
+      isLimitedExclusion: data.limitedExemption.value,
+      resources: data.resources.value,
+    };
+    console.log(exclusion);
+    await postExclusion(exclusion);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
 
 function Page({ app, applicationsData }) {
   const topBarHeight = 64;
@@ -172,6 +190,7 @@ function Page({ app, applicationsData }) {
               <AccordionDetails>
                 <ComplianceTable
                   title="Issues"
+                  onAcceptOfRisk={complianceOnAcceptOfRisk}
                   noDataMessage={noDataMessage}
                   invalidPermissionsMessage={invalidPermissionsMessage}
                   loading={false}

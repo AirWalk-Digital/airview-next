@@ -127,6 +127,7 @@ function ComplianceTableRowDetail({ detailData, onAcceptOfRisk }) {
         onAccept={onAcceptOfRisk}
         exemptions={detailData.resources}
         applicationId={detailData.id}
+        controlId={detailData.controlId}
         impactLevel={getRisk}
       />
     </React.Fragment>
