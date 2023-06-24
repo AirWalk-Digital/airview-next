@@ -23,7 +23,7 @@ export function SolutionView({
 }) {
 
 
-  console.log('SolutionView:frontmatter: ', frontmatter)
+  console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
@@ -32,7 +32,7 @@ export function SolutionView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
-  const { solutions, chapters, knowledge, designs } = menuStructure || {};
+  const { primary, relatedContent, knowledge, designs, chapters } = menuStructure || {};
   // console.log('SolutionView:menuStructure: ', menuStructure)
   function handlePrint() {
     setPrint(!print);
@@ -56,7 +56,7 @@ export function SolutionView({
         />
 
         <SolutionsMenu
-          solutions={solutions}
+          solutions={primary}
           open={menuOpen}
           top={topBarHeight}
           drawerWidth={navDrawerWidth}
@@ -71,39 +71,39 @@ export function SolutionView({
         >
           {/* {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />} */}
           <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
-          {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>   
-              <Grid xs="auto">
-                <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
-              </Grid>
-              <Grid >
-                <IconButton
-                  size="medium"
-                  onClick={handlePresentation}
-                  color="inherit"
-                >
-                  <SlideshowIcon />
-                </IconButton>
-              </Grid>
-              <Grid xs/>
+          {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
+            <Grid xs="auto" item>
+              <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
             </Grid>
-            }
+            <Grid item>
+              <IconButton
+                size="medium"
+                onClick={handlePresentation}
+                color="inherit"
+              >
+                <SlideshowIcon />
+              </IconButton>
+            </Grid>
+            <Grid xs />
+          </Grid>
+          }
 
-{frontmatter.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
-<Grid xs="auto">
-                <Alert severity="info">This is draft content from Etherpad edit here: </Alert>
-              </Grid>
-              <Grid >
-                <IconButton
-                  size="medium"
-                  // onClick={handlePresentation}
-                  color="inherit"
-                >
-                  <SlideshowIcon />
-                </IconButton>
-              </Grid>
-              <Grid xs/>
+          {frontmatter?.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
+            <Grid>
+              <Alert severity="info">This is draft content from Etherpad edit here: </Alert>
             </Grid>
-            }
+            <Grid>
+              <IconButton
+                size="medium"
+                // onClick={handlePresentation}
+                color="inherit"
+              >
+                <SlideshowIcon />
+              </IconButton>
+            </Grid>
+            <Grid />
+          </Grid>
+          }
 
           <AsideAndMainContainer>
             <Main sx={{}}>
@@ -111,8 +111,10 @@ export function SolutionView({
             </Main>
             <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
               <ContentMenu
-                chapters={chapters}
-                knowledge={knowledge}
+                content={relatedContent}
+                // chapters={chapters}
+                // knowledge={knowledge}
+                // designs={designs}
                 file={file}
               />
               {/* <ButtonMenu
@@ -148,29 +150,39 @@ export function SolutionView({
 }
 
 
-function ContentMenu({ chapters, file, knowledge }) {
-  // console.log('ChaptersMenu: ', chapters)
+function ContentMenu({ content, chapters, file, knowledge, designs }) {
+  let directory = file?.includes("/") ? file.split("/")[1] : file;
   // console.log('ChaptersMenu:File ', file)
-  let directory = file ? file.split("/")[1] : '';
   let chaptersMenu = []
-  if (chapters && chapters[directory]) {
-    chaptersMenu.push(
-      {
-        groupTitle: "Chapters",
-        links: chapters[directory]
-      }
-    )
-  }
-  if (knowledge && knowledge[directory]) {
-    chaptersMenu.push(
-      {
-        groupTitle: "Knowledge",
-        links: knowledge[directory]
-      }
-    )
-  }
+  if (content && content[directory]) {
+    if (content[directory].chapters) {
+      chaptersMenu.push(
+        {
+          groupTitle: "Chapters",
+          links: content[directory].chapters
+        }
+      )
+    }
+    if (content[directory].knowledge) {
+      chaptersMenu.push(
+        {
+          groupTitle: "Knowledge",
+          links: content[directory].knowledge
 
+        }
+      )
+    }
+    if (content[directory].designs) {
+      chaptersMenu.push(
+        {
+          groupTitle: "Designs",
+          links: content[directory].designs
+        }
+      )
+    }
+  }
   if (chaptersMenu) {
+    // return (null)
     return (
       <Menu
         menuTitle="Content"
@@ -187,7 +199,7 @@ function ContentMenu({ chapters, file, knowledge }) {
 
 
 function SolutionsMenu({ solutions, open, top, drawerWidth }) {
-  console.log('SolutionsMenu: ', solutions)
+  // console.log('SolutionsMenu: ', solutions)
 
   return (
     <NavigationDrawer

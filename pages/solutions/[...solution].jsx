@@ -28,7 +28,7 @@ export default function Page({
 
   const [menuStructure, setMenuStructure] = useState(null);
 
-  console.log('Solution:Page:file: ', file)
+  // console.log('Solution:Page:initialMenuStructure: ', initialMenuStructure)
 
   useEffect(() => {
 
@@ -69,7 +69,7 @@ export default function Page({
               })
 
           }
-          console.log('fetchPadDetails: ', padData)
+          // console.log('fetchPadDetails: ', padData)
 
         })
         .catch(error => {
@@ -78,7 +78,7 @@ export default function Page({
     }
 
     if (file && file.endsWith(".etherpad")) {
-      console.log('fetching etherpad cache')
+      // console.log('fetching etherpad cache')
       const cacheKey = 'etherpad:new:/' + file
       fetchPadDetails(cacheKey)
     }
@@ -97,23 +97,32 @@ export default function Page({
 
     const fetchDataAndUpdateState = async () => {
       const padsMenu = await fetchPadMenu();
+      // console.log('fetchDataAndUpdateState:pads: ', padsMenu)
+      // console.log('fetchDataAndUpdateState:initialMenuStructure: ', initialMenuStructure)
 
+      let directory = file && file.includes("/") ? file.split("/")[1] : '';
+      // console.log('fetchDataAndUpdateState:directory: ', directory)
       // Create a new object rather than mutating the existing one
       const newMenuStructure = {
-        ...menuStructure,
-        solutions: [
-          ...(Array.isArray(initialMenuStructure?.solutions) ? initialMenuStructure.solutions : []),
+        ...initialMenuStructure,
+        primary: [
+          ...(Array.isArray(initialMenuStructure?.primary) ? initialMenuStructure.primary : []),
           ...(Array.isArray(padsMenu?.collections?.solutions) ? padsMenu.collections.solutions : []),
         ],
-        designs: [
-          ...(Array.isArray(initialMenuStructure?.designs) ? initialMenuStructure.designs : []),
-          ...(Array.isArray(padsMenu?.collections?.designs) ? padsMenu.collections.designs : []),
-        ],
-        knowledge: [
-          ...(Array.isArray(initialMenuStructure?.knowledge) ? initialMenuStructure.knowledge : []),
-          ...(Array.isArray(padsMenu?.collections?.knowledge) ? padsMenu.collections.knowledge : []),
-        ],
+        relatedContent: {
+          ...initialMenuStructure.relatedContent,
+          ...Object.keys(padsMenu.relatedContent).reduce((acc, key) => {
+            acc[key] = {
+              ...initialMenuStructure.relatedContent[key],
+              ...padsMenu.relatedContent[key]
+            };
+            return acc;
+          }, {})
+        }
       };
+
+      console.log('fetchDataAndUpdateState:newMenuStructure: ', newMenuStructure)
+
       setMenuStructure(newMenuStructure)
     };
     // console.log('initialMenuStructure: ', initialMenuStructure);
@@ -160,7 +169,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
-  console.log('params: ', context.params.solution)
+  // console.log('params: ', context.params.solution)
   const file = 'solutions/' + context.params.solution.join('/')
   const pageContent = await getFileContent(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, file);
   const pageContentText = pageContent ? Buffer.from(pageContent).toString("utf-8") : '';

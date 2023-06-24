@@ -30,7 +30,15 @@ export const siteConfig = {
       owner: 'airwalk-digital', // The owner of the repo
       branch: 'main',
       path: 'knowledge'  // the base path for the content
+    },
+    designs: {
+      source: 'github', // The source of the content
+      repo: 'airwalk_patterns', // The name of the repo
+      owner: 'airwalk-digital', // The owner of the repo
+      branch: 'main',
+      path: 'designs'  // the base path for the content
     }
+
   }
 
 }
