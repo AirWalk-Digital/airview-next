@@ -23,7 +23,7 @@ export function SolutionView({
 }) {
 
 
-  console.log('SolutionView:menuStructure: ', menuStructure)
+  console.log('SolutionView:frontmatter: ', frontmatter)
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
@@ -33,7 +33,7 @@ export function SolutionView({
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
   const { solutions, chapters, knowledge, designs } = menuStructure || {};
-  console.log('SolutionView:menuStructure: ', menuStructure)
+  // console.log('SolutionView:menuStructure: ', menuStructure)
   function handlePrint() {
     setPrint(!print);
     setMenuOpen(print);
@@ -71,8 +71,7 @@ export function SolutionView({
         >
           {/* {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />} */}
           <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
-          {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
-             
+          {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>   
               <Grid xs="auto">
                 <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
               </Grid>
@@ -88,6 +87,24 @@ export function SolutionView({
               <Grid xs/>
             </Grid>
             }
+
+{frontmatter.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
+<Grid xs="auto">
+                <Alert severity="info">This is draft content from Etherpad edit here: </Alert>
+              </Grid>
+              <Grid >
+                <IconButton
+                  size="medium"
+                  // onClick={handlePresentation}
+                  color="inherit"
+                >
+                  <SlideshowIcon />
+                </IconButton>
+              </Grid>
+              <Grid xs/>
+            </Grid>
+            }
+
           <AsideAndMainContainer>
             <Main sx={{}}>
               {children && children}
@@ -134,9 +151,9 @@ export function SolutionView({
 function ContentMenu({ chapters, file, knowledge }) {
   // console.log('ChaptersMenu: ', chapters)
   // console.log('ChaptersMenu:File ', file)
-  let directory = file.split("/")[1]; // Extract directory name
+  let directory = file ? file.split("/")[1] : '';
   let chaptersMenu = []
-  if (chapters[directory]) {
+  if (chapters && chapters[directory]) {
     chaptersMenu.push(
       {
         groupTitle: "Chapters",
@@ -144,7 +161,7 @@ function ContentMenu({ chapters, file, knowledge }) {
       }
     )
   }
-  if (knowledge[directory]) {
+  if (knowledge && knowledge[directory]) {
     chaptersMenu.push(
       {
         groupTitle: "Knowledge",
@@ -170,7 +187,7 @@ function ContentMenu({ chapters, file, knowledge }) {
 
 
 function SolutionsMenu({ solutions, open, top, drawerWidth }) {
-  // console.log('SolutionsMenu: ', solutions)
+  console.log('SolutionsMenu: ', solutions)
 
   return (
     <NavigationDrawer
