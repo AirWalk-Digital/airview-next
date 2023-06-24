@@ -13,20 +13,28 @@ import { FullScreenSpinner } from '@/components/dashboard/index.js';
 import { dirname, basename } from 'path';
 import { getMenuStructureSolutions } from '@/lib/content/menus';
 
+import { Button } from '@mui/material';
+
+
+
 export default function Page({
   content,
   file,
-  menuStructure }) {
+  menuStructure: initialMenuStructure }) {
 
   const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
+
+  const [menuStructure, setMenuStructure] = useState(initialMenuStructure);
+  
+  console.log('Solution:Page:file: ', file)
 
   useEffect(() => {
     let format;
     if (file.endsWith(".md")) {
       format = 'md';
-    } else {
+    } else if (file.endsWith(".mdx")){
       format = 'mdx';
-    }
+    } 
 
     // if (content) {content = '<SlidePage>\n' + content + '\n</SlidePage>'}
 
@@ -35,6 +43,40 @@ export default function Page({
   }, [content])
 
   const context = { file: file, ...siteConfig.content.solutions };
+
+  // load additional menu items from the Etherpad cache
+  useEffect(() => {
+    const fetchPadMenu = async () => {
+      const res = await fetch(`/api/structure?cache=true`);
+      const data = await res.json();
+      return data;
+    };
+  
+    const fetchDataAndUpdateState = async () => {
+      const padsMenu = await fetchPadMenu();
+    
+      // Create a new object rather than mutating the existing one
+      const newMenuStructure = {
+        ...menuStructure, 
+        solutions: [
+          ...(Array.isArray(menuStructure?.solutions) ? menuStructure.solutions : []), 
+          ...(Array.isArray(padsMenu?.collections?.solutions) ? padsMenu.collections.solutions : []),
+        ],
+        designs: [
+          ...(Array.isArray(menuStructure?.designs) ? menuStructure.designs : []), 
+          ...(Array.isArray(padsMenu?.collections?.designs) ? padsMenu.collections.designs : []),
+        ],
+        knowledge: [
+          ...(Array.isArray(menuStructure?.knowledge) ? menuStructure.knowledge : []), 
+          ...(Array.isArray(padsMenu?.collections?.knowledge) ? padsMenu.collections.knowledge : []),
+        ],
+      };
+      setMenuStructure(newMenuStructure)
+    };
+    
+    fetchDataAndUpdateState();
+  }, []); // [] indicates this useEffect runs once, after initial render
+  
 
   if (pageContent.content && pageContent.frontmatter) {
     const Content = pageContent.content;
@@ -51,9 +93,6 @@ export default function Page({
     </SolutionView>
   }
 };
-
-
-
 
 export async function getStaticPaths() {
   let pages = [];
@@ -74,64 +113,10 @@ export async function getStaticPaths() {
       paths: pages
     }
   }
-
-
 }
 
-
-
 export async function getStaticProps(context) {
-
-
-
-  // const solutions = await getAllFiles(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, siteConfig.content.solutions.path, true, '.md*');
-  // const knowledge = await getAllFiles(siteConfig.content.knowledge.owner, siteConfig.content.knowledge.repo, siteConfig.content.knowledge.branch, siteConfig.content.knowledge.path, true, '.md*');
-
-  // const solutionsContentPromises = solutions.map((file) => {
-  //   return getFileContent(
-  //     siteConfig.content.solutions.owner,
-  //     siteConfig.content.solutions.repo,
-  //     siteConfig.content.solutions.branch,
-  //     file
-  //   )
-  //     .then(content => {
-  //       const matterData = matter(content, { excerpt: false }).data || null;
-  //       if (matterData) {
-  //         for (let key in matterData) {
-  //           if (matterData[key] instanceof Date) {
-  //             matterData[key] = matterData[key].toISOString();
-  //           }
-  //         }
-  //       }
-  //       return { file: file, frontmatter: matterData };
-  //     })
-  //     .catch(error => {
-  //       // console.error(`Error processing file ${file}: ${error}`);
-  //       return { file: null, frontmatter: null };
-  //     });
-  // });
-
-  // const solutionsContent = await Promise.all(solutionsContentPromises);
-
-  // const knowledgeContentPromises = knowledge.map((file) => {
-  //   return getFileContent(
-  //     siteConfig.content.knowledge.owner,
-  //     siteConfig.content.knowledge.repo,
-  //     siteConfig.content.knowledge.branch,
-  //     file
-  //   )
-  //     .then(content => {
-  //       const matterData = matter(content, { excerpt: false }).data || null;
-  //       return { file: file, frontmatter: matterData };
-  //     })
-  //     .catch(error => {
-  //       console.error(`Error processing file ${file}: ${error}`);
-  //       return null; // or however you want to handle errors for each file
-  //     });
-  // });
-
-  // const knowledgeContent = await Promise.all(knowledgeContentPromises);
-
+console.log('params: ', context.params.solution)
   const file = 'solutions/' + context.params.solution.join('/')
   const pageContent = await getFileContent(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, file);
   const pageContentText = pageContent ? Buffer.from(pageContent).toString("utf-8") : '';

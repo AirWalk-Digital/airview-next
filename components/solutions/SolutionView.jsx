@@ -23,7 +23,7 @@ export function SolutionView({
 }) {
 
 
-  // console.log('SolutionView:menuStructure: ', menuStructure)
+  console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
@@ -32,8 +32,8 @@ export function SolutionView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
-  const { solutionMenu, chapterFiles, knowledgeFiles, designFiles } = menuStructure;
-
+  const { solutions, chapters, knowledge, designs } = menuStructure || {};
+  console.log('SolutionView:menuStructure: ', menuStructure)
   function handlePrint() {
     setPrint(!print);
     setMenuOpen(print);
@@ -56,7 +56,7 @@ export function SolutionView({
         />
 
         <SolutionsMenu
-          solutions={solutionMenu}
+          solutions={solutions}
           open={menuOpen}
           top={topBarHeight}
           drawerWidth={navDrawerWidth}
@@ -94,8 +94,8 @@ export function SolutionView({
             </Main>
             <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
               <ContentMenu
-                chapters={chapterFiles}
-                knowledge={knowledgeFiles}
+                chapters={chapters}
+                knowledge={knowledge}
                 file={file}
               />
               {/* <ButtonMenu
