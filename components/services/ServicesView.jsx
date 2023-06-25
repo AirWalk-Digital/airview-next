@@ -182,7 +182,7 @@ export function ServicesView({
 
 
 function createControlCoverage(controls) {
-  console.log('createControlCoverage:controls: ', controls)
+  // console.log('createControlCoverage:controls: ', controls)
 
   let controlCountCovered = 0
   let controlCountUnCovered = 0
@@ -200,7 +200,7 @@ function createControlCoverage(controls) {
   }
   // calculate the percentage of covered controls vs controls
   controlCoverage = Math.round((controlCountCovered / controls.length) * 100)
-  console.log('createControlCoverage:controlCoverage: ', controlCoverage)
+  // console.log('createControlCoverage:controlCoverage: ', controlCoverage)
   return ({ controlCountCovered, controlCountUnCovered, controlMethods, controlCoverage, controlCount: controls.length })
 };
 
@@ -209,7 +209,7 @@ function createControlMenu(controls) {
   console.log('createControlMenu:controls: ', controls)
   try {
     const links = controls.map((control) => {
-      const label = control.data.id || ''; // Adjust the property name according to your control data structure
+      const label = control.data.name || control.data.id || ''; // Adjust the property name according to your control data structure
       const url = control.file;
 
       return {

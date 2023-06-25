@@ -12,6 +12,7 @@ import { ServicesView } from '@/components/services'
 
 import { FullScreenSpinner } from '@/components/dashboard/index.js';
 import { dirname, basename } from 'path';
+// import { getMenuStructureProviderServices } from '@/lib/content/menus';
 
 export default function Page({ providers, services, content, file, controls }) {
   const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
@@ -101,11 +102,7 @@ export async function getStaticProps(context) {
 
   // controls
   const controlLocation = siteConfig.content.services.path + '/' + dirname(context.params.service.join('/'));
-  console.log('controlLocation: ', controlLocation)
-
   const controlFiles = await getAllFiles(siteConfig.content.services.owner, siteConfig.content.services.repo, siteConfig.content.services.branch, controlLocation, true, '.toml')
-  // const files = await getAllFiles(controlLocation, '/**/*.toml');
-  console.log('files: ', controlFiles)
   const controlContent = controlFiles.map(async (file) => {
     const content = await getFileContent(siteConfig.content.services.owner, siteConfig.content.services.repo, siteConfig.content.services.branch, file);
     return { data: parse(content), file: file };
