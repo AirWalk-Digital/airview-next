@@ -94,7 +94,7 @@ export default function Home() {
 
   const [title, setTitle] = useState('');
   const parents = ['None', 'Solution', 'Design', 'Service', 'Provider'];
-  const docTypes = [{ label: 'Solution', prefix: 'solutions' }, { label: 'Design', prefix: 'designs' }, { label: 'Service', prefix: 'services' }, { label: 'Provider', prefix: 'providers' }, { label: 'Knowledge', prefix: 'nowledge' }];
+  const docTypes = [{ label: 'Solution', prefix: 'solutions' }, { label: 'Design', prefix: 'designs' }, { label: 'Service', prefix: 'services' }, { label: 'Provider', prefix: 'providers' }, { label: 'Knowledge', prefix: 'knowledge' }];
 
   const handleCreateDialog = () => {
     setCreateOpen(!createOpen);
