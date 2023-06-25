@@ -11,10 +11,10 @@ import { SolutionView } from '@/components/solutions'
 
 import { FullScreenSpinner } from '@/components/dashboard/index.js';
 import { dirname, basename } from 'path';
-import { getMenuStructureSolutions } from '@/lib/content/menus';
+import { getMenuStructure } from '@/lib/content/menus';
 
 import { Button } from '@mui/material';
-
+import { fetchPadDetails } from '@/lib/etherpad'
 
 
 export default function Page({
@@ -27,11 +27,43 @@ export default function Page({
   const [content, setRawContent] = useState(initialContent);
 
   const [menuStructure, setMenuStructure] = useState(null);
+  const [rev, setRev] = useState(0);
 
-  // console.log('Solution:Page:initialMenuStructure: ', initialMenuStructure)
+  const handleContentClick = async (url, label) => {
+    console.log('Content Clicked: label: ', label, ' url: ', url)
+
+    if (url && url.endsWith(".etherpad")) { // load the pad
+      const cacheKey = 'etherpad:new:/' + url
+      const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
+      const pad = await fetchPadDetails(cacheKey);
+      console.log('handleContentClick: ', pad)
+
+      if (pad.rawContent && pad.frontmatter) {
+        setRev(pad.rev);
+        setRawContent(matter.stringify(pad.rawContent, pad.frontmatter));
+      }
+    } else if (url) { // load from github
+      try {
+        const response = await fetch(`/api/content/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`);
+        if (response.ok) {
+          const data = await response.text();
+          // console.log('handleContentClick:data: ', data);
+          // const content = Buffer.from(data ?? "", "base64").toString("utf8");
+          // console.log('handleContentClick:content: ', content);
+          setRawContent(data);
+        } else {
+          throw new Error('Error fetching files');
+        }
+      } catch (error) {
+        console.error('Error fetching files:', error);
+      }
+    }
+
+
+  };
 
   useEffect(() => {
-
+    console.log('useEffect:MDX:File: ', file)
     let format;
     if (file && file.endsWith(".md")) {
       format = 'md';
@@ -39,51 +71,43 @@ export default function Page({
       format = 'mdx';
     } else if (file && file.endsWith(".etherpad")) {
       format = 'mdx';
+    } else {
+      format = 'mdx;'
     }
-
     const { mdxContent, frontmatter } = useMDX(content, format);
     setContent({ content: mdxContent, frontmatter: frontmatter });
   }, [content])
 
   useEffect(() => {
-
-    const fetchPadDetails = async (cacheKey) => {
-      fetch(`/api/cache?key=${cacheKey}`)
-        .then((res) => res.json())
-        .then(data => {
-          const padData = JSON.parse(data.content)
-          if (padData.padID) {
-            fetch(`/api/etherpad/pad?pad=${padData.padID}`)
-              .then((res) => res.json())
-              .then(data => {
-                if (data.content) {
-                  // setRawContent(data.content);
-                  // Parse the existing frontmatter using gray-matter
-                  let { content, data: frontmatter } = matter(data.content);
-                  // Add padID to the frontmatter
-                  frontmatter.padID = padData.padID;
-                  // Stringify back to a markdown string
-                  const contentWithPadID = matter.stringify(content, frontmatter);
-                  setRawContent(contentWithPadID);
-                }
-              })
-
-          }
-          // console.log('fetchPadDetails: ', padData)
-
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    }
-
+    const fetchData = async () => {
+      const cacheKey = 'etherpad:new:/' + file;
+      try {
+        const pad = await fetchPadDetails(cacheKey);
+        return pad;
+      } catch (error) {
+        console.error('Error fetching pad details:', error);
+        return null;
+      }
+    };
+  
     if (file && file.endsWith(".etherpad")) {
-      // console.log('fetching etherpad cache')
-      const cacheKey = 'etherpad:new:/' + file
-      fetchPadDetails(cacheKey)
+      const fetchDataAndSetState = async () => {
+        const padDetails = await fetchData();
+        console.log('useEffect:fetchData1: ', padDetails);
+  
+        if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
+          console.log('useEffect:fetchData2: ', padDetails);
+  
+          setRev(padDetails.rev);
+          setRawContent(matter.stringify(padDetails.rawContent, padDetails.frontmatter));
+        }
+      };
+  
+      fetchDataAndSetState();
     }
+  }, [file]);
+  
 
-  }, [file])
 
   const context = { file: file, ...siteConfig.content.solutions };
 
@@ -97,12 +121,9 @@ export default function Page({
 
     const fetchDataAndUpdateState = async () => {
       const padsMenu = await fetchPadMenu();
-      // console.log('fetchDataAndUpdateState:pads: ', padsMenu)
-      // console.log('fetchDataAndUpdateState:initialMenuStructure: ', initialMenuStructure)
 
       let directory = file && file.includes("/") ? file.split("/")[1] : '';
-      // console.log('fetchDataAndUpdateState:directory: ', directory)
-      // Create a new object rather than mutating the existing one
+
       const newMenuStructure = {
         ...initialMenuStructure,
         primary: [
@@ -110,21 +131,22 @@ export default function Page({
           ...(Array.isArray(padsMenu?.collections?.solutions) ? padsMenu.collections.solutions : []),
         ],
         relatedContent: {
-          ...initialMenuStructure.relatedContent,
-          ...Object.keys(padsMenu.relatedContent).reduce((acc, key) => {
+          ...initialMenuStructure?.relatedContent,
+          ...Object.keys(padsMenu?.relatedContent || {}).reduce((acc, key) => {
             acc[key] = {
-              ...initialMenuStructure.relatedContent[key],
-              ...padsMenu.relatedContent[key]
+              ...initialMenuStructure?.relatedContent?.[key],
+              ...padsMenu?.relatedContent?.[key]
             };
             return acc;
           }, {})
         }
       };
 
-      console.log('fetchDataAndUpdateState:newMenuStructure: ', newMenuStructure)
+      console.log('fetchDataAndUpdateState:newMenuStructure: ', newMenuStructure);
 
-      setMenuStructure(newMenuStructure)
+      setMenuStructure(newMenuStructure);
     };
+
     // console.log('initialMenuStructure: ', initialMenuStructure);
     fetchDataAndUpdateState();
   }, [initialMenuStructure]);
@@ -133,13 +155,13 @@ export default function Page({
   if (pageContent.content && pageContent.frontmatter) {
     const Content = pageContent.content;
 
-    return <SolutionView frontmatter={pageContent.frontmatter} file={file} content={content} menuStructure={menuStructure} >
+    return <SolutionView frontmatter={pageContent.frontmatter} file={file} content={content} menuStructure={menuStructure} handleContentClick={handleContentClick}>
       <MDXProvider components={mdComponents(context)}>
         <Content />
       </MDXProvider>
     </SolutionView>
   } else {
-    return <SolutionView frontmatter={pageContent.frontmatter} file={file} menuStructure={menuStructure}>
+    return <SolutionView frontmatter={pageContent.frontmatter} file={file} menuStructure={menuStructure} handleContentClick={handleContentClick}>
       <MDXProvider components={mdComponents(context)}>
         <FullScreenSpinner />
       </MDXProvider>
@@ -171,9 +193,10 @@ export async function getStaticPaths() {
 export async function getStaticProps(context) {
   // console.log('params: ', context.params.solution)
   const file = 'solutions/' + context.params.solution.join('/')
-  const pageContent = await getFileContent(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, file);
+  let pageContent = '';
+  if (!file.endsWith(".etherpad")) { pageContent = await getFileContent(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, file); };
   const pageContentText = pageContent ? Buffer.from(pageContent).toString("utf-8") : '';
-  const menuStructure = await getMenuStructureSolutions(siteConfig);
+  const menuStructure = await getMenuStructure(siteConfig, siteConfig.content.solutions);
 
   return {
     props: {

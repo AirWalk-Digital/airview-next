@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       const data = await getFileContent(owner, repo, branch, filepath);
       const extension = path.extname(filepath);
       const contentType = mime.lookup(extension) || 'application/octet-stream';
-      // // console.log('api:data: ', contentType, data);
+      console.log('api:data: ', contentType, data);
       res.setHeader("Content-Type", contentType);
       res.send(data);
       // res.end(Buffer.from(data, "base64"));
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       // res.status(200).json({ data });
     }
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     res.status(500).send();
   }
 }

@@ -120,7 +120,8 @@ export function ButtonMenu({
                             textDecoration: "none",
                             textTransform: 'none',
                             textAlign: 'left',
-                            color: "text.secondary",
+                            fontWeight: 'light',
+                            color: 'secondary.main',
                             ...(url === currentRoute && { fontWeight: "bold" }),
                           }}
                         >

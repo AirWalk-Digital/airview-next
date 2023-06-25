@@ -6,11 +6,11 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Link from '@mui/material/Link';
 import { TopBar } from '@/components/dashboard';
-import { Menu, NavigationDrawer } from '@/components/airview-ui';
+import { Menu, NavigationDrawer, ButtonMenu } from '@/components/airview-ui';
 import { PagedOutput } from '@/components/display/PagedOutput';
 import { PresentationOutput } from '@/components/display/PresentationOutput';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
-import { IconButton, Typography, MenuItem, Box, Alert, Grid } from '@mui/material';
+import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase } from '@mui/material';
 
 import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
 
@@ -19,7 +19,8 @@ export function SolutionView({
   frontmatter,
   file,
   content,
-  menuStructure
+  menuStructure,
+  handleContentClick
 }) {
 
 
@@ -115,6 +116,7 @@ export function SolutionView({
                 // chapters={chapters}
                 // knowledge={knowledge}
                 // designs={designs}
+                handleContentClick={handleContentClick}
                 file={file}
               />
               {/* <ButtonMenu
@@ -150,7 +152,7 @@ export function SolutionView({
 }
 
 
-function ContentMenu({ content, chapters, file, knowledge, designs }) {
+function ContentMenu({ content, file, handleContentClick }) {
   let directory = file?.includes("/") ? file.split("/")[1] : file;
   // console.log('ChaptersMenu:File ', file)
   let chaptersMenu = []
@@ -183,15 +185,41 @@ function ContentMenu({ content, chapters, file, knowledge, designs }) {
   }
   if (chaptersMenu) {
     // return (null)
+
     return (
-      <Menu
-        menuTitle="Content"
-        menuItems={chaptersMenu}
-        initialCollapsed={false}
-        loading={false}
-        fetching={false}
-      />
-    );
+      <>
+      <ButtonBase
+                          variant="text"
+                          onClick={() => handleContentClick('/' + file, 'primary link')}
+                          sx={{
+                            textDecoration: "none",
+                            textTransform: 'none',
+                            textAlign: 'left',
+                            fontWeight: 'bold',
+                            color: 'secondary.main',
+                            mb: '5%'
+                          }}
+                        >Main Content</ButtonBase>
+
+      <ButtonMenu
+      menuTitle="Content"
+      menuItems={chaptersMenu}
+      initialCollapsed={false}
+      loading={false}
+      fetching={false}
+      handleButtonClick={handleContentClick}
+    /></>
+   
+    )
+    // return (
+    //   <Menu
+    //     menuTitle="Content"
+    //     menuItems={chaptersMenu}
+    //     initialCollapsed={false}
+    //     loading={false}
+    //     fetching={false}
+    //   />
+    // );
   }
 }
 

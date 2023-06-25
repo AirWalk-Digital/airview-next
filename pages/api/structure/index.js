@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   if (cache) {
 
     const newPads = await cacheSearch('etherpad:new:*')
-    console.log('cache: ', newPads)
+    // console.log('cache: ', newPads)
 
     const padMeta = await Promise.all(newPads.map(item => cacheRead(item)));
 
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
         for (let y of parents) {
           if (item[y]) {
-            let directory = file.includes("/") ? file.split("/")[2] : '';
+            let directory = item[y].includes("/") ? item[y].split("/")[2] : '';
 
             // Check if the key exists in the relatedContent object
             if (!relatedContent[directory]) {
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
               label: item.title,
               url: item.url.startsWith('/') ? item.url : '/' + item.url,
             });
-            console.log('added: ', relatedContent, item)
+            // console.log('added: ', relatedContent, item)
 
           }
         }
