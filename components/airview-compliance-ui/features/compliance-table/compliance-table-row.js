@@ -16,12 +16,12 @@ import { complianceTableCommonStyles } from "./compliance-table.common-styles";
 import { complianceTableRowStyles } from "./compliance-table-row.styles";
 
 function ComplianceTableRow({
-  environment,
+  environmentName,
   raisedDate,
   timeSinceRaised,
   qualityModel,
   severity,
-  name,
+  technicalControlName,
   tickets,
   children,
 }) {
@@ -68,14 +68,14 @@ function ComplianceTableRow({
           sx={{ "&.MuiTableCell-root": sharedClasses.applicationTableCell }}
         >
           <Box component="span" sx={classes.nameEnvBase} aria-label="name">
-            {name}
+            {technicalControlName}
           </Box>
           <Box
             component="span"
             sx={{ ...classes.env, ...classes.nameEnvBase }}
             aria-label="environment"
           >
-            {environment}
+            {environmentName}
           </Box>
         </TableCell>
 

@@ -34,7 +34,7 @@ function ComplianceTable({
     if (!applications) return;
 
     const derrivedFilters = applications
-      .map((application) => application.environment)
+      .map((application) => application.environmentName)
       .reduce((uniqueFilters, filter) => {
         return uniqueFilters.includes(filter)
           ? uniqueFilters
@@ -64,7 +64,7 @@ function ComplianceTable({
     if (filterValues.length < 1) return applications;
 
     return applications.filter((application) =>
-      filterValues.includes(application.environment)
+      filterValues.includes(application.environmentName)
     );
   };
 
@@ -171,8 +171,7 @@ function ComplianceTable({
               {...getTicketTimeData(application.raisedDateTime)}
             >
               <ComplianceTableRowDetail
-                detailData={application.applicationDetailData}
-                applicationId={application.id}
+                detailData={application}
                 onAcceptOfRisk={onAcceptOfRisk}
               />
             </ComplianceTableRow>

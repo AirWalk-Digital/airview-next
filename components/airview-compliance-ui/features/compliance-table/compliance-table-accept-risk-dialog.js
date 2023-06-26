@@ -34,6 +34,7 @@ export function ComplianceTableAcceptRiskDialog({
   onAccept,
   exemptions,
   applicationId,
+  controlId,
   impactLevel,
 }) {
   const theme = useTheme();
@@ -125,7 +126,11 @@ export function ComplianceTableAcceptRiskDialog({
     try {
       setSubmitting(true);
 
-      await onAccept({ ...formData, applicationId: { value: applicationId } });
+      await onAccept({
+        ...formData,
+        applicationId: { value: applicationId },
+        controlId: { value: controlId },
+      });
 
       onClose();
     } catch {
@@ -336,8 +341,8 @@ export function ComplianceTableAcceptRiskDialog({
               >
                 {exemptions.map((exemption) => (
                   <MenuItem
-                    key={exemption.name}
-                    value={exemption.name}
+                    key={exemption.id}
+                    value={exemption.id}
                     disabled={exemption.status !== "none"}
                   >
                     {exemption.status === "pending"
