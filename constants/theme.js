@@ -155,6 +155,7 @@ const theme = deepmerge(
         color: palette.palette.text.highlight,
       },
       ul: {
+        display: 'inline',
         breakInside: 'avoid-column',
         listStyleType: 'circle',
         li: {

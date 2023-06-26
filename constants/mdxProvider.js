@@ -23,8 +23,8 @@ import { motion } from "framer-motion";
 // import Card from '@material-ui/core/Card';
 // import CardContent from '@material-ui/core/CardContent';
 // import CardHeader from '@material-ui/core/CardHeader';
-import { Typography } from '@mui/material';
-import Alert from '@mui/material/Alert';
+// import { Typography, Box } from '@mui/material';
+// import Alert from '@mui/material/Alert';
 
 // Custom components
 
@@ -39,7 +39,8 @@ import { ProgressTable } from '../components/Tables.jsx';
 // import {Layout, Column, Item } from './Layouts';
 
 import path from 'path';
-import { Dialog, DialogContent, DialogActions, Button, Box} from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Button, IconButton, Box, Typography, Alert} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 
@@ -159,7 +160,9 @@ function MdxImage({ props, baseContext }) {
           maxWidth="90%"
         >
            <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
+           <IconButton color="highlight" onClick={handleClose}>
+          <CloseIcon />
+          </IconButton>
         </DialogActions>
          
           <DialogContent sx={{
@@ -201,7 +204,8 @@ export const mdComponents = (baseContext) => ({
   img: (props) => (<MdxImage props={props} baseContext={baseContext} fill loading="lazy" />),
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
   ul: (props) => <Typography variant="ul">{props.children}</Typography>,
-  table: (props) => <Typography variant="table">{props.children}</Typography>,
+  // table: (props) => <Typography variant="table">{props.children}</Typography>,
+  hr: (props) => null,
   pre: (props) => props.children,
   code: (props) => {
     const { className } = props;
@@ -231,6 +235,7 @@ export const mdComponents = (baseContext) => ({
   // Card,
   Alert,
   // custom component
+  Box,
   Header,
   Banner,
   Footer,
@@ -242,7 +247,8 @@ export const mdComponents = (baseContext) => ({
   // Font,
   // layouts
   TitleSlide,
-  Layout, Column, Item
+  Layout: (props) => null, 
+  Column, Item
 });
 
 // export default ({ children }) => (

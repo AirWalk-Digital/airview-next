@@ -1,5 +1,5 @@
 
-# Next MDX Deck
+# Next Airview
 
 Create presentation decks using MDX, React, and [Next.js](https://nextjs.org/).
 

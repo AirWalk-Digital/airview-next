@@ -16,7 +16,7 @@ import dynamic from 'next/dynamic'
 
 import Zoom from '@/components/presentations/Zoom';
 
-const globalStyles = `
+const globalStyl2es = `
 
   body,
   html {
@@ -25,7 +25,7 @@ const globalStyles = `
     height: 100vw;
     margin: 0;
     padding: 0;
-    background-color: black;
+    background-color: grey;
   }
 
   @media print {
@@ -43,11 +43,27 @@ const globalStyles = `
 
 `;
 
+const globalStyles = `
+
+  body
+   {
+    overflow: auto;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+  }
+`;
+
 export default dynamic(() => Promise.resolve(SlidePage), {
   ssr: false,
 }); 
 
 function SlidePage({ children, next }) {
+
+  console.log('SlidePage:children: ', children)
+
   const {
     currentSlide,
     setSlide,
@@ -135,12 +151,12 @@ function SlidePage({ children, next }) {
     }
   };
 
-  useEffect(() => {
-    router.push(
-      `${router.asPath}`,
-      `${router.asPath.split("?")[0]}?format=ppt&mode=${mode}#${currentSlide}`
-    );
-  }, [currentSlide, mode, router.pathname]);
+  // useEffect(() => {
+  //   router.push(
+  //     `${router.asPath}`,
+  //     `${router.asPath.split("?")[0]}?format=ppt&mode=${mode}#${currentSlide}`
+  //   );
+  // }, [currentSlide, mode]);
 
   useEventListener("keydown", navigate);
 
@@ -182,7 +198,10 @@ function SlidePage({ children, next }) {
     React.Children.map(children, (child) => {
       // Check for <hr> element to separate slides
 
+      console.log('Child: ', child)
+
       const childType = child && child.props && (child.type || []);
+      console.log(childType)
       if (childType && childType === "hr") {
         generatorCount += 1;
         return;
@@ -220,21 +239,21 @@ function SlidePage({ children, next }) {
       );
       setSlide(slideCount);
     }
-
     // // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
     return <Slide>{generatedSlides[currentSlide]}</Slide>;
   };
   
   const pageSize = { width:1920, height:1080}
-
+  const ratio = pageSize.width / pageSize.height
   return (
     
-    <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{maxWidth: '100vw', maxHeight: '100vh'}}>
+    <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{maxWidth: '100vw', maxHeight: '100%'}}>
     <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
       <GlobalStyles styles={globalStyles} />
       <Storage />
       <PresentationMode mode={mode} notes={slideNotes()} currentSlide={currentSlide} >
-        <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}>
+        {/* <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}> */}
+        <div id="slide">
           {renderSlide()}
         </div>
       </PresentationMode>
