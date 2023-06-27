@@ -25,24 +25,6 @@ export async function getApplications() {
   }
 }
 
-export async function postExclusion(data) {
-  try {
-    console.log(process.env.AIRVIEW_API_URL);
-    console.log(`${process.env.AIRVIEW_API_URL}/exclusions`);
-    const res = await fetch(`/api/compliance/exclusions`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
-}
-
 export async function getComplianceAggregation(applicationId) {
   try {
     const res = await fetch(

@@ -81,8 +81,9 @@ export function ControlOverviewItemDetail({
           </Box>
         </Box>
       </Grid>
-
+      {/*
       <Grid item xs={3} sx={classes.actions}>
+	
         <Button
           variant="contained"
           disableElevation
@@ -95,6 +96,7 @@ export function ControlOverviewItemDetail({
           Create Exemption
         </Button>
       </Grid>
+      */}
     </Grid>
   );
 }

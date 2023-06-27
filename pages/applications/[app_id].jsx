@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Typography, Box } from "@mui/material";
 
@@ -11,7 +11,6 @@ import {
   getApplications,
   getApplicationById,
   getComplianceAggregation,
-  postExclusion,
 } from "../../backend/applications";
 
 import { ComplianceTable } from "../../components/airview-compliance-ui/features/compliance-table";
@@ -43,15 +42,20 @@ export default dynamic(() => Promise.resolve(Page), {
 
 async function complianceOnAcceptOfRisk(data) {
   try {
-    console.log(data);
     const exclusion = {
       controlId: data.controlId.value,
       summary: data.summary.value,
       isLimitedExclusion: data.limitedExemption.value,
       resources: data.resources.value,
     };
-    console.log(exclusion);
-    await postExclusion(exclusion);
+    const res = await fetch(`/api/compliance/exclusions/`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(exclusion),
+    });
   } catch (e) {
     console.log(e);
     throw e;
@@ -208,7 +212,7 @@ function Page({ app, applicationsData }) {
                 <Typography>Controls</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <ApplicationControls />
+                <ApplicationControls applicationId={app.id} />
               </AccordionDetails>
             </Accordion>
 
@@ -249,7 +253,6 @@ export async function getStaticProps(context) {
     const applicationsData = await getComplianceAggregation(
       context.params.app_id
     );
-    console.log(applicationsData);
     return {
       props: {
         app: app,
@@ -266,64 +269,123 @@ export async function getStaticProps(context) {
   }
 }
 
-const ApplicationControls = () => {
+const ApplicationControls = ({ applicationId }) => {
+  console.log(applicationId);
+  // const [state, setControlsData, setResourcesData] =
+  //   useControlOverviewController(() => {
+  //     return new Promise((resolve) => {
+  //       setTimeout(() => {
+  //         resolve(groups);
+  //       }, [500]);
+  //     });
+  //   }, 1);
+
+  // const handleOnRequestOfControlsData = (id) => {
+  //   setControlsData(id, () => {
+  //     return new Promise((resolve) => {
+  //       setTimeout(() => {
+  //         if (id === 3) resolve("error");
+
+  //         resolve(controls[id]);
+  //       }, [500]);
+  //     });
+  //   });
+  // };
+
+  // const handleOnRequestOfResourcesData = (id) => {
+  //   setResourcesData(id, () => {
+  //     return new Promise((resolve) => {
+  //       setTimeout(() => {
+  //         if (id === 3) resolve("error");
+
+  //         resolve(resources[id]);
+  //       }, [500]);
+  //     });
+  //   });
+  // };
+
+  // let models = {};
+
   const [state, setControlsData, setResourcesData] =
-    useControlOverviewController(() => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(groups);
-        }, [500]);
+    useControlOverviewController(() => fetchGroupData(applicationId), null);
+
+  // useEffect(() => {
+  //   return () => {
+  //     models = {};
+  //   };
+  // }, []);
+
+  if (!state) return null;
+
+  async function fetchGroupData(applicationId) {
+    try {
+      const modelData = await (
+        await fetch(
+          `/api/compliance/applications/${applicationId}/quality-models/`
+        )
+      ).json();
+      return modelData.map((item, index) => {
+        const model = {
+          id: item.name,
+          title:
+            item.name.charAt(0).toUpperCase() +
+            item.name.slice(1).toLowerCase(),
+        };
+        return model;
       });
-    }, 1);
+    } catch {
+      return [];
+    }
+  }
 
-  const handleOnRequestOfControlsData = (id) => {
-    setControlsData(id, () => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          if (id === 3) resolve("error");
+  async function fetchControlsData({ applicationId, id }) {
+    const controls = await (
+      await fetch(
+        `/api/compliance/applications/${applicationId}/control-overviews?qualityModel=${id}`
+      )
+    ).json();
+    return controls.map((item) => {
+      return {
+        ...item,
+        severity:
+          item.severity.charAt(0).toUpperCase() +
+          item.severity.slice(1).toLowerCase(),
 
-          resolve(controls[id]);
-        }, [500]);
-      });
+        control: { name: item.name, url: "/" },
+        frameworks: [],
+        controlAction:
+          item.controlAction.charAt(0).toUpperCase() +
+          item.controlAction.slice(1).toLowerCase(),
+        lifecycle: item.systemStage,
+      };
     });
-  };
+  }
 
-  const handleOnRequestOfResourcesData = (id) => {
-    setResourcesData(id, () => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          if (id === 3) resolve("error");
-
-          resolve(resources[id]);
-        }, [500]);
-      });
+  async function fetchResourcesData({ applicationId, id }) {
+    const resources = await (
+      await fetch(
+        `/api/compliance/aggregations/control-overview-resources/${applicationId}?technicalControlId=${id}`
+      )
+    ).json();
+    return resources.map((item) => {
+      const status =
+        item.state || "FLAGGED" === "FLAGGED" ? "Non-Compliant" : "Monitoring";
+      return { ...item, type: "Unknown", status: status };
     });
-  };
-
-  const handleOnResourceExemptionDelete = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, [1000]);
-    });
-  };
-
-  const handleOnResourceExemptionSave = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, [1000]);
-    });
-  };
+  }
 
   return (
     <ControlOverview
       title="Control Overview"
       data={state}
-      onRequestOfControlsData={handleOnRequestOfControlsData}
-      onRequestOfResourcesData={handleOnRequestOfResourcesData}
-      onResourceExemptionDelete={handleOnResourceExemptionDelete}
-      onResourceExemptionSave={handleOnResourceExemptionSave}
+      onRequestOfControlsData={(id) =>
+        setControlsData(id, () => fetchControlsData({ applicationId, id }))
+      }
+      onRequestOfResourcesData={(id) =>
+        setResourcesData(id, () => fetchResourcesData({ applicationId, id }))
+      }
+      onResourceExemptionDelete={() => {}}
+      onResourceExemptionSave={() => {}}
     />
   );
 };

@@ -4,8 +4,8 @@ export const config = {
   api: {
     externalResolver: true,
     bodyParser: false,
-  }
-}
+  },
+};
 
 const proxy = createProxyMiddleware({
   target: process.env.AIRVIEW_API_URL,
@@ -16,16 +16,13 @@ const proxy = createProxyMiddleware({
 
 function addTrailingSlash(url) {
   var regex = /(\/)(?![?/])$/;
-  
+
   if (regex.test(url)) {
     return url; // URL already has a trailing slash in the pathname
   } else {
-    return url.replace(/(\/)?(\?|$)/, '/$2'); // Append a trailing slash to the URL
+    return url.replace(/(\/)?(\?|$)/, "/$2"); // Append a trailing slash to the URL
   }
 }
-
-
-
 
 export default function handler(req, res) {
   req.url = addTrailingSlash(req.url);
