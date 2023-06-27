@@ -13,28 +13,16 @@ import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { FormControl, Link, Dialog, DialogTitle, DialogContent, ButtonGroup, DialogContentText, Select, MenuItem, DialogActions, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Skeleton, FormControl, Link, Dialog, DialogTitle, DialogContent, ButtonGroup, DialogContentText, Select, MenuItem, DialogActions, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { baseTheme } from '../../constants/baseTheme';
 import * as matter from 'gray-matter';
 import { v4 as uuidv4 } from 'uuid';
 import { dirname, basename } from 'path';
 
+import { NewPadDialog } from '@/components/etherpad';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.main" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://airwalkreply.com/">
-        airwalkreply.com
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-function Pad({ children }) {
+function Pad({ padID, title }) {
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -49,23 +37,23 @@ function Pad({ children }) {
     /> */}
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography gutterBottom variant="h5" component="h2">
-            Etherpad
+            
           </Typography>
           <Typography variant="p" sx={{ fontSize: "1rem" }}>
-            {children}
+            {title}
           </Typography>
         </CardContent>
         <CardActions>
           {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
           {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
-          <Button href={`/output/pad/${children}?format=ppt`} size="small">
+          <Button href={`/output/pad/${padID}?format=ppt`} size="small">
             PPT
           </Button>
-          <Button href={`/output/pad/${children}?format=doc`} size="small">
+          <Button href={`/output/pad/${padID}?format=doc`} size="small">
             Doc
           </Button>
           <Button
-            href={`https://pad.airview.airwalkconsulting.io/p/${children}`}
+            href={`https://pad.airview.airwalkconsulting.io/p/${padID}`}
             rel="noopener noreferrer"
             target="_blank"
             size="small"
@@ -82,86 +70,16 @@ export default function Home() {
   const [padList, setPadList] = useState(0);
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
+  const [airviewPads, setAirviewPads] = useState(null);
 
   // dialogs
   // New Pad
   const [createOpen, setCreateOpen] = useState(false);
-  const [dropDownData, setDropDownData] = useState([]);
-  const [selectedDropDown, setSelectedDropDown] = useState('');
-  const [docType, setDocType] = useState('designs');
 
-  const [parent, setParent] = useState('None');
-
-  const [title, setTitle] = useState('');
-  const parents = ['None', 'Solution', 'Design', 'Service', 'Provider'];
-  const docTypes = [{ label: 'Solution', prefix: 'solutions' }, { label: 'Design', prefix: 'designs' }, { label: 'Service', prefix: 'services' }, { label: 'Provider', prefix: 'providers' }, { label: 'Knowledge', prefix: 'knowledge' }];
-
-  const handleCreateDialog = () => {
+  function handleCreateDialog() {
     setCreateOpen(!createOpen);
   };
-  const handleCreateNew = async () => {
-    console.log('create new pad: ', title, ' / ', selectedDropDown, ' / ', parent);
-    let pad = uuidv4();  // Generate a unique padID
 
-
-
-    let frontmatter;
-    if (parent === 'None') {
-      // define the object for when parent === 'None'
-      frontmatter = {
-        type: docType,
-        title: title
-      };
-    } else {
-      // define the object for when parent !== 'None'
-      frontmatter = {
-        type: docType,
-        [parent.toLowerCase()]: dirname(selectedDropDown),
-        title: title,
-        parentType: parent.toLowerCase(),
-        parentName: dirname(selectedDropDown)
-      };
-    }
-    const initialContent = matter.stringify('\n', frontmatter);
-
-    try {
-      const response = await fetch(`/api/etherpad/new?padID=${pad}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ initialContent }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      } else {
-        setCreateOpen(false);
-      }
-
-    } catch (error) {
-      console.error('Error:', error);
-    }
-
-
-  };
-
-  const handleParentChange = async (parent) => {
-    setParent(parent);
-    if (parent === 'Solution') {
-      console.log(siteContent.menuStructure['solutionMenu'])
-      setDropDownData(siteContent.menuStructure['solutionMenu']);
-    }
-
-  };
-
-  const handleDocTypeChange = async (x) => {
-    setDocType(x);
-  };
-
-  const handleDropDownChange = (event) => {
-    setSelectedDropDown(event.target.value);
-  };
 
   // Import Pad
   const [importOpen, setImportOpen] = useState(false);
@@ -179,13 +97,13 @@ export default function Home() {
   const handleImport = async () => {
     console.log('import pad')
 
-    
-      // const resPadRevs = await fetch(`/api/etherpad/pad-revs?pad=${padId}`);
-      // const dataPadRevs = await resPadRevs.json();
-      // const response = await fetch(`/api/etherpad/pad?pad=${padId}`);
-      // console.log('fetch response:', response.json())
-      if (!padData) {
-        try {
+
+    // const resPadRevs = await fetch(`/api/etherpad/pad-revs?pad=${padId}`);
+    // const dataPadRevs = await resPadRevs.json();
+    // const response = await fetch(`/api/etherpad/pad?pad=${padId}`);
+    // console.log('fetch response:', response.json())
+    if (!padData) {
+      try {
         fetch(`/api/etherpad/pad?pad=${padId}`)
           .then((res) => res.json())
           .then(data => {
@@ -197,107 +115,131 @@ export default function Home() {
 
             }
           })
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      } else {
-        try {
-          const response = await fetch(`/api/etherpad/new?padID=${padId}&import=true`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ initialContent: padData }),
-          });
-    
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          } else {
-            handleImportDialog();
-          }
-    
-        } catch (error) {
-          console.error('Error:', error);
-        }
+      } catch (error) {
+        console.error('Error:', error);
       }
+    } else {
+      try {
+        const response = await fetch(`/api/etherpad/new?padID=${padId}&import=true`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ initialContent: padData }),
+        });
 
-      // Store the returned data
-      // setPadData(response.content);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        } else {
+          handleImportDialog();
+        }
 
-      // console.log(padData)
-      // fetch(`/api/etherpad/pad?pad=${location}`)
-      //         .then((res) => res.json())
-      //         .then(data => {
-      //           console.log('fetch data:', data)
-      //           if (data.content) {
-      //             setPadData(data.content)
-      //             console.log('fetch :', data.content)
-      //           }
-      //         })
-      //         .catch(error => {
-      //           console.log(error)
-      //         })
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
 
 
-      // const resPad = await fetch(`/api/etherpad/pad?pad=${padId}`);
-      // const dataPad = await resPad.json();
-      // console.log('fetchPadContent: ', await resPad);
 
-      // if (dataPad.content) {
-
-      //   try {
-      //     const response = await fetch(`/api/etherpad/new?padID=${padId}&import=true`, {
-      //       method: 'POST',
-      //       headers: {
-      //         'Content-Type': 'application/json',
-      //       },
-      //       body: JSON.stringify({ content: dataPad.content }),
-      //     });
-
-      //     if (!response.ok) {
-      //       throw new Error('Network response was not ok');
-      //     } else {
-      //       setPadData()
-      //       setCreateOpen(false);
-      //     }
-      //   } catch (error) {
-      //     console.error('Error:', error);
-      //   }
-      // }
-
-    
   };
 
-  useEffect(() => {
-    fetch(`/api/etherpad/all-pads`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPadList(data.pads);
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-      .finally(() => {
-        setTimeout(() => setRefreshToken(Math.random()), 5000);
+  const handleImportAll = async () => {
+    try {
+      const res = await fetch(`/api/etherpad/all-pads`);
+      const data = await res.json();
+      console.log('handleImportAll:', data.pads);
+
+      //   const padPromises = data.pads.map((pad) =>
+      //   fetch(`/api/etherpad/pad?pad=${pad}`).then((res) => res.json())
+      // );
+      const padPromises = data.pads.map((pad) =>
+        fetch(`/api/etherpad/pad?pad=${pad}`)
+          .then((res) => res.json())
+          .then((data) => ({ pad, ...data }))
+      );
+
+
+      const padResponses = await Promise.all(padPromises);
+      console.log('handleImportAll:padResponses: ', padResponses)
+      padResponses.forEach((data) => {
+        if (data.content) {
+          const matterData = matter(data.content, { excerpt: false }).data || null;
+
+          if (matterData && matterData.type && matterData.title && data.pad && !matterData.archived) {
+
+            try {
+              const response = fetch(`/api/etherpad/new?padID=${data.pad}&import=true`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ initialContent: matter.stringify('', { ...matterData }) }),
+              });
+              
+              if (!response.ok) {
+                throw new Error('handleImportAll:Network response was not ok:', response);
+              }
+
+            } catch (error) {
+              console.error('Error:', error);
+            }
+
+          }
+        }
       });
-  }, [refreshToken]);
+      refreshPads()
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+
+
+  // useEffect(() => {
+  //   fetch(`/api/etherpad/all-pads`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setPadList(data.pads);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error)
+  //     })
+  //     .finally(() => {
+  //       setTimeout(() => setRefreshToken(Math.random()), 5000);
+  //     });
+  // }, [refreshToken]);
+
+
+  const refreshPads = async () => {
+    const fetchPads = async () => {
+      const res = await fetch(`/api/etherpad/imported`);
+      const data = await res.json();
+      return data;
+    };
+
+    const fetchDataAndUpdateState = async () => {
+      const pads = await fetchPads();
+      setAirviewPads(pads);
+    }
+
+    fetchDataAndUpdateState()
+  }
 
 
   useEffect(() => {
-    const fetchSiteContent = async () => {
-      fetch(`/api/structure`)
-        .then((res) => res.json())
-        .then(data => {
-          setSiteContent(data);
-          setDropDownData(data.menuStructure['solutionMenu']);
-          console.log('SiteConfig: ', data)
+    const fetchPads = async () => {
+      const res = await fetch(`/api/etherpad/imported`);
+      const data = await res.json();
+      return data;
+    };
 
-        })
-        .catch(error => {
-          console.log(error)
-        })
+    const fetchDataAndUpdateState = async () => {
+      const pads = await fetchPads();
+      setAirviewPads(pads);
+      console.log('useEffect:LoadPads: ', pads)
     }
-    fetchSiteContent()
+
+    fetchDataAndUpdateState()
   }, []);
 
   return (
@@ -310,7 +252,7 @@ export default function Home() {
           sx={{
             bgcolor: "background.paper",
             pt: 8,
-            pb: 6,
+            pb: 1,
           }}
         >
           <Container maxWidth="m">
@@ -321,7 +263,7 @@ export default function Home() {
               color="text.main"
               gutterBottom
             >
-              Presentations as Code
+              Collaboration
             </Typography>
             <Typography
               variant="h5"
@@ -329,7 +271,7 @@ export default function Home() {
               color="text.highlight"
               paragraph
             >
-              Create Presentations using Markdown or MDX.
+              Create and collaborate on <strong>Documents</strong> and  <strong>Presentations</strong> using Markdown or MDX.
             </Typography>
             <Stack
               sx={{ pt: 4 }}
@@ -343,85 +285,18 @@ export default function Home() {
               >
                 Create New
               </Button>
-              <Dialog open={createOpen} onClose={handleCreateDialog}>
-                <DialogTitle>Create New</DialogTitle>
-                <DialogContent>
-                  {/* Title Input */}
-                  <Typography variant="subtitle1" gutterBottom>
-                    Title
-                  </Typography>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="title"
-                    label="Title"
-                    type="text"
-                    fullWidth
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                  {/* Parent Buttons */}
-                  <Typography variant="subtitle1" gutterBottom style={{ marginTop: '20px' }}>
-                    Document Type
-                  </Typography>
-                  <ButtonGroup variant="outlined" color="primary" aria-label="outlined primary button group">
-                    {docTypes.map((docTypeItem) => (
-                      <Button
-                        variant={docTypeItem.prefix === docType ? "contained" : "outlined"}
-                        onClick={() => handleDocTypeChange(docTypeItem.prefix)}
-                      >
-                        {docTypeItem.label}
-                      </Button>
-                    ))}
-                  </ButtonGroup>
-
-
-
-                  {/* Document Type Buttons */}
-                  <Typography variant="subtitle1" gutterBottom style={{ marginTop: '20px' }}>
-                    Select Parent
-                  </Typography>
-                  <ButtonGroup variant="outlined" color="primary" aria-label="outlined primary button group">
-                    {parents.map((parentOption) => (
-                      <Button
-                        variant={parentOption === parent ? "contained" : "outlined"}
-                        onClick={() => handleParentChange(parentOption)}
-                      >
-                        {parentOption}
-                      </Button>
-                    ))}
-                  </ButtonGroup>
-
-                  {/* Dropdown for selected parent */}
-                  <Typography variant="subtitle1" gutterBottom style={{ marginTop: '20px' }}>
-                    Select Item
-                  </Typography>
-                  <FormControl fullWidth>
-                    <Select
-                      value={selectedDropDown}
-                      onChange={handleDropDownChange}
-                    >
-                      {dropDownData && dropDownData.map((item, index) => (
-                        <MenuItem key={index} value={item.url}>{item.label}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </DialogContent>
-
-                <DialogActions>
-                  <Button onClick={handleCreateDialog}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleCreateNew}>
-                    Submit
-                  </Button>
-                </DialogActions>
-              </Dialog>
+              <NewPadDialog dialogOpen={createOpen} handleDialog={handleCreateDialog} siteContent={siteContent} />
               <Button
                 onClick={handleImportDialog}
                 variant="outlined"
               >
                 Import
+              </Button>
+              <Button
+                onClick={handleImportAll}
+                variant="outlined"
+              >
+                Import ALL
               </Button>
               <Dialog open={importOpen} onClose={handleImportDialog}>
                 <DialogTitle>Import Pad</DialogTitle>
@@ -474,23 +349,52 @@ export default function Home() {
             </Stack>
           </Container>
         </Box>
-        <Container sx={{ py: 8 }} maxWidth="md">
+        <Container sx={{ py: 0 }} maxWidth="md">
           {/* End hero unit */}
+          {airviewPads ? (
+            <PadView pads={airviewPads.collections} />) : (
+            <>
+              <h3>loading........</h3>
+              <Skeleton animation="wave" />
+            </>
+          )}
 
-          <Grid container spacing={4}>
-            {padList ? (
-              padList.map((pad, i) => <Pad key={i}>{pad}</Pad>)
-            ) : (
-              <Pad>Etherpad Error</Pad>
-            )}
-          </Grid>
         </Container>
       </main>
-      {/* Footer */}
-      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
-        <Copyright />
-      </Box>
-      {/* End footer */}
+
     </ThemeProvider>
   );
 }
+
+
+function PadView(pads) {
+
+  console.log('PadView:pads: ', pads)
+  const collections = Object.entries(pads.pads).map(([key, value]) => {
+    return {
+      [key]: Object.values(value)
+    };
+  });
+
+  console.log('PadView:collections: ', collections)
+
+  return (
+    <div>
+      {Object.entries(pads.pads).map(([category, elements]) => (
+        <div key={category}>
+          <h2>{capitalizeFirstLetter(category)}</h2>
+          <Grid container spacing={4}>
+
+            {elements.map((element, index) => (
+              <Pad padID={element.padID} title={element.title} />
+            ))}
+          </Grid>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};

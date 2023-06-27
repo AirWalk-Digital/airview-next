@@ -1,4 +1,4 @@
-import { getMenuStructureSolutions } from '@/lib/content/menus';
+import { getMenuStructureSolutions, getContent } from '@/lib/content/menuContent';
 import { siteConfig } from "../../../site.config.js";
 import { cacheRead, cacheSearch } from '@/lib/redis';
 
@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const { cache } = req.query;
   if (cache) {
 
-    const newPads = await cacheSearch('etherpad:new:*')
+    const newPads = await cacheSearch('etherpad:*')
     // console.log('cache: ', newPads)
 
     const padMeta = await Promise.all(newPads.map(item => cacheRead(item)));
@@ -25,11 +25,17 @@ export default async function handler(req, res) {
         });
 
         // find parents
-        const parents = ['solution', 'pattern', 'product', 'design', 'knowledge']
+        // const parents = ['solutions', 'patterns', 'product', 'design', 'knowledge']
+        const getListOfKeys = (data) => Object.keys(data);
+        const parents = getListOfKeys(siteConfig.content);
+        console.log('API:/api/structure:item', item)
+
+        console.log('API:/api/structure:parents', parents)
 
         for (let y of parents) {
           if (item[y]) {
-            let directory = item[y].includes("/") ? item[y].split("/")[2] : '';
+            let directory = item[y].includes("/") ? item[y].split("/")[1] : '';
+            console.log('API:/api/structure:directory', directory)
 
             // Check if the key exists in the relatedContent object
             if (!relatedContent[directory]) {
@@ -62,8 +68,15 @@ export default async function handler(req, res) {
 
   } else {
     try {
-      const menuStructure = await getMenuStructureSolutions(siteConfig);
-      res.status(200).json({ menuStructure })
+      let docs;
+      if (req.query.collection) {
+        docs = await getContent(siteConfig.content[req.query.collection])
+      } else { // should be able to remove this!
+        docs = await getMenuStructureSolutions(siteConfig);
+      }
+      // console.log('API:/api/structure:content[',req.query.collection, ']: ', docs)
+
+      res.status(200).json({ docs })
     } catch (error) {
       console.error(error)
       res.status(500).json({ error: 'Internal Server Error' })

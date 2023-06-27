@@ -19,7 +19,7 @@ export default function Page({ providers, services, content, file, controls }) {
 
   useEffect(() => {
     let format;
-    if (file.endsWith(".md")) {
+    if (file && file.endsWith(".md")) {
       format = 'md';
     } else {
       format = 'mdx';

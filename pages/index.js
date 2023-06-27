@@ -25,9 +25,11 @@ import Paper from '@mui/material/Paper';
 import { styled } from "@mui/material/styles";
 import { IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { siteConfig } from "../site.config.js";
 
 import { TopBar } from '@/components/dashboard';
-
+import { ScrollToTop } from '@/components/utils/ScrollToTop'
+import {ScrollToBottom }from '@/components/utils/ScrollToBottom'
 
 const SiteSection = ({ title, description, link }) => {
 
@@ -89,16 +91,13 @@ const LandingPage = () => {
           </Grid>
 
           <Grid container spacing={4} alignItems="stretch" sx={{ my: '0px' }}>
-            <SiteSection title='Frameworks'
-              description='View the compliance frameworks that guide your IT policy'
-              link='/frameworks' />
-            <SiteSection title='Services'
-              description='View the catalogue of Services available, complete with patterns, implementation guides and secuity controls.'
-              link='/services' />
-            <SiteSection title='Applications'
-              description='Browse the Applications within the Organisation'
-              link='/applications' />
-          </Grid>
+
+            {siteConfig.content.frameworks && <SiteSection title='Frameworks & Standards' description='View the compliance frameworks that guide your IT policy as well as standards to help adoption.' link='/frameworks' />}
+            {siteConfig.content.services && <SiteSection title='Providers & Services' description='View the catalogue of Services available, complete with patterns, implementation guides and secuity controls.' link='/services' />}
+            {siteConfig.content.applications && <SiteSection title='Applications' description='Browse the Applications within the Organisation' link='/applications' />}
+            {siteConfig.content.customers && <SiteSection title='Customers & Projects' description="Customers and the projects we've done for them" link='/customers' />}
+
+                     </Grid>
         </Container>
       </section>
 
@@ -128,7 +127,8 @@ const LandingPage = () => {
           </Grid>
         </Container>
       </section>
-
+        <ScrollToTop/>
+        <ScrollToBottom/>
       {/* Other Sections */}
       {/* Add more sections with similar structure for the rest of the landing page content */}
     </ThemeProvider>

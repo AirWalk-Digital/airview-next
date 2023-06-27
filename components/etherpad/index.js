@@ -1,0 +1,1 @@
+export { NewPadDialog } from './NewPadDialog';

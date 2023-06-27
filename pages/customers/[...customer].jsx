@@ -1,39 +1,41 @@
 
 import React, { useState, useEffect } from 'react'
 import { siteConfig } from "../../site.config.js";
-import { mdComponents } from "../../constants/mdxProvider";
+import { mdComponents } from "../../constants/mdxProvider.js";
 import * as matter from 'gray-matter';
 import { MDXProvider } from '@mdx-js/react';
 import { getAllFiles, getFileContent } from '@/lib/github'
 import { useMDX } from '@/lib/content/mdx'
 
-import { SolutionView } from '@/components/solutions'
+import { ContentView } from '@/components/content'
 
 import { FullScreenSpinner } from '@/components/dashboard/index.js';
 import { dirname, basename } from 'path';
-import { getMenuStructure } from '@/lib/content';
 
 import { Button } from '@mui/material';
 import { fetchPadDetails } from '@/lib/etherpad'
+import { getMenuStructure } from '@/lib/content';
+import { groupMenu } from '@/lib/content/menu'
 
 
 export default function Page({
   content: initialContent,
   file,
-  menuStructure: initialMenuStructure }) {
+  menuStructure: initialMenuStructure,
+  pageStructure: initialPageStructure }) {
 
   const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
 
   const [content, setRawContent] = useState(initialContent);
-
-  const [menuStructure, setMenuStructure] = useState(null);
+  const [pageStructure, setPageStructure] = useState(null);
+  const [menuStructure, setMenuStructure] = useState(initialMenuStructure);
   const [rev, setRev] = useState(0);
 
   const handleContentClick = async (url, label) => {
     console.log('Content Clicked: label: ', label, ' url: ', url)
 
     if (url && url.endsWith(".etherpad")) { // load the pad
-      const cacheKey = 'etherpad:new:/' + url
+      const cacheKey = 'etherpad:/' + url
       const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
       const pad = await fetchPadDetails(cacheKey);
       console.log('handleContentClick: ', pad)
@@ -44,12 +46,9 @@ export default function Page({
       }
     } else if (url) { // load from github
       try {
-        const response = await fetch(`/api/content/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`);
+        const response = await fetch(`/api/content/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?branch=${siteConfig.content.providers.branch}&path=${url}`);
         if (response.ok) {
           const data = await response.text();
-          // console.log('handleContentClick:data: ', data);
-          // const content = Buffer.from(data ?? "", "base64").toString("utf8");
-          // console.log('handleContentClick:content: ', content);
           setRawContent(data);
         } else {
           throw new Error('Error fetching files');
@@ -89,27 +88,27 @@ export default function Page({
         return null;
       }
     };
-  
+
     if (file && file.endsWith(".etherpad")) {
       const fetchDataAndSetState = async () => {
         const padDetails = await fetchData();
         console.log('useEffect:fetchData1: ', padDetails);
-  
+
         if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
           console.log('useEffect:fetchData2: ', padDetails);
-  
+
           setRev(padDetails.rev);
           setRawContent(matter.stringify(padDetails.rawContent, padDetails.frontmatter));
         }
       };
-  
+
       fetchDataAndSetState();
     }
   }, [file]);
-  
 
 
-  const context = { file: file, ...siteConfig.content.solutions };
+
+  const context = { file: file, ...siteConfig.content.customers };
 
   // load additional menu items from the Etherpad cache
   useEffect(() => {
@@ -124,56 +123,64 @@ export default function Page({
 
       let directory = file && file.includes("/") ? file.split("/")[1] : '';
 
-      const newMenuStructure = {
-        ...initialMenuStructure,
+
+      const newPageStructure = mergeObjects(padsMenu, initialPageStructure);
+
+      const newMenuStructure2 = {
+        ...initialPageStructure,
         primary: [
-          ...(Array.isArray(initialMenuStructure?.primary) ? initialMenuStructure.primary : []),
-          ...(Array.isArray(padsMenu?.collections?.solutions) ? padsMenu.collections.solutions : []),
+          ...(Array.isArray(initialPageStructure?.primary) ? initialPageStructure.primary : []),
+          ...(Array.isArray(padsMenu?.collections?.providers) ? padsMenu.collections.providers : []),
         ],
         relatedContent: {
-          ...initialMenuStructure?.relatedContent,
+          ...initialPageStructure?.relatedContent,
           ...Object.keys(padsMenu?.relatedContent || {}).reduce((acc, key) => {
             acc[key] = {
-              ...initialMenuStructure?.relatedContent?.[key],
+              ...initialPageStructure?.relatedContent?.[key],
               ...padsMenu?.relatedContent?.[key]
             };
             return acc;
           }, {})
         }
       };
+      console.log('fetchDataAndUpdateState:padsMenu: ', padsMenu);
 
-      console.log('fetchDataAndUpdateState:newMenuStructure: ', newMenuStructure);
+      console.log('fetchDataAndUpdateState:newMenuStructure: ', newPageStructure);
 
-      setMenuStructure(newMenuStructure);
+      setPageStructure(newPageStructure);
+
+      const newMenuStructure = groupMenu(newPageStructure)
+      setMenuStructure(newMenuStructure)
+
     };
 
     // console.log('initialMenuStructure: ', initialMenuStructure);
     fetchDataAndUpdateState();
-  }, [initialMenuStructure]);
+  }, [initialPageStructure]);
 
 
   if (pageContent.content && pageContent.frontmatter) {
     const Content = pageContent.content;
 
-    return <SolutionView frontmatter={pageContent.frontmatter} file={file} content={content} menuStructure={menuStructure} handleContentClick={handleContentClick}>
+    return <ContentView frontmatter={pageContent.frontmatter} file={file} content={content} menuStructure={menuStructure} pageStructure={pageStructure} handleContentClick={handleContentClick} siteConfig={siteConfig} >
       <MDXProvider components={mdComponents(context)}>
         <Content />
       </MDXProvider>
-    </SolutionView>
+    </ContentView>
   } else {
-    return <SolutionView frontmatter={pageContent.frontmatter} file={file} menuStructure={menuStructure} handleContentClick={handleContentClick}>
+    return <ContentView frontmatter={pageContent.frontmatter} file={file} menuStructure={menuStructure} pageStructure={pageStructure} handleContentClick={handleContentClick} siteConfig={siteConfig}>
       <MDXProvider components={mdComponents(context)}>
         <FullScreenSpinner />
       </MDXProvider>
-    </SolutionView>
+    </ContentView>
   }
 };
 
 export async function getStaticPaths() {
   let pages = [];
   try {
-    const solutions = await getAllFiles(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, siteConfig.content.solutions.path, true, '.md*');
-    pages = solutions
+    const pageFiles = await getAllFiles(siteConfig.content.customers.owner, siteConfig.content.customers.repo, siteConfig.content.customers.branch, siteConfig.content.customers.path, true, '.md*');
+    pages = pageFiles
       .filter((file) => basename(file) !== 'README.md')
       .map((file) => { return '/' + file });
 
@@ -192,18 +199,52 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
   // console.log('params: ', context.params.solution)
-  const file = 'solutions/' + context.params.solution.join('/')
+  const file = 'customers/' + context.params.customer.join('/')
   let pageContent = '';
-  if (!file.endsWith(".etherpad")) { pageContent = await getFileContent(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, file); };
+  if (!file.endsWith(".etherpad")) { pageContent = await getFileContent(siteConfig.content.customers.owner, siteConfig.content.customers.repo, siteConfig.content.customers.branch, file); };
   const pageContentText = pageContent ? Buffer.from(pageContent).toString("utf-8") : '';
-  const menuStructure = await getMenuStructure(siteConfig, siteConfig.content.solutions);
+
+  const structurePromise = getMenuStructure(siteConfig, siteConfig.content.customers);
+
+  const pageStructure = await structurePromise
+
+  const groupedMenu = groupMenu(pageStructure);
+  // const menuStructure = await getMenuStructure(siteConfig, siteConfig.content.providers);
 
   return {
     props: {
       content: pageContentText || null,
       file: file,
-      menuStructure: menuStructure || null
+      menuStructure: groupedMenu || null,
+      pageStructure: pageStructure || null
     },
   };
 }
 
+
+function mergeObjects(obj1, obj2) {
+  if (!obj1 || typeof obj1 !== 'object') {
+    return obj2;
+  }
+  if (!obj2 || typeof obj2 !== 'object') {
+    return obj1;
+  }
+
+  const merged = { ...obj1 };
+
+  for (const key in obj2) {
+    if (obj2.hasOwnProperty(key)) {
+      if (Array.isArray(obj2[key])) {
+        if (merged.hasOwnProperty(key) && Array.isArray(merged[key])) {
+          merged[key] = [...merged[key], ...obj2[key]];
+        } else {
+          merged[key] = obj2[key];
+        }
+      } else {
+        merged[key] = mergeObjects(merged[key], obj2[key]);
+      }
+    }
+  }
+
+  return merged;
+}
