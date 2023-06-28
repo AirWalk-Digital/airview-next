@@ -168,7 +168,7 @@ export default function Page({
     
       if (contentSource && contentSource.startsWith('etherpad')) {
 
-        return <Etherpad padId={contentSource.split(':')[1]}><Content /></Etherpad>;
+        return <Etherpad file={file}><Content /></Etherpad>;
       } else {
         console.log('contentSource: ', contentSource)
         return <Content />;
