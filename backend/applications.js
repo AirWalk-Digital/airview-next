@@ -1,18 +1,64 @@
 // utils/applications.js
 
-import fs from 'fs';
-import path from 'path';
+export async function getComplianceData() {
+  try {
+    console.log("h");
+    const res = await fetch(
+      `${process.env.AIRVIEW_API_URL}/compliance/?$select=applicationName,controlSeverity,environmentName`
+    );
 
-export function getApplications() {
-  const filePath = path.join(process.cwd(), 'content/applications/applications.json');
-  const fileContents = fs.readFileSync(filePath, 'utf8');
-  const data = JSON.parse(fileContents);
-
-  return data.applications; // Assuming the "applications" key holds the array of applications
+    const apiData = await res.json();
+    return apiData;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+export async function getApplications() {
+  try {
+    const res = await fetch(`${process.env.AIRVIEW_API_URL}/applications/`);
+    const apiData = await res.json();
+    return apiData;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 }
 
-export function getApplicationById(id) {
-  const applications = getApplications();
-  const application = applications.find(app => app.app_id === id);
+export async function postExclusion(data) {
+  try {
+    console.log(process.env.AIRVIEW_API_URL);
+    console.log(`${process.env.AIRVIEW_API_URL}/exclusions`);
+    const res = await fetch(`/api/compliance/exclusions`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+
+export async function getComplianceAggregation(applicationId) {
+  try {
+    const res = await fetch(
+      `${process.env.AIRVIEW_API_URL}/aggregations/compliance/${applicationId}`
+    );
+    const apiData = await res.json();
+    return apiData.map((m) => ({ ...m, instances: [] }));
+    return apiData;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+
+export async function getApplicationById(id) {
+  const applications = await getApplications();
+  const application = applications.find((app) => app.id === Number(id));
   return application;
 }

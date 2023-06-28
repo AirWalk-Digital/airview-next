@@ -42,3 +42,4 @@ yarn-error.log*
 
 # Temp stuff
 components/dashboard-demo/
+/.env

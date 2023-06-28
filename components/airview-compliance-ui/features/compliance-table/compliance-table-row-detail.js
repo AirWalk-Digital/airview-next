@@ -6,17 +6,13 @@ import { getRisk } from "./get-risk";
 import { complianceTableRowDetailStyles } from "./compliance-table-row-detail.styles";
 import { ComplianceTableAcceptRiskDialog } from "./compliance-table-accept-risk-dialog";
 
-function ComplianceTableRowDetail({
-  detailData,
-  onAcceptOfRisk,
-  applicationId,
-}) {
+function ComplianceTableRowDetail({ detailData, onAcceptOfRisk }) {
   const classes = complianceTableRowDetailStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
   const handleOnClose = () => setDialogOpen(false);
 
   const actionableRisks = useMemo(() => {
-    return detailData.instances.filter((instance) => instance.status === "none")
+    return detailData.resources.filter((instance) => instance.status === "none")
       .length;
   }, [detailData]);
 
@@ -27,7 +23,7 @@ function ComplianceTableRowDetail({
           <Box component="li" sx={classes.instanceInfoItem}>
             <span>Resources:</span>
             <Box component="ul" sx={classes.instances}>
-              {detailData.instances.map((instance) => (
+              {detailData.resources.map((instance) => (
                 <Box
                   component="li"
                   key={instance.id}
@@ -46,11 +42,11 @@ function ComplianceTableRowDetail({
           <Box component="li" sx={classes.instanceInfoItem}>
             <span>Control:</span>
             <Box component="span" sx={classes.control}>
-              {detailData.control.name}
+              {detailData.controlName}
               <Button
                 size="small"
                 variant="outlined"
-                href={detailData.control.url}
+                href={detailData.controlId}
                 color="primary"
                 endIcon={<OpenInNewIcon />}
               >
@@ -91,7 +87,7 @@ function ComplianceTableRowDetail({
 
           <Box component="li" sx={classes.instanceInfoItem}>
             <span>System Source:</span>
-            <span>{detailData.systemSource}</span>
+            <span>{detailData.systemName}</span>
           </Box>
 
           <Box component="li" sx={classes.instanceInfoItem}>
@@ -112,6 +108,7 @@ function ComplianceTableRowDetail({
           >
             Accept Risk
           </Button>
+          {/*
           <Button
             variant="contained"
             disableElevation
@@ -121,14 +118,16 @@ function ComplianceTableRowDetail({
           >
             Create Problem
           </Button>
+	   */}
         </Box>
       </Box>
       <ComplianceTableAcceptRiskDialog
         open={dialogOpen}
         onClose={handleOnClose}
         onAccept={onAcceptOfRisk}
-        exemptions={detailData.instances}
-        applicationId={applicationId}
+        exemptions={detailData.resources}
+        applicationId={detailData.id}
+        controlId={detailData.controlId}
         impactLevel={getRisk}
       />
     </React.Fragment>
