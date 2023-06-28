@@ -31,6 +31,8 @@ import { TopBar } from '@/components/dashboard';
 import { ScrollToTop } from '@/components/utils/ScrollToTop'
 import {ScrollToBottom }from '@/components/utils/ScrollToBottom'
 
+
+
 const SiteSection = ({ title, description, link }) => {
 
   return (
@@ -89,7 +91,6 @@ const LandingPage = () => {
               </Button>
             </Grid>
           </Grid>
-
           <Grid container spacing={4} alignItems="stretch" sx={{ my: '0px' }}>
 
             {siteConfig.content.frameworks && <SiteSection title='Frameworks & Standards' description='View the compliance frameworks that guide your IT policy as well as standards to help adoption.' link='/frameworks' />}

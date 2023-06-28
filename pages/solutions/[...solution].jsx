@@ -16,6 +16,7 @@ import { getMenuStructure } from '@/lib/content';
 import { Button } from '@mui/material';
 import { fetchPadDetails } from '@/lib/etherpad'
 
+import { Etherpad } from '@/components/etherpad'
 
 export default function Page({
   content: initialContent,
@@ -25,7 +26,7 @@ export default function Page({
   const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
 
   const [content, setRawContent] = useState(initialContent);
-
+    const [contentSource, setContentSource] = useState(null)
   const [menuStructure, setMenuStructure] = useState(null);
   const [rev, setRev] = useState(0);
 
@@ -33,8 +34,9 @@ export default function Page({
     console.log('Content Clicked: label: ', label, ' url: ', url)
 
     if (url && url.endsWith(".etherpad")) { // load the pad
-      const cacheKey = 'etherpad:new:/' + url
+      const cacheKey = 'etherpad:/' + url
       const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
+      setContentSource('etherpad:' + frontmatter.padID);
       const pad = await fetchPadDetails(cacheKey);
       console.log('handleContentClick: ', pad)
 
@@ -80,7 +82,7 @@ export default function Page({
 
   useEffect(() => {
     const fetchData = async () => {
-      const cacheKey = 'etherpad:new:/' + file;
+      const cacheKey = 'etherpad:/' + file;
       try {
         const pad = await fetchPadDetails(cacheKey);
         return pad;
@@ -91,11 +93,14 @@ export default function Page({
     };
   
     if (file && file.endsWith(".etherpad")) {
+      
       const fetchDataAndSetState = async () => {
         const padDetails = await fetchData();
         console.log('useEffect:fetchData1: ', padDetails);
   
         if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
+          setContentSource('etherpad:' + padDetails.frontmatter.padID);
+
           console.log('useEffect:fetchData2: ', padDetails);
   
           setRev(padDetails.rev);
@@ -104,6 +109,8 @@ export default function Page({
       };
   
       fetchDataAndSetState();
+    } else {
+      setContentSource('git')
     }
   }, [file]);
   
@@ -151,13 +158,26 @@ export default function Page({
     fetchDataAndUpdateState();
   }, [initialMenuStructure]);
 
+  
 
   if (pageContent.content && pageContent.frontmatter) {
-    const Content = pageContent.content;
 
+    const Content = pageContent.content;
+    const WrappedContent = () => {
+      console.log('contentSource: ', contentSource)
+    
+      if (contentSource && contentSource.startsWith('etherpad')) {
+
+        return <Etherpad padId={contentSource.split(':')[1]}><Content /></Etherpad>;
+      } else {
+        console.log('contentSource: ', contentSource)
+        return <Content />;
+      }
+    }
+    
     return <SolutionView frontmatter={pageContent.frontmatter} file={file} content={content} menuStructure={menuStructure} handleContentClick={handleContentClick}>
       <MDXProvider components={mdComponents(context)}>
-        <Content />
+        <WrappedContent />
       </MDXProvider>
     </SolutionView>
   } else {
