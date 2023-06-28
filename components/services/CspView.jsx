@@ -53,22 +53,22 @@ export function CspView({
     pageData = null // controls for the menu
   }) {
   
-    // // console.log('IndexView:menu: ', menu)
+    // // // console.log('IndexView:menu: ', menu)
   
-    // // console.log('IndexView:content: ', content)
+    // // // console.log('IndexView:content: ', content)
   
-    // // console.log('IndexView:frontmatter: ', frontmatter)
+    // // // console.log('IndexView:frontmatter: ', frontmatter)
   
     const approvedServices = menu.filter(obj => obj.frontmatter.status === 'approved');
     const unapprovedServices = menu.filter(obj => obj.frontmatter.status !== 'approved');
   
-    // console.log('CSPView:approvedServices: ', approvedServices)
+    // // console.log('CSPView:approvedServices: ', approvedServices)
   
   
     const navItemsApproved = createMenuLinks(approvedServices);
     const navItemsUnapproved = createMenuLinks(unapprovedServices);
   
-    // console.log('CSPView:navItemsApproved: ', navItemsApproved)
+    // // console.log('CSPView:navItemsApproved: ', navItemsApproved)
   
   
     const serviceMenu = [
@@ -83,11 +83,11 @@ export function CspView({
     ]
   
   
-    // // console.log('IndexView:navItems: ', navItems)
+    // // // console.log('IndexView:navItems: ', navItems)
     // let tiles = [];
     // if (frontmatter && frontmatter.title) { tiles = navItems.filter(item => item.groupTitle === frontmatter.title)[0].links; }
     // tiles = navItems.filter(item => item.groupTitle === "Microsoft Azure")[0].links;
-    // // console.log('IndexView:tiles: ', tiles)
+    // // // console.log('IndexView:tiles: ', tiles)
   
     const navDrawerWidth = 300;
     const topBarHeight = 64;

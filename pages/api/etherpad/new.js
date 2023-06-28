@@ -24,7 +24,7 @@ export default async function createHandler(req, res) {
     const matterData = matter(initialContent, { excerpt: false }).data || null;
     
 
-    // console.log('API:/api/etherpad/new:matterData.type: ', matterData.type)
+    // // console.log('API:/api/etherpad/new:matterData.type: ', matterData.type)
     // const collection = Object.keys(siteConfig.content).find(key => siteConfig.content[key].reference === matterData.type).toLowerCase()
     const collection = matterData.type.toLowerCase()
 

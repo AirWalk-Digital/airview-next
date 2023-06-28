@@ -13,7 +13,7 @@ export function ControlsView({
     
   
     let navItemsControls = null;
-    // console.log('ControlView:context', context);
+    // // console.log('ControlView:context', context);
     if (controls) { navItemsControls = createControlMenu(controls) } else {
       navItemsControls = [
         {
@@ -21,7 +21,7 @@ export function ControlsView({
           links: []
         }];
     }
-    // console.log('navItemsControls :', navItemsControls)
+    // // console.log('navItemsControls :', navItemsControls)
     const navItemsDocs = [
       {
         groupTitle: "Infrastructure-as-Code",

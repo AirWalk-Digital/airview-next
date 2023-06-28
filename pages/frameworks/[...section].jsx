@@ -117,7 +117,7 @@ function controlSections(jsonSection) {
 }
 
 function FrameworkControl({ control }) {
-  // // console.log('control : ', control)
+  // // // console.log('control : ', control)
   let description = '';
   if (control.parts) { description = controlSections(control.parts) };
   return (

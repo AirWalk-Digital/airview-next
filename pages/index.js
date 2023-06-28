@@ -36,7 +36,7 @@ import {ScrollToBottom }from '@/components/utils/ScrollToBottom'
 const SiteSection = ({ title, description, link }) => {
 
   return (
-    <Grid item xs={3} md={3}>
+    <Grid item xs={4} md={4}>
       <Paper variant='outlined' sx={{ height: '100%', borderRadius: '16px', p: 3, display: 'flex', flexDirection: 'column' }}>
 
         <Typography variant="h5" component="h5" gutterBottom>
@@ -93,10 +93,11 @@ const LandingPage = () => {
           </Grid>
           <Grid container spacing={4} alignItems="stretch" sx={{ my: '0px' }}>
 
-            {siteConfig.content.frameworks && <SiteSection title='Frameworks & Standards' description='View the compliance frameworks that guide your IT policy as well as standards to help adoption.' link='/frameworks' />}
-            {siteConfig.content.services && <SiteSection title='Providers & Services' description='View the catalogue of Services available, complete with patterns, implementation guides and secuity controls.' link='/services' />}
-            {siteConfig.content.applications && <SiteSection title='Applications' description='Browse the Applications within the Organisation' link='/applications' />}
-            {siteConfig.content.customers && <SiteSection title='Customers & Projects' description="Customers and the projects we've done for them" link='/customers' />}
+            {siteConfig.content.frameworks && <SiteSection title='Frameworks & Standards' description='View the compliance frameworks that guide our IT policy as well as standards to help adoption.' link='/frameworks' />}
+            {siteConfig.content.services && <SiteSection title='Providers & Services' description='View the catalogue of Services available, complete with patterns, implementation guides and quality controls.' link='/services' />}
+            {siteConfig.content.applications && <SiteSection title='Applications' description='Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance.' link='/applications' />}
+            {siteConfig.content.customers && <SiteSection title='Customers & Projects' description="Customers and the projects we've done for them." link='/customers' />}
+            {siteConfig.content.solutions && <SiteSection title='Solutions' description="Solutions and Propositions." link='/solutions' />}
 
                      </Grid>
         </Container>

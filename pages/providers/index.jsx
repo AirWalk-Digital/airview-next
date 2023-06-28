@@ -11,7 +11,7 @@ export default function Page({ tiles, menuStructure }) {
   
 
 
-  console.log('menuStructure: ', menuStructure)
+  // console.log('menuStructure: ', menuStructure)
 
   return <IndexView menuStructure={menuStructure} title="Providers" tiles={tiles}/>
 };
@@ -78,9 +78,9 @@ export async function getStaticProps(context) {
 
   const groupedMenu = groupMenu(menuStructure);
   
-  console.log('menuStructure: ', menuStructure)
+  // console.log('menuStructure: ', menuStructure)
 
-  console.log('groupedMenu: ', groupedMenu)
+  // console.log('groupedMenu: ', groupedMenu)
 
   return {
     props: {

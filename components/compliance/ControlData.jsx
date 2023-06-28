@@ -139,7 +139,7 @@ function FrameworksList({ frameworks }) {
 
 export function ControlDataDisplay({ data }) {
 
-  // console.log('ControlDataDisplay:data: ', data)
+  // // console.log('ControlDataDisplay:data: ', data)
   const steps = ['Overview', 'Frameworks', 'Methods'];
   const [activeStep, setActiveStep] = useState(0);
 

@@ -79,8 +79,15 @@ export async function getStaticPaths() {
 }
 */
 
+export async function getStaticPaths() {
+  return {
+          fallback: true,
+          paths: []
+        }
+}
+
 export async function getStaticProps(context) {
-  // // console.log(context.params.service)
+  // // // console.log(context.params.service)
 
   // construct menu structure
   const providers = await getAllFiles(

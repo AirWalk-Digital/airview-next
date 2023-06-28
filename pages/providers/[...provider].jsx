@@ -4,7 +4,8 @@ import { siteConfig } from "../../site.config.js";
 import { mdComponents } from "../../constants/mdxProvider.js";
 import * as matter from 'gray-matter';
 import { MDXProvider } from '@mdx-js/react';
-import { getAllFiles, getFileContent } from '@/lib/github'
+// import { getAllFiles, getFileContent } from '@/lib/github'
+import { getFileContent } from '@/lib/github'
 import { useMDX } from '@/lib/content/mdx'
 
 import { ContentView } from '@/components/content'
@@ -32,13 +33,13 @@ export default function Page({
   const [rev, setRev] = useState(0);
 
   const handleContentClick = async (url, label) => {
-    console.log('Content Clicked: label: ', label, ' url: ', url)
+    // console.log('Content Clicked: label: ', label, ' url: ', url)
 
     if (url && url.endsWith(".etherpad")) { // load the pad
       const cacheKey = 'etherpad:/' + url
       const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
       const pad = await fetchPadDetails(cacheKey);
-      console.log('handleContentClick: ', pad)
+      // console.log('handleContentClick: ', pad)
 
       if (pad.rawContent && pad.frontmatter) {
         setRev(pad.rev);
@@ -62,7 +63,7 @@ export default function Page({
   };
 
   useEffect(() => {
-    console.log('useEffect:MDX:File: ', file)
+    // console.log('useEffect:MDX:File: ', file)
     let format;
     if (file && file.endsWith(".md")) {
       format = 'md';
@@ -92,10 +93,10 @@ export default function Page({
     if (file && file.endsWith(".etherpad")) {
       const fetchDataAndSetState = async () => {
         const padDetails = await fetchData();
-        console.log('useEffect:fetchData1: ', padDetails);
+        // console.log('useEffect:fetchData1: ', padDetails);
 
         if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
-          console.log('useEffect:fetchData2: ', padDetails);
+          // console.log('useEffect:fetchData2: ', padDetails);
 
           setRev(padDetails.rev);
           setRawContent(matter.stringify(padDetails.rawContent, padDetails.frontmatter));
@@ -143,9 +144,9 @@ export default function Page({
           }, {})
         }
       };
-      console.log('fetchDataAndUpdateState:padsMenu: ', padsMenu);
+      // console.log('fetchDataAndUpdateState:padsMenu: ', padsMenu);
 
-      console.log('fetchDataAndUpdateState:newMenuStructure: ', newPageStructure);
+      // console.log('fetchDataAndUpdateState:newMenuStructure: ', newPageStructure);
 
       setPageStructure(newPageStructure);
 
@@ -154,7 +155,7 @@ export default function Page({
 
     };
 
-    // console.log('initialMenuStructure: ', initialMenuStructure);
+    // // console.log('initialMenuStructure: ', initialMenuStructure);
     fetchDataAndUpdateState();
   }, [initialPageStructure]);
 
@@ -176,29 +177,37 @@ export default function Page({
   }
 };
 
-export async function getStaticPaths() {
-  let pages = [];
-  try {
-    const pageFiles = await getAllFiles(siteConfig.content.providers.owner, siteConfig.content.providers.repo, siteConfig.content.providers.branch, siteConfig.content.providers.path, true, '.md*');
-    pages = pageFiles
-      .filter((file) => basename(file) !== 'README.md')
-      .map((file) => { return '/' + file });
+// export async function getStaticPaths() {
+//   let pages = [];
+//   try {
+//     const pageFiles = await getAllFiles(siteConfig.content.providers.owner, siteConfig.content.providers.repo, siteConfig.content.providers.branch, siteConfig.content.providers.path, true, '.md*');
+//     pages = pageFiles
+//       .filter((file) => basename(file) !== 'README.md')
+//       .map((file) => { return '/' + file });
 
-    return {
-      fallback: true,
-      paths: pages
-    }
-  } catch (error) {
-    console.error(error)
-    return {
-      fallback: true,
-      paths: pages
-    }
-  }
+//     return {
+//       fallback: true,
+//       paths: pages
+//     }
+//   } catch (error) {
+//     console.error(error)
+//     return {
+//       fallback: true,
+//       paths: pages
+//     }
+//   }
+// }
+
+export async function getStaticPaths() {
+  return {
+          fallback: true,
+          paths: []
+        }
 }
 
+
 export async function getStaticProps(context) {
-  // console.log('params: ', context.params.solution)
+  // // console.log('params: ', context.params.solution)
   const file = 'providers/' + context.params.provider.join('/')
   let pageContent = '';
   if (!file.endsWith(".etherpad")) { pageContent = await getFileContent(siteConfig.content.providers.owner, siteConfig.content.providers.repo, siteConfig.content.providers.branch, file); };

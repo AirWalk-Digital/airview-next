@@ -62,7 +62,7 @@ export default dynamic(() => Promise.resolve(SlidePage), {
 
 function SlidePage({ children, next }) {
 
-  console.log('SlidePage:children: ', children)
+  // console.log('SlidePage:children: ', children)
 
   const {
     currentSlide,
@@ -198,10 +198,10 @@ function SlidePage({ children, next }) {
     React.Children.map(children, (child) => {
       // Check for <hr> element to separate slides
 
-      console.log('Child: ', child)
+      // console.log('Child: ', child)
 
       const childType = child && child.props && (child.type || []);
-      console.log(childType)
+      // console.log(childType)
       if (childType && childType === "hr") {
         generatorCount += 1;
         return;
@@ -239,7 +239,7 @@ function SlidePage({ children, next }) {
       );
       setSlide(slideCount);
     }
-    // // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
+    // // // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
     return <Slide>{generatedSlides[currentSlide]}</Slide>;
   };
   

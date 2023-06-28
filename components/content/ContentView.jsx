@@ -26,7 +26,7 @@ export function ContentView({
 }) {
 
 
-  console.log('SolutionView:menuStructure: ', menuStructure)
+  // console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
@@ -36,7 +36,7 @@ export function ContentView({
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
   const { primary, relatedContent } = pageStructure || {};
-  console.log('SolutionView:pageStructure: ', pageStructure)
+  // console.log('SolutionView:pageStructure: ', pageStructure)
   function handlePrint() {
     setPrint(!print);
     setMenuOpen(print);
@@ -154,7 +154,7 @@ export function ContentView({
 
 function AsideMenu({ content, file, handleContentClick, siteConfig }) {
   let directory = file?.includes("/") ? file.split("/")[1] : file;
-  // console.log('ChaptersMenu:File ', file)
+  // // console.log('ChaptersMenu:File ', file)
   let chaptersMenu = []
   if (content && content[directory]) {
 
@@ -213,7 +213,7 @@ function AsideMenu({ content, file, handleContentClick, siteConfig }) {
 
 
 function SolutionsMenu({ solutions, open, top, drawerWidth }) {
-  // console.log('SolutionsMenu: ', solutions)
+  // // console.log('SolutionsMenu: ', solutions)
 
   return (
     <NavigationDrawer
@@ -231,7 +231,7 @@ function SolutionsMenu({ solutions, open, top, drawerWidth }) {
 
 function ContentMenu({ menu, open, top, drawerWidth }) {
 
-    console.log('ContentMenu:menu: ', menu )
+    // console.log('ContentMenu:menu: ', menu )
 
   return (
     <NavigationDrawer

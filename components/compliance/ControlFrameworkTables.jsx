@@ -281,7 +281,7 @@ function Implementation({ methods }) {
 }
 export function ControlTable({ controls, framework = 'NIST80053' }) {
 
-  // console.log('ControlTable:controls: ', controls)
+  // // console.log('ControlTable:controls: ', controls)
 
   return (
     <TableContainer component={Paper}>

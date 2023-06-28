@@ -9,11 +9,11 @@ export default async function handler(req, res) {
   let collections = {}
   
     const newPads = await cacheSearch('etherpad:*')
-    // console.log('cache: ', newPads)
+    // // console.log('cache: ', newPads)
 
     const padMeta = await Promise.all(newPads.map(item => cacheRead(item)));
 
-    console.log('API:/api/etherpad/imported: ', padMeta)
+    // console.log('API:/api/etherpad/imported: ', padMeta)
 
     padMeta.forEach((item, index) => {
       item = JSON.parse(item);
@@ -31,10 +31,10 @@ export default async function handler(req, res) {
       } catch (error) {
         console.error(error)
       }
-      // console.log('meta: ', item);
+      // // console.log('meta: ', item);
     });
 
-    // console.log('collections: ', collections)
+    // // console.log('collections: ', collections)
 
     res.status(200).json({ collections })
 

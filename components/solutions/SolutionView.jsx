@@ -24,7 +24,7 @@ export function SolutionView({
 }) {
 
 
-  console.log('SolutionView:menuStructure: ', menuStructure)
+  // console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
   const topBarHeight = 64;
   const [menuOpen, setMenuOpen] = useState(true);
@@ -34,7 +34,7 @@ export function SolutionView({
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
   const { primary, relatedContent, knowledge, designs, chapters } = menuStructure || {};
-  // console.log('SolutionView:menuStructure: ', menuStructure)
+  // // console.log('SolutionView:menuStructure: ', menuStructure)
   function handlePrint() {
     setPrint(!print);
     setMenuOpen(print);
@@ -154,7 +154,7 @@ export function SolutionView({
 
 function ContentMenu({ content, file, handleContentClick }) {
   let directory = file?.includes("/") ? file.split("/")[1] : file;
-  // console.log('ChaptersMenu:File ', file)
+  // // console.log('ChaptersMenu:File ', file)
   let chaptersMenu = []
   if (content && content[directory]) {
     if (content[directory].chapters) {
@@ -227,7 +227,7 @@ function ContentMenu({ content, file, handleContentClick }) {
 
 
 function SolutionsMenu({ solutions, open, top, drawerWidth }) {
-  // console.log('SolutionsMenu: ', solutions)
+  // // console.log('SolutionsMenu: ', solutions)
 
   return (
     <NavigationDrawer

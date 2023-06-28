@@ -19,7 +19,7 @@ export function IndexView({
   title
 }) {
 
-  console.log('IndexView:title: ', title)
+  // console.log('IndexView:title: ', title)
 
   const navDrawerWidth = 300;
   const topBarHeight = 64;

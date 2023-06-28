@@ -23,12 +23,12 @@ export function Etherpad({ file, children }) {
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
 
-  // console.log('Etherpad: ', padId)
+  // // console.log('Etherpad: ', padId)
   // const url = `https://pad.airview.airwalkconsulting.io/p/${padId}?showControls=false&showChat=false&showLineNumbers=false&useMonospaceFont=false`
 
   const url = `${etherpad_host}/p/${padId}?showControls=false&showChat=false&showLineNumbers=false&useMonospaceFont=false`
 
-  console.log('Etherpad:url: ', url)
+  // console.log('Etherpad:url: ', url)
   const [isEditorVisible, setIsEditorVisible] = useState(false);
 
   const handleToggleEditor = () => {
@@ -56,11 +56,11 @@ export function Etherpad({ file, children }) {
 
   //     const fetchDataAndSetState = async () => {
   //       const padDetails = await fetchData();
-  //       console.log('useEffect:fetchData1: ', padDetails);
+  //       // console.log('useEffect:fetchData1: ', padDetails);
 
   //       if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
   //         setPadId(padDetails.frontmatter.padID);
-  //         console.log('useEffect:fetchData2: ', padDetails);
+  //         // console.log('useEffect:fetchData2: ', padDetails);
   //         setRev(padDetails.rev);
   //         setRawContent(matter.stringify(padDetails.rawContent, padDetails.frontmatter));
   //       }
@@ -85,7 +85,7 @@ export function Etherpad({ file, children }) {
 
     const fetchPadMetadata = async () => {
       const padDetails = await fetchData();
-      console.log('useEffect:fetchPadDetails: ', padDetails);
+      // console.log('useEffect:fetchPadDetails: ', padDetails);
 
       if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
         setPadId(padDetails.frontmatter.padID);
@@ -100,9 +100,9 @@ export function Etherpad({ file, children }) {
       fetch(`/api/etherpad/pad-revs?pad=${padId}`)
         .then((res) => res.json())
         .then(data => {
-          // console.log('fetchPadContent:data.rev : ', data.rev, 'rev : ', rev)
+          // // console.log('fetchPadContent:data.rev : ', data.rev, 'rev : ', rev)
           if (data.rev && data.rev > rev) {
-            // console.log('fetchPadContent:new revision :', data.rev)
+            // // console.log('fetchPadContent:new revision :', data.rev)
             const newrev = data.rev
             fetch(`/api/etherpad/pad?pad=${padId}&rev=${newrev}`)
               .then((res) => res.json())
@@ -113,13 +113,13 @@ export function Etherpad({ file, children }) {
                 }
               })
               .catch(error => {
-                // // console.log(error)
+                // // // console.log(error)
               })
           }
 
         })
         .catch(error => {
-          // // console.log(error)
+          // // // console.log(error)
         })
         .finally(() => {
           setTimeout(() => setRefreshToken(Math.random()), 5000);
@@ -160,7 +160,7 @@ export function Etherpad({ file, children }) {
     );
 
   } else {
-    console.log('pageContent: ', pageContent)
+    // console.log('pageContent: ', pageContent)
 
     return (<FullScreenSpinner />)
   }

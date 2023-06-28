@@ -57,14 +57,14 @@ async function complianceOnAcceptOfRisk(data) {
       body: JSON.stringify(exclusion),
     });
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     throw e;
   }
 }
 
 function Page({ app, applicationsData }) {
   const topBarHeight = 64;
-  // console.log('Page:app: ', app)
+  // // console.log('Page:app: ', app)
   let data_classification = "";
   let tier = "";
 
@@ -225,25 +225,32 @@ function Page({ app, applicationsData }) {
   );
 }
 
+// export async function getStaticPaths() {
+//   let pages = [];
+//   let location = "services";
+//   try {
+//     const apps = await getApplications();
+//     const pages = apps.map((file) => {
+//       return "/applications/" + file.id;
+//     });
+//     return {
+//       fallback: true,
+//       paths: pages,
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return {
+//       fallback: true,
+//       paths: pages,
+//     };
+//   }
+// }
+
 export async function getStaticPaths() {
-  let pages = [];
-  let location = "services";
-  try {
-    const apps = await getApplications();
-    const pages = apps.map((file) => {
-      return "/applications/" + file.id;
-    });
-    return {
-      fallback: true,
-      paths: pages,
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      fallback: true,
-      paths: pages,
-    };
-  }
+  return {
+          fallback: true,
+          paths: []
+        }
 }
 export async function getStaticProps(context) {
   try {
@@ -270,7 +277,7 @@ export async function getStaticProps(context) {
 }
 
 const ApplicationControls = ({ applicationId }) => {
-  console.log(applicationId);
+  // console.log(applicationId);
   // const [state, setControlsData, setResourcesData] =
   //   useControlOverviewController(() => {
   //     return new Promise((resolve) => {

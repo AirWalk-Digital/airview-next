@@ -95,13 +95,13 @@ export default function Home() {
     setImportOpen(!importOpen);
   };
   const handleImport = async () => {
-    console.log('import pad')
+    // console.log('import pad')
 
 
     // const resPadRevs = await fetch(`/api/etherpad/pad-revs?pad=${padId}`);
     // const dataPadRevs = await resPadRevs.json();
     // const response = await fetch(`/api/etherpad/pad?pad=${padId}`);
-    // console.log('fetch response:', response.json())
+    // // console.log('fetch response:', response.json())
     if (!padData) {
       try {
         fetch(`/api/etherpad/pad?pad=${padId}`)
@@ -147,7 +147,7 @@ export default function Home() {
     try {
       const res = await fetch(`/api/etherpad/all-pads`);
       const data = await res.json();
-      console.log('handleImportAll:', data.pads);
+      // console.log('handleImportAll:', data.pads);
 
       //   const padPromises = data.pads.map((pad) =>
       //   fetch(`/api/etherpad/pad?pad=${pad}`).then((res) => res.json())
@@ -160,7 +160,7 @@ export default function Home() {
 
 
       const padResponses = await Promise.all(padPromises);
-      console.log('handleImportAll:padResponses: ', padResponses)
+      // console.log('handleImportAll:padResponses: ', padResponses)
       padResponses.forEach((data) => {
         if (data.content) {
           const matterData = matter(data.content, { excerpt: false }).data || null;
@@ -202,7 +202,7 @@ export default function Home() {
   //       setPadList(data.pads);
   //     })
   //     .catch((error) => {
-  //       console.log(error)
+  //       // console.log(error)
   //     })
   //     .finally(() => {
   //       setTimeout(() => setRefreshToken(Math.random()), 5000);
@@ -236,7 +236,7 @@ export default function Home() {
     const fetchDataAndUpdateState = async () => {
       const pads = await fetchPads();
       setAirviewPads(pads);
-      console.log('useEffect:LoadPads: ', pads)
+      // console.log('useEffect:LoadPads: ', pads)
     }
 
     fetchDataAndUpdateState()
@@ -369,14 +369,14 @@ export default function Home() {
 
 function PadView(pads) {
 
-  console.log('PadView:pads: ', pads)
+  // console.log('PadView:pads: ', pads)
   const collections = Object.entries(pads.pads).map(([key, value]) => {
     return {
       [key]: Object.values(value)
     };
   });
 
-  console.log('PadView:collections: ', collections)
+  // console.log('PadView:collections: ', collections)
 
   return (
     <div>

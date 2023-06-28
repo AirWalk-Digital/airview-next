@@ -53,13 +53,13 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
 
     const parentContentElements = getParentContentElements(siteConfig);
 
-    console.log('parentContentElements: ', parentContentElements);
-    // console.log(docTypes);
+    // console.log('parentContentElements: ', parentContentElements);
+    // // console.log(docTypes);
     // const docTypes = [{ label: 'Solution', prefix: 'solutions' }, { label: 'Design', prefix: 'designs' }, { label: 'Service', prefix: 'services' }, { label: 'Provider', prefix: 'providers' }, { label: 'Knowledge', prefix: 'knowledge' }];
 
 
     const handleCreateNew = async () => {
-        console.log('create new pad: ', title, ' / ', selectedDropDown, ' / ', parent);
+        // console.log('create new pad: ', title, ' / ', selectedDropDown, ' / ', parent);
         let pad = uuidv4();  // Generate a unique padID
 
 
@@ -119,12 +119,12 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
                 }));
 
 
-                console.log('setDropDownData: ', values)
+                // console.log('setDropDownData: ', values)
 
                 setDropDownData(values);
             })
             .catch(error => {
-                console.log(error)
+                // console.log(error)
             })
     };
 

@@ -32,13 +32,13 @@ export default function Page({
   const [rev, setRev] = useState(0);
 
   const handleContentClick = async (url, label) => {
-    console.log('Content Clicked: label: ', label, ' url: ', url)
+    // console.log('Content Clicked: label: ', label, ' url: ', url)
 
     if (url && url.endsWith(".etherpad")) { // load the pad
       const cacheKey = 'etherpad:/' + url
       const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
       const pad = await fetchPadDetails(cacheKey);
-      console.log('handleContentClick: ', pad)
+      // console.log('handleContentClick: ', pad)
 
       if (pad.rawContent && pad.frontmatter) {
         setRev(pad.rev);
@@ -62,7 +62,7 @@ export default function Page({
   };
 
   useEffect(() => {
-    console.log('useEffect:MDX:File: ', file)
+    // console.log('useEffect:MDX:File: ', file)
     let format;
     if (file && file.endsWith(".md")) {
       format = 'md';
@@ -92,10 +92,10 @@ export default function Page({
     if (file && file.endsWith(".etherpad")) {
       const fetchDataAndSetState = async () => {
         const padDetails = await fetchData();
-        console.log('useEffect:fetchData1: ', padDetails);
+        // console.log('useEffect:fetchData1: ', padDetails);
 
         if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
-          console.log('useEffect:fetchData2: ', padDetails);
+          // console.log('useEffect:fetchData2: ', padDetails);
 
           setRev(padDetails.rev);
           setRawContent(matter.stringify(padDetails.rawContent, padDetails.frontmatter));
@@ -143,9 +143,9 @@ export default function Page({
           }, {})
         }
       };
-      console.log('fetchDataAndUpdateState:padsMenu: ', padsMenu);
+      // console.log('fetchDataAndUpdateState:padsMenu: ', padsMenu);
 
-      console.log('fetchDataAndUpdateState:newMenuStructure: ', newPageStructure);
+      // console.log('fetchDataAndUpdateState:newMenuStructure: ', newPageStructure);
 
       setPageStructure(newPageStructure);
 
@@ -154,7 +154,7 @@ export default function Page({
 
     };
 
-    // console.log('initialMenuStructure: ', initialMenuStructure);
+    // // console.log('initialMenuStructure: ', initialMenuStructure);
     fetchDataAndUpdateState();
   }, [initialPageStructure]);
 
@@ -198,7 +198,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
-  // console.log('params: ', context.params.solution)
+  // // console.log('params: ', context.params.solution)
   const file = 'customers/' + context.params.customer.join('/')
   let pageContent = '';
   if (!file.endsWith(".etherpad")) { pageContent = await getFileContent(siteConfig.content.customers.owner, siteConfig.content.customers.repo, siteConfig.content.customers.branch, file); };

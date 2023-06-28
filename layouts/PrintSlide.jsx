@@ -47,7 +47,7 @@ export default dynamic(() => Promise.resolve(PrintSlide), {
 });
 
 function PrintSlide({ children, next }) {
-  // // console.log('PrintSlide:children : ', children)
+  // // // console.log('PrintSlide:children : ', children)
   let generatedSlides = [];
   let generatorCount = 0;
   // Filter down children by only Slides

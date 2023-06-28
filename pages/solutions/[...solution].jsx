@@ -32,14 +32,14 @@ export default function Page({
   const [rev, setRev] = useState(0);
 
   const handleContentClick = async (url, label) => {
-    console.log("Content Clicked: label: ", label, " url: ", url);
+    // console.log("Content Clicked: label: ", label, " url: ", url);
 
     if (url && url.endsWith(".etherpad")) { // load the pad
       const cacheKey = 'etherpad:/' + url
       const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
       setContentSource('etherpad:' + frontmatter.padID);
       const pad = await fetchPadDetails(cacheKey);
-      console.log("handleContentClick: ", pad);
+      // console.log("handleContentClick: ", pad);
 
       if (pad.rawContent && pad.frontmatter) {
         setRev(pad.rev);
@@ -53,9 +53,9 @@ export default function Page({
         );
         if (response.ok) {
           const data = await response.text();
-          // console.log('handleContentClick:data: ', data);
+          // // console.log('handleContentClick:data: ', data);
           // const content = Buffer.from(data ?? "", "base64").toString("utf8");
-          // console.log('handleContentClick:content: ', content);
+          // // console.log('handleContentClick:content: ', content);
           setRawContent(data);
         } else {
           throw new Error("Error fetching files");
@@ -67,7 +67,7 @@ export default function Page({
   };
 
   useEffect(() => {
-    console.log("useEffect:MDX:File: ", file);
+    // console.log("useEffect:MDX:File: ", file);
     let format;
     if (file && file.endsWith(".md")) {
       format = "md";
@@ -98,12 +98,12 @@ export default function Page({
       
       const fetchDataAndSetState = async () => {
         const padDetails = await fetchData();
-        console.log("useEffect:fetchData1: ", padDetails);
+        // console.log("useEffect:fetchData1: ", padDetails);
 
         if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
           setContentSource('etherpad:' + padDetails.frontmatter.padID);
 
-          console.log('useEffect:fetchData2: ', padDetails);
+          // console.log('useEffect:fetchData2: ', padDetails);
   
           setRev(padDetails.rev);
           setRawContent(
@@ -154,18 +154,13 @@ export default function Page({
           }, {}),
         },
       };
-
-      console.log(
-        "fetchDataAndUpdateState:newMenuStructure: ",
-        newMenuStructure
-      );
-
       setMenuStructure(newMenuStructure);
     };
 
-    // console.log('initialMenuStructure: ', initialMenuStructure);
+    // // console.log('initialMenuStructure: ', initialMenuStructure);
     fetchDataAndUpdateState();
-  }, [initialMenuStructure]);
+
+  }, [initialMenuStructure] );
 
   
 
@@ -173,13 +168,13 @@ export default function Page({
 
     const Content = pageContent.content;
     const WrappedContent = () => {
-      console.log('contentSource: ', contentSource)
+      // console.log('contentSource: ', contentSource)
     
       if (contentSource && contentSource.startsWith('etherpad')) {
 
         return <Etherpad file={file}><Content /></Etherpad>;
       } else {
-        console.log('contentSource: ', contentSource)
+        // console.log('contentSource: ', contentSource)
         return <Content />;
       }
     }
@@ -228,8 +223,15 @@ export async function getStaticPaths() {
 }
 */
 
+export async function getStaticPaths() {
+  return {
+          fallback: true,
+          paths: []
+        }
+}
+
 export async function getStaticProps(context) {
-  // console.log('params: ', context.params.solution)
+  // // console.log('params: ', context.params.solution)
   const file = "solutions/" + context.params.solution.join("/");
   let pageContent = "";
   if (!file.endsWith(".etherpad")) {

@@ -2,7 +2,7 @@
 
 export async function getComplianceData() {
   try {
-    console.log("h");
+    // console.log("h");
     const res = await fetch(
       `${process.env.AIRVIEW_API_URL}/compliance/?$select=applicationName,controlSeverity,environmentName`
     );
@@ -10,7 +10,7 @@ export async function getComplianceData() {
     const apiData = await res.json();
     return apiData;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     throw err;
   }
 }
@@ -20,7 +20,7 @@ export async function getApplications() {
     const apiData = await res.json();
     return apiData;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     throw err;
   }
 }
@@ -34,7 +34,7 @@ export async function getComplianceAggregation(applicationId) {
     return apiData.map((m) => ({ ...m, instances: [] }));
     return apiData;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     throw err;
   }
 }

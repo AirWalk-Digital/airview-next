@@ -7,9 +7,9 @@ const Applications = () => {
     const getData = async () =>{
       
     const response = await fetch("/api/compliance/applications/")
-      // console.log(response)
+      // // console.log(response)
       const data =await response.json();
-      // console.log(data)
+      // // console.log(data)
       setState(data);
     }
     getData()

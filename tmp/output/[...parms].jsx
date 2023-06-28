@@ -62,8 +62,8 @@ function useMdx(defaults) {
           })
         ).default
       } catch (error) {
-        // // console.log('output:evalutate:Error: ', error)
-        // // console.log('output:evalutate:Error/Content: ', file)
+        // // // console.log('output:evalutate:Error: ', error)
+        // // // console.log('output:evalutate:Error/Content: ', file)
         const message =
           error instanceof VFileMessage ? error : new VFileMessage(error)
 
@@ -73,7 +73,7 @@ function useMdx(defaults) {
 
         message.fatal = true
       }
-      // // console.log('output:evalutate:Success/Content: ', file)
+      // // // console.log('output:evalutate:Success/Content: ', file)
       setState({ ...config, file })
     },
     { leading: true, trailing: true, wait: 0 }
@@ -140,7 +140,7 @@ function Page() {
   })
 
   const mdxContent = (format, mdx, pageParms) => {
-    // // console.log('pageParms: ', pageParms)
+    // // // console.log('pageParms: ', pageParms)
     if (pageParms && pageParms.parms) { delete pageParms.parms };
     const { content, data } = matter(mdx);
     let frontmatter = { ...data, ...pageParms };
@@ -164,7 +164,7 @@ function Page() {
     try {
       return state.file.result()
     } catch (error) {
-      // // console.log('/output:Preview:useCallback:Error: ', error)
+      // // // console.log('/output:Preview:useCallback:Error: ', error)
       return <FallbackComponent error={error} />
     }
   }, [state])
@@ -176,27 +176,27 @@ function Page() {
         .then((res) => res.json())
         .then(data => {
           if (data.content) {
-            // // console.log('/output/[...params].jsx:useEffect:router.query: ', router.query)
+            // // // console.log('/output/[...params].jsx:useEffect:router.query: ', router.query)
 
-            // // console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content, router.query))
+            // // // console.log('/output/[...params].jsx:useEffect:content: ', mdxContent(format, data.content, router.query))
 
             setConfig({ ...state, value: String(mdxContent(format, data.content, router.query)) })
           } else if (error) {
-            // // console.log('output:error: ', error)
+            // // // console.log('output:error: ', error)
           } else {
-            // // console.log('output:error: unknown error')
+            // // // console.log('output:error: unknown error')
           }
         })
         .catch(error => {
-          // // console.log(error)
+          // // // console.log(error)
           return { fileData: null, error: error }
         })
         .finally(() => {
-          // console.log('timeout: ', refreshToken);
+          // // console.log('timeout: ', refreshToken);
         });
     };
 
-    // console.log('effectloading file', router)
+    // // console.log('effectloading file', router)
     if (source === 'file') { 
       fetchFileContent()
       setTimeout(() => setRefreshToken(Math.random()), 50000);
@@ -210,9 +210,9 @@ function Page() {
       fetch(`/api/etherpad/pad-revs?pad=${location}`)
         .then((res) => res.json())
         .then(data => {
-          // // console.log('data.rev : ', data.rev , 'rev : ', rev)
+          // // // console.log('data.rev : ', data.rev , 'rev : ', rev)
           if (data.rev && data.rev > rev) {
-            // // console.log('new revision :', data.rev)
+            // // // console.log('new revision :', data.rev)
             const newrev = data.rev
             fetch(`/api/etherpad/pad?pad=${location}&rev=${newrev}`)
               .then((res) => res.json())
@@ -223,13 +223,13 @@ function Page() {
                 }
               })
               .catch(error => {
-                // // console.log(error)
+                // // // console.log(error)
               })
           }
 
         })
         .catch(error => {
-          // // console.log(error)
+          // // // console.log(error)
         })
         .finally(() => {
           setTimeout(() => setRefreshToken(Math.random()), 5000);
@@ -243,7 +243,7 @@ function Page() {
 
   if (format === 'doc') {
     if (state.file && state.file.result) { 
-      // // console.log('/output:PrintView:file: ', state.file.result) 
+      // // // console.log('/output:PrintView:file: ', state.file.result) 
     }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -253,7 +253,7 @@ function Page() {
   } else {
 
     if (state.file && state.file.result) { 
-      // // console.log('/output:DefaultView:file: ', state.file.result) 
+      // // // console.log('/output:DefaultView:file: ', state.file.result) 
     }
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -269,7 +269,7 @@ function Page() {
 
 // PDF Print View component
 function DocumentView({ children }) {
-  // // console.log('/output:PrintView:children: ', children);
+  // // // console.log('/output:PrintView:children: ', children);
 
   const mdxContainer = useRef(null);
   const previewContainer = useRef(null);
@@ -285,8 +285,8 @@ function DocumentView({ children }) {
           previewContainer.current
         )
         .then((flow) => {
-          // // console.log('====flow====')
-          // // console.log(flow)
+          // // // console.log('====flow====')
+          // // // console.log(flow)
         });
       return () => {
         document.head
@@ -315,7 +315,7 @@ function DocumentView({ children }) {
 // Normal View component
 function DefaultView({ children }) {
 
-  // // console.log('DefaultView:children: ', children)
+  // // // console.log('DefaultView:children: ', children)
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
