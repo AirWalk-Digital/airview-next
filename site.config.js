@@ -2,6 +2,9 @@ export const siteConfig = {
   title: `Airview`,
   company: `airwalkreply.com`,
   tagline: `technology, done right`,
+  etherpad: {
+    url: 'https://pad.airview.airwalkconsulting.io'
+  },
   content: {
     services: {
       source: 'github', // The source of the content
