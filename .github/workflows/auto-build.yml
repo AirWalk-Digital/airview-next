@@ -45,9 +45,7 @@ jobs:
           tags: airwalk-digital/airview-mdx-deck
           secrets: |
             "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
-          env:
-            REDIS_HOST: ${{ steps.redis-connection.outputs.host }}
-            REDIS_PORT: ${{ steps.redis-connection.outputs.port }}
+            "REDIS_HOST: redis"
 
       - name: Release
         env:
