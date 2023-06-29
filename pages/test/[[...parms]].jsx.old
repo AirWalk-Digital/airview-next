@@ -76,7 +76,7 @@ function FallbackComponent({ error }) {
 
 
 function createControlMenu(controls) {
-  // console.log('createControlMenu:controls: ', controls)
+  // // console.log('createControlMenu:controls: ', controls)
   try {
     const links = controls.map((control) => {
       const label = control.data.id || ''; // Adjust the property name according to your control data structure
@@ -94,7 +94,7 @@ function createControlMenu(controls) {
         links: links
       }];
   } catch (error) {
-    // console.log('createControlMenu:error: ', error)
+    // // console.log('createControlMenu:error: ', error)
 
     return [
       {
@@ -124,7 +124,7 @@ export default dynamic(() => Promise.resolve(Page), {
 
 function Page({ content, controls, type, menu, frontmatter }) {
 
-  // // console.log('Page:menu: ', menu)
+  // // // console.log('Page:menu: ', menu)
   const router = useRouter();
   const context = { source: 'local', router: router }
 
@@ -251,7 +251,7 @@ export async function getStaticPaths() {
       }
     })
     pages.push('/services')
-    // // console.log('getStaticPaths: ', pages)
+    // // // console.log('getStaticPaths: ', pages)
     return {
       fallback: true,
       paths: pages
@@ -311,7 +311,7 @@ export async function getStaticProps2(context) {
       controls = await Promise.all(controlPromises);
 
     } else if (type === 'index') {
-      // // console.log('getStaticProps:index')
+      // // // console.log('getStaticProps:index')
 
       // construct menu structure
       const controlLocation = 'services/';
@@ -347,16 +347,16 @@ export async function getStaticProps2(context) {
     let pageContent = {};
     if (location) {
       const fileContent = await getFileContent(location);
-      // // console.log('getStaticProps:fileContent: ', fileContent)
+      // // // console.log('getStaticProps:fileContent: ', fileContent)
       pageContent = await matter(fileContent);
-      // // console.log('getStaticProps:pageContent: ', pageContent)
+      // // // console.log('getStaticProps:pageContent: ', pageContent)
 
       // pageContent = content;
       // frontmatter = data;
     };
 
-    // // console.log('getStaticProps:pageContent: ', pageContent)
-    // // console.log('getStaticProps:location: ', location)
+    // // // console.log('getStaticProps:pageContent: ', pageContent)
+    // // // console.log('getStaticProps:location: ', location)
 
 
     return {

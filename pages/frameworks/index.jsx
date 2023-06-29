@@ -45,7 +45,7 @@ function FrameworkSection({ domain }) {
 }
 
 function FrameworkControl({ control }) {
-    // // console.log('control : ', control)
+    // // // console.log('control : ', control)
 
     return (
         <Box
@@ -70,7 +70,7 @@ function FrameworkControl({ control }) {
 };
 
 export default function Page({ framework }) {
-    // console.log('framework : ', framework)
+    // // console.log('framework : ', framework)
     const [selectedControl, setControl] = useState('');
     const controlsNav = framework.domains.map(domain => ({
         groupTitle: domain.title,
@@ -87,7 +87,7 @@ export default function Page({ framework }) {
     function controlDomainNav(nav, setControl) {
         const handleButtonClick = (url, label) => {
             // Update the state or perform any other desired actions with the URL
-            // console.log("Clicked Label:", label);
+            // // console.log("Clicked Label:", label);
             // Update the 'control' state in your page component
             setControl({url, label});
           };

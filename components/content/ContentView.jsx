@@ -14,13 +14,15 @@ import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase } from '
 
 import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
 
-export function SolutionView({
+export function ContentView({
   children,
   frontmatter,
   file,
   content,
   menuStructure,
-  handleContentClick
+  pageStructure,
+  handleContentClick,
+  siteConfig = null
 }) {
 
 
@@ -33,8 +35,8 @@ export function SolutionView({
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
-  const { primary, relatedContent, knowledge, designs, chapters } = menuStructure || {};
-  // // console.log('SolutionView:menuStructure: ', menuStructure)
+  const { primary, relatedContent } = pageStructure || {};
+  // console.log('SolutionView:pageStructure: ', pageStructure)
   function handlePrint() {
     setPrint(!print);
     setMenuOpen(print);
@@ -56,8 +58,8 @@ export function SolutionView({
           handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
         />
 
-        <SolutionsMenu
-          solutions={primary}
+        <ContentMenu
+          menu={menuStructure}
           open={menuOpen}
           top={topBarHeight}
           drawerWidth={navDrawerWidth}
@@ -66,11 +68,8 @@ export function SolutionView({
           style={{
             marginTop: topBarHeight,
             paddingLeft: menuOpen ? navDrawerWidth : 0,
-            // paddingLeft: (print || !menuOpen) ? 0 : navDrawerWidth,
-
           }}
         >
-          {/* {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />} */}
           <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
           {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
             <Grid xs="auto" item>
@@ -111,11 +110,12 @@ export function SolutionView({
               {children && children}
             </Main>
             <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
-              <ContentMenu
+              <AsideMenu
                 content={relatedContent}
                 // chapters={chapters}
                 // knowledge={knowledge}
                 // designs={designs}
+                siteConfig={siteConfig}
                 handleContentClick={handleContentClick}
                 file={file}
               />
@@ -152,11 +152,24 @@ export function SolutionView({
 }
 
 
-function ContentMenu({ content, file, handleContentClick }) {
+function AsideMenu({ content, file, handleContentClick, siteConfig }) {
   let directory = file?.includes("/") ? file.split("/")[1] : file;
   // // console.log('ChaptersMenu:File ', file)
   let chaptersMenu = []
   if (content && content[directory]) {
+
+    for (let collection in siteConfig.content) {
+      if (content[directory][collection]) {
+        chaptersMenu.push(
+          {
+            groupTitle: capitalizeFirstLetter(collection),
+            links: content[directory][collection]
+          }
+        )
+      }
+    }
+
+
     if (content[directory].chapters) {
       chaptersMenu.push(
         {
@@ -165,61 +178,34 @@ function ContentMenu({ content, file, handleContentClick }) {
         }
       )
     }
-    if (content[directory].knowledge) {
-      chaptersMenu.push(
-        {
-          groupTitle: "Knowledge",
-          links: content[directory].knowledge
-
-        }
-      )
-    }
-    if (content[directory].designs) {
-      chaptersMenu.push(
-        {
-          groupTitle: "Designs",
-          links: content[directory].designs
-        }
-      )
-    }
+    
   }
   if (chaptersMenu) {
-    // return (null)
-
     return (
       <>
-      <ButtonBase
-                          variant="text"
-                          onClick={() => handleContentClick('/' + file, 'primary link')}
-                          sx={{
-                            textDecoration: "none",
-                            textTransform: 'none',
-                            textAlign: 'left',
-                            fontWeight: 'bold',
-                            color: 'secondary.main',
-                            mb: '5%'
-                          }}
-                        >Main Content</ButtonBase>
+        <ButtonBase
+          variant="text"
+          onClick={() => handleContentClick('/' + file, 'primary link')}
+          sx={{
+            textDecoration: "none",
+            textTransform: 'none',
+            textAlign: 'left',
+            fontWeight: 'bold',
+            color: 'secondary.main',
+            mb: '5%'
+          }}
+        >Main Content</ButtonBase>
+        <ButtonMenu
+          menuTitle="Content"
+          menuItems={chaptersMenu}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+          handleButtonClick={handleContentClick}
+        /></>
 
-      <ButtonMenu
-      menuTitle="Content"
-      menuItems={chaptersMenu}
-      initialCollapsed={false}
-      loading={false}
-      fetching={false}
-      handleButtonClick={handleContentClick}
-    /></>
-   
     )
-    // return (
-    //   <Menu
-    //     menuTitle="Content"
-    //     menuItems={chaptersMenu}
-    //     initialCollapsed={false}
-    //     loading={false}
-    //     fetching={false}
-    //   />
-    // );
+  
   }
 }
 
@@ -240,3 +226,69 @@ function SolutionsMenu({ solutions, open, top, drawerWidth }) {
     </NavigationDrawer>
   );
 }
+
+
+
+function ContentMenu({ menu, open, top, drawerWidth }) {
+
+    // console.log('ContentMenu:menu: ', menu )
+
+  return (
+    <NavigationDrawer
+      open={open}
+      top={top}
+      drawerWidth={drawerWidth}
+    >
+      {menu &&
+        menu.length > 0 &&
+        menu.map((c) => (
+          <React.Fragment key={c.label}>
+            <Link href={c.url} sx={{ textDecoration: 'none', color: 'text.secondary' }}>
+              <h3 sx={{ pl: '0', color: 'text.secondary' }}>{c.label}</h3>
+            </Link>
+            {c.children && <L2Menu menu={c.children} />}
+          </React.Fragment>
+        ))}
+
+    </NavigationDrawer>
+  );
+}
+
+const L2Menu = ({ menu }) => {
+  return (
+    <>
+      {menu && Object.entries(menu).map(([key, children]) => (
+        <div key={key}>
+          <Menu
+            key={key}
+            menuTitle={capitalizeFirstLetter(key)}
+            menuItems={[{ links: children }]}
+            initialCollapsed={true}
+            loading={false}
+            fetching={false}
+            linkComponent={Link}
+          />
+
+          {/* 
+          <h3 sx={{ pl: '0', color: 'text.secondary', textTransform: 'capitalize' }}>
+            {key}
+          </h3>
+          {children && children.map((item, index) => (
+            <Link key={index} href={item.url} sx={{ textDecoration: 'none', color: 'text.secondary' }}>
+              <MenuItem sx={{ pl: '0', color: 'text.secondary'}}>
+                 {item.label}</MenuItem>
+            </Link>
+          ))} */}
+        </div>
+      ))}
+    </>
+  );
+};
+
+// {menu.map((c, i) =>  <Link key={i} href={c.url} sx={{ textDecoration: 'none', color: 'text.secondary' }}><MenuItem sx={{ pl: '0', color: 'text.secondary'}}>
+//                 {c.label}</MenuItem></Link>)}
+
+
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};

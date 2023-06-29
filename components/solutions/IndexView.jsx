@@ -80,11 +80,11 @@ export function IndexView({
   // pageData = null // controls for the menu
 }) {
 
-  // // console.log('IndexView:menu: ', menu)
+  // // // console.log('IndexView:menu: ', menu)
 
   // const navItems = [];
   // const { navItems, csp } = createMenu(services, providers);
-  // // console.log('IndexView:navItems: ', navItems)
+  // // // console.log('IndexView:navItems: ', navItems)
 
   const { solutionMenu, designFiles, knowledgeFiles } = fileStructure(solutions)
 

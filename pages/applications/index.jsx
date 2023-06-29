@@ -244,7 +244,7 @@ export async function getStaticProps() {
     console.error(error);
     return {
       props: {
-        apps: {},
+        apps: [],
       },
     };
   }

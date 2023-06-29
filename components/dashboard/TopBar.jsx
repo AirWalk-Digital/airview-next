@@ -14,6 +14,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import PrintIcon from '@mui/icons-material/Print';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { styled } from "@mui/material/styles";
+import { siteConfig } from "../../site.config.js";
+
 // import logo from '../../public/logos/airwalk-logo.png';
 const Logo = styled("img")({
     display: "block",
@@ -41,7 +43,7 @@ export function TopBar({
 
   
     return (
-      <AppBar position="fixed" color="white" elevation={0} sx={{ displayPrint: 'none' }}>
+      <AppBar position="fixed" color="white" elevation={0} sx={{ displayPrint: 'none',borderBottom: '1px solid #e0e0e0' }}>
         <Toolbar>
           {/* has menu */}
         {menu &&  <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={onNavButtonClick}>{navOpen ? <CloseIcon /> : <MenuIcon />}</IconButton>}
@@ -51,9 +53,11 @@ export function TopBar({
           
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           </Typography>
+
           <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt'  }} onClick={(event) => handleMenuOpen(event, 'catalogue')} >Catalogue</Button>
-          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }} onClick={(event) => handleMenuOpen(event, 'applications')} >Applications</Button>
-          <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }} onClick={(event) => handleMenuOpen(event, 'content')} >Collaborate</Button>
+          {(siteConfig.content.applications) && <Button color="inherit" endIcon={<ExpandMoreIcon />} sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }} onClick={(event) => handleMenuOpen(event, 'applications')} >Applications</Button>}
+          {(siteConfig.content.customers) && <Link color="inherit" href="/customers" sx={{ textDecoration: 'none' }}><Button color='inherit' sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }}>Customers</Button></Link>}
+          <Link color="inherit" href="/etherpad" sx={{ textDecoration: 'none' }}><Button color='inherit' sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }}>Collaborate</Button></Link>
           <Menu
             id="menu-content"
             anchorEl={anchorEl}
@@ -74,21 +78,22 @@ export function TopBar({
             onClose={handleMenuClose}
             onClick={handleMenuClose}
           >
-            <Link href="/services" sx={{ textDecoration: 'none' }}>
+            {(siteConfig.content.providers || siteConfig.content.services) && <Link href="/services" sx={{ textDecoration: 'none' }}>
               <MenuItem>
               Providers & Services
               </MenuItem>
-            </Link>
-            <Link href="/frameworks" sx={{ textDecoration: 'none' }}>
+            </Link>}
+            {(siteConfig.content.frameworks) &&  <Link href="/frameworks" sx={{ textDecoration: 'none' }}>
               <MenuItem>
-              Frameworks
+              Frameworks & Standards
               </MenuItem>
-            </Link>
-            <Link href="/solutions" sx={{ textDecoration: 'none' }}>
+            </Link>}
+            {(siteConfig.content.solutions) &&  <Link href="/solutions" sx={{ textDecoration: 'none' }}>
               <MenuItem>
               Solutions
               </MenuItem>
-            </Link>
+            </Link>}
+            
           </Menu>
           <Menu
             id="menu-applications"

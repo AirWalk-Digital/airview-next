@@ -134,7 +134,7 @@ export function ComplianceTableAcceptRiskDialog({
 
       onClose();
     } catch {
-      // console.log("Something went wrong attempting to submit risk");
+      // // console.log("Something went wrong attempting to submit risk");
     }
   };
 

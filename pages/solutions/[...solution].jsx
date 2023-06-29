@@ -1,113 +1,122 @@
-
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 import { siteConfig } from "../../site.config.js";
 import { mdComponents } from "../../constants/mdxProvider";
-import * as matter from 'gray-matter';
-import { MDXProvider } from '@mdx-js/react';
-import { getAllFiles, getFileContent } from '@/lib/github'
-import { useMDX } from '@/lib/content/mdx'
+import * as matter from "gray-matter";
+import { MDXProvider } from "@mdx-js/react";
+import { useMDX } from "@/lib/content/mdx";
 
-import { SolutionView } from '@/components/solutions'
+import { SolutionView } from "@/components/solutions";
 
 import { FullScreenSpinner } from '@/components/dashboard/index.js';
 import { dirname, basename } from 'path';
-import { getMenuStructure } from '@/lib/content/menus';
+import { getMenuStructure } from '@/lib/content';
 
 import { Button } from '@mui/material';
 import { fetchPadDetails } from '@/lib/etherpad'
 
+import { Etherpad } from '@/components/etherpad'
 
 export default function Page({
   content: initialContent,
   file,
-  menuStructure: initialMenuStructure }) {
-
-  const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
+  menuStructure: initialMenuStructure,
+}) {
+  const [pageContent, setContent] = useState({
+    content: undefined,
+    frontmatter: undefined,
+  });
 
   const [content, setRawContent] = useState(initialContent);
-
+    const [contentSource, setContentSource] = useState(null)
   const [menuStructure, setMenuStructure] = useState(null);
   const [rev, setRev] = useState(0);
 
   const handleContentClick = async (url, label) => {
-    console.log('Content Clicked: label: ', label, ' url: ', url)
+    // console.log("Content Clicked: label: ", label, " url: ", url);
 
     if (url && url.endsWith(".etherpad")) { // load the pad
-      const cacheKey = 'etherpad:new:/' + url
+      const cacheKey = 'etherpad:/' + url
       const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
+      setContentSource('etherpad:' + frontmatter.padID);
       const pad = await fetchPadDetails(cacheKey);
-      console.log('handleContentClick: ', pad)
+      // console.log("handleContentClick: ", pad);
 
       if (pad.rawContent && pad.frontmatter) {
         setRev(pad.rev);
         setRawContent(matter.stringify(pad.rawContent, pad.frontmatter));
       }
-    } else if (url) { // load from github
+    } else if (url) {
+      // load from github
       try {
-        const response = await fetch(`/api/content/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`);
+        const response = await fetch(
+          `/api/content/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`
+        );
         if (response.ok) {
           const data = await response.text();
-          // console.log('handleContentClick:data: ', data);
+          // // console.log('handleContentClick:data: ', data);
           // const content = Buffer.from(data ?? "", "base64").toString("utf8");
-          // console.log('handleContentClick:content: ', content);
+          // // console.log('handleContentClick:content: ', content);
           setRawContent(data);
         } else {
-          throw new Error('Error fetching files');
+          throw new Error("Error fetching files");
         }
       } catch (error) {
-        console.error('Error fetching files:', error);
+        console.error("Error fetching files:", error);
       }
     }
-
-
   };
 
   useEffect(() => {
-    console.log('useEffect:MDX:File: ', file)
+    // console.log("useEffect:MDX:File: ", file);
     let format;
     if (file && file.endsWith(".md")) {
-      format = 'md';
+      format = "md";
     } else if (file && file.endsWith(".mdx")) {
-      format = 'mdx';
+      format = "mdx";
     } else if (file && file.endsWith(".etherpad")) {
-      format = 'mdx';
+      format = "mdx";
     } else {
-      format = 'mdx;'
+      format = "mdx;";
     }
     const { mdxContent, frontmatter } = useMDX(content, format);
     setContent({ content: mdxContent, frontmatter: frontmatter });
-  }, [content])
+  }, [content]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const cacheKey = 'etherpad:new:/' + file;
+      const cacheKey = 'etherpad:/' + file;
       try {
         const pad = await fetchPadDetails(cacheKey);
         return pad;
       } catch (error) {
-        console.error('Error fetching pad details:', error);
+        console.error("Error fetching pad details:", error);
         return null;
       }
     };
-  
+
     if (file && file.endsWith(".etherpad")) {
+      
       const fetchDataAndSetState = async () => {
         const padDetails = await fetchData();
-        console.log('useEffect:fetchData1: ', padDetails);
-  
+        // console.log("useEffect:fetchData1: ", padDetails);
+
         if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
-          console.log('useEffect:fetchData2: ', padDetails);
+          setContentSource('etherpad:' + padDetails.frontmatter.padID);
+
+          // console.log('useEffect:fetchData2: ', padDetails);
   
           setRev(padDetails.rev);
-          setRawContent(matter.stringify(padDetails.rawContent, padDetails.frontmatter));
+          setRawContent(
+            matter.stringify(padDetails.rawContent, padDetails.frontmatter)
+          );
         }
       };
-  
+
       fetchDataAndSetState();
+    } else {
+      setContentSource('git')
     }
   }, [file]);
-  
-
 
   const context = { file: file, ...siteConfig.content.solutions };
 
@@ -122,53 +131,76 @@ export default function Page({
     const fetchDataAndUpdateState = async () => {
       const padsMenu = await fetchPadMenu();
 
-      let directory = file && file.includes("/") ? file.split("/")[1] : '';
+      let directory = file && file.includes("/") ? file.split("/")[1] : "";
 
       const newMenuStructure = {
         ...initialMenuStructure,
         primary: [
-          ...(Array.isArray(initialMenuStructure?.primary) ? initialMenuStructure.primary : []),
-          ...(Array.isArray(padsMenu?.collections?.solutions) ? padsMenu.collections.solutions : []),
+          ...(Array.isArray(initialMenuStructure?.primary)
+            ? initialMenuStructure.primary
+            : []),
+          ...(Array.isArray(padsMenu?.collections?.solutions)
+            ? padsMenu.collections.solutions
+            : []),
         ],
         relatedContent: {
           ...initialMenuStructure?.relatedContent,
           ...Object.keys(padsMenu?.relatedContent || {}).reduce((acc, key) => {
             acc[key] = {
               ...initialMenuStructure?.relatedContent?.[key],
-              ...padsMenu?.relatedContent?.[key]
+              ...padsMenu?.relatedContent?.[key],
             };
             return acc;
-          }, {})
-        }
+          }, {}),
+        },
       };
-
-      console.log('fetchDataAndUpdateState:newMenuStructure: ', newMenuStructure);
-
       setMenuStructure(newMenuStructure);
     };
 
-    // console.log('initialMenuStructure: ', initialMenuStructure);
+    // // console.log('initialMenuStructure: ', initialMenuStructure);
     fetchDataAndUpdateState();
-  }, [initialMenuStructure]);
 
+  }, [initialMenuStructure] );
+
+  
 
   if (pageContent.content && pageContent.frontmatter) {
-    const Content = pageContent.content;
 
+    const Content = pageContent.content;
+    const WrappedContent = () => {
+      // console.log('contentSource: ', contentSource)
+    
+      if (contentSource && contentSource.startsWith('etherpad')) {
+
+        return <Etherpad file={file}><Content /></Etherpad>;
+      } else {
+        // console.log('contentSource: ', contentSource)
+        return <Content />;
+      }
+    }
+    
     return <SolutionView frontmatter={pageContent.frontmatter} file={file} content={content} menuStructure={menuStructure} handleContentClick={handleContentClick}>
       <MDXProvider components={mdComponents(context)}>
-        <Content />
+        <WrappedContent />
       </MDXProvider>
     </SolutionView>
   } else {
-    return <SolutionView frontmatter={pageContent.frontmatter} file={file} menuStructure={menuStructure} handleContentClick={handleContentClick}>
-      <MDXProvider components={mdComponents(context)}>
-        <FullScreenSpinner />
-      </MDXProvider>
-    </SolutionView>
+    return (
+      <SolutionView
+        frontmatter={pageContent.frontmatter}
+        file={file}
+        menuStructure={menuStructure}
+        handleContentClick={handleContentClick}
+      >
+        <MDXProvider components={mdComponents(context)}>
+          <FullScreenSpinner />
+        </MDXProvider>
+      </SolutionView>
+    );
   }
-};
+}
 
+/*
 export async function getStaticPaths() {
   let pages = [];
   try {
@@ -189,21 +221,40 @@ export async function getStaticPaths() {
     }
   }
 }
+*/
+
+export async function getStaticPaths() {
+  return {
+          fallback: true,
+          paths: []
+        }
+}
 
 export async function getStaticProps(context) {
-  // console.log('params: ', context.params.solution)
-  const file = 'solutions/' + context.params.solution.join('/')
-  let pageContent = '';
-  if (!file.endsWith(".etherpad")) { pageContent = await getFileContent(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, file); };
-  const pageContentText = pageContent ? Buffer.from(pageContent).toString("utf-8") : '';
-  const menuStructure = await getMenuStructure(siteConfig, siteConfig.content.solutions);
+  // // console.log('params: ', context.params.solution)
+  const file = "solutions/" + context.params.solution.join("/");
+  let pageContent = "";
+  if (!file.endsWith(".etherpad")) {
+    pageContent = await getFileContent(
+      siteConfig.content.solutions.owner,
+      siteConfig.content.solutions.repo,
+      siteConfig.content.solutions.branch,
+      file
+    );
+  }
+  const pageContentText = pageContent
+    ? Buffer.from(pageContent).toString("utf-8")
+    : "";
+  const menuStructure = await getMenuStructure(
+    siteConfig,
+    siteConfig.content.solutions
+  );
 
   return {
     props: {
       content: pageContentText || null,
       file: file,
-      menuStructure: menuStructure || null
+      menuStructure: menuStructure || null,
     },
   };
 }
-

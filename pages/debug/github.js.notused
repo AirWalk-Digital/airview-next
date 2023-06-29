@@ -96,7 +96,7 @@ export async function getStaticProps() {
 
   const data = await getAllFiles('airwalk-digital', 'airview-demo-content', 'main', '/');
 
-  // // console.log('data', data );
+  // // // console.log('data', data );
   return {
     props: {
       files: data

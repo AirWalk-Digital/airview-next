@@ -33,12 +33,12 @@ export function Tile({ name, url, image }) {
               alignItems: 'center',
             }}
           >
-            <img src={image} alt={name} style={{ maxWidth: '100%', maxHeight: '100%' }} />
+           {image && <img src={image} alt={name} style={{ maxWidth: '100%', maxHeight: '100%' }} /> }
           </Box>
           <Box
             sx={{
               position: 'absolute',
-              top: 0,
+              top: image ? 0 : 75,
               left: 0,
               right: 0,
               p: 2,

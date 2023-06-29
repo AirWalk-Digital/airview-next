@@ -65,22 +65,22 @@ ${serviceDescription}`;
 
           fs.writeFileSync(filePath, frontmatter);
 
-          // console.log(`Created ${filePath}`);
+          // // console.log(`Created ${filePath}`);
         } else {
           // Read the existing file's content
           const existingContent = fs.readFileSync(filePath, 'utf-8');
           if (existingContent.includes('auto-generated')) {
             fs.writeFileSync(filePath, frontmatter);
-            // console.log(`Updated ${filePath}`);
+            // // console.log(`Updated ${filePath}`);
           } else {
-            // console.log(`Skipped edited file ${filePath}`);
+            // // console.log(`Skipped edited file ${filePath}`);
           }
 
         }
       });
     });
 
-    // console.log('File structure generation completed.');
+    // // console.log('File structure generation completed.');
   })
   .catch(error => {
     console.error('An error occurred:', error);

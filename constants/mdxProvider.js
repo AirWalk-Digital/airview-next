@@ -79,7 +79,7 @@ function MdxImage({ props, baseContext }) {
       updateSize();
       return () => window.removeEventListener('resize', updateSize);
     }, []);
-    console.log('useWindowSize:size', size)
+    // console.log('useWindowSize:size', size)
     return size;
   }
   function useContainerSize() {
@@ -98,7 +98,7 @@ function MdxImage({ props, baseContext }) {
   
       return () => window.removeEventListener('resize', updateSize);
     }, []);
-    console.log('useContainerSize:size', size)
+    // console.log('useContainerSize:size', size)
     return [size, ref];
   }
 
@@ -123,7 +123,7 @@ function MdxImage({ props, baseContext }) {
     };
 
     const handleImageLoad = (event) => {
-      console.log('handleImageLoad:event', event.target)
+      // console.log('handleImageLoad:event', event.target)
       const { naturalWidth, naturalHeight } = event.target;
       setImageSize({ width: naturalWidth, height: naturalHeight });
     };

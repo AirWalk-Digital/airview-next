@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     if (filepath.endsWith("/")) {
       // Remove trailing slash
       filepath = filepath.slice(0, -1);
-      // // console.log(path);
+      // // // console.log(path);
       // Get the list of files for the given path and its subdirectories
       const files = await getAllFiles(owner, repo, branch, filepath);
 
@@ -25,11 +25,11 @@ export default async function handler(req, res) {
 
     } else {
       // Get the content of a specific file
-      // // console.log('Getting file content');
+      // // // console.log('Getting file content');
       const data = await getFileContent(owner, repo, branch, filepath);
       const extension = path.extname(filepath);
       const contentType = mime.lookup(extension) || 'application/octet-stream';
-      console.log('api:data: ', contentType, data);
+      // console.log('api:data: ', contentType, data);
       res.setHeader("Content-Type", contentType);
       res.send(data);
       // res.end(Buffer.from(data, "base64"));
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       // res.status(200).json({ data });
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).send();
   }
 }

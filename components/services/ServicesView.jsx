@@ -45,14 +45,14 @@ export function ServicesView({
   controls
 }) {
 
-  // // console.log('IndexView:menu: ', menu)
-  // console.log('ServicesView:services: ', services)
-  // console.log('ServicesView:providers: ', providers)
-  // console.log('ServicesView:frontmatter: ', frontmatter)
-  // console.log('ServicesView:children: ', children)
+  // // // console.log('IndexView:menu: ', menu)
+  // // console.log('ServicesView:services: ', services)
+  // // console.log('ServicesView:providers: ', providers)
+  // // console.log('ServicesView:frontmatter: ', frontmatter)
+  // // console.log('ServicesView:children: ', children)
   // const navItems = [];
   // const { navItems, csp } = createMenu(services, providers);
-  // // console.log('IndexView:navItems: ', navItems)
+  // // // console.log('IndexView:navItems: ', navItems)
   const mdxContainer = useRef(null);
   const previewContainer = useRef(null);
 
@@ -73,9 +73,9 @@ export function ServicesView({
   };
   const handleButtonClick = (url, label) => {
     // Update the state or perform any other desired actions with the URL
-    // console.log("Clicked Label:", label);
+    // // console.log("Clicked Label:", label);
     // Update the 'control' state in your page component
-    console.log("Clicked Label:", label);
+    // console.log("Clicked Label:", label);
   };
 
   function handlePrint() {
@@ -83,7 +83,7 @@ export function ServicesView({
     setPrint(!print);
     setMenuOpen(print);
 
-    console.log('handlePrint:print: ', print)
+    // console.log('handlePrint:print: ', print)
   };
 
   const controlCoverage = createControlCoverage(controls);
@@ -182,7 +182,7 @@ export function ServicesView({
 
 
 function createControlCoverage(controls) {
-  // console.log('createControlCoverage:controls: ', controls)
+  // // console.log('createControlCoverage:controls: ', controls)
 
   let controlCountCovered = 0
   let controlCountUnCovered = 0
@@ -200,13 +200,13 @@ function createControlCoverage(controls) {
   }
   // calculate the percentage of covered controls vs controls
   controlCoverage = Math.round((controlCountCovered / controls.length) * 100)
-  // console.log('createControlCoverage:controlCoverage: ', controlCoverage)
+  // // console.log('createControlCoverage:controlCoverage: ', controlCoverage)
   return ({ controlCountCovered, controlCountUnCovered, controlMethods, controlCoverage, controlCount: controls.length })
 };
 
 
 function createControlMenu(controls) {
-  console.log('createControlMenu:controls: ', controls)
+  // console.log('createControlMenu:controls: ', controls)
   try {
     const links = controls.map((control) => {
       const label = control.data.name || control.data.id || ''; // Adjust the property name according to your control data structure
@@ -223,7 +223,7 @@ function createControlMenu(controls) {
         links: links
       }];
   } catch (error) {
-    // console.log('createControlMenu:error: ', error)
+    // // console.log('createControlMenu:error: ', error)
 
     return [
       {
@@ -290,8 +290,8 @@ function ServiceMenu({ services, providers, open, top, drawerWidth }) {
 function ServicesHeader({ frontmatter, controlCoverage }) {
   if (!frontmatter) { return <></> }
   // frontmatter = frontmatter.frontmatter
-  console.log('ServicesHeader:controlCoverage: ', controlCoverage)
-  // console.log('ServicesHeader:frontmatter: ', frontmatter)
+  // console.log('ServicesHeader:controlCoverage: ', controlCoverage)
+  // // console.log('ServicesHeader:frontmatter: ', frontmatter)
 
   let icon = { color: 'success', icon: 'check' }
 
