@@ -8,6 +8,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    container: ubuntu
     services:
       redis:
         image: redis:latest
