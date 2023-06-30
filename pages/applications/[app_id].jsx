@@ -225,34 +225,7 @@ function Page({ app, applicationsData }) {
   );
 }
 
-// export async function getStaticPaths() {
-//   let pages = [];
-//   let location = "services";
-//   try {
-//     const apps = await getApplications();
-//     const pages = apps.map((file) => {
-//       return "/applications/" + file.id;
-//     });
-//     return {
-//       fallback: true,
-//       paths: pages,
-//     };
-//   } catch (error) {
-//     console.error(error);
-//     return {
-//       fallback: true,
-//       paths: pages,
-//     };
-//   }
-// }
-
-export async function getStaticPaths() {
-  return {
-          fallback: true,
-          paths: []
-        }
-}
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   try {
     const app = (await getApplicationById(context.params.app_id)) || null;
     // const applicationsData = await getApplicationsData();

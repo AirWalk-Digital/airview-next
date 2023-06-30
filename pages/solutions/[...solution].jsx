@@ -7,14 +7,14 @@ import { useMDX } from "@/lib/content/mdx";
 
 import { SolutionView } from "@/components/solutions";
 
-import { FullScreenSpinner } from '@/components/dashboard/index.js';
-import { dirname, basename } from 'path';
-import { getMenuStructure } from '@/lib/content';
+import { FullScreenSpinner } from "@/components/dashboard/index.js";
+import { dirname, basename } from "path";
+import { getMenuStructure } from "@/lib/content";
 
-import { Button } from '@mui/material';
-import { fetchPadDetails } from '@/lib/etherpad'
+import { Button } from "@mui/material";
+import { fetchPadDetails } from "@/lib/etherpad";
 
-import { Etherpad } from '@/components/etherpad'
+import { Etherpad } from "@/components/etherpad";
 
 export default function Page({
   content: initialContent,
@@ -27,17 +27,18 @@ export default function Page({
   });
 
   const [content, setRawContent] = useState(initialContent);
-    const [contentSource, setContentSource] = useState(null)
+  const [contentSource, setContentSource] = useState(null);
   const [menuStructure, setMenuStructure] = useState(null);
   const [rev, setRev] = useState(0);
 
   const handleContentClick = async (url, label) => {
     // console.log("Content Clicked: label: ", label, " url: ", url);
 
-    if (url && url.endsWith(".etherpad")) { // load the pad
-      const cacheKey = 'etherpad:/' + url
+    if (url && url.endsWith(".etherpad")) {
+      // load the pad
+      const cacheKey = "etherpad:/" + url;
       const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
-      setContentSource('etherpad:' + frontmatter.padID);
+      setContentSource("etherpad:" + frontmatter.padID);
       const pad = await fetchPadDetails(cacheKey);
       // console.log("handleContentClick: ", pad);
 
@@ -84,7 +85,7 @@ export default function Page({
 
   useEffect(() => {
     const fetchData = async () => {
-      const cacheKey = 'etherpad:/' + file;
+      const cacheKey = "etherpad:/" + file;
       try {
         const pad = await fetchPadDetails(cacheKey);
         return pad;
@@ -95,16 +96,15 @@ export default function Page({
     };
 
     if (file && file.endsWith(".etherpad")) {
-      
       const fetchDataAndSetState = async () => {
         const padDetails = await fetchData();
         // console.log("useEffect:fetchData1: ", padDetails);
 
         if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
-          setContentSource('etherpad:' + padDetails.frontmatter.padID);
+          setContentSource("etherpad:" + padDetails.frontmatter.padID);
 
           // console.log('useEffect:fetchData2: ', padDetails);
-  
+
           setRev(padDetails.rev);
           setRawContent(
             matter.stringify(padDetails.rawContent, padDetails.frontmatter)
@@ -114,7 +114,7 @@ export default function Page({
 
       fetchDataAndSetState();
     } else {
-      setContentSource('git')
+      setContentSource("git");
     }
   }, [file]);
 
@@ -159,31 +159,38 @@ export default function Page({
 
     // // console.log('initialMenuStructure: ', initialMenuStructure);
     fetchDataAndUpdateState();
-
-  }, [initialMenuStructure] );
-
-  
+  }, [initialMenuStructure]);
 
   if (pageContent.content && pageContent.frontmatter) {
-
     const Content = pageContent.content;
     const WrappedContent = () => {
       // console.log('contentSource: ', contentSource)
-    
-      if (contentSource && contentSource.startsWith('etherpad')) {
 
-        return <Etherpad file={file}><Content /></Etherpad>;
+      if (contentSource && contentSource.startsWith("etherpad")) {
+        return (
+          <Etherpad file={file}>
+            <Content />
+          </Etherpad>
+        );
       } else {
         // console.log('contentSource: ', contentSource)
         return <Content />;
       }
-    }
-    
-    return <SolutionView frontmatter={pageContent.frontmatter} file={file} content={content} menuStructure={menuStructure} handleContentClick={handleContentClick}>
-      <MDXProvider components={mdComponents(context)}>
-        <WrappedContent />
-      </MDXProvider>
-    </SolutionView>
+    };
+
+    return (
+      <SolutionView
+        frontmatter={pageContent.frontmatter}
+        file={file}
+        content={content}
+        menuStructure={menuStructure}
+        handleContentClick={handleContentClick}
+      >
+        <MDXProvider components={mdComponents(context)}>
+          <WrappedContent />
+        </MDXProvider>
+      </SolutionView>
+    );
   } else {
     return (
       <SolutionView
@@ -200,37 +207,7 @@ export default function Page({
   }
 }
 
-/*
-export async function getStaticPaths() {
-  let pages = [];
-  try {
-    const solutions = await getAllFiles(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, siteConfig.content.solutions.path, true, '.md*');
-    pages = solutions
-      .filter((file) => basename(file) !== 'README.md')
-      .map((file) => { return '/' + file });
-
-    return {
-      fallback: true,
-      paths: pages
-    }
-  } catch (error) {
-    console.error(error)
-    return {
-      fallback: true,
-      paths: pages
-    }
-  }
-}
-*/
-
-export async function getStaticPaths() {
-  return {
-          fallback: true,
-          paths: []
-        }
-}
-
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   // // console.log('params: ', context.params.solution)
   const file = "solutions/" + context.params.solution.join("/");
   let pageContent = "";
