@@ -195,17 +195,17 @@ function MdxImage({ props, baseContext }) {
 
 // export const mdComponents = {
 export const mdComponents = (baseContext) => ({
-  h1: (props) => <Typography variant="h1">{props.children}</Typography>,
-  h2: (props) => <Typography variant="h2">{props.children}</Typography>,
-  h3: (props) => <Typography variant="h3">{props.children}</Typography>,
-  h4: (props) => <Typography variant="h4">{props.children}</Typography>,
-  h5: (props) => <Typography variant="h5">{props.children}</Typography>,
+  h1: (props) => <Typography variant="h1" id={props.id}>{props.children}</Typography>,
+  h2: (props) => <Typography variant="h2" id={props.id}>{props.children}</Typography>,
+  h3: (props) => <Typography variant="h3" id={props.id}>{props.children}</Typography>,
+  h4: (props) => <Typography variant="h4" id={props.id}>{props.children}</Typography>,
+  h5: (props) => <Typography variant="h5" id={props.id}>{props.children}</Typography>,
   p: (props) => <Typography variant="p">{props.children}</Typography>,
   img: (props) => (<MdxImage props={props} baseContext={baseContext} fill loading="lazy" />),
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
-  ul: (props) => <Typography variant="ul">{props.children}</Typography>,
+  // ul: (props) => <Typography variant="ul">{props.children}</Typography>,
   // table: (props) => <Typography variant="table">{props.children}</Typography>,
-  hr: (props) => null,
+  // hr: (props) => null,
   pre: (props) => props.children,
   code: (props) => {
     const { className } = props;

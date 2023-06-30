@@ -14,6 +14,7 @@ export const PresentationOutput = dynamic(() => Promise.resolve(PresentationOutp
   ssr: true,
 });
 
+
 function PresentationOutputPage({ children, handlePresentation, refresh = false, content }) {
   const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
 

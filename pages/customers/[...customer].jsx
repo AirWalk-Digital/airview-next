@@ -73,8 +73,8 @@ export default function Page({
     } else {
       format = 'mdx;'
     }
-    const { mdxContent, frontmatter } = useMDX(content, format);
-    setContent({ content: mdxContent, frontmatter: frontmatter });
+    const { mdxContent, frontmatter } = useMDX(content ? content : initialContent, format);
+    setContent({ content: mdxContent, frontmatter: frontmatter});
   }, [content])
 
   useEffect(() => {

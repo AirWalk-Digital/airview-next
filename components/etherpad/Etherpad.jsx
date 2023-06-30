@@ -7,7 +7,7 @@ import * as matter from 'gray-matter';
 import { siteConfig } from "../../site.config.js";
 
 
-export function Etherpad({ file, children }) {
+export function Etherpad({ file, frontMatterCallback }) {
 
 
   const etherpad_host = siteConfig?.etherpad?.url ?? null
@@ -38,6 +38,7 @@ export function Etherpad({ file, children }) {
   useEffect(() => { // process the rawcontent
     const { mdxContent, frontmatter } = useMDX(content, 'mdx');
     setPageContent({ content: mdxContent, frontmatter: frontmatter });
+    frontMatterCallback(frontmatter);
   }, [content])
 
   // useEffect(() => {
@@ -113,20 +114,22 @@ export function Etherpad({ file, children }) {
                 }
               })
               .catch(error => {
-                // // // console.log(error)
+                console.error('Etherpad:Error refreshing pad: ', error)
               })
           }
 
         })
         .catch(error => {
-          // // // console.log(error)
+          console.error('Etherpad:Error refreshing pad revisions: ', error)
         })
-        .finally(() => {
-          setTimeout(() => setRefreshToken(Math.random()), 5000);
-        });
+        
     }
 
-    if (padId) { fetchPadContent() } else { fetchPadMetadata() }
+    if (padId) { 
+      fetchPadContent()
+      setTimeout(() => setRefreshToken(Math.random()), 5000);
+      console.log('Etherpad:useEffect:PadRefresh')
+    } else { fetchPadMetadata() }
 
   }, [refreshToken]);
 

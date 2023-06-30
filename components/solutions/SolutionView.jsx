@@ -13,6 +13,7 @@ import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase } from '@mui/material';
 
 import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
+import { TableOfContents } from '@/components/content';
 
 export function SolutionView({
   children,
@@ -24,6 +25,11 @@ export function SolutionView({
 }) {
 
 
+  let tableOfContents = [];
+  if (frontmatter && frontmatter.tableOfContents) {
+
+
+  }
   // console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
   const topBarHeight = 64;
@@ -111,6 +117,7 @@ export function SolutionView({
               {children && children}
             </Main>
             <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
+
               <ContentMenu
                 content={relatedContent}
                 // chapters={chapters}
@@ -119,6 +126,8 @@ export function SolutionView({
                 handleContentClick={handleContentClick}
                 file={file}
               />
+              {frontmatter?.tableOfContents && <TableOfContents tableOfContents={frontmatter.tableOfContents} />}
+
               {/* <ButtonMenu
                 menuTitle="Controls"
                 menuItems={createControlMenu(controls)}
@@ -188,28 +197,28 @@ function ContentMenu({ content, file, handleContentClick }) {
 
     return (
       <>
-      <ButtonBase
-                          variant="text"
-                          onClick={() => handleContentClick('/' + file, 'primary link')}
-                          sx={{
-                            textDecoration: "none",
-                            textTransform: 'none',
-                            textAlign: 'left',
-                            fontWeight: 'bold',
-                            color: 'secondary.main',
-                            mb: '5%'
-                          }}
-                        >Main Content</ButtonBase>
+        <ButtonBase
+          variant="text"
+          onClick={() => handleContentClick('/' + file, 'primary link')}
+          sx={{
+            textDecoration: "none",
+            textTransform: 'none',
+            textAlign: 'left',
+            fontWeight: 'bold',
+            color: 'secondary.main',
+            mb: '5%'
+          }}
+        >Main Content</ButtonBase>
 
-      <ButtonMenu
-      menuTitle="Content"
-      menuItems={chaptersMenu}
-      initialCollapsed={false}
-      loading={false}
-      fetching={false}
-      handleButtonClick={handleContentClick}
-    /></>
-   
+        <ButtonMenu
+          menuTitle="Related Content"
+          menuItems={chaptersMenu}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+          handleButtonClick={handleContentClick}
+        /></>
+
     )
     // return (
     //   <Menu
