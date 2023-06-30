@@ -213,32 +213,7 @@ function FrameworkControl({ control }) {
   );
 }
 
-export async function getStaticPaths() {
-  return {
-    fallback: "blocking",
-    paths: [],
-  };
-  /*
-  let pages = [];
-  try {
-    const apps = await getFrameworks();
-    const pages = apps.map((file) => {
-      return "/frameworks/" + file.bu_id;
-    });
-    return {
-      fallback: true,
-      paths: pages,
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      fallback: true,
-      paths: pages,
-    };
-  }
-  */
-}
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   try {
     const framework = await getFrameworkByName(context.params.section[0]);
     return {

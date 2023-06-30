@@ -40,14 +40,8 @@ async function getFrontMatter(config) {
   });
   return await Promise.all(filesPromises);
 }
-export async function getStaticPaths() {
-  return {
-    fallback: "blocking",
-    paths: [],
-  };
-}
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   // export async function getServerSideProps(context) {
   // construct menu structure
 

@@ -229,7 +229,7 @@ export default function Page({ apps, complianceData }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   try {
     const apps = await getApplications();
     const complianceData = await getComplianceData();
@@ -238,7 +238,6 @@ export async function getStaticProps() {
         apps,
         complianceData,
       },
-      revalidate: 10, // In seconds
     };
   } catch (error) {
     console.error(error);

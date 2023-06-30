@@ -8,14 +8,7 @@ export default function Page({ solutions, knowledge }) {
   return <IndexView knowledge={knowledge} solutions={solutions} />;
 }
 
-export async function getStaticPaths() {
-  return {
-    fallback: "blocking",
-    paths: [],
-  };
-}
-
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   // construct menu structure
 
   const solutions = await getAllFiles(

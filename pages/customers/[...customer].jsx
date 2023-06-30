@@ -199,34 +199,7 @@ export default function Page({
   }
 }
 
-export async function getStaticPaths() {
-  return {
-    fallback: true,
-    paths: [],
-  };
-  /*
-  let pages = [];
-  try {
-    const pageFiles = await getAllFiles(siteConfig.content.customers.owner, siteConfig.content.customers.repo, siteConfig.content.customers.branch, siteConfig.content.customers.path, true, '.md*');
-    pages = pageFiles
-      .filter((file) => basename(file) !== 'README.md')
-      .map((file) => { return '/' + file });
-
-    return {
-      fallback: true,
-      paths: pages
-    }
-  } catch (error) {
-    console.error(error)
-    return {
-      fallback: true,
-      paths: pages
-    }
-  }
-*/
-}
-
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   // // console.log('params: ', context.params.solution)
   const file = "customers/" + context.params.customer.join("/");
   let pageContent = "";
