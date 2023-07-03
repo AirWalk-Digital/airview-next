@@ -80,7 +80,7 @@ const baseTheme = deepmerge(
         paddingLeft: '25px',
         page: 'no-chapter',
         breakBefore: 'always',
-        fontSize: '4rem'
+        fontSize: '3rem'
 
       },
       h2: {
@@ -89,7 +89,7 @@ const baseTheme = deepmerge(
         lineHeight: 1.2,
         breakAfter: 'avoid-column',
         my: '1%',
-        fontSize: '3rem'
+        fontSize: '2rem'
 
       },
       h3: {

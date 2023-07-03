@@ -4,9 +4,9 @@ import { useEffect, useState, useRef } from 'react';
 // import { MDXProvider } from "@mdx-js/react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
-import SlidePage from "../layouts/SlidePage";
-import PrintSlide from "../layouts/PrintSlide";
-import MDXViewer from "../layouts/MDXViewer";
+import SlidePage from "@/components/display/SlidePage";
+import PrintSlide from "@/components/display/PrintSlide";
+import MDXViewer from "@/components/display/MDXViewer";
 import Image from "next/image";
 
 // fix for Roadmap, Nest

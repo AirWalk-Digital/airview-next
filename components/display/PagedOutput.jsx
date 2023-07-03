@@ -12,18 +12,30 @@ export function PagedOutput({ children, handlePrint }) {
   const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
+    console.log('useEffect running');
     if (!rendered) {
       if (mdxContainer.current !== null) {
         const paged = new Previewer();
-        const contentMdx = `${mdxContainer.current?.innerHTML}`;
-        paged
-          .preview(contentMdx, ['/pdf.css'], previewContainer.current)
-          .then((flow) => {
-            setRendered(true)
-          });
+        const contentMdx = `${mdxContainer.current.innerHTML}`;
+
+        // Clear the content of previewContainer
+        previewContainer.current.innerHTML = '';
+        paged.preview(contentMdx, ['/pdf.css'], previewContainer.current).then((flow) => {
+          setRendered(true);
+
+          // Delay the removal of the second instance of .pagedjs_pages
+          setTimeout(() => {
+            const pagedPages = previewContainer.current.getElementsByClassName('pagedjs_pages');
+            if (pagedPages.length > 1) {
+              pagedPages[0].remove();
+            }
+          }, 0);
+        });
+        
       }
     }
-  }, []);
+  }, [children]);
+
 
 
   return (

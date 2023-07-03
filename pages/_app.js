@@ -4,7 +4,7 @@ import { siteConfig } from "../site.config.js";
 import { AnimatePresence } from "framer-motion";
 import { CurrentSlideProvider } from "../context/CurrentSlideContext";
 import { ModeProvider } from "../context/ModeContext";
-import TransitionPage from "../layouts/TransitionPage";
+// import TransitionPage from "../layouts/TransitionPage";
 import Script from 'next/script';
 
 import { MDXProvider } from '@mdx-js/react'

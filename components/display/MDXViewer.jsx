@@ -2,7 +2,7 @@ import React from "react";
 import GlobalStyles from '@mui/material/GlobalStyles';
 import PresentationMode from "@/components/presentations/PresentationMode";
 import Swipeable from "@/components/presentations/Swipeable";
-import { Storage } from "../hooks/useStorage";
+import { Storage } from "../../hooks/useStorage";
 
 import dynamic from 'next/dynamic'
 

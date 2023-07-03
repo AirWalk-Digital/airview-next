@@ -5,7 +5,7 @@ import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Link from '@mui/material/Link';
-import { TopBar } from '@/components/dashboard';
+import { TopBar, ControlBar } from '@/components/dashboard';
 import { Menu, NavigationDrawer, ButtonMenu } from '@/components/airview-ui';
 import { PagedOutput } from '@/components/display/PagedOutput';
 import { PresentationOutput } from '@/components/display/PresentationOutput';
@@ -21,7 +21,9 @@ export function SolutionView({
   file,
   content,
   menuStructure,
-  handleContentClick
+  handleContentChange,
+  setEditMode,
+  collection
 }) {
 
 
@@ -30,9 +32,16 @@ export function SolutionView({
 
 
   }
+  // ControlBar
+  const [controlBarOpen, setControlBarOpen] = useState(false);
+  const handleEditMode = (mode) => {
+    setEditMode(mode)
+    setMenuOpen(!mode)
+  }
+
   // console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
-  const topBarHeight = 64;
+  const topBarHeight = controlBarOpen ? 64 + 64 : 64;
   const [menuOpen, setMenuOpen] = useState(true);
   const [print, setPrint] = useState(false);
   const [presentation, setPresentation] = useState(false);
@@ -60,8 +69,14 @@ export function SolutionView({
           topBarHeight={topBarHeight}
           handlePrint={handlePrint}
           handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
+          handleMore={() => setControlBarOpen(controlBarOpen => !controlBarOpen)}
         />
-
+        <ControlBar open={controlBarOpen} height={64}
+          handleEdit={handleEditMode}
+          handlePrint={handlePrint}
+          handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
+          collection={collection}
+        />
         <SolutionsMenu
           solutions={primary}
           open={menuOpen}
@@ -123,7 +138,7 @@ export function SolutionView({
                 // chapters={chapters}
                 // knowledge={knowledge}
                 // designs={designs}
-                handleContentClick={handleContentClick}
+                handleContentChange={handleContentChange}
                 file={file}
               />
               {frontmatter?.tableOfContents && <TableOfContents tableOfContents={frontmatter.tableOfContents} />}
@@ -146,8 +161,8 @@ export function SolutionView({
     return (
       <PagedOutput handlePrint={handlePrint} >
         <ThemeProvider theme={baseTheme}>
-          <CssBaseline />
-          {children && children}
+        <CssBaseline />
+        {children && children}
         </ThemeProvider>
       </PagedOutput>
     )
@@ -161,7 +176,7 @@ export function SolutionView({
 }
 
 
-function ContentMenu({ content, file, handleContentClick }) {
+function ContentMenu({ content, file, handleContentChange }) {
   let directory = file?.includes("/") ? file.split("/")[1] : file;
   // // console.log('ChaptersMenu:File ', file)
   let chaptersMenu = []
@@ -199,7 +214,7 @@ function ContentMenu({ content, file, handleContentClick }) {
       <>
         <ButtonBase
           variant="text"
-          onClick={() => handleContentClick('/' + file, 'primary link')}
+          onClick={() => handleContentChange(file, false)}
           sx={{
             textDecoration: "none",
             textTransform: 'none',
@@ -216,7 +231,7 @@ function ContentMenu({ content, file, handleContentClick }) {
           initialCollapsed={false}
           loading={false}
           fetching={false}
-          handleButtonClick={handleContentClick}
+          handleButtonClick={handleContentChange}
         /></>
 
     )

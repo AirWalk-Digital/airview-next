@@ -5,12 +5,12 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import { Slide } from 'airview-mdx';
 import PresentationMode from "@/components/presentations/PresentationMode";
 import Swipeable from "@/components/presentations/Swipeable";
-import useEventListener from "../hooks/useEventListener";
-import { useTotalPages } from "../context/TotalPagesContext";
-import { useMode } from "../context/ModeContext";
-import { useCurrentSlide } from "../context/CurrentSlideContext";
-import { Storage } from "../hooks/useStorage";
-import { MODES } from "../constants/modes";
+import useEventListener from "../../hooks/useEventListener";
+import { useTotalPages } from "../../context/TotalPagesContext";
+import { useMode } from "../../context/ModeContext";
+import { useCurrentSlide } from "../../context/CurrentSlideContext";
+import { Storage } from "../../hooks/useStorage";
+import { MODES } from "../../constants/modes";
 import { Box } from '@mui/material';
 
 import dynamic from 'next/dynamic'
@@ -263,7 +263,7 @@ function SlidePage({ children, next }) {
   const ratio = pageSize.width / pageSize.height
   return (
 
-    <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{ maxWidth: '100vw', maxHeight: '100%' }}>
+    <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{ maxWidth: '100%', maxHeight: '100%' }}>
       <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
         <GlobalStyles styles={globalStyles} />
         <Storage />

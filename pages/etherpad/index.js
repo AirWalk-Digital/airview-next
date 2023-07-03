@@ -255,7 +255,7 @@ export default function Home() {
             pb: 1,
           }}
         >
-          <Container maxWidth="m">
+          <Container maxWidth="m" sx={{mt: '1%'}}>
             <Typography
               component="h1"
               variant="h2"
