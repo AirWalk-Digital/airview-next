@@ -8,14 +8,14 @@ import { useMDX } from "@/lib/content/mdx";
 import { SolutionView } from "@/components/solutions";
 import { getFileContent } from "@/lib/github";
 
-import { FullScreenSpinner } from '@/components/dashboard/index.js';
-import { dirname, basename } from 'path';
-import { getMenuStructure } from '@/lib/content';
+import { FullScreenSpinner } from "@/components/dashboard/index.js";
+import { dirname, basename } from "path";
+import { getMenuStructure } from "@/lib/content";
 
-import { Button } from '@mui/material';
-import { fetchPadDetails } from '@/lib/etherpad'
+import { Button } from "@mui/material";
+import { fetchPadDetails } from "@/lib/etherpad";
 
-import { Etherpad } from '@/components/etherpad'
+import { Etherpad } from "@/components/etherpad";
 
 export default function Page({
   content: initialContent,
@@ -30,7 +30,7 @@ export default function Page({
   // console.log('Solutions:Page:initialContent: ', initialContent)
 
   const [content, setRawContent] = useState(initialContent);
-  const [contentSource, setContentSource] = useState(null)
+  const [contentSource, setContentSource] = useState(null);
   const [menuStructure, setMenuStructure] = useState(null);
 
   const frontMatterCallback = (frontmatter) => {
@@ -206,37 +206,7 @@ export default function Page({
   }
 }
 
-/*
-export async function getStaticPaths() {
-  let pages = [];
-  try {
-    const solutions = await getAllFiles(siteConfig.content.solutions.owner, siteConfig.content.solutions.repo, siteConfig.content.solutions.branch, siteConfig.content.solutions.path, true, '.md*');
-    pages = solutions
-      .filter((file) => basename(file) !== 'README.md')
-      .map((file) => { return '/' + file });
-
-    return {
-      fallback: true,
-      paths: pages
-    }
-  } catch (error) {
-    console.error(error)
-    return {
-      fallback: true,
-      paths: pages
-    }
-  }
-}
-*/
-
-export async function getStaticPaths() {
-  return {
-    fallback: true,
-    paths: []
-  }
-}
-
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   // // console.log('params: ', context.params.solution)
   const file = "solutions/" + context.params.solution.join("/");
   let pageContent = "";

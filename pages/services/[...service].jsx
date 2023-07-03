@@ -22,7 +22,7 @@ export default function Page({ providers, services, content, file, controls }) {
   useEffect(() => {
     let format;
     if (file && file.endsWith(".md")) {
-      format = 'md';
+      format = "md";
     } else {
       format = "mdx";
     }
@@ -51,42 +51,7 @@ export default function Page({ providers, services, content, file, controls }) {
   }
 }
 
-/*
-export async function getStaticPaths() {
-  let pages = [];
-  try {
-    const services = await getAllFiles(siteConfig.content.services.owner, siteConfig.content.services.repo, siteConfig.content.services.branch, siteConfig.content.services.path, true, '.md*');
-    // const pages = services.map((file) => {
-    //   return file
-    // })
-    pages = services
-      .filter((file) => basename(file) !== 'README.md')
-      .map((file) => { return '/' + file });
-
-    return {
-      fallback: true,
-      paths: pages
-    }
-  } catch (error) {
-    console.error(error)
-    return {
-      fallback: true,
-      paths: pages
-    }
-  }
-
-
-}
-*/
-
-export async function getStaticPaths() {
-  return {
-          fallback: true,
-          paths: []
-        }
-}
-
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   // // // console.log(context.params.service)
 
   // construct menu structure

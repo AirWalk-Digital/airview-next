@@ -1,21 +1,26 @@
-import remarkGfm from 'remark-gfm'
-import remarkFrontmatter from 'remark-frontmatter'
-import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
-import remarkUnwrapImages from 'remark-unwrap-images';
+import remarkGfm from "remark-gfm";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
+import remarkUnwrapImages from "remark-unwrap-images";
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
 
-const remarkPlugins = [remarkGfm,remarkFrontmatter, remarkMdxFrontmatter,remarkUnwrapImages ]
+const remarkPlugins = [
+  remarkGfm,
+  remarkFrontmatter,
+  remarkMdxFrontmatter,
+  remarkUnwrapImages,
+];
 // const remarkPlugins = [remarkFrontmatter, remarkMdxFrontmatter,remarkUnwrapImages ]
 /** @type {import('next').NextConfig} */
 
 const withMDX = createMDX({
-// const withMDX = require("@next/mdx")({
+  // const withMDX = require("@next/mdx")({
   extension: /\.(md|mdx)$/,
   options: {
     providerImportSource: "@mdx-js/react",
     remarkPlugins: remarkPlugins,
-  }
+  },
 });
 
 const nextConfig = {
@@ -53,7 +58,7 @@ const nextConfig = {
     unoptimized: false,
   },
   webpack: (config) => {
-    config.resolve.fallback = { fs: false };
+    config.resolve.fallback = { fs: false, dns: false };
     // Add the alias configuration to the webpack config
     config.resolve.alias = {
       ...config.resolve.alias,

@@ -1,33 +1,30 @@
-
-import React from 'react'
+import React from "react";
 import { siteConfig } from "../../site.config.js";
-import * as matter from 'gray-matter';
-import { getAllFiles, getFileContent } from '@/lib/github'
-import { IndexView } from '@/components/content'
-import { getMenuStructure, groupMenu } from '@/lib/content';
+import * as matter from "gray-matter";
+import { getAllFiles, getFileContent } from "@/lib/github";
+import { IndexView } from "@/components/content";
+import { getMenuStructure, groupMenu } from "@/lib/content";
 
 export default function Page({ tiles, menuStructure }) {
-
-  
-
-
   // console.log('menuStructure: ', menuStructure)
 
-  return <IndexView menuStructure={menuStructure} title="Providers" tiles={tiles}/>
-};
-
-
+  return (
+    <IndexView menuStructure={menuStructure} title="Providers" tiles={tiles} />
+  );
+}
 
 async function getFrontMatter(config) {
-  const files = await getAllFiles(config.owner, config.repo, config.branch, config.path, true, '.md*');
+  const files = await getAllFiles(
+    config.owner,
+    config.repo,
+    config.branch,
+    config.path,
+    true,
+    ".md*"
+  );
   const filesPromises = files.map((file) => {
-    return getFileContent(
-      config.owner,
-      config.repo,
-      config.branch,
-      file
-    )
-      .then(content => {
+    return getFileContent(config.owner, config.repo, config.branch, file)
+      .then((content) => {
         const matterData = matter(content, { excerpt: false }).data || null;
         if (matterData) {
           for (let key in matterData) {
@@ -38,7 +35,7 @@ async function getFrontMatter(config) {
         }
         return { file: file, frontmatter: matterData };
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error(`Error processing file ${file}: ${error}`);
         return { file: null, frontmatter: null };
       });
@@ -46,14 +43,11 @@ async function getFrontMatter(config) {
   return await Promise.all(filesPromises);
 }
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   // construct menu structure
 
-  const tiles = await getFrontMatter(siteConfig.content.providers)
+  const tiles = await getFrontMatter(siteConfig.content.providers);
 
-
-
- 
   // const knowledgeContentPromises = knowledge.map((file) => {
   //   return getFileContent(
   //     siteConfig.content.knowledge.owner,
@@ -72,12 +66,15 @@ export async function getStaticProps(context) {
   // });
 
   // const knowledgeContent = await Promise.all(knowledgeContentPromises);
-  const menuPromise = getMenuStructure(siteConfig, siteConfig.content.providers);
-  
-  const menuStructure = await menuPromise
+  const menuPromise = getMenuStructure(
+    siteConfig,
+    siteConfig.content.providers
+  );
+
+  const menuStructure = await menuPromise;
 
   const groupedMenu = groupMenu(menuStructure);
-  
+
   // console.log('menuStructure: ', menuStructure)
 
   // console.log('groupedMenu: ', groupedMenu)
@@ -85,8 +82,7 @@ export async function getStaticProps(context) {
   return {
     props: {
       menuStructure: groupedMenu,
-      tiles: tiles
+      tiles: tiles,
     },
   };
 }
-
