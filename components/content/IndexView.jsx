@@ -57,7 +57,7 @@ export function IndexView({
                     url={c?.file}
                     image={
                       c?.frontmatter?.image
-                        ? `/api/content/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content.providers.branch}`
+                        ? `/api/content/github/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content.providers.branch}`
                         : null
                     }
                   />

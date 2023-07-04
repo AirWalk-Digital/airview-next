@@ -63,7 +63,7 @@ export default function Page({
       // load from github
       try {
         const response = await fetch(
-          `/api/content/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`
+          `/api/content/github/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`
         );
         if (response.ok) {
           const data = await response.text();
@@ -110,7 +110,7 @@ export default function Page({
       // load from github
       try {
         const response = await fetch(
-          `/api/content/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`
+          `/api/content/github/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`
         );
         if (response.ok) {
           const data = await response.text();

@@ -118,7 +118,7 @@ export function IndexView({
           <Container maxWidth="lg" sx={{ height: '100vh', mt: '10%' }}>
             {/* <Grid container spacing={4} alignItems="stretch">
                 {providers ? (
-                  providers.map((c, i) => <Tile key={i} name={c?.frontmatter?.title} url={c?.file} image={`/api/content/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?path=${path.dirname(c?.file)}/${c?.frontmatter?.image}&branch=${siteConfig.content.providers.branch}`} simage={c?.frontmatter?.image} />)
+                  providers.map((c, i) => <Tile key={i} name={c?.frontmatter?.title} url={c?.file} image={`/api/content/github/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?path=${path.dirname(c?.file)}/${c?.frontmatter?.image}&branch=${siteConfig.content.providers.branch}`} simage={c?.frontmatter?.image} />)
                 ) : (
                   null
                 )}
