@@ -252,7 +252,7 @@ export function ControlOverviewItemResources({
               return (
                 <TableRow key={resource.id}>
                   <TableCell>{resource.type}</TableCell>
-                  <TableCell>{resource.reference}</TableCell>
+                  <TableCell>{resource.name}</TableCell>
                   <TableCell>{resource.environment}</TableCell>
                   <TableCell>
                     {dayjs(resource.lastSeen).format("MMM D YYYY h:mm A")}
