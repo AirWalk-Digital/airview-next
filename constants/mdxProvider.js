@@ -62,12 +62,17 @@ function MdxImage({ props, baseContext }) {
     } else if (baseContext.source === 'github') {
       // strip off leading / if present
       src = src.replace('./', '');
+
       if (src.slice(0, 1) === '/') { src = src.slice(1) };
       // get directory from the file path
-      let dir = path.dirname(baseContext.file)
-      src = dir + '/' + src;
+
+      if (baseContext.file) {
+        let dir = path.dirname(baseContext.file);
+        src = dir + '/' + src;
+      }
 
       src = '/api/content/github/' + baseContext.owner + '/' + baseContext.repo + '?path=' + src + '&branch=' + baseContext.branch;
+      console.log('src : ', src)
 
     } else {
       src = '/image-not-found.png';

@@ -98,6 +98,7 @@ const LandingPage = () => {
             {siteConfig.content.applications && <SiteSection title='Applications' description='Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance.' link='/applications' />}
             {siteConfig.content.customers && <SiteSection title='Customers & Projects' description="Customers and the projects we've done for them." link='/customers' />}
             {siteConfig.content.solutions && <SiteSection title='Solutions' description="Solutions and Propositions." link='/solutions' />}
+            {siteConfig.content.products && <SiteSection title='Products' description="Products." link='/products' />}
 
                      </Grid>
         </Container>

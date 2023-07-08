@@ -101,7 +101,11 @@ export function TopBar({
               Solutions
               </MenuItem>
             </Link>}
-            
+            {(siteConfig.content.products) &&  <Link href="/products" sx={{ textDecoration: 'none' }}>
+              <MenuItem>
+              Products
+              </MenuItem>
+            </Link>}
           </Menu>
           <Menu
             id="menu-applications"
