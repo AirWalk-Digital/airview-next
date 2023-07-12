@@ -61,7 +61,7 @@ function Pad({ children }) {
             Doc
           </Button>
           <Button
-            href={`https://pad.airview.airwalkconsulting.io/p/${children}`}
+            href={`${process.env.NEXT_PUBLIC_PAD_URL}/p/${children}`}
             rel="noopener noreferrer"
             target="_blank"
             size="small"
@@ -137,7 +137,7 @@ export default function Home() {
               justifyContent="center"
             >
               <Button
-                href={"https://pad.airview.airwalkconsulting.io"}
+                href={process.env.NEXT_PUBLIC_PAD_URL}
                 variant="contained"
               >
                 Create New
