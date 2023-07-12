@@ -51,7 +51,7 @@ export function ControlOverviewItemResources({
   const handleOnFilterChange = (selectedFilter) => {
     if (activeFilters.includes(selectedFilter)) {
       setActiveFilters(
-        activeFilters.filter((filter) => filter !== selectedFilter)
+        activeFilters.filter((filter) => filter !== selectedFilter),
       );
     } else {
       setActiveFilters([...activeFilters, selectedFilter]);
@@ -73,7 +73,7 @@ export function ControlOverviewItemResources({
     if (filterValues.length < 1) return resources;
 
     return resources.filter((instance) =>
-      filterValues.includes(instance.environment)
+      filterValues.includes(instance.environment),
     );
   };
 
@@ -95,7 +95,7 @@ export function ControlOverviewItemResources({
   const processedResourcesData = useMemo(() => {
     return getResourcesByFilterValues(
       getResourcesSortedByLastSeenDate(resourcesData, lastSeenOrder),
-      activeFilters
+      activeFilters,
     );
   }, [resourcesData, lastSeenOrder, activeFilters]);
 
@@ -330,7 +330,7 @@ ControlOverviewItemResources.propTypes = {
       lastSeen: PropTypes.string,
       status: PropTypes.oneOf(["Monitoring", "Non-Compliant", "Exempt"]),
       pending: PropTypes.bool,
-    })
+    }),
   ),
   onManageResourceClick: PropTypes.func.isRequired,
   onViewResourceEvidence: PropTypes.func.isRequired,
