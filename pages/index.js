@@ -30,7 +30,7 @@ function Copyright() {
   );
 }
 
-function Pad({ children }) {
+function Pad({endpoint, pad}) {
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -48,20 +48,20 @@ function Pad({ children }) {
             Etherpad
           </Typography>
           <Typography variant="p" sx={{ fontSize: "1rem" }}>
-            {children}
+            {pad}
           </Typography>
         </CardContent>
         <CardActions>
           {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
           {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
-          <Button href={`/result/pad/${children}?format=ppt`} size="small">
+          <Button href={`/result/pad/${pad}?format=ppt`} size="small">
             PPT
           </Button>
-          <Button href={`/result/pad/${children}?format=doc`} size="small">
+          <Button href={`/result/pad/${pad}?format=doc`} size="small">
             Doc
           </Button>
           <Button
-            href={`https://pad.airview.airwalkconsulting.io/p/${children}`}
+            href={`${endpoint}/p/${pad}`}
             rel="noopener noreferrer"
             target="_blank"
             size="small"
@@ -76,6 +76,7 @@ function Pad({ children }) {
 
 export default function Home() {
   const [padList, setPadList] = useState(0);
+  const [environment, setEnvironment] = useState("");
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
   useEffect(() => {
@@ -91,6 +92,16 @@ export default function Home() {
         setTimeout(() => setRefreshToken(Math.random()), 5000);
       });
   }, [refreshToken]);
+
+  useEffect(() => {
+    const fetchData = async () =>{
+      const resp = await fetch("/api/environment");
+      const data = await resp.json();
+      console.log(data)
+      setEnvironment(data)
+    }
+    fetchData()
+  },[]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -137,7 +148,7 @@ export default function Home() {
               justifyContent="center"
             >
               <Button
-                href={"https://pad.airview.airwalkconsulting.io"}
+                href={environment.ETHERPAD_URL}
                 variant="contained"
               >
                 Create New
@@ -161,11 +172,8 @@ export default function Home() {
           {/* End hero unit */}
 
           <Grid container spacing={4}>
-            {padList ? (
-              padList.map((pad, i) => <Pad key={i}>{pad}</Pad>)
-            ) : (
-              <Pad>Etherpad Error</Pad>
-            )}
+            {padList || ["Etherpad Error"].map((pad, i) => <Pad endpoint={environment.ETHERPAD_URL} key={i} pad={pad} />)
+            }
           </Grid>
         </Container>
       </main>
