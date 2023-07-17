@@ -22,7 +22,7 @@ import { dirname, basename } from 'path';
 
 import { NewPadDialog } from '@/components/etherpad';
 
-function Pad({ padID, title }) {
+function Pad({ endpoint, padID, title }) {
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -53,7 +53,7 @@ function Pad({ padID, title }) {
             Doc
           </Button>
           <Button
-            href={`https://pad.airview.airwalkconsulting.io/p/${padID}`}
+            href={`${endpoint}/p/${padID}`}
             rel="noopener noreferrer"
             target="_blank"
             size="small"
@@ -368,6 +368,17 @@ export default function Home() {
 
 
 function PadView(pads) {
+  const [environment, setEnvironment] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () =>{
+      const resp = await fetch("/api/environment");
+      const data = await resp.json();
+      console.log(data)
+      setEnvironment(data)
+    }
+    fetchData()
+  },[]);
 
   // console.log('PadView:pads: ', pads)
   const collections = Object.entries(pads.pads).map(([key, value]) => {
@@ -386,7 +397,7 @@ function PadView(pads) {
           <Grid container spacing={4}>
 
             {elements.map((element, index) => (
-              <Pad padID={element.padID} title={element.title} />
+              <Pad endpoint={environment.ETHERPAD_URL} padID={element.padID} title={element.title} />
             ))}
           </Grid>
         </div>
