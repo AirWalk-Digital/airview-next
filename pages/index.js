@@ -35,6 +35,7 @@ import {ScrollToBottom }from '@/components/utils/ScrollToBottom'
 
 const SiteSection = ({ title, description, link }) => {
 
+  
   return (
     <Grid item xs={4} md={4}>
       <Paper variant='outlined' sx={{ height: '100%', borderRadius: '16px', p: 3, display: 'flex', flexDirection: 'column' }}>
