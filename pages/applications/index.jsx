@@ -214,7 +214,7 @@ export default function Page({ apps, complianceData }) {
                     <AppTile
                       key={i}
                       name={app.name}
-                      app_id={app.app_id}
+                      id={app.id}
                       complianceData={complianceData}
                       tier={app.tier}
                       data_classification={app.data_classification}

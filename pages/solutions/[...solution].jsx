@@ -4,6 +4,7 @@ import { mdComponents } from "../../constants/mdxProvider";
 import * as matter from "gray-matter";
 import { MDXProvider } from "@mdx-js/react";
 import { useMDX } from "@/lib/content/mdx";
+import { getFileContent } from "@/lib/github";
 
 import { SolutionView } from "@/components/solutions";
 import { getFileContent } from "@/lib/github";

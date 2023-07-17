@@ -231,7 +231,7 @@ export async function getServerSideProps(context) {
     // const applicationsData = await getApplicationsData();
 
     const applicationsData = await getComplianceAggregation(
-      context.params.app_id
+      context.params.app_id,
     );
     return {
       props: {
@@ -301,7 +301,7 @@ const ApplicationControls = ({ applicationId }) => {
     try {
       const modelData = await (
         await fetch(
-          `/api/compliance/applications/${applicationId}/quality-models/`
+          `/api/compliance/applications/${applicationId}/quality-models/`,
         )
       ).json();
       return modelData.map((item, index) => {
@@ -321,7 +321,7 @@ const ApplicationControls = ({ applicationId }) => {
   async function fetchControlsData({ applicationId, id }) {
     const controls = await (
       await fetch(
-        `/api/compliance/applications/${applicationId}/control-overviews?qualityModel=${id}`
+        `/api/compliance/applications/${applicationId}/control-overviews?qualityModel=${id}`,
       )
     ).json();
     return controls.map((item) => {
@@ -344,12 +344,14 @@ const ApplicationControls = ({ applicationId }) => {
   async function fetchResourcesData({ applicationId, id }) {
     const resources = await (
       await fetch(
-        `/api/compliance/aggregations/control-overview-resources/${applicationId}?technicalControlId=${id}`
+        `/api/compliance/aggregations/control-overview-resources/${applicationId}?technicalControlId=${id}`,
       )
     ).json();
     return resources.map((item) => {
       const status =
-        item.state || "FLAGGED" === "FLAGGED" ? "Non-Compliant" : "Monitoring";
+        (item.status || "FLAGGED") === "FLAGGED"
+          ? "Non-Compliant"
+          : "Monitoring";
       return { ...item, type: "Unknown", status: status };
     });
   }
