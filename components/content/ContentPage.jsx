@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 
 import { baseTheme } from '../../constants/baseTheme';
+import { MDXProvider } from "@mdx-js/react";
+import { mdComponents } from "../../constants/mdxProvider.js";
 
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,22 +13,26 @@ import { PagedOutput } from '@/components/display/PagedOutput';
 import { PresentationOutput } from '@/components/display/PresentationOutput';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase } from '@mui/material';
+import { FullScreenSpinner } from "@/components/dashboard/index.js";
 
 import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
 import { TableOfContents } from '@/components/content';
+import { ContentWrapperContext } from '@/components/content';
+import { Etherpad } from '@/components/etherpad';
 
 export function ContentPage({
-  children,
-  frontmatter,
+  pageContent,
   file,
   content,
   menuStructure,
   handleContentChange,
-  setEditMode,
-  collection
+  collection,
+  context,
+  frontMatterCallback,
+  contentSource
 }) {
 
-
+  const frontmatter = pageContent.frontmatter
   let tableOfContents = [];
   if (frontmatter && frontmatter.tableOfContents) {
 
@@ -45,6 +51,8 @@ export function ContentPage({
   const [menuOpen, setMenuOpen] = useState(true);
   const [print, setPrint] = useState(false);
   const [presentation, setPresentation] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
@@ -59,91 +67,105 @@ export function ContentPage({
     setPresentation(!presentation);
   };
 
+  // let Content = <h1>tesr</h1>;
+  let Content = FullScreenSpinner ;
+
+  if (pageContent.content && pageContent.frontmatter) {
+    Content = pageContent.content;
+  } else if (file && contentSource && contentSource.startsWith('etherpad')) {
+    Content = <Etherpad file={file} frontMatterCallback={frontMatterCallback} editMode={editMode} />
+  }
+
+
+
   if (!print && !presentation) {
     return (
-      <ThemeProvider theme={baseTheme}>
-        <CssBaseline />
-        <TopBar onNavButtonClick={handleOnNavButtonClick}
-          navOpen={menuOpen}
-          menu={true}
-          topBarHeight={topBarHeight}
-          handlePrint={handlePrint}
-          handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
-          handleMore={() => setControlBarOpen(controlBarOpen => !controlBarOpen)}
-        />
-        <ControlBar open={controlBarOpen} height={64}
-          handleEdit={handleEditMode}
-          handlePrint={handlePrint}
-          handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
-          collection={collection}
-        />
-        <BasicLeftMenu
-          menu={primary}
-          open={menuOpen}
-          top={topBarHeight}
-          drawerWidth={navDrawerWidth}
-        />
-        <div
-          style={{
-            marginTop: topBarHeight,
-            paddingLeft: menuOpen ? navDrawerWidth : 0,
-            // paddingLeft: (print || !menuOpen) ? 0 : navDrawerWidth,
+      <ContentWrapperContext>
+        <ThemeProvider theme={baseTheme}>
+          <CssBaseline />
+          <TopBar onNavButtonClick={handleOnNavButtonClick}
+            navOpen={menuOpen}
+            menu={true}
+            topBarHeight={topBarHeight}
+            handlePrint={handlePrint}
+            handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
+            handleMore={() => setControlBarOpen(controlBarOpen => !controlBarOpen)}
+          />
+          <ControlBar open={controlBarOpen} height={64}
+            handleEdit={handleEditMode}
+            handlePrint={handlePrint}
+            handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
+            collection={collection}
+          />
+          <BasicLeftMenu
+            menu={primary}
+            open={menuOpen}
+            top={topBarHeight}
+            drawerWidth={navDrawerWidth}
+          />
+          <div
+            style={{
+              marginTop: topBarHeight,
+              paddingLeft: menuOpen ? navDrawerWidth : 0,
+              // paddingLeft: (print || !menuOpen) ? 0 : navDrawerWidth,
 
-          }}
-        >
-          {/* {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />} */}
-          <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
-          {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
-            <Grid xs="auto" item>
-              <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
+            }}
+          >
+            {/* {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />} */}
+            <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
+            {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
+              <Grid xs="auto" item>
+                <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  size="medium"
+                  onClick={handlePresentation}
+                  color="inherit"
+                >
+                  <SlideshowIcon />
+                </IconButton>
+              </Grid>
+              <Grid xs />
             </Grid>
-            <Grid item>
-              <IconButton
-                size="medium"
-                onClick={handlePresentation}
-                color="inherit"
-              >
-                <SlideshowIcon />
-              </IconButton>
+            }
+
+            {frontmatter?.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
+              <Grid>
+                <Alert severity="info">This is draft content from Etherpad edit here: </Alert>
+              </Grid>
+              <Grid>
+                <IconButton
+                  size="medium"
+                  // onClick={handlePresentation}
+                  color="inherit"
+                >
+                  <SlideshowIcon />
+                </IconButton>
+              </Grid>
+              <Grid />
             </Grid>
-            <Grid xs />
-          </Grid>
-          }
+            }
 
-          {frontmatter?.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
-            <Grid>
-              <Alert severity="info">This is draft content from Etherpad edit here: </Alert>
-            </Grid>
-            <Grid>
-              <IconButton
-                size="medium"
-                // onClick={handlePresentation}
-                color="inherit"
-              >
-                <SlideshowIcon />
-              </IconButton>
-            </Grid>
-            <Grid />
-          </Grid>
-          }
+            <AsideAndMainContainer>
+              <Main sx={{}}>
+                <MDXProvider components={mdComponents(context)}>
+                  <><Content /></>
+                </MDXProvider>
+              </Main>
+              <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
 
-          <AsideAndMainContainer>
-            <Main sx={{}}>
-              {children && children}
-            </Main>
-            <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
+                <ContentMenu
+                  content={relatedContent}
+                  // chapters={chapters}
+                  // knowledge={knowledge}
+                  // designs={designs}
+                  handleContentChange={handleContentChange}
+                  file={file}
+                />
+                {frontmatter?.tableOfContents && <TableOfContents tableOfContents={frontmatter.tableOfContents} />}
 
-              <ContentMenu
-                content={relatedContent}
-                // chapters={chapters}
-                // knowledge={knowledge}
-                // designs={designs}
-                handleContentChange={handleContentChange}
-                file={file}
-              />
-              {frontmatter?.tableOfContents && <TableOfContents tableOfContents={frontmatter.tableOfContents} />}
-
-              {/* <ButtonMenu
+                {/* <ButtonMenu
                 menuTitle="Controls"
                 menuItems={createControlMenu(controls)}
                 initialCollapsed={false}
@@ -152,25 +174,34 @@ export function ContentPage({
                 handleButtonClick={handleControlClick}
               /> */}
 
-            </Aside>
-          </AsideAndMainContainer>
-        </div>
-      </ThemeProvider>
+              </Aside>
+            </AsideAndMainContainer>
+          </div>
+        </ThemeProvider>
+      </ContentWrapperContext>
     )
   } else if (print) {
     return (
-      <PagedOutput handlePrint={handlePrint} >
-        <ThemeProvider theme={baseTheme}>
-        <CssBaseline />
-        {children && children}
-        </ThemeProvider>
-      </PagedOutput>
+      <ContentWrapperContext>
+        <PagedOutput handlePrint={handlePrint} >
+          <ThemeProvider theme={baseTheme}>
+            <CssBaseline />
+            <MDXProvider components={mdComponents(context)}>
+            <><Content /></>
+            </MDXProvider>
+          </ThemeProvider>
+        </PagedOutput>
+      </ContentWrapperContext>
     )
   } else if (presentation) {
     return (
-      <PresentationOutput handlePresentation={handlePresentation} refresh={false} content={content}>
-        {children && children}
-      </PresentationOutput>
+      <ContentWrapperContext>
+        <PresentationOutput handlePresentation={handlePresentation} refresh={false} content={content}>
+          <MDXProvider components={mdComponents(context)}>
+          <><Content /></>
+          </MDXProvider>
+        </PresentationOutput>
+      </ContentWrapperContext>
     )
   }
 }
@@ -268,45 +299,45 @@ function SolutionsMenu({ solutions, open, top, drawerWidth }) {
 
 function LeftMenu({ menu, open, top, drawerWidth }) {
 
-  console.log('LeftMenu:menu: ', menu )
+  console.log('LeftMenu:menu: ', menu)
 
-return (
-  <NavigationDrawer
-    open={open}
-    top={top}
-    drawerWidth={drawerWidth}
-  >
-    {menu &&
-      menu.length > 0 &&
-      menu.map((c) => (
-        <React.Fragment key={c.label}>
-          <Link href={c.url} sx={{ textDecoration: 'none', color: 'text.secondary' }}>
-            <h3 sx={{ pl: '0', color: 'text.secondary' }}>{c.label}</h3>
-          </Link>
-          {c.children && <L2Menu menu={c.children} />}
-        </React.Fragment>
-      ))}
+  return (
+    <NavigationDrawer
+      open={open}
+      top={top}
+      drawerWidth={drawerWidth}
+    >
+      {menu &&
+        menu.length > 0 &&
+        menu.map((c) => (
+          <React.Fragment key={c.label}>
+            <Link href={c.url} sx={{ textDecoration: 'none', color: 'text.secondary' }}>
+              <h3 sx={{ pl: '0', color: 'text.secondary' }}>{c.label}</h3>
+            </Link>
+            {c.children && <L2Menu menu={c.children} />}
+          </React.Fragment>
+        ))}
 
-  </NavigationDrawer>
-);
+    </NavigationDrawer>
+  );
 }
 
 const L2Menu = ({ menu }) => {
-return (
-  <>
-    {menu && Object.entries(menu).map(([key, children]) => (
-      <div key={key}>
-        <Menu
-          key={key}
-          menuTitle={capitalizeFirstLetter(key)}
-          menuItems={[{ links: children }]}
-          initialCollapsed={true}
-          loading={false}
-          fetching={false}
-          linkComponent={Link}
-        />
+  return (
+    <>
+      {menu && Object.entries(menu).map(([key, children]) => (
+        <div key={key}>
+          <Menu
+            key={key}
+            menuTitle={capitalizeFirstLetter(key)}
+            menuItems={[{ links: children }]}
+            initialCollapsed={true}
+            loading={false}
+            fetching={false}
+            linkComponent={Link}
+          />
 
-        {/* 
+          {/* 
         <h3 sx={{ pl: '0', color: 'text.secondary', textTransform: 'capitalize' }}>
           {key}
         </h3>
@@ -316,10 +347,10 @@ return (
                {item.label}</MenuItem>
           </Link>
         ))} */}
-      </div>
-    ))}
-  </>
-);
+        </div>
+      ))}
+    </>
+  );
 };
 
 // {menu.map((c, i) =>  <Link key={i} href={c.url} sx={{ textDecoration: 'none', color: 'text.secondary' }}><MenuItem sx={{ pl: '0', color: 'text.secondary'}}>
@@ -346,5 +377,7 @@ function BasicLeftMenu({ menu, open, top, drawerWidth }) {
 
 
 const capitalizeFirstLetter = (string) => {
-return string.charAt(0).toUpperCase() + string.slice(1);
+  return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+

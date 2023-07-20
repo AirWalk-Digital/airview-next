@@ -18,7 +18,7 @@ import { fetchPadDetails } from "@/lib/etherpad";
 import { getMenuStructure, githubExternal } from "@/lib/content";
 import { groupMenu } from "@/lib/content/menu";
 import { ContentWrapperContext } from '@/components/content'
-
+import { usePageContent } from "@/lib/hooks";
 
 
 export default function Page({
@@ -27,163 +27,24 @@ export default function Page({
   menuStructure: initialMenuStructure,
   collection
 }) {
-  const [pageContent, setContent] = useState({
-    content: undefined,
-    frontmatter: undefined,
-  });
+
+  const {
+    pageContent,
+    file,
+    contentSource,
+    menuStructure,
+    handleContentChange,
+    // setEditMode, 
+    context,
+    content,
+    frontMatterCallback
+  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
 
 
-  const [editMode, setEditMode] = useState(false);
-  const [file, setFile] = useState(initialFile);
-  const [content, setRawContent] = useState(initialContent);
-  const [context, setContext ] = useState({ file: file, ...siteConfig.content.products });
-  const [contentSource, setContentSource] = useState(null);
-  const [menuStructure, setMenuStructure] = useState(null);
-  const [relPage, setRelPage] = useState(useRouter()?.query?.page ?? null)
-  const frontMatterCallback = (frontmatter) => {
-    setContent({ frontmatter: frontmatter })
-  }
+  return (
+<ContentPage pageContent={pageContent} file={initialFile} content={content} menuStructure={menuStructure} handleContentChange={handleContentChange} collection={collection} context={context} frontMatterCallback={frontMatterCallback} contentSource={contentSource} />
 
-  // const context = { file: file, ...siteConfig.content.products };
-
-  function clearQueryParams() {
-    const newUrl = window.location.pathname;
-    window.history.replaceState({}, document.title, newUrl);
-  }
-  async function handleContentChange(url, relative) {
-    console.log("useEffect:relative: ", relative);
-    setFile(url);
-    if (relative != true && relPage) {
-      clearQueryParams()
-      setRelPage(null);
-      //
-    };
-    // setRelPage(null);
-    if (url && url.endsWith(".etherpad")) { // load the pad
-      const cacheKey = 'etherpad:/' + url
-      const { frontmatter } = await fetchPadDetails(cacheKey);
-      setContentSource('etherpad:' + frontmatter.padID);
-      // const pad = await fetchPadDetails(cacheKey);
-      // // console.log("handleContentChange: ", pad);
-
-      // if (pad.rawContent && pad.frontmatter) {
-      //   setRev(pad.rev);
-      //   setRawContent(matter.stringify(pad.rawContent, pad.frontmatter));
-      // }
-    } else if (url) {
-      setContentSource('api')
-      // load from github
-      try {
-        const response = await fetch(
-          `/api/content/github/${collection.owner}/${collection.repo}?branch=${collection.branch}&path=${url}`
-        );
-        if (response.ok) {
-          const data = await response.text();
-          setRawContent(data);
-        } else {
-          throw new Error("Error fetching files");
-        }
-      } catch (error) {
-        console.error("Error fetching files:", error);
-      }
-    }
-  };
-
-
-  useEffect(() => {
-    const loadPad = async (file) => {
-      const cacheKey = 'etherpad:/' + file
-      const { frontmatter } = await fetchPadDetails(cacheKey);
-      setContentSource('etherpad:' + frontmatter.padID);
-    };
-
-    const relativeContent = async (file) => {
-      await handleContentChange(file, true)
-    };
-
-    const githubExternalContent = async (frontmatter, existingContext) => {
-      const { file, content, context } = await githubExternal(frontmatter, existingContext);
-
-      // console.log('Product:useEffect:githubExternal:function: ', githubExternal(frontmatter, context))
-      console.log('Product:useEffect:githubExternal:content: ', content)
-      console.log('Product:useEffect:githubExternal:file: ', file)
-      setContext(context);
-      setFile(file);
-      setRawContent(content);
-    }
-    // const relPage = router?.query?.page ?? null;
-    console.log('Solutions:useEffect:relPage: ', relPage)
-
-    if (relPage) {
-      relativeContent(relPage)
-    }
-
-    if (file && file.endsWith(".md")) {
-      setContentSource('api')
-      const { mdxContent, frontmatter } = useMDX(content ? content : initialContent, 'md');
-      if (frontmatter.external_repo || frontmatter.external) {
-        githubExternalContent(frontmatter, context)
-
-      }
-      console.log('ContentPage:frontmatter: ', frontmatter)
-      setContent({ content: mdxContent, frontmatter: frontmatter });
-    } else if (file && file.endsWith(".mdx")) {
-      setContentSource('api')
-      console.log('useEffect:BuildMDX:format: ', 'mdx')
-      const { mdxContent, frontmatter } = useMDX(content ? content : initialContent, 'mdx');
-      setContent({ content: mdxContent, frontmatter: frontmatter });
-    } else if (file && file.endsWith(".etherpad")) {
-      loadPad(file)
-    }
-    // const { mdxContent, frontmatter } = useMDX(content ? content : initialContent, format);
-    // setContent({ content: mdxContent, frontmatter: frontmatter});
-
-  }, [file, content]);
-
-
-  // load additional menu items from the Etherpad cache
-  useEffect(() => {
-    const fetchPadMenu = async () => {
-      const res = await fetch(`/api/structure?cache=true`);
-      const data = await res.json();
-      return data;
-    };
-
-    const fetchDataAndUpdateState = async () => {
-      const padsMenu = await fetchPadMenu();
-
-      let directory = file && file.includes("/") ? file.split("/")[1] : "";
-
-      const newMenuStructure = {
-        ...initialMenuStructure,
-        primary: [
-          ...(Array.isArray(initialMenuStructure?.primary)
-            ? initialMenuStructure.primary
-            : []),
-          ...(Array.isArray(padsMenu?.collections?.products)
-            ? padsMenu.collections.products
-            : []),
-        ],
-        relatedContent: {
-          ...initialMenuStructure?.relatedContent,
-          ...Object.keys(padsMenu?.relatedContent || {}).reduce((acc, key) => {
-            acc[key] = {
-              ...initialMenuStructure?.relatedContent?.[key],
-              ...padsMenu?.relatedContent?.[key],
-            };
-            return acc;
-          }, {}),
-        },
-      };
-      setMenuStructure(newMenuStructure);
-    };
-
-    // // console.log('initialMenuStructure: ', initialMenuStructure);
-    fetchDataAndUpdateState();
-
-  }, [initialMenuStructure]);
-
-
+  )
 
 
   if (pageContent.content && pageContent.frontmatter) {
