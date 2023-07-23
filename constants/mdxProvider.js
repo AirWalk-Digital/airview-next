@@ -68,11 +68,12 @@ function MdxImage({ props, baseContext }) {
 
       if (baseContext.file) {
         let dir = path.dirname(baseContext.file);
-        src = dir + '/' + src;
+
+        if (!dir.startsWith('.')) { src = dir + '/' + src}; // ignore base paths
       }
 
       src = '/api/content/github/' + baseContext.owner + '/' + baseContext.repo + '?path=' + src + '&branch=' + baseContext.branch;
-      console.log('src : ', src)
+      console.debug('mdxProvider:MdxImage:src: ', src)
 
     } else {
       src = '/image-not-found.png';

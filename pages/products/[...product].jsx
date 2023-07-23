@@ -37,7 +37,7 @@ export default function Page({
     // setEditMode, 
     context,
     content,
-    frontMatterCallback
+    frontMatterCallback,
   } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
 
 

@@ -299,7 +299,7 @@ function SolutionsMenu({ solutions, open, top, drawerWidth }) {
 
 function LeftMenu({ menu, open, top, drawerWidth }) {
 
-  console.log('LeftMenu:menu: ', menu)
+  // console.log('LeftMenu:menu: ', menu)
 
   return (
     <NavigationDrawer
@@ -360,7 +360,7 @@ const L2Menu = ({ menu }) => {
 
 
 function BasicLeftMenu({ menu, open, top, drawerWidth }) {
-  console.log('BasicLeftMenu: ', menu)
+  // console.log('BasicLeftMenu: ', menu)
 
   return (
     <NavigationDrawer
