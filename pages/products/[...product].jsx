@@ -34,6 +34,7 @@ export default function Page({
     contentSource,
     menuStructure,
     handleContentChange,
+    handlePageReset,
     // setEditMode, 
     context,
     content,
@@ -42,7 +43,7 @@ export default function Page({
 
 
   return (
-<ContentPage pageContent={pageContent} file={initialFile} content={content} menuStructure={menuStructure} handleContentChange={handleContentChange} collection={collection} context={context} frontMatterCallback={frontMatterCallback} contentSource={contentSource} />
+<ContentPage pageContent={pageContent} file={initialFile} content={content} menuStructure={menuStructure} handleContentChange={handleContentChange} handlePageReset={handlePageReset} collection={collection} context={context} frontMatterCallback={frontMatterCallback} contentSource={contentSource} />
 
   )
 

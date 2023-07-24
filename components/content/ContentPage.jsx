@@ -26,6 +26,7 @@ export function ContentPage({
   content,
   menuStructure,
   handleContentChange,
+  handlePageReset,
   collection,
   context,
   frontMatterCallback,
@@ -161,6 +162,7 @@ export function ContentPage({
                   // knowledge={knowledge}
                   // designs={designs}
                   handleContentChange={handleContentChange}
+                  handlePageReset={handlePageReset}
                   file={file}
                 />
                 {frontmatter?.tableOfContents && <TableOfContents tableOfContents={frontmatter.tableOfContents} />}
@@ -207,7 +209,7 @@ export function ContentPage({
 }
 
 
-function ContentMenu({ content, file, handleContentChange }) {
+function ContentMenu({ content, file, handleContentChange, handlePageReset }) {
   let directory = file?.includes("/") ? file.split("/")[1] : file;
   // // console.log('ChaptersMenu:File ', file)
   let chaptersMenu = []
@@ -245,7 +247,7 @@ function ContentMenu({ content, file, handleContentChange }) {
       <>
         <ButtonBase
           variant="text"
-          onClick={() => handleContentChange(file, false)}
+          onClick={() => handlePageReset()}
           sx={{
             textDecoration: "none",
             textTransform: 'none',
