@@ -8,7 +8,7 @@ export const siteConfig = {
   content: {
     services: {
       source: "github", // The source of the content
-      repo: "airview-demo-content", // The name of the repo
+      repo: "airview_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
       branch: "main",
       path: "services", // the base path for the content
@@ -17,7 +17,7 @@ export const siteConfig = {
     },
     providers: {
       source: "github", // The source of the content
-      repo: "airview-demo-content", // The name of the repo
+      repo: "airview_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
       branch: "main",
       path: "providers", // the base path for the content
@@ -26,7 +26,7 @@ export const siteConfig = {
     },
     solutions: {
       source: "github", // The source of the content
-      repo: "airview-demo-content", // The name of the repo
+      repo: "airview_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
       branch: "main",
       path: "solutions", // the base path for the content
@@ -35,7 +35,7 @@ export const siteConfig = {
     },
     knowledge: {
       source: "github", // The source of the content
-      repo: "airview-demo-content", // The name of the repo
+      repo: "airview_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
       branch: "main",
       path: "knowledge", // the base path for the content
@@ -43,7 +43,7 @@ export const siteConfig = {
     },
     designs: {
       source: "github", // The source of the content
-      repo: "airview-demo-content", // The name of the repo
+      repo: "airview_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
       branch: "main",
       path: "designs", // the base path for the content
@@ -52,7 +52,7 @@ export const siteConfig = {
     },
     customers: {
       source: "github", // The source of the content
-      repo: "airview-demo-content", // The name of the repo
+      repo: "airview_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
       branch: "main",
       path: "customers", // the base path for the content
@@ -61,7 +61,7 @@ export const siteConfig = {
     },
     projects: {
       source: "github", // The source of the content
-      repo: "airview-demo-content", // The name of the repo
+      repo: "airview_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
       branch: "main",
       path: "projects", // the base path for the content
@@ -70,7 +70,7 @@ export const siteConfig = {
     },
     products: {
       source: "github", // The source of the content
-      repo: "airview-demo-content", // The name of the repo
+      repo: "airview_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
       branch: "main",
       path: "products", // the base path for the content
