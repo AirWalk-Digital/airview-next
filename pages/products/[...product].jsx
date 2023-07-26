@@ -35,129 +35,28 @@ export default function Page({
     menuStructure,
     handleContentChange,
     handlePageReset,
-    // setEditMode, 
     context,
     content,
-    frontMatterCallback,
   } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
 
 
   return (
-<ContentPage pageContent={pageContent} file={initialFile} content={content} menuStructure={menuStructure} handleContentChange={handleContentChange} handlePageReset={handlePageReset} collection={collection} context={context} frontMatterCallback={frontMatterCallback} contentSource={contentSource} />
+<ContentPage 
+  pageContent={pageContent} 
+  file={initialFile} 
+  content={content} 
+  menuStructure={menuStructure} 
+  handleContentChange={handleContentChange} 
+  handlePageReset={handlePageReset} 
+  collection={collection} 
+  context={context} 
+  // frontMatterCallback={frontMatterCallback} 
+  contentSource={contentSource}
+   />
 
   )
-
-
-  if (pageContent.content && pageContent.frontmatter) {
-    console.log('pageContent has content: ', pageContent)
-    const Content = pageContent.content;
-    return <ContentWrapperContext><ContentPage frontmatter={pageContent.frontmatter} file={initialFile} content={content} menuStructure={menuStructure} handleContentChange={handleContentChange} setEditMode={setEditMode} collection={collection}>
-      <MDXProvider components={mdComponents(context)}>
-        <Content />
-      </MDXProvider>
-    </ContentPage>
-    </ContentWrapperContext>
-  } else if (file && contentSource && contentSource.startsWith('etherpad')) {
-    return <ContentWrapperContext><ContentPage frontmatter={pageContent.frontmatter} file={initialFile} content={content} menuStructure={menuStructure} handleContentChange={handleContentChange} setEditMode={setEditMode} collection={collection}>
-      <MDXProvider components={mdComponents(context)}>
-        <Etherpad file={file} frontMatterCallback={frontMatterCallback} editMode={editMode} />
-      </MDXProvider>
-    </ContentPage>
-    </ContentWrapperContext>
-
-  } else {
-    return (
-      <ContentWrapperContext>
-        <ContentPage
-          frontmatter={pageContent.frontmatter}
-          file={file}
-          menuStructure={menuStructure}
-          handleContentChange={handleContentChange}
-          setEditMode={setEditMode}
-          collection={collection}
-        >
-          <MDXProvider components={mdComponents(context)}>
-            <FullScreenSpinner />
-          </MDXProvider>
-        </ContentPage>
-      </ContentWrapperContext>
-    );
-  }
 }
 
-
-
-//   if (pageContent.content && pageContent.frontmatter) {
-//     const Content = pageContent.content;
-
-//     return (
-//       <ContentPage
-//         frontmatter={pageContent.frontmatter}
-//         file={file}
-//         content={content}
-//         menuStructure={menuStructure}
-//         pageStructure={pageStructure}
-//         handleContentClick={handleContentClick}
-//         siteConfig={siteConfig}
-//       >
-//         <MDXProvider components={mdComponents(context)}>
-//           <Content />
-//         </MDXProvider>
-//       </ContentPage>
-//     );
-//   } else {
-//     return (
-//       <ContentPage
-//         frontmatter={pageContent.frontmatter}
-//         file={file}
-//         menuStructure={menuStructure}
-//         pageStructure={pageStructure}
-//         handleContentClick={handleContentClick}
-//         siteConfig={siteConfig}
-//       >
-//         <MDXProvider components={mdComponents(context)}>
-//           <FullScreenSpinner />
-//         </MDXProvider>
-//       </ContentPage>
-//     );
-//   }
-// }
-
-// export async function getServerSideProps(context) {
-//   // // console.log('params: ', context.params.solution)
-//   const file = "products/" + context.params.product.join("/");
-//   let pageContent = "";
-//   if (!file.endsWith(".etherpad")) {
-//     pageContent = await getFileContent(
-//       siteConfig.content.products.owner,
-//       siteConfig.content.products.repo,
-//       siteConfig.content.products.branch,
-//       file
-//     );
-//   }
-//   const pageContentText = pageContent
-//     ? Buffer.from(pageContent).toString("utf-8")
-//     : "";
-
-//   const structurePromise = getMenuStructure(
-//     siteConfig,
-//     siteConfig.content.products
-//   );
-
-//   const pageStructure = await structurePromise;
-
-//   const groupedMenu = groupMenu(pageStructure);
-//   // const menuStructure = await getMenuStructure(siteConfig, siteConfig.content.providers);
-
-//   return {
-//     props: {
-//       content: pageContentText || null,
-//       file: file,
-//       menuStructure: groupedMenu || null,
-//       pageStructure: pageStructure || null,
-//     },
-//   };
-// }
 
 
 

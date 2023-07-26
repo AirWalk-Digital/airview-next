@@ -23,7 +23,7 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
 
-  console.log('Etherpad: editMode', editMode)
+  // console.log('Etherpad: editMode', editMode)
   // const url = `https://pad.airview.airwalkconsulting.io/p/${padId}?showControls=false&showChat=false&showLineNumbers=false&useMonospaceFont=false`
 
   const url = `${etherpad_host}/p/${padId}?showControls=false&showChat=false&showLineNumbers=false&useMonospaceFont=false`
@@ -37,8 +37,12 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
 
   useEffect(() => { // process the rawcontent
     const { mdxContent, frontmatter } = useMDX(content, 'mdx');
-    setPageContent({ content: mdxContent, frontmatter: frontmatter });
-    frontMatterCallback(frontmatter);
+      // console.log('Etherpad:frontmatter: ', frontmatter)
+
+    if (mdxContent && frontmatter) {
+      setPageContent({ content: mdxContent, frontmatter: frontmatter });
+      frontMatterCallback(frontmatter);
+    }
   }, [content])
 
   // useEffect(() => {
@@ -127,7 +131,7 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
 
     if (padId) { 
       fetchPadContent()
-      setTimeout(() => setRefreshToken(Math.random()), 5000);
+      // setTimeout(() => setRefreshToken(Math.random()), 5000);
       console.log('Etherpad:useEffect:PadRefresh')
     } else { fetchPadMetadata() }
 

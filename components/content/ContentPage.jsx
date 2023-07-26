@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 
 import { baseTheme } from '../../constants/baseTheme';
 import { MDXProvider } from "@mdx-js/react";
@@ -19,6 +19,7 @@ import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
 import { TableOfContents } from '@/components/content';
 import { ContentWrapperContext } from '@/components/content';
 import { Etherpad } from '@/components/etherpad';
+import deepEqual from 'deep-equal';
 
 export function ContentPage({
   pageContent,
@@ -29,16 +30,22 @@ export function ContentPage({
   handlePageReset,
   collection,
   context,
-  frontMatterCallback,
-  contentSource
 }) {
 
-  const frontmatter = pageContent.frontmatter
-  let tableOfContents = [];
-  if (frontmatter && frontmatter.tableOfContents) {
+  const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
+  
+  const isEmptyObject = (obj) => {
+    return Object.keys(obj).length === 0;
+  };
+
+  // Use useCallback to memoize the frontMatterCallback function
+  const frontMatterCallback = useCallback((newFrontmatter) => {
+    if (!isEmptyObject(newFrontmatter) && !deepEqual(frontmatter, newFrontmatter)) {
+      setFrontmatter(newFrontmatter);
+    }
+  }, [frontmatter]); // Make sure to include frontmatter in the dependency array
 
 
-  }
   // ControlBar
   const [controlBarOpen, setControlBarOpen] = useState(false);
   const handleEditMode = (mode) => {
@@ -46,7 +53,6 @@ export function ContentPage({
     setMenuOpen(!mode)
   }
 
-  // console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
   const topBarHeight = controlBarOpen ? 64 + 64 : 64;
   const [menuOpen, setMenuOpen] = useState(true);
@@ -58,7 +64,6 @@ export function ContentPage({
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
   const { primary, relatedContent } = menuStructure || {};
-  console.log('ContentPage:menuStructure: ', menuStructure)
   function handlePrint() {
     setPrint(!print);
     setMenuOpen(print);
@@ -69,15 +74,24 @@ export function ContentPage({
   };
 
   // let Content = <h1>tesr</h1>;
-  let Content = FullScreenSpinner ;
+  // let Content = FullScreenSpinner ;
 
-  if (pageContent.content && pageContent.frontmatter) {
-    Content = pageContent.content;
-  } else if (file && contentSource && contentSource.startsWith('etherpad')) {
-    Content = <Etherpad file={file} frontMatterCallback={frontMatterCallback} editMode={editMode} />
+  const Content = () => {
+    if (context && context.file && context.file.endsWith('.etherpad')) {
+      return <Etherpad file={context.file} frontMatterCallback={frontMatterCallback} editMode={editMode} />
+    } else if (pageContent.content && pageContent.frontmatter) {
+      const Page = pageContent.content;
+      return <Page />;
+    } else {
+      return <FullScreenSpinner />
+    }
   }
 
-
+  useEffect(() => { // update the frontmatter
+    if (pageContent.frontmatter) {
+      setFrontmatter(pageContent.frontmatter);
+    }
+  }, [pageContent.frontmatter]);
 
   if (!print && !presentation) {
     return (
@@ -189,7 +203,7 @@ export function ContentPage({
           <ThemeProvider theme={baseTheme}>
             <CssBaseline />
             <MDXProvider components={mdComponents(context)}>
-            <><Content /></>
+              <><Content /></>
             </MDXProvider>
           </ThemeProvider>
         </PagedOutput>
@@ -200,7 +214,7 @@ export function ContentPage({
       <ContentWrapperContext>
         <PresentationOutput handlePresentation={handlePresentation} refresh={false} content={content}>
           <MDXProvider components={mdComponents(context)}>
-          <><Content /></>
+            <><Content /></>
           </MDXProvider>
         </PresentationOutput>
       </ContentWrapperContext>

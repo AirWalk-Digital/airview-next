@@ -7,7 +7,7 @@ import { useMDX } from "@/lib/content/mdx";
 import { getFileContent } from "@/lib/github";
 
 import { SolutionView } from "@/components/solutions";
-import { getFileContent } from "@/lib/github";
+// import { getFileContent } from "@/lib/github";
 
 import { FullScreenSpinner } from "@/components/dashboard/index.js";
 import { dirname, basename } from "path";
