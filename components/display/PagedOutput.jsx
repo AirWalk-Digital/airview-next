@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { AppBar, Box, Toolbar, useScrollTrigger, Container, Fab, Fade, IconButton } from '@mui/material';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { Box, useScrollTrigger, Fab, Fade } from '@mui/material';
 import { Previewer } from 'pagedjs'
+import { FullScreenSpinner } from "@/components/dashboard/index.js";
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CloseIcon from '@mui/icons-material/Close';
@@ -12,18 +13,34 @@ export function PagedOutput({ children, handlePrint }) {
   const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
-    if (!rendered) {
-      if (mdxContainer.current !== null) {
-        const paged = new Previewer();
-        const contentMdx = `${mdxContainer.current?.innerHTML}`;
-        paged
-          .preview(contentMdx, ['/pdf.css'], previewContainer.current)
-          .then((flow) => {
-            setRendered(true)
-          });
-      }
-    }
-  }, []);
+    // if (!rendered && children) {
+
+    const timerId = setTimeout(() => { // wait for a bit!
+      const paged = new Previewer();
+      const contentMdx = `${mdxContainer.current.innerHTML}`;
+
+      // Clear the content of previewContainer
+      previewContainer.current.innerHTML = '';
+      paged.preview(contentMdx, ['/pdf.css'], previewContainer.current).then((flow) => {
+        setRendered(true);
+
+        // Delay the removal of the second instance of .pagedjs_pages
+        // setTimeout(() => {
+        //   const pagedPages = previewContainer.current.getElementsByClassName('pagedjs_pages');
+        //   if (pagedPages.length > 1) {
+        //     pagedPages[0].remove();
+        //   }
+        // }, 0);
+      });
+
+    }, 5000);
+
+    // Clean up the timer to avoid memory leaks
+    return () => clearTimeout(timerId);
+    
+    
+    // }
+  }, [children]);
 
 
   return (
@@ -38,13 +55,10 @@ export function PagedOutput({ children, handlePrint }) {
           <CloseIcon />
         </Fab>
       </Box>
-      {/* <AppBar position="static">
-  <Toolbar variant="dense">
-  
-  </Toolbar>
-      </AppBar> */}
+    
       <div id="back-to-top-anchor" sx={{ displayPrint: 'none', height: 0 }} />
 
+     
       <div className="pagedjs_page" ref={previewContainer}> </div>
       <div ref={mdxContainer} style={{ display: 'none' }}>
         {children && children}

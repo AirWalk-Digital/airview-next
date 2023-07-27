@@ -1,2 +1,5 @@
 export { IndexView } from './IndexView'
 export { ContentView } from './ContentView'
+export { ContentPage } from './ContentPage'
+export { TableOfContents } from './TableOfContents'
+export { ContentWrapperContext, useBranch } from './ContentWrapperContext'

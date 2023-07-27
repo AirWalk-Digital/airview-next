@@ -1,7 +1,7 @@
 import {getAllFiles, getFileContent} from "@/lib/github";
 import path from 'path';
 import mime from 'mime-types';
-// example: http://localhost:3000/api/content/owner/repo?path=docs/
+// example: http://localhost:3000/api/content/github/owner/repo?path=docs/
 
 export default async function handler(req, res) {
   try {

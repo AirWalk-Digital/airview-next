@@ -18,7 +18,7 @@ export function NavigationDrawer({
         bottom: 0,
         left: 0,
         width: drawerWidth,
-        borderRight: 1,
+        borderRight: 0,
         borderColor: "grey.300",
         paddingY: 6,
         paddingX: 3,
@@ -26,7 +26,8 @@ export function NavigationDrawer({
         backgroundColor: "common.white",
         zIndex: 1200,
         overflowY: "auto",
-        displayPrint: 'none'
+        displayPrint: 'none',
+        borderTop: '1px solid #e0e0e0'
       }}
     >
       {children}

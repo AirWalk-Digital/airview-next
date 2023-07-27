@@ -30,7 +30,7 @@ function Copyright() {
   );
 }
 
-function Pad({ endpoint, pad }) {
+function Pad({ endpoint, padID, title }) {
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -54,14 +54,14 @@ function Pad({ endpoint, pad }) {
         <CardActions>
           {/* <Button href={`/pads/ppt/${children}`} size="small">PPT</Button> */}
           {/* <Button href={`/pads/print/${children}`}size="small">Print</Button> */}
-          <Button href={`/result/pad/${pad}?format=ppt`} size="small">
+          <Button href={`/result/pad/${padID}?format=ppt`} size="small">
             PPT
           </Button>
-          <Button href={`/result/pad/${pad}?format=doc`} size="small">
+          <Button href={`/result/pad/${padID}?format=doc`} size="small">
             Doc
           </Button>
           <Button
-            href={`${endpoint}/p/${pad}`}
+            href={`${endpoint}/p/${padID}`}
             rel="noopener noreferrer"
             target="_blank"
             size="small"
@@ -123,7 +123,7 @@ export default function Home() {
             pb: 6,
           }}
         >
-          <Container maxWidth="m">
+          <Container maxWidth="m" sx={{mt: '1%'}}>
             <Typography
               component="h1"
               variant="h2"
@@ -184,3 +184,47 @@ export default function Home() {
     </ThemeProvider>
   );
 }
+
+
+function PadView(pads) {
+  const [environment, setEnvironment] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () =>{
+      const resp = await fetch("/api/environment");
+      const data = await resp.json();
+      console.log(data)
+      setEnvironment(data)
+    }
+    fetchData()
+  },[]);
+
+  // console.log('PadView:pads: ', pads)
+  const collections = Object.entries(pads.pads).map(([key, value]) => {
+    return {
+      [key]: Object.values(value)
+    };
+  });
+
+  // console.log('PadView:collections: ', collections)
+
+  return (
+    <div>
+      {Object.entries(pads.pads).map(([category, elements]) => (
+        <div key={category}>
+          <h2>{capitalizeFirstLetter(category)}</h2>
+          <Grid container spacing={4}>
+
+            {elements.map((element, index) => (
+              <Pad endpoint={environment.ETHERPAD_URL} padID={element.padID} title={element.title} />
+            ))}
+          </Grid>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};

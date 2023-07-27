@@ -69,17 +69,17 @@ export const siteConfig = {
       collections: ["knowledge"],
     },
     products: {
-      source: "github", // The source of the content
-      repo: "airwalk_patterns", // The name of the repo
-      owner: "airwalk-digital", // The owner of the repo
-      branch: "main",
-      path: "products", // the base path for the content
-      reference: "product", // how the collection is referred to in frontmatter links
-      collections: ["knowledge", "designs"],
+      source: 'github', // The source of the content
+      repo: 'airwalk_patterns', // The name of the repo
+      owner: 'airwalk-digital', // The owner of the repo
+      branch: 'main',
+      path: 'products',  // the base path for the content
+      reference: 'product', // how the collection is referred to in frontmatter links
+      collections: ['knowledge', 'designs']
     },
-    applications: { source: "static" },
-    frameworks: { source: "static" },
-  },
-};
+    applications: { source: 'static'},
+    frameworks: { source: 'static'}
+  }
+}
 
 export default siteConfig;

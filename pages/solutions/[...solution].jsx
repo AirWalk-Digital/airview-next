@@ -7,6 +7,7 @@ import { useMDX } from "@/lib/content/mdx";
 import { getFileContent } from "@/lib/github";
 
 import { SolutionView } from "@/components/solutions";
+// import { getFileContent } from "@/lib/github";
 
 import { FullScreenSpinner } from "@/components/dashboard/index.js";
 import { dirname, basename } from "path";
@@ -16,48 +17,57 @@ import { Button } from "@mui/material";
 import { fetchPadDetails } from "@/lib/etherpad";
 
 import { Etherpad } from "@/components/etherpad";
+import { useRouter } from 'next/router'
+
+import { ContentWrapperContext } from '@/components/content'
 
 export default function Page({
   content: initialContent,
-  file,
+  file: initialFile,
   menuStructure: initialMenuStructure,
+  collection
 }) {
   const [pageContent, setContent] = useState({
     content: undefined,
     frontmatter: undefined,
   });
 
+  const router = useRouter();
+  const [editMode, setEditMode] = useState(false);
+  const [file, setFile] = useState(initialFile);
   const [content, setRawContent] = useState(initialContent);
   const [contentSource, setContentSource] = useState(null);
   const [menuStructure, setMenuStructure] = useState(null);
-  const [rev, setRev] = useState(0);
+  const [relPage, setRelPage] = useState(useRouter()?.query?.page ?? null)
+  const frontMatterCallback = (frontmatter) => {
+    setContent({frontmatter: frontmatter})
+  }
+  
+  // const relPage = useRouter()?.query?.page ?? null;
 
-  const handleContentClick = async (url, label) => {
+  const handleContentChangeOld = async (url, label) => {
     // console.log("Content Clicked: label: ", label, " url: ", url);
 
-    if (url && url.endsWith(".etherpad")) {
-      // load the pad
-      const cacheKey = "etherpad:/" + url;
-      const { rev, rawContent, frontmatter } = await fetchPadDetails(cacheKey);
-      setContentSource("etherpad:" + frontmatter.padID);
-      const pad = await fetchPadDetails(cacheKey);
-      // console.log("handleContentClick: ", pad);
+    if (url && url.endsWith(".etherpad")) { // load the pad
+      const cacheKey = 'etherpad:/' + url
+      const { frontmatter } = await fetchPadDetails(cacheKey);
+      setContentSource('etherpad:' + frontmatter.padID);
+      // const pad = await fetchPadDetails(cacheKey);
+      // // console.log("handleContentChange: ", pad);
 
-      if (pad.rawContent && pad.frontmatter) {
-        setRev(pad.rev);
-        setRawContent(matter.stringify(pad.rawContent, pad.frontmatter));
-      }
+      // if (pad.rawContent && pad.frontmatter) {
+      //   setRev(pad.rev);
+      //   setRawContent(matter.stringify(pad.rawContent, pad.frontmatter));
+      // }
     } else if (url) {
+      setContentSource('api')
       // load from github
       try {
         const response = await fetch(
-          `/api/content/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`
+          `/api/content/github/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`
         );
         if (response.ok) {
           const data = await response.text();
-          // // console.log('handleContentClick:data: ', data);
-          // const content = Buffer.from(data ?? "", "base64").toString("utf8");
-          // // console.log('handleContentClick:content: ', content);
           setRawContent(data);
         } else {
           throw new Error("Error fetching files");
@@ -68,56 +78,123 @@ export default function Page({
     }
   };
 
-  useEffect(() => {
-    // console.log("useEffect:MDX:File: ", file);
-    let format;
-    if (file && file.endsWith(".md")) {
-      format = "md";
-    } else if (file && file.endsWith(".mdx")) {
-      format = "mdx";
-    } else if (file && file.endsWith(".etherpad")) {
-      format = "mdx";
-    } else {
-      format = "mdx;";
-    }
-    const { mdxContent, frontmatter } = useMDX(content, format);
-    setContent({ content: mdxContent, frontmatter: frontmatter });
-  }, [content]);
+  function clearQueryParams() {
+    const newUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, newUrl);
+  }
+  async function handleContentChange(url, relative) {
+    console.log("useEffect:relative: ", relative);
+    setFile(url);
+    if (relative != true && relPage) {
+      const { asPath } = router
+      const urlPath = asPath.split("?")[0]
+      clearQueryParams()
+      // router.push({ urlPath }, undefined, { shallow: true });
+      console.log("useEffect:router:urlPath: ", urlPath);
+      setRelPage(null);
+      //
+    };
+    // setRelPage(null);
+    if (url && url.endsWith(".etherpad")) { // load the pad
+      const cacheKey = 'etherpad:/' + url
+      const { frontmatter } = await fetchPadDetails(cacheKey);
+      setContentSource('etherpad:' + frontmatter.padID);
+      // const pad = await fetchPadDetails(cacheKey);
+      // // console.log("handleContentChange: ", pad);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const cacheKey = "etherpad:/" + file;
+      // if (pad.rawContent && pad.frontmatter) {
+      //   setRev(pad.rev);
+      //   setRawContent(matter.stringify(pad.rawContent, pad.frontmatter));
+      // }
+    } else if (url) {
+      setContentSource('api')
+      // load from github
       try {
-        const pad = await fetchPadDetails(cacheKey);
-        return pad;
+        const response = await fetch(
+          `/api/content/github/${siteConfig.content.solutions.owner}/${siteConfig.content.solutions.repo}?branch=${siteConfig.content.solutions.branch}&path=${url}`
+        );
+        if (response.ok) {
+          const data = await response.text();
+          setRawContent(data);
+        } else {
+          throw new Error("Error fetching files");
+        }
       } catch (error) {
-        console.error("Error fetching pad details:", error);
-        return null;
+        console.error("Error fetching files:", error);
       }
+    }
+  };
+
+  
+  useEffect(() => {
+    const loadPad = async (file) => {
+      const cacheKey = 'etherpad:/' + file
+      const { frontmatter } = await fetchPadDetails(cacheKey);
+      setContentSource('etherpad:' + frontmatter.padID);
     };
 
-    if (file && file.endsWith(".etherpad")) {
-      const fetchDataAndSetState = async () => {
-        const padDetails = await fetchData();
-        // console.log("useEffect:fetchData1: ", padDetails);
+    const relativeContent = async (file) => {
+      await handleContentChange(file, true)
+    };
+    // const relPage = router?.query?.page ?? null;
+    console.log('Solutions:useEffect:relPage: ', relPage)
 
-        if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
-          setContentSource("etherpad:" + padDetails.frontmatter.padID);
-
-          // console.log('useEffect:fetchData2: ', padDetails);
-
-          setRev(padDetails.rev);
-          setRawContent(
-            matter.stringify(padDetails.rawContent, padDetails.frontmatter)
-          );
-        }
-      };
-
-      fetchDataAndSetState();
-    } else {
-      setContentSource("git");
+    if (relPage) {
+      relativeContent(relPage)
     }
-  }, [file]);
+
+    if (file && file.endsWith(".md")) {
+      setContentSource('api')
+      const { mdxContent, frontmatter } = useMDX(content ? content : initialContent, 'md');
+      setContent({ content: mdxContent, frontmatter: frontmatter });
+    } else if (file && file.endsWith(".mdx")) {
+      setContentSource('api')
+      console.log('useEffect:BuildMDX:format: ', 'mdx')
+      const { mdxContent, frontmatter } = useMDX(content ? content : initialContent, 'mdx');
+      setContent({ content: mdxContent, frontmatter: frontmatter });
+    } else if (file && file.endsWith(".etherpad")) {
+      loadPad(file)
+    }
+    // const { mdxContent, frontmatter } = useMDX(content ? content : initialContent, format);
+    // setContent({ content: mdxContent, frontmatter: frontmatter});
+
+  }, [file, content]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const cacheKey = 'etherpad:/' + file;
+  //     try {
+  //       const pad = await fetchPadDetails(cacheKey);
+  //       return pad;
+  //     } catch (error) {
+  //       console.error("Error fetching pad details:", error);
+  //       return null;
+  //     }
+  //   };
+
+  //   if (file && file.endsWith(".etherpad")) {
+
+  //     const fetchDataAndSetState = async () => {
+  //       const padDetails = await fetchData();
+  //       // console.log("useEffect:fetchData1: ", padDetails);
+
+  //       if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
+  //         setContentSource('etherpad:' + padDetails.frontmatter.padID);
+
+  //         // console.log('useEffect:fetchData2: ', padDetails);
+
+  //         setRev(padDetails.rev);
+  //         setRawContent(
+  //           matter.stringify(padDetails.rawContent, padDetails.frontmatter)
+  //         );
+  //       }
+  //     };
+
+  //     fetchDataAndSetState();
+  //   } else {
+  //     setContentSource('git')
+  //   }
+  // }, [file]);
 
   const context = { file: file, ...siteConfig.content.solutions };
 
@@ -160,50 +237,44 @@ export default function Page({
 
     // // console.log('initialMenuStructure: ', initialMenuStructure);
     fetchDataAndUpdateState();
+
   }, [initialMenuStructure]);
 
+
+
   if (pageContent.content && pageContent.frontmatter) {
+    console.log('pageContent has content: ', pageContent)
     const Content = pageContent.content;
-    const WrappedContent = () => {
-      // console.log('contentSource: ', contentSource)
+    return <ContentWrapperContext><SolutionView frontmatter={pageContent.frontmatter} file={initialFile} content={content} menuStructure={menuStructure} handleContentChange={handleContentChange} setEditMode={setEditMode} collection={collection}>
+      <MDXProvider components={mdComponents(context)}>
+        <Content />
+      </MDXProvider>
+    </SolutionView>
+    </ContentWrapperContext>
+  } else if (file && contentSource && contentSource.startsWith('etherpad')) {
+    return <ContentWrapperContext><SolutionView frontmatter={pageContent.frontmatter} file={initialFile} content={content} menuStructure={menuStructure} handleContentChange={handleContentChange} setEditMode={setEditMode} collection={collection}>
+      <MDXProvider components={mdComponents(context)}>
+        <Etherpad file={file} frontMatterCallback={frontMatterCallback} editMode={editMode} />
+      </MDXProvider>
+    </SolutionView>
+    </ContentWrapperContext>
 
-      if (contentSource && contentSource.startsWith("etherpad")) {
-        return (
-          <Etherpad file={file}>
-            <Content />
-          </Etherpad>
-        );
-      } else {
-        // console.log('contentSource: ', contentSource)
-        return <Content />;
-      }
-    };
-
-    return (
-      <SolutionView
-        frontmatter={pageContent.frontmatter}
-        file={file}
-        content={content}
-        menuStructure={menuStructure}
-        handleContentClick={handleContentClick}
-      >
-        <MDXProvider components={mdComponents(context)}>
-          <WrappedContent />
-        </MDXProvider>
-      </SolutionView>
-    );
   } else {
     return (
+      <ContentWrapperContext>
       <SolutionView
         frontmatter={pageContent.frontmatter}
         file={file}
         menuStructure={menuStructure}
-        handleContentClick={handleContentClick}
+        handleContentChange={handleContentChange}
+        setEditMode={setEditMode}
+        collection={collection}
       >
         <MDXProvider components={mdComponents(context)}>
           <FullScreenSpinner />
         </MDXProvider>
       </SolutionView>
+      </ContentWrapperContext>
     );
   }
 }
@@ -220,9 +291,13 @@ export async function getServerSideProps(context) {
       file
     );
   }
+
+
   const pageContentText = pageContent
     ? Buffer.from(pageContent).toString("utf-8")
     : "";
+
+
   const menuStructure = await getMenuStructure(
     siteConfig,
     siteConfig.content.solutions
@@ -233,6 +308,7 @@ export async function getServerSideProps(context) {
       content: pageContentText || null,
       file: file,
       menuStructure: menuStructure || null,
+      collection: siteConfig.content.solutions,
     },
   };
 }

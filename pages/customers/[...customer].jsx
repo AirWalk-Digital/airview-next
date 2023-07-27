@@ -50,7 +50,7 @@ export default function Page({
       // load from github
       try {
         const response = await fetch(
-          `/api/content/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?branch=${siteConfig.content.providers.branch}&path=${url}`
+          `/api/content/github/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?branch=${siteConfig.content.providers.branch}&path=${url}`
         );
         if (response.ok) {
           const data = await response.text();
@@ -76,9 +76,9 @@ export default function Page({
     } else {
       format = "mdx;";
     }
-    const { mdxContent, frontmatter } = useMDX(content, format);
-    setContent({ content: mdxContent, frontmatter: frontmatter });
-  }, [content]);
+    const { mdxContent, frontmatter } = useMDX(content ? content : initialContent, format);
+    setContent({ content: mdxContent, frontmatter: frontmatter});
+  }, [content])
 
   useEffect(() => {
     const fetchData = async () => {

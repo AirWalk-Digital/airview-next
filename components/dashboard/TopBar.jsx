@@ -15,6 +15,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { styled } from "@mui/material/styles";
 import { siteConfig } from "../../site.config.js";
+import MoreIcon from '@mui/icons-material/MoreVert';
 
 // import logo from '../../public/logos/airwalk-logo.png';
 const Logo = styled("img")({
@@ -24,7 +25,7 @@ const Logo = styled("img")({
   });
 
 export function TopBar({
-    onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64, logo=true, handlePrint, handlePresentation }) {
+    onNavButtonClick, navOpen, menu=false, back=false, topBarHeight=64, logo=true, handlePrint, handlePresentation, handleMore }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [activeMenu, setActiveMenu] = useState('');
@@ -39,11 +40,18 @@ export function TopBar({
       setActiveMenu('');
     };
   
+    const handleMoreClick = () => {
+      if (typeof handleMore === 'function') {
+        handleMore();
+      } else {
+        console.error('TopBar: Error: handleMore is not a function');
+      }
+    };
 
 
   
     return (
-      <AppBar position="fixed" color="white" elevation={0} sx={{ displayPrint: 'none',borderBottom: '1px solid #e0e0e0' }}>
+      <AppBar position="fixed" color="white" elevation={0} sx={{ displayPrint: 'none', borderBottom: 1, borderColor: 'grey.300' }}>
         <Toolbar>
           {/* has menu */}
         {menu &&  <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={onNavButtonClick}>{navOpen ? <CloseIcon /> : <MenuIcon />}</IconButton>}
@@ -93,7 +101,11 @@ export function TopBar({
               Solutions
               </MenuItem>
             </Link>}
-            
+            {(siteConfig.content.products) &&  <Link href="/products" sx={{ textDecoration: 'none' }}>
+              <MenuItem>
+              Products
+              </MenuItem>
+            </Link>}
           </Menu>
           <Menu
             id="menu-applications"
@@ -113,20 +125,16 @@ export function TopBar({
               </MenuItem>
             </Link>
           </Menu>
-          {handlePrint && <IconButton
+
+              <IconButton
                 size="large"
-                onClick={() => handlePrint()}
+                onClick={() => handleMoreClick()}
                 color="inherit"
               >
-                <PrintIcon />
-              </IconButton>}
-              {handlePresentation && <IconButton
-                size="large"
-                onClick={() => handlePresentation()}
-                color="inherit"
-              >
-                <SlideshowIcon />
-              </IconButton>}
+
+              <MoreIcon />
+              </IconButton>
+
         </Toolbar>
       </AppBar>
     );

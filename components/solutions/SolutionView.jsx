@@ -5,7 +5,7 @@ import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Link from '@mui/material/Link';
-import { TopBar } from '@/components/dashboard';
+import { TopBar, ControlBar } from '@/components/dashboard';
 import { Menu, NavigationDrawer, ButtonMenu } from '@/components/airview-ui';
 import { PagedOutput } from '@/components/display/PagedOutput';
 import { PresentationOutput } from '@/components/display/PresentationOutput';
@@ -13,6 +13,7 @@ import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase } from '@mui/material';
 
 import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
+import { TableOfContents } from '@/components/content';
 
 export function SolutionView({
   children,
@@ -20,13 +21,27 @@ export function SolutionView({
   file,
   content,
   menuStructure,
-  handleContentClick
+  handleContentChange,
+  setEditMode,
+  collection
 }) {
 
 
+  let tableOfContents = [];
+  if (frontmatter && frontmatter.tableOfContents) {
+
+
+  }
+  // ControlBar
+  const [controlBarOpen, setControlBarOpen] = useState(false);
+  const handleEditMode = (mode) => {
+    setEditMode(mode)
+    setMenuOpen(!mode)
+  }
+
   // console.log('SolutionView:menuStructure: ', menuStructure)
   const navDrawerWidth = 300;
-  const topBarHeight = 64;
+  const topBarHeight = controlBarOpen ? 64 + 64 : 64;
   const [menuOpen, setMenuOpen] = useState(true);
   const [print, setPrint] = useState(false);
   const [presentation, setPresentation] = useState(false);
@@ -54,8 +69,14 @@ export function SolutionView({
           topBarHeight={topBarHeight}
           handlePrint={handlePrint}
           handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
+          handleMore={() => setControlBarOpen(controlBarOpen => !controlBarOpen)}
         />
-
+        <ControlBar open={controlBarOpen} height={64}
+          handleEdit={handleEditMode}
+          handlePrint={handlePrint}
+          handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
+          collection={collection}
+        />
         <SolutionsMenu
           solutions={primary}
           open={menuOpen}
@@ -111,14 +132,17 @@ export function SolutionView({
               {children && children}
             </Main>
             <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
+
               <ContentMenu
                 content={relatedContent}
                 // chapters={chapters}
                 // knowledge={knowledge}
                 // designs={designs}
-                handleContentClick={handleContentClick}
+                handleContentChange={handleContentChange}
                 file={file}
               />
+              {frontmatter?.tableOfContents && <TableOfContents tableOfContents={frontmatter.tableOfContents} />}
+
               {/* <ButtonMenu
                 menuTitle="Controls"
                 menuItems={createControlMenu(controls)}
@@ -137,8 +161,8 @@ export function SolutionView({
     return (
       <PagedOutput handlePrint={handlePrint} >
         <ThemeProvider theme={baseTheme}>
-          <CssBaseline />
-          {children && children}
+        <CssBaseline />
+        {children && children}
         </ThemeProvider>
       </PagedOutput>
     )
@@ -152,7 +176,7 @@ export function SolutionView({
 }
 
 
-function ContentMenu({ content, file, handleContentClick }) {
+function ContentMenu({ content, file, handleContentChange }) {
   let directory = file?.includes("/") ? file.split("/")[1] : file;
   // // console.log('ChaptersMenu:File ', file)
   let chaptersMenu = []
@@ -188,28 +212,28 @@ function ContentMenu({ content, file, handleContentClick }) {
 
     return (
       <>
-      <ButtonBase
-                          variant="text"
-                          onClick={() => handleContentClick('/' + file, 'primary link')}
-                          sx={{
-                            textDecoration: "none",
-                            textTransform: 'none',
-                            textAlign: 'left',
-                            fontWeight: 'bold',
-                            color: 'secondary.main',
-                            mb: '5%'
-                          }}
-                        >Main Content</ButtonBase>
+        <ButtonBase
+          variant="text"
+          onClick={() => handleContentChange(file, false)}
+          sx={{
+            textDecoration: "none",
+            textTransform: 'none',
+            textAlign: 'left',
+            fontWeight: 'bold',
+            color: 'secondary.main',
+            mb: '5%'
+          }}
+        >Main Content</ButtonBase>
 
-      <ButtonMenu
-      menuTitle="Content"
-      menuItems={chaptersMenu}
-      initialCollapsed={false}
-      loading={false}
-      fetching={false}
-      handleButtonClick={handleContentClick}
-    /></>
-   
+        <ButtonMenu
+          menuTitle="Related Content"
+          menuItems={chaptersMenu}
+          initialCollapsed={false}
+          loading={false}
+          fetching={false}
+          handleButtonClick={handleContentChange}
+        /></>
+
     )
     // return (
     //   <Menu

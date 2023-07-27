@@ -35,6 +35,7 @@ import {ScrollToBottom }from '@/components/utils/ScrollToBottom'
 
 const SiteSection = ({ title, description, link }) => {
 
+  
   return (
     <Grid item xs={4} md={4}>
       <Paper variant='outlined' sx={{ height: '100%', borderRadius: '16px', p: 3, display: 'flex', flexDirection: 'column' }}>
@@ -98,6 +99,7 @@ const LandingPage = () => {
             {siteConfig.content.applications && <SiteSection title='Applications' description='Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance.' link='/applications' />}
             {siteConfig.content.customers && <SiteSection title='Customers & Projects' description="Customers and the projects we've done for them." link='/customers' />}
             {siteConfig.content.solutions && <SiteSection title='Solutions' description="Solutions and Propositions." link='/solutions' />}
+            {siteConfig.content.products && <SiteSection title='Products' description="Products." link='/products' />}
 
                      </Grid>
         </Container>

@@ -58,7 +58,7 @@ export default async function createHandler(req, res) {
         });
     }
 
-    await cacheWrite(cacheKey, JSON.stringify(padMetadata), 60 * 60 * 24); // cache for 24 hours
+    await cacheWrite(cacheKey, JSON.stringify(padMetadata)); // cache for 24 hours
     res.status(200).json({ status: 'Pad created and initialized', padID: pad });
   } catch (error) {
     console.error('API:/api/etherpad/new:ERROR:', error);

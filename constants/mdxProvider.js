@@ -4,9 +4,9 @@ import { useEffect, useState, useRef } from 'react';
 // import { MDXProvider } from "@mdx-js/react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
-import SlidePage from "../layouts/SlidePage";
-import PrintSlide from "../layouts/PrintSlide";
-import MDXViewer from "../layouts/MDXViewer";
+import SlidePage from "@/components/display/SlidePage";
+import PrintSlide from "@/components/display/PrintSlide";
+import MDXViewer from "@/components/display/MDXViewer";
 import Image from "next/image";
 
 // fix for Roadmap, Nest
@@ -39,7 +39,7 @@ import { ProgressTable } from '../components/Tables.jsx';
 // import {Layout, Column, Item } from './Layouts';
 
 import path from 'path';
-import { Dialog, DialogContent, DialogActions, Button, IconButton, Box, Typography, Alert} from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Button, IconButton, Box, Typography, Alert } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 
@@ -48,26 +48,38 @@ import CloseIcon from '@mui/icons-material/Close';
 function MdxImage({ props, baseContext }) {
   let src = props.src;
 
-  if (baseContext.source === 'local' && baseContext.router.asPath && src.slice(0, 2) === './') { // relative 
-    src = src.replace('./', '/');
-    src = '/api/files/get-binary?filePath=' + baseContext.router.asPath + src;
-  } else if (baseContext.source === 'local' && baseContext.router.asPath && src.slice(0, 1) === '/') { //file is an absolute path (public directory)
-    src = src
-  } else if (baseContext.source === 'github') {
-    // strip off leading / if present
-    src = src.replace('./', '');
-    if (src.slice(0, 1) === '/') { src = src.slice(1) };
-    // get directory from the file path
-    let dir = path.dirname(baseContext.file)
-    src = dir + '/' + src;
-
-    src = '/api/content/' + baseContext.owner + '/' + baseContext.repo + '?path=' + src + '&branch=' + baseContext.branch;
+  if (isSharePointUrl(src)) {
+    src = '/api/content/sharepoint?url=' + src
 
   } else {
-    src = '/image-not-found.png';
+
+
+    if (baseContext.source === 'local' && baseContext.router.asPath && src.slice(0, 2) === './') { // relative 
+      src = src.replace('./', '/');
+      src = '/api/files/get-binary?filePath=' + baseContext.router.asPath + src;
+    } else if (baseContext.source === 'local' && baseContext.router.asPath && src.slice(0, 1) === '/') { //file is an absolute path (public directory)
+      src = src
+    } else if (baseContext.source === 'github') {
+      // strip off leading / if present
+      src = src.replace('./', '');
+
+      if (src.slice(0, 1) === '/') { src = src.slice(1) };
+      // get directory from the file path
+
+      if (baseContext.file) {
+        let dir = path.dirname(baseContext.file);
+
+        if (!dir.startsWith('.')) { src = dir + '/' + src}; // ignore base paths
+      }
+
+      src = '/api/content/github/' + baseContext.owner + '/' + baseContext.repo + '?path=' + src + '&branch=' + baseContext.branch;
+      console.debug('mdxProvider:MdxImage:src: ', src)
+
+    } else {
+      src = '/image-not-found.png';
+    };
+
   };
-
-
   // Custom hook for getting window size
   function useWindowSize() {
     const [size, setSize] = useState([0, 0]);
@@ -85,7 +97,7 @@ function MdxImage({ props, baseContext }) {
   function useContainerSize() {
     const ref = useRef(null);
     const [size, setSize] = useState({ width: 0, height: 0 });
-  
+
     useEffect(() => {
       function updateSize() {
         setSize({
@@ -95,7 +107,7 @@ function MdxImage({ props, baseContext }) {
       }
       window.addEventListener('resize', updateSize);
       updateSize();
-  
+
       return () => window.removeEventListener('resize', updateSize);
     }, []);
     // console.log('useContainerSize:size', size)
@@ -106,7 +118,7 @@ function MdxImage({ props, baseContext }) {
 
   function ImageComponent({ src, alt }) {
 
-    
+
 
     const [open, setOpen] = useState(false);
     const [width, height] = useWindowSize();
@@ -127,12 +139,12 @@ function MdxImage({ props, baseContext }) {
       const { naturalWidth, naturalHeight } = event.target;
       setImageSize({ width: naturalWidth, height: naturalHeight });
     };
-    
+
     return (
       <>
- 
+
         <Box
-        ref={containerRef}
+          ref={containerRef}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -159,12 +171,12 @@ function MdxImage({ props, baseContext }) {
           fullWidth={true}
           maxWidth="90%"
         >
-           <DialogActions>
-           <IconButton color="highlight" onClick={handleClose}>
-          <CloseIcon />
-          </IconButton>
-        </DialogActions>
-         
+          <DialogActions>
+            <IconButton color="highlight" onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </DialogActions>
+
           <DialogContent sx={{
             display: 'flex',
             alignItems: 'center',
@@ -172,7 +184,7 @@ function MdxImage({ props, baseContext }) {
             position: 'relative',
             margin: 'auto'
           }}>
-            <img src={src} alt={alt}/>
+            <img src={src} alt={alt} />
           </DialogContent>
         </Dialog>
       </>
@@ -195,17 +207,17 @@ function MdxImage({ props, baseContext }) {
 
 // export const mdComponents = {
 export const mdComponents = (baseContext) => ({
-  h1: (props) => <Typography variant="h1">{props.children}</Typography>,
-  h2: (props) => <Typography variant="h2">{props.children}</Typography>,
-  h3: (props) => <Typography variant="h3">{props.children}</Typography>,
-  h4: (props) => <Typography variant="h4">{props.children}</Typography>,
-  h5: (props) => <Typography variant="h5">{props.children}</Typography>,
+  h1: (props) => <Typography variant="h1" id={props.id}>{props.children}</Typography>,
+  h2: (props) => <Typography variant="h2" id={props.id}>{props.children}</Typography>,
+  h3: (props) => <Typography variant="h3" id={props.id}>{props.children}</Typography>,
+  h4: (props) => <Typography variant="h4" id={props.id}>{props.children}</Typography>,
+  h5: (props) => <Typography variant="h5" id={props.id}>{props.children}</Typography>,
   p: (props) => <Typography variant="p">{props.children}</Typography>,
   img: (props) => (<MdxImage props={props} baseContext={baseContext} fill loading="lazy" />),
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
-  ul: (props) => <Typography variant="ul">{props.children}</Typography>,
+  // ul: (props) => <Typography variant="ul">{props.children}</Typography>,
   // table: (props) => <Typography variant="table">{props.children}</Typography>,
-  hr: (props) => null,
+  // hr: (props) => null,
   pre: (props) => props.children,
   code: (props) => {
     const { className } = props;
@@ -247,10 +259,21 @@ export const mdComponents = (baseContext) => ({
   // Font,
   // layouts
   TitleSlide,
-  Layout: (props) => null, 
+  Layout: (props) => null,
   Column, Item
 });
 
 // export default ({ children }) => (
 //   <MDXProvider components={mdComponents}>{children}</MDXProvider>
 // );
+
+
+function isSharePointUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname;
+    return hostname.endsWith('sharepoint.com');
+  } catch {
+    return false;
+  }
+}

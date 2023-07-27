@@ -1,22 +1,23 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import GlobalStyles from '@mui/material/GlobalStyles';
 import { Slide } from 'airview-mdx';
-import PresentationMode from "@/components/presentations/PresentationMode";
-import Swipeable from "@/components/presentations/Swipeable";
-import useEventListener from "../hooks/useEventListener";
-import { useTotalPages } from "../context/TotalPagesContext";
-import { useMode } from "../context/ModeContext";
-import { useCurrentSlide } from "../context/CurrentSlideContext";
-import { Storage } from "../hooks/useStorage";
-import { MODES } from "../constants/modes";
+// import PresentationMode from "@/components/presentations/PresentationMode";
+// import Swipeable from "@/components/presentations/Swipeable";
+// import useEventListener from "../hooks/useEventListener";
+// import { useTotalPages } from "../context/TotalPagesContext";
+// import { useMode } from "../context/ModeContext";
+// import { useCurrentSlide } from "../context/CurrentSlideContext";
+// import { Storage } from "../hooks/useStorage";
+// import { MODES } from "../constants/modes";
 
 import dynamic from 'next/dynamic'
 
 import Zoom from '@/components/presentations/Zoom';
+import { Box } from '@mui/material';
 
 
-const globalStyles = `
+const globalStyless = `
 
   body,
   html {
@@ -40,6 +41,20 @@ const globalStyles = `
     -webkit-overflow-scrolling: touch;
   }
 
+`;
+
+
+const globalStyles = `
+
+  body
+   {
+    overflow: auto;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+  }
 `;
 
 export default dynamic(() => Promise.resolve(PrintSlide), {
@@ -83,11 +98,12 @@ function PrintSlide({ children, next }) {
     <>
       <GlobalStyles styles={globalStyles} />
       {generatedSlides.map(d => (
-        <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{ maxWidth: '100vw', maxHeight: '100vh' }}>
-          {/* // <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} > */}
-          <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}>
+          <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{ maxWidth: '100vw', maxHeight: '100%' }}>
+    {/* // <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} > */}
+          {/* <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}> */}
+          <Box id="slide">
             <Slide>{d}</Slide>
-          </div>
+          </Box>
         </Zoom>
 
       ))}

@@ -7,7 +7,7 @@ import * as matter from 'gray-matter';
 import { siteConfig } from "../../site.config.js";
 
 
-export function Etherpad({ file, children }) {
+export function Etherpad({ file, frontMatterCallback, editMode }) {
 
 
   const etherpad_host = siteConfig?.etherpad?.url ?? null
@@ -23,21 +23,26 @@ export function Etherpad({ file, children }) {
   const [refreshToken, setRefreshToken] = useState(Math.random());
 
 
-  // // console.log('Etherpad: ', padId)
+  // console.log('Etherpad: editMode', editMode)
   // const url = `https://pad.airview.airwalkconsulting.io/p/${padId}?showControls=false&showChat=false&showLineNumbers=false&useMonospaceFont=false`
 
   const url = `${etherpad_host}/p/${padId}?showControls=false&showChat=false&showLineNumbers=false&useMonospaceFont=false`
 
-  // console.log('Etherpad:url: ', url)
-  const [isEditorVisible, setIsEditorVisible] = useState(false);
+  // // console.log('Etherpad:url: ', url)
+  // const [isEditorVisible, setIsEditorVisible] = useState(false);
 
-  const handleToggleEditor = () => {
-    setIsEditorVisible(!isEditorVisible);
-  };
+  // const handleToggleEditor = () => {
+  //   setIsEditorVisible(!isEditorVisible);
+  // };
 
   useEffect(() => { // process the rawcontent
     const { mdxContent, frontmatter } = useMDX(content, 'mdx');
-    setPageContent({ content: mdxContent, frontmatter: frontmatter });
+      // console.log('Etherpad:frontmatter: ', frontmatter)
+
+    if (mdxContent && frontmatter) {
+      setPageContent({ content: mdxContent, frontmatter: frontmatter });
+      frontMatterCallback(frontmatter);
+    }
   }, [content])
 
   // useEffect(() => {
@@ -113,20 +118,22 @@ export function Etherpad({ file, children }) {
                 }
               })
               .catch(error => {
-                // // // console.log(error)
+                console.error('Etherpad:Error refreshing pad: ', error)
               })
           }
 
         })
         .catch(error => {
-          // // // console.log(error)
+          console.error('Etherpad:Error refreshing pad revisions: ', error)
         })
-        .finally(() => {
-          setTimeout(() => setRefreshToken(Math.random()), 5000);
-        });
+        
     }
 
-    if (padId) { fetchPadContent() } else { fetchPadMetadata() }
+    if (padId) { 
+      fetchPadContent()
+      // setTimeout(() => setRefreshToken(Math.random()), 5000);
+      console.log('Etherpad:useEffect:PadRefresh')
+    } else { fetchPadMetadata() }
 
   }, [refreshToken]);
 
@@ -139,18 +146,18 @@ export function Etherpad({ file, children }) {
 
     return (
       <Grid container spacing={2}>
-        <Grid item xs={12} sx={{ mt: '1%' }}>
+        {/* <Grid item xs={12} sx={{ mt: '1%' }}>
           <Button variant="contained" onClick={handleToggleEditor}>
             {isEditorVisible ? 'Hide' : 'Show'} Edit
           </Button>
-        </Grid>
-        { isEditorVisible && (
+        </Grid> */}
+        { editMode && (
           <Grid item xs={12} md={6}>
             <iframe src={editorURL} width="100%" height="100%" frameborder="0"></iframe>
             {/* <iframe name="embed_readwrite" src="https://pad.airview.airwalkconsulting.io/p/5072ba3e-90c2-409b-908b-9a89f58f85c8?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false" width="100%" height="600" frameborder="0"></iframe> */}
           </Grid>
         )}
-        <Grid item xs={12} md={isEditorVisible ? 6 : 12}>
+        <Grid item xs={12} md={editMode ? 6 : 12}>
 
           <Content />
 

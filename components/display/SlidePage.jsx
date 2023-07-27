@@ -1,16 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import GlobalStyles from '@mui/material/GlobalStyles';
 // import Slide from "../components/Slide";
 import { Slide } from 'airview-mdx';
 import PresentationMode from "@/components/presentations/PresentationMode";
 import Swipeable from "@/components/presentations/Swipeable";
-import useEventListener from "../hooks/useEventListener";
-import { useTotalPages } from "../context/TotalPagesContext";
-import { useMode } from "../context/ModeContext";
-import { useCurrentSlide } from "../context/CurrentSlideContext";
-import { Storage } from "../hooks/useStorage";
-import { MODES } from "../constants/modes";
+import useEventListener from "../../hooks/useEventListener";
+import { useTotalPages } from "../../context/TotalPagesContext";
+import { useMode } from "../../context/ModeContext";
+import { useCurrentSlide } from "../../context/CurrentSlideContext";
+import { Storage } from "../../hooks/useStorage";
+import { MODES } from "../../constants/modes";
+import { Box } from '@mui/material';
 
 import dynamic from 'next/dynamic'
 
@@ -58,20 +59,23 @@ const globalStyles = `
 
 export default dynamic(() => Promise.resolve(SlidePage), {
   ssr: false,
-}); 
+});
 
 function SlidePage({ children, next }) {
 
   // console.log('SlidePage:children: ', children)
 
   const {
-    currentSlide,
+    // currentSlide,
     setSlide,
     steps,
     currentStep,
     setCurrentStep,
     clearSteps,
   } = useCurrentSlide();
+
+  const [pageCount, setPageCount] = useState(0)
+  const [currentSlide, setCurrentSlide] = useState(0)
   const router = useRouter();
   const totalPages = useTotalPages();
   const { mode, setMode } = useMode();
@@ -87,68 +91,74 @@ function SlidePage({ children, next }) {
       if (keyCode === PRESENTER) {
         if (mode === MODES.SPEAKER) {
           setMode(MODES.SLIDESHOW);
-          router.push(
-            router.pathname,
-            `${router.asPath.split("?")[0]}?format=ppt&mode=${MODES.SLIDESHOW}#${currentSlide}`,
-            { shallow: true }
-          );
+          // router.push(
+          //   router.pathname,
+          //   `${router.asPath.split("?")[0]}?format=ppt&mode=${MODES.SLIDESHOW}#${currentSlide}`,
+          //   { shallow: true }
+          // );
         } else {
           setMode(MODES.SPEAKER);
-          router.push(
-            router.pathname,
-            `${router.asPath.split("?")[0]}?format=ppt&mode=${MODES.SPEAKER}#${currentSlide}`,
-            { shallow: true }
-          );
+          // router.push(
+          //   router.pathname,
+          //   `${router.asPath.split("?")[0]}?format=ppt&mode=${MODES.SPEAKER}#${currentSlide}`,
+          //   { shallow: true }
+          // );
         }
         return false;
       }
     }
 
     // Handle Previous page
-    if (keyCode === PREV && currentSlide === 0) {
-      if (router.query && router.pathname) {
-        if (router.pathname > 1) {
-          router.push(`${parseInt(router.pathname, 10) - 1}?mode=${mode}#999`);
-        }
-      }
+    if (keyCode === PREV) {
+      console.log('prev')
+      setCurrentSlide(currentSlide - 1)
+
+      // if (router.query && router.pathname) {
+      //   if (router.pathname > 1) {
+      //     router.push(`${parseInt(router.pathname, 10) - 1}?mode=${mode}#999`);
+      //   }
+      // }
       return false;
     }
 
     // Handle next page
-    if (NEXT.indexOf(keyCode) !== -1 && currentSlide === slideCount) {
-      if (router.query && router.pathname && next) {
-        router.push(`${next}?format=ppt&mode=${mode}`);
-      }
+    if (NEXT.indexOf(keyCode) !== -1) {
+      setCurrentSlide(currentSlide + 1)
+      console.log('next', currentSlide)
+
+      // if (router.query && router.pathname && next) {
+      //   router.push(`${next}?format=ppt&mode=${mode}`);
+      // }
       return false;
     }
 
-    // Handle slide changes
-    if (NEXT.indexOf(keyCode) !== -1) {
-      // Do we have Steps inside the slide? Navigate those first
-      if (steps.length > 0 && currentStep < steps.length - 1)
-        return setCurrentStep((prevStep) => prevStep + 1);
+    // // Handle slide changes
+    // if (NEXT.indexOf(keyCode) !== -1) {
+    //   // Do we have Steps inside the slide? Navigate those first
+    //   if (steps.length > 0 && currentStep < steps.length - 1)
+    //     return setCurrentStep((prevStep) => prevStep + 1);
 
-      // Otherwise go to next slide
+    //   // Otherwise go to next slide
 
-      setSlide((prevState) => {
-        return prevState + 1;
-      });
-      clearSteps();
-    } else if (keyCode === PREV) {
-      // Do we have Steps inside the slide? Navigate those first
-      if (steps.length > 0 && currentStep !== 0)
-        return setCurrentStep((prevStep) => prevStep - 1);
+    //   setSlide((prevState) => {
+    //     return prevState + 1;
+    //   });
+    //   clearSteps();
+    // } else if (keyCode === PREV) {
+    //   // Do we have Steps inside the slide? Navigate those first
+    //   if (steps.length > 0 && currentStep !== 0)
+    //     return setCurrentStep((prevStep) => prevStep - 1);
 
-      // Otherwise go to prev slide
-      setSlide((prevState) => {
-        // router.push(
-        //   `${router.pathname}`,
-        //   `${router.pathname}?mode=${mode}#${prevState - 1}`
-        // );
-        return prevState - 1;
-      });
-      clearSteps();
-    }
+    //   // Otherwise go to prev slide
+    //   setSlide((prevState) => {
+    //     // router.push(
+    //     //   `${router.pathname}`,
+    //     //   `${router.pathname}?mode=${mode}#${prevState - 1}`
+    //     // );
+    //     return prevState - 1;
+    //   });
+    //   clearSteps();
+    // }
   };
 
   // useEffect(() => {
@@ -190,7 +200,7 @@ function SlidePage({ children, next }) {
     return generatedNotes;
   };
 
-  const renderSlide = () => {
+  function renderSlides() {
     let generatedSlides = [];
     let generatorCount = 0;
 
@@ -198,67 +208,74 @@ function SlidePage({ children, next }) {
     React.Children.map(children, (child) => {
       // Check for <hr> element to separate slides
 
-      // console.log('Child: ', child)
+      console.log('Child: ', child)
 
       const childType = child && child.props && (child.type || []);
       // console.log(childType)
       if (childType && childType === "hr") {
         generatorCount += 1;
         return;
-      }    
-      
+      }
+
       if (!Array.isArray(generatedSlides[generatorCount])) {
         generatedSlides[generatorCount] = [];
       }
 
       if (typeof childType !== 'function') {
-        
+
         // Add slide content to current generated slide
-        
+
         if (!Array.isArray(generatedSlides[generatorCount])) {
           generatedSlides[generatorCount] = [];
         }
         generatedSlides[generatorCount].push(child);
 
         // Check if it's a SpeakerNotes component
-      } else if ( childType.name !== 'SpeakerNotes') {
+      } else if (childType.name !== 'SpeakerNotes') {
         // Add slide content to current generated slide
         generatedSlides[generatorCount].push(child);
       }
-      
+
     });
 
     // Get total slide count
     slideCount = generatorCount;
-    // Return current slide
-    if (currentSlide === 999) {
-      router.push(
-        router.pathname,
-        `${router.pathname}?mode=${mode}#${slideCount}`,
-        { shallow: true }
-      );
-      setSlide(slideCount);
-    }
+
+    // setPageCount(generatorCount);
+    // // Return current slide
+    // if (currentSlide === 999) {
+    //   router.push(
+    //     router.pathname,
+    //     `${router.pathname}?mode=${mode}#${slideCount}`,
+    //     { shallow: true }
+    //   );
+    //   setSlide(slideCount);
+    // }
     // // // console.log('generatedSlides[currentSlide]: ', generatedSlides[currentSlide])
-    return <Slide>{generatedSlides[currentSlide]}</Slide>;
+    return generatedSlides;
+
+    // return <Slide>{generatedSlides[currentSlide]}</Slide>;
   };
-  
-  const pageSize = { width:1920, height:1080}
+
+
+  const slides = renderSlides();
+  const pageSize = { width: 1920, height: 1080 }
   const ratio = pageSize.width / pageSize.height
   return (
-    
-    <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{maxWidth: '100vw', maxHeight: '100%'}}>
-    <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
-      <GlobalStyles styles={globalStyles} />
-      <Storage />
-      <PresentationMode mode={mode} notes={slideNotes()} currentSlide={currentSlide} >
+
+    <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{ maxWidth: '100%', maxHeight: '100%' }}>
+      <Swipeable onSwipedLeft={swipeLeft} onSwipedRight={swipeRight}>
+        <GlobalStyles styles={globalStyles} />
+        <Storage />
+        {/* <PresentationMode mode={mode} notes={slideNotes()} currentSlide={currentSlide} > */}
         {/* <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}> */}
-        <div id="slide">
-          {renderSlide()}
-        </div>
-      </PresentationMode>
-    </Swipeable>
+        {/* <Box id="slide" sx={{background: 'white', height: pageSize.height, width: pageSize.width, px:'25px'}}> */}
+        <Box id="slide">
+          <Slide>{slides[currentSlide]}</Slide>
+        </Box>
+        {/* </PresentationMode> */}
+      </Swipeable>
     </Zoom>
-   
+
   );
 }

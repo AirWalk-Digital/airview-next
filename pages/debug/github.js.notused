@@ -39,7 +39,7 @@ export default function Home() {
         const owner = 'airwalk-digital';
         const branch = 'main'; // Specify the desired branch here
         const path = '/'; // Specify the desired path here
-        const response = await fetch(`/api/content/${owner}/${repo}?branch=${branch}&path=${path}`);
+        const response = await fetch(`/api/content/github/${owner}/${repo}?branch=${branch}&path=${path}`);
         if (response.ok) {
           const data = response.json();
           setFiles(data.files);
@@ -61,7 +61,7 @@ export default function Home() {
         const owner = 'airwalk-digital';
         const branch = 'main'; // Specify the desired branch here
         const path = '/'; // Specify the desired path here
-        const response = await fetch(`/api/content/airwalk-digital/airview-demo-content/?path=README.md`);
+        const response = await fetch(`/api/content/github/airwalk-digital/airview-demo-content/?path=README.md`);
         if (response.ok) {
           const data = await response.json();
           setContent(data.data);
