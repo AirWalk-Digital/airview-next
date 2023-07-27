@@ -48,7 +48,7 @@ function Pad({ endpoint, padID, title }) {
             Etherpad
           </Typography>
           <Typography variant="p" sx={{ fontSize: "1rem" }}>
-            {pad}
+            {title}
           </Typography>
         </CardContent>
         <CardActions>
@@ -123,7 +123,7 @@ export default function Home() {
             pb: 6,
           }}
         >
-          <Container maxWidth="m" sx={{mt: '1%'}}>
+          <Container maxWidth="m" sx={{ mt: "1%" }}>
             <Typography
               component="h1"
               variant="h2"
@@ -185,24 +185,23 @@ export default function Home() {
   );
 }
 
-
 function PadView(pads) {
   const [environment, setEnvironment] = useState("");
 
   useEffect(() => {
-    const fetchData = async () =>{
+    const fetchData = async () => {
       const resp = await fetch("/api/environment");
       const data = await resp.json();
-      console.log(data)
-      setEnvironment(data)
-    }
-    fetchData()
-  },[]);
+      console.log(data);
+      setEnvironment(data);
+    };
+    fetchData();
+  }, []);
 
   // console.log('PadView:pads: ', pads)
   const collections = Object.entries(pads.pads).map(([key, value]) => {
     return {
-      [key]: Object.values(value)
+      [key]: Object.values(value),
     };
   });
 
@@ -214,9 +213,12 @@ function PadView(pads) {
         <div key={category}>
           <h2>{capitalizeFirstLetter(category)}</h2>
           <Grid container spacing={4}>
-
             {elements.map((element, index) => (
-              <Pad endpoint={environment.ETHERPAD_URL} padID={element.padID} title={element.title} />
+              <Pad
+                endpoint={environment.ETHERPAD_URL}
+                padID={element.padID}
+                title={element.title}
+              />
             ))}
           </Grid>
         </div>
