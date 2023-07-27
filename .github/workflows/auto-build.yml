@@ -7,7 +7,13 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest
+    # container: ubuntu
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -34,6 +40,7 @@ jobs:
         with:
           context: .
           # platforms: linux/amd64,linux/arm64
+          container: redis # Use the Redis service container
           push: false
           load: true
           tags: airwalk-digital/airview-mdx-deck

@@ -8,13 +8,15 @@ export default async function handler(req, res) {
   });
   let pad = null;
   try {
-    let resp = (await client.get('getText', {
-      params: {
-        padID: req.query.pad,
-        rev: req.query.rev,
-      }
-    }))
-    pad = resp.data.data?.text.text
+    let params = { padID: req.query.pad };
+
+    if(req.query.rev) {
+        params.rev = req.query.rev;
+    }
+    
+    let resp = await client.get('getText', { params });
+    pad = resp.data.data?.text
+    // // console.log(`API:/etherpad/pad:[${req.query.pad}]: ${pad}`);
     res.status(200).json({ content: pad })
   } catch (error) {
     // console.log(error)

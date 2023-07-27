@@ -18,15 +18,23 @@
 
 
 .pagedjs_page {
-  background-color: white;
-  box-shadow: 0px 28px 30px 0 rgba(0, 0, 0, 0.1);
-  margin: 0in;
+  background-color: rgb(219, 219, 219);
+  box-shadow: 10px 12px 30px 0 rgba(0, 0, 0, 0.1);
+  margin: 0.5in;
   flex-shrink: 0;
   flex-grow: 0;
   margin-top: 10mm;
   margin-left: auto;
   margin-right: auto;
 }
+
+@media print {
+  .pagedjs_page {
+    box-shadow: none;
+    margin-top: 0;
+  }
+}
+
 
 
 /* .pagedjs_ .pagedjs_page:last-of-type {
@@ -62,7 +70,7 @@
   /* background: url(./backgrounds/image17-bg.jpeg) no-repeat; */
   /* background: url(/backgrounds/cover.jpg) no-repeat; */
   /* background-size: cover; */
-  margin: 0;
+  /* margin: 0; */
 }
 
 @page {
@@ -71,8 +79,8 @@
   background-size: 100px;
   padding-top: 0px;
   padding-bottom: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
   z-index: -1000;
   size: A4;
   margin-left: 25px;

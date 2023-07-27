@@ -1,21 +1,12 @@
-const glob = require('glob')
+import { getAllFiles } from '../../../backend/filesystem'
 
 export default async function handler(req, res) {
-
   try {
-
-    const targetDir = path.join(process.cwd(), 'markdown')
-
-    glob(targetDir + '/**/*.md*', (err, files) => {
-      if (err) {
-        // console.log('Error', err)
-      } else {
-        // console.log(files)
-        res.status(200).json({ files: files, })
-      }
-    })
-
+    const { filePath, globmatcher } = req.query
+    const files = await getAllFiles(filePath, globmatcher)
+    res.status(200).json({ files })
   } catch (error) {
-    // console.log(error)
+    console.error(error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
