@@ -79,7 +79,7 @@ export function ContentPage({
   const Content = () => {
     if (context && context.file && context.file.endsWith('.etherpad')) {
       return <Etherpad file={context.file} frontMatterCallback={frontMatterCallback} editMode={editMode} />
-    } else if (pageContent.content && pageContent.frontmatter) {
+    } else if (context && pageContent.content && pageContent.frontmatter) {
       const Page = pageContent.content;
       return <Page />;
     } else {
@@ -163,12 +163,13 @@ export function ContentPage({
             }
 
             <AsideAndMainContainer>
-              <Main sx={{}}>
+              {/* <Main sx={{}}> */}
+              <Main>
                 <MDXProvider components={mdComponents(context)}>
                   <><Content /></>
                 </MDXProvider>
               </Main>
-              <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
+              <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '' }}>
 
                 <ContentMenu
                   content={relatedContent}
