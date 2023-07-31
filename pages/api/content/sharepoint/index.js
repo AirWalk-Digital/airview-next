@@ -11,8 +11,8 @@ import mime from 'mime-types';
     // configure your node options (only once in your application)
     let buffer = process.env.SHAREPOINT_PRIVATE_KEY;
     if (!buffer) {
-        const privateKeyPath = process.env.SHAREPOINT_PRIVATE_KEY_FILE;
-        buffer = readFileSync(privateKeyPath);
+        const privateSharepointKeyPath = process.env.SHAREPOINT_PRIVATE_KEY_FILE;
+        buffer = readFileSync(privateSharepointKeyPath);
     }
 
     const config = {
