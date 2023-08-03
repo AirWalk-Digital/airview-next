@@ -46,6 +46,8 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 function MdxImage({ props, baseContext }) {
+  // console.debug('mdxProvider:MdxImage:baseContext: ', baseContext)
+
   let src = props.src;
 
   if (isSharePointUrl(src)) {
@@ -73,7 +75,7 @@ function MdxImage({ props, baseContext }) {
       }
 
       src = '/api/content/github/' + baseContext.owner + '/' + baseContext.repo + '?path=' + src + '&branch=' + baseContext.branch;
-      console.debug('mdxProvider:MdxImage:src: ', src)
+      // console.debug('mdxProvider:MdxImage:src: ', src)
 
     } else {
       src = '/image-not-found.png';
