@@ -37,7 +37,7 @@ export async function getServerSideProps(context) {
       siteConfig.content.providers.branch,
       file
     );
-    const matterData = matter(content, { excerpt: false }).data;
+    const matterData = (() => { try { return matter(content, { excerpt: false }).data; } catch (error) { return {}; } })();
     return { file: file, frontmatter: matterData };
   });
   const servicesContent = await services.map(async (file) => {
@@ -47,7 +47,7 @@ export async function getServerSideProps(context) {
       siteConfig.content.providers.branch,
       file
     );
-    const matterData = matter(content, { excerpt: false }).data;
+    const matterData = (() => { try { return matter(content, { excerpt: false }).data; } catch (error) { return {}; } })();
     return { file: file, frontmatter: matterData };
   });
 
