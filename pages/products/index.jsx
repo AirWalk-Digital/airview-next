@@ -2,10 +2,12 @@ import React from "react";
 import { siteConfig } from "../../site.config.js";
 import { IndexView } from "@/components/content";
 import { getMenuStructure, groupMenu, getFrontMatter } from "@/lib/content";
+import { HeaderMinimalMenu } from '@/components/dashboard/Menus'
+
 
 export default function Page({ tiles, menuStructure }) {
   return (
-    <IndexView menuStructure={menuStructure} title="Products" tiles={tiles} />
+    <IndexView menuStructure={menuStructure} title="Products" tiles={tiles} menuComponent={HeaderMinimalMenu} />
   );
 }
 
