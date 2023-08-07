@@ -80,7 +80,17 @@ export async function getServerSideProps(context) {
       siteConfig.content.providers.branch,
       file
     );
-    const matterData = matter(content, { excerpt: false }).data;
+    let matterData;
+    try {
+        matterData = matter(content, { excerpt: false }).data;
+    } catch (error) {
+        console.log("Error Loading YAML: ", error)
+        console.log("Check source document formatting for file", file)
+        matterData = {
+            title: "Error Loading YAML file",
+            file_path: file
+        };
+    }
     return { file: file, frontmatter: matterData };
   });
   const servicesContent = await services.map(async (file) => {
@@ -90,7 +100,17 @@ export async function getServerSideProps(context) {
       siteConfig.content.providers.branch,
       file
     );
-    const matterData = matter(content, { excerpt: false }).data;
+    let matterData;
+    try {
+        matterData = matter(content, { excerpt: false }).data;
+    } catch (error) {
+        console.log("Error Loading YAML: ", error)
+        console.log("Check source document formatting for file", file)
+        matterData = {
+            title: "Error Loading YAML file",
+            file_path: file
+        };
+    }
     return {
       file: file.replace("services/", "/services/"),
       frontmatter: matterData,
