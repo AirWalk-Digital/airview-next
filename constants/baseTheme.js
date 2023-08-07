@@ -125,6 +125,7 @@ const baseTheme = deepmerge(
         fontFamily: 'Roboto Mono',
         lineHeight: 1,
         overflow: 'visible',
+        whiteSpace: 'pre-wrap'
 
       },
       p: {

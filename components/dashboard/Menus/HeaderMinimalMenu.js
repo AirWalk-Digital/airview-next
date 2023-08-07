@@ -4,6 +4,9 @@ import Link from '@mui/material/Link';
 
 
 export function HeaderMinimalMenu({ menu, open, top, drawerWidth }) {
+
+  // console.log('HeaderMinimalMenu:menu: ', menu)
+
   return (
     <NavigationDrawer
       open={open}

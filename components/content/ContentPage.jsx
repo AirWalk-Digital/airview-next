@@ -20,6 +20,7 @@ import { TableOfContents } from '@/components/content';
 import { ContentWrapperContext } from '@/components/content';
 import { Etherpad } from '@/components/etherpad';
 import deepEqual from 'deep-equal';
+import path from 'path';
 
 export function ContentPage({
   pageContent,
@@ -30,10 +31,12 @@ export function ContentPage({
   handlePageReset,
   collection,
   context,
+  menuComponent
 }) {
 
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
-  
+  const MenuComponent = menuComponent;
+
   const isEmptyObject = (obj) => {
     return Object.keys(obj).length === 0;
   };
@@ -112,12 +115,12 @@ export function ContentPage({
             handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
             collection={collection}
           />
-          <BasicLeftMenu
-            menu={primary}
+          {menuStructure && <MenuComponent
+            menu={menuStructure.primary}
             open={menuOpen}
             top={topBarHeight}
             drawerWidth={navDrawerWidth}
-          />
+          />}
           <div
             style={{
               marginTop: topBarHeight,
@@ -225,8 +228,11 @@ export function ContentPage({
 
 
 function ContentMenu({ content, file, handleContentChange, handlePageReset }) {
-  let directory = file?.includes("/") ? file.split("/")[1] : file;
-  // // console.log('ChaptersMenu:File ', file)
+  // let directory = file?.includes("/") ? file.split("/")[1] : file;
+
+  let directory = path.dirname(file);
+
+  // console.log('ChaptersMenu:File ', file)
   let chaptersMenu = []
   if (content && content[directory]) {
     if (content[directory].chapters) {

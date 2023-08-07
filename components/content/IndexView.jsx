@@ -18,7 +18,7 @@ export function IndexView({
   menuComponent
 }) {
 
-  // console.log('IndexView:title: ', title)
+  console.log('IndexView:menuStructure: ', menuStructure)
 
   const MenuComponent = menuComponent;
 
@@ -35,12 +35,12 @@ export function IndexView({
         menu={true}
         topBarHeight={topBarHeight} />
 
-      <MenuComponent
-        menu={menuStructure}
+      {menuStructure && <MenuComponent
+        menu={menuStructure.primary}
         open={menuOpen}
         top={topBarHeight}
         drawerWidth={navDrawerWidth}
-      />
+      />}
       <div
         style={{
           marginTop: topBarHeight,
