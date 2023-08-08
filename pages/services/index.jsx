@@ -17,22 +17,19 @@ export default function Page({ tiles, menuStructure: initialMenuStructure, colle
 
 
 export async function getServerSideProps(context) {
-  // export async function getServerSideProps(context) {
-  // construct menu structure
-
+ 
   const tiles = await getFrontMatter(siteConfig.content.providers);
   const menuPromise = getMenuStructure(
     siteConfig,
     siteConfig.content.providers
   );
   const menuStructure = await menuPromise;
-  const groupedMenu = groupMenu(menuStructure);
 
   return {
     props: {
-      menuStructure: groupedMenu,
+      menuStructure: menuStructure,
       tiles: tiles,
-      collection: siteConfig.content.providers
+      collection: siteConfig.content.providers,
     },
   };
 }

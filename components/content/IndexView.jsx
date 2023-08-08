@@ -35,7 +35,7 @@ export function IndexView({
         menu={true}
         topBarHeight={topBarHeight} />
 
-      {menuStructure && <MenuComponent
+      {menuStructure && menuStructure.primary && <MenuComponent
         menu={menuStructure.primary}
         open={menuOpen}
         top={topBarHeight}

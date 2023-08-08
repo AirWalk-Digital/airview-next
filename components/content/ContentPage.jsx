@@ -31,11 +31,15 @@ export function ContentPage({
   handlePageReset,
   collection,
   context,
-  menuComponent
+  menuComponent,
+  headerComponent = null,
+  sideComponent = null
 }) {
 
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
   const MenuComponent = menuComponent;
+  const HeaderComponent = headerComponent;
+  const SideComponent = sideComponent;
 
   const isEmptyObject = (obj) => {
     return Object.keys(obj).length === 0;
@@ -115,6 +119,9 @@ export function ContentPage({
             handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
             collection={collection}
           />
+
+
+
           {menuStructure && <MenuComponent
             menu={menuStructure.primary}
             open={menuOpen}
@@ -129,8 +136,13 @@ export function ContentPage({
 
             }}
           >
-            {/* {frontmatter  && <ServicesHeader frontmatter={frontmatter} controlCoverage={controlCoverage} />} */}
-            <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
+            {
+              headerComponent ? (
+                <HeaderComponent frontmatter={frontmatter} />
+              ) : (
+                <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
+              )
+            }
             {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
               <Grid xs="auto" item>
                 <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
@@ -176,13 +188,14 @@ export function ContentPage({
 
                 <ContentMenu
                   content={relatedContent}
-                  // chapters={chapters}
+                  collection={collection}
                   // knowledge={knowledge}
                   // designs={designs}
                   handleContentChange={handleContentChange}
                   handlePageReset={handlePageReset}
                   file={file}
                 />
+                { sideComponent && <SideComponent /> }
                 {frontmatter?.tableOfContents && <TableOfContents tableOfContents={frontmatter.tableOfContents} />}
 
                 {/* <ButtonMenu
@@ -227,39 +240,55 @@ export function ContentPage({
 }
 
 
-function ContentMenu({ content, file, handleContentChange, handlePageReset }) {
+function ContentMenu({ content, file, handleContentChange, handlePageReset, collection }) {
   // let directory = file?.includes("/") ? file.split("/")[1] : file;
 
   let directory = path.dirname(file);
 
-  // console.log('ChaptersMenu:File ', file)
+  // console.log('ContentMenu:directory ', directory)
+  // console.log('ContentMenu:content ', content)
+
   let chaptersMenu = []
   if (content && content[directory]) {
-    if (content[directory].chapters) {
-      chaptersMenu.push(
-        {
-          groupTitle: "Chapters",
-          links: content[directory].chapters
-        }
-      )
+    for (let collectionItem of collection.collections) {
+      if (content[directory][collectionItem]) {
+        chaptersMenu.push(
+          {
+            groupTitle: collectionItem.path,
+            links: content[directory][collectionItem]
+          }
+        )
+      } 
     }
-    if (content[directory].knowledge) {
-      chaptersMenu.push(
-        {
-          groupTitle: "Knowledge",
-          links: content[directory].knowledge
+  
+    
 
-        }
-      )
-    }
-    if (content[directory].designs) {
-      chaptersMenu.push(
-        {
-          groupTitle: "Designs",
-          links: content[directory].designs
-        }
-      )
-    }
+
+    // if (content[directory].chapters) {
+    //   chaptersMenu.push(
+    //     {
+    //       groupTitle: "Chapters",
+    //       links: content[directory].chapters
+    //     }
+    //   )
+    // }
+    // if (content[directory].knowledge) {
+    //   chaptersMenu.push(
+    //     {
+    //       groupTitle: "Knowledge",
+    //       links: content[directory].knowledge
+
+    //     }
+    //   )
+    // }
+    // if (content[directory].designs) {
+    //   chaptersMenu.push(
+    //     {
+    //       groupTitle: "Designs",
+    //       links: content[directory].designs
+    //     }
+    //   )
+    // }
   }
   if (chaptersMenu) {
     // return (null)

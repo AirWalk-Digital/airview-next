@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { siteConfig } from "../../site.config.js";
 import { mdComponents } from "../../constants/mdxProvider";
-import * as matter from "gray-matter";
 import { parse } from "toml";
 import { MDXProvider } from "@mdx-js/react";
 import { getAllFiles, getFileContent } from "@/lib/github";
-import { useMDX } from "@/lib/content/mdx";
+import { usePageContent } from "@/lib/hooks";
+import { getMenuStructure } from "@/lib/content";
+import { ContentPage } from "@/components/content";
+import { FullHeaderMenu, ControlsMenu } from '@/components/dashboard/Menus'
+import { ServicesHeader } from '@/components/dashboard/Headers'
+
 
 import { ServicesView } from "@/components/services";
 
@@ -13,120 +17,67 @@ import { FullScreenSpinner } from "@/components/dashboard/index.js";
 import { dirname, basename } from "path";
 // import { getMenuStructureProviderServices } from '@/lib/content/menus';
 
-export default function Page({ providers, services, content, file, controls }) {
-  const [pageContent, setContent] = useState({
-    content: undefined,
-    frontmatter: undefined,
-  });
+export default function Page({
+  content: initialContent,
+  file: initialFile,
+  menuStructure: initialMenuStructure,
+  collection,
+  controls
+}) {
 
-  useEffect(() => {
-    let format;
-    if (file && file.endsWith(".md")) {
-      format = "md";
-    } else {
-      format = "mdx";
-    }
-    const { mdxContent, frontmatter } = useMDX(content, format);
-    setContent({ content: mdxContent, frontmatter: frontmatter });
-  }, [content]);
+  const {
+    pageContent,
+    contentSource,
+    menuStructure,
+    handleContentChange,
+    handlePageReset,
+    context,
+    content,
+  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
 
-  const context = { file: file, ...siteConfig.content.services };
+  return (
+    <ContentPage
+      pageContent={pageContent}
+      file={initialFile}
+      content={content}
+      menuStructure={menuStructure}
+      handleContentChange={handleContentChange}
+      handlePageReset={handlePageReset}
+      collection={collection}
+      context={context}
+      menuComponent={FullHeaderMenu}
+      contentSource={contentSource}
+      headerComponent={(props) => <ServicesHeader {...props} extraData={controls} />}
+      sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
+    />
 
-  if (pageContent.content && pageContent.frontmatter) {
-    const Content = pageContent.content;
-    return (
-      <ServicesView
-        services={services}
-        providers={providers}
-        controls={controls}
-        frontmatter={pageContent.frontmatter}
-      >
-        <MDXProvider components={mdComponents(context)}>
-          <Content />
-        </MDXProvider>
-      </ServicesView>
-    );
-  } else {
-    return <FullScreenSpinner />;
-  }
+  )
+
 }
 
 export async function getServerSideProps(context) {
   // // // console.log(context.params.service)
 
-  // construct menu structure
-  const providers = await getAllFiles(
-    siteConfig.content.providers.owner,
-    siteConfig.content.providers.repo,
-    siteConfig.content.providers.branch,
-    siteConfig.content.providers.path,
-    true,
-    ".md*"
-  );
-
-  const services = await getAllFiles(
-    siteConfig.content.services.owner,
-    siteConfig.content.services.repo,
-    siteConfig.content.services.branch,
-    siteConfig.content.services.path,
-    true,
-    ".md*"
-  );
-  // build page contents (Providers)
-  const providersContent = await providers.map(async (file) => {
-    const content = await getFileContent(
-      siteConfig.content.providers.owner,
-      siteConfig.content.providers.repo,
-      siteConfig.content.providers.branch,
-      file
-    );
-    let matterData;
-    try {
-        matterData = matter(content, { excerpt: false }).data;
-    } catch (error) {
-        console.log("Error Loading YAML: ", error)
-        console.log("Check source document formatting for file", file)
-        matterData = {
-            title: "Error Loading YAML file",
-            file_path: file
-        };
-    }
-    return { file: file, frontmatter: matterData };
-  });
-  const servicesContent = await services.map(async (file) => {
-    const content = await getFileContent(
-      siteConfig.content.providers.owner,
-      siteConfig.content.providers.repo,
-      siteConfig.content.providers.branch,
-      file
-    );
-    let matterData;
-    try {
-        matterData = matter(content, { excerpt: false }).data;
-    } catch (error) {
-        console.log("Error Loading YAML: ", error)
-        console.log("Check source document formatting for file", file)
-        matterData = {
-            title: "Error Loading YAML file",
-            file_path: file
-        };
-    }
-    return {
-      file: file.replace("services/", "/services/"),
-      frontmatter: matterData,
-    };
-  });
-
   const file = "services/" + context.params.service.join("/");
-  const pageContent = await getFileContent(
-    siteConfig.content.services.owner,
-    siteConfig.content.services.repo,
-    siteConfig.content.services.branch,
-    file
-  );
+  let pageContent = "";
+  if (!file.endsWith(".etherpad")) {
+    pageContent = await getFileContent(
+      siteConfig.content.services.owner,
+      siteConfig.content.services.repo,
+      siteConfig.content.services.branch,
+      file
+    );
+  }
+
   const pageContentText = pageContent
     ? Buffer.from(pageContent).toString("utf-8")
     : "";
+
+  const menuPromise = getMenuStructure(
+    siteConfig,
+    siteConfig.content.providers
+  );
+  const menuStructure = await menuPromise;
 
   // controls
   const controlLocation =
@@ -153,10 +104,10 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      providers: await Promise.all(providersContent),
-      services: await Promise.all(servicesContent),
       content: pageContentText || null,
       file: file,
+      menuStructure: menuStructure || null,
+      collection: siteConfig.content.services,
       controls: await Promise.all(controlContent),
     },
   };
