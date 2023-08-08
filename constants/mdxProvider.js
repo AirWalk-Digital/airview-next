@@ -229,7 +229,9 @@ export const mdComponents = (baseContext) => ({
         className={className}
         language={language}
         style={okaidia}
-        customStyle={{ overflow: 'clip', fontSize: '0.75rem' }}
+        // customStyle={{ overflow: 'clip', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}
+        customStyle={{ fontSize: '0.75rem' }}
+        wrapLongLines={true}
         {...props}
       />
     );

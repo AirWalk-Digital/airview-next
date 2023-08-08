@@ -1,80 +1,35 @@
 import React from "react";
 import { siteConfig } from "../../site.config.js";
-import * as matter from "gray-matter";
-import { getAllFiles, getFileContent } from "@/lib/github";
-import { IndexView } from "@/components/services";
+import { IndexView } from "@/components/content";
+import { getMenuStructure, groupMenu, getFrontMatter } from "@/lib/content";
+import { HeaderMinimalMenu } from '@/components/dashboard/Menus'
+import { usePageMenu } from "@/lib/hooks";
 
-export default function Page({ providers, services }) {
-  return <IndexView services={services} providers={providers} />;
+
+export default function Page({ tiles, menuStructure: initialMenuStructure, collection }) {
+
+  const { menuStructure  } = usePageMenu(initialMenuStructure, collection);
+
+  return (
+    <IndexView menuStructure={menuStructure} title="Providers and Services" tiles={tiles} menuComponent={HeaderMinimalMenu} />
+  );
 }
 
+
 export async function getServerSideProps(context) {
-  // construct menu structure
-
-  const providers = await getAllFiles(
-    siteConfig.content.providers.owner,
-    siteConfig.content.providers.repo,
-    siteConfig.content.providers.branch,
-    siteConfig.content.providers.path,
-    true,
-    ".md*"
+ 
+  const tiles = await getFrontMatter(siteConfig.content.providers);
+  const menuPromise = getMenuStructure(
+    siteConfig,
+    siteConfig.content.providers
   );
-
-  const services = await getAllFiles(
-    siteConfig.content.services.owner,
-    siteConfig.content.services.repo,
-    siteConfig.content.services.branch,
-    siteConfig.content.services.path,
-    true,
-    ".md*"
-  );
-
-  // build page contents (Providers)
-  const providersContent = await providers.map(async (file) => {
-    const content = await getFileContent(
-      siteConfig.content.providers.owner,
-      siteConfig.content.providers.repo,
-      siteConfig.content.providers.branch,
-      file
-    );
-    let matterData;
-    try {
-        matterData = matter(content, { excerpt: false }).data;
-    } catch (error) {
-        console.log("Error Loading YAML: ", error)
-        console.log("Check source document formatting for file", file)
-        matterData = {
-            title: "Error Loading YAML file",
-            file_path: file
-        };
-    }
-    return { file: file, frontmatter: matterData };
-  });
-  const servicesContent = await services.map(async (file) => {
-    const content = await getFileContent(
-      siteConfig.content.providers.owner,
-      siteConfig.content.providers.repo,
-      siteConfig.content.providers.branch,
-      file
-    );
-    let matterData;
-    try {
-        matterData = matter(content, { excerpt: false }).data;
-    } catch (error) {
-        console.log("Error Loading YAML: ", error)
-        console.log("Check source document formatting for file", file)
-        matterData = {
-            title: "Error Loading YAML file",
-            file_path: file
-        };
-    }
-    return { file: file, frontmatter: matterData };
-  });
+  const menuStructure = await menuPromise;
 
   return {
     props: {
-      providers: await Promise.all(providersContent),
-      services: await Promise.all(servicesContent),
+      menuStructure: menuStructure,
+      tiles: tiles,
+      collection: siteConfig.content.providers,
     },
   };
 }
