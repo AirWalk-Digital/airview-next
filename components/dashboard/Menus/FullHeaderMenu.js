@@ -21,7 +21,7 @@ function convertToObjectArray(inputObject) {
 
 export function FullHeaderMenu({ menu, open, top, drawerWidth }) {
 
-  console.log('FullHeaderMenu:menu: ', menu)
+  // console.log('FullHeaderMenu:menu: ', menu)
 
   // [{ links: x.children }]
 

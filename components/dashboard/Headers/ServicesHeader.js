@@ -33,7 +33,7 @@ export function ServicesHeader({ frontmatter, extraData }) {
     {/* <Box sx={{ display: "flex" }}>{children}</Box> */}
   
       {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
-      <Grid container spacing={2} alignItems="center" sx={{ mb: '3%' }} component="servicesHeader">
+      <Grid container spacing={2} alignItems="center" sx={{ mb: '3%' }}>
         <Grid item xs={8}>
           <Typography variant="h1" component="h1">{frontmatter.title}</Typography>
           <Stack direction="row" spacing={1}>

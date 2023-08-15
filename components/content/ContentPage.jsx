@@ -188,7 +188,7 @@ export function ContentPage({
 
                 <ContentMenu
                   content={relatedContent}
-                  collection={collection}
+                  context={context}
                   // knowledge={knowledge}
                   // designs={designs}
                   handleContentChange={handleContentChange}
@@ -240,17 +240,17 @@ export function ContentPage({
 }
 
 
-function ContentMenu({ content, file, handleContentChange, handlePageReset, collection }) {
+function ContentMenu({ content, file, handleContentChange, handlePageReset, context }) {
   // let directory = file?.includes("/") ? file.split("/")[1] : file;
 
   let directory = path.dirname(file);
 
-  // console.log('ContentMenu:directory ', directory)
-  // console.log('ContentMenu:content ', content)
+  console.log('ContentMenu:directory ', directory)
+  console.log('ContentMenu:collection ', context)
 
   let chaptersMenu = []
   if (content && content[directory]) {
-    for (let collectionItem of collection.collections) {
+    for (let collectionItem of context.collections) {
       if (content[directory][collectionItem]) {
         chaptersMenu.push(
           {
