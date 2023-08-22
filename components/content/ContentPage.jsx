@@ -245,8 +245,8 @@ function ContentMenu({ content, file, handleContentChange, handlePageReset, cont
 
   let directory = path.dirname(file);
 
-  console.log('ContentMenu:directory ', directory)
-  console.log('ContentMenu:collection ', context)
+  // console.log('ContentMenu:directory ', directory)
+  // console.log('ContentMenu:collection ', context)
 
   let chaptersMenu = []
   if (content && content[directory]) {
