@@ -1,21 +1,14 @@
 import React from "react";
 import { siteConfig } from "../../site.config.js";
-import { mdComponents } from "../../constants/mdxProvider";
 import { parse } from "toml";
-import { MDXProvider } from "@mdx-js/react";
 import { getAllFiles, getFileContent } from "@/lib/github";
 import { usePageContent } from "@/lib/hooks";
 import { getMenuStructure } from "@/lib/content";
 import { ContentPage } from "@/components/content";
 import { FullHeaderMenu, ControlsMenu } from '@/components/dashboard/Menus'
 import { ServicesHeader } from '@/components/dashboard/Headers'
+import { dirname } from "path";
 
-
-import { ServicesView } from "@/components/services";
-
-import { FullScreenSpinner } from "@/components/dashboard/index.js";
-import { dirname, basename } from "path";
-// import { getMenuStructureProviderServices } from '@/lib/content/menus';
 
 export default function Page({
   content: initialContent,
@@ -24,6 +17,9 @@ export default function Page({
   collection,
   controls
 }) {
+
+  
+
 
   const {
     pageContent,
@@ -78,7 +74,6 @@ export async function getServerSideProps(context) {
     siteConfig.content.providers
   );
   const menuStructure = await menuPromise;
-
   // controls
   const controlLocation =
     siteConfig.content.services.path +
@@ -101,13 +96,17 @@ export async function getServerSideProps(context) {
     );
     return { data: parse(content), file: file };
   });
+  
+  // const util = require('util')
+  // console.log('menuStructure: ', util.inspect(menuStructure, false, null, true /* enable colors */))
+  
 
   return {
     props: {
       content: pageContentText || null,
       file: file,
       menuStructure: menuStructure || null,
-      collection: siteConfig.content.services,
+      collection: siteConfig.content.providers,
       controls: await Promise.all(controlContent),
     },
   };
