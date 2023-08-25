@@ -252,26 +252,24 @@ function ContentMenu({ content, file, handleContentChange, handlePageReset, cont
   if (content && content[directory]) {
     for (let collectionItem of context.collections) {
       if (content[directory][collectionItem]) {
+        // console.log('ContentMenu:collectionItem: ', collectionItem)
         chaptersMenu.push(
           {
-            groupTitle: collectionItem.path,
+            groupTitle: collectionItem,
             links: content[directory][collectionItem]
           }
         )
       } 
     }
   
-    
-
-
-    // if (content[directory].chapters) {
-    //   chaptersMenu.push(
-    //     {
-    //       groupTitle: "Chapters",
-    //       links: content[directory].chapters
-    //     }
-    //   )
-    // }
+    if (content[directory].chapters) {
+      chaptersMenu.push(
+        {
+          groupTitle: "Chapters",
+          links: content[directory].chapters
+        }
+      )
+    }
     // if (content[directory].knowledge) {
     //   chaptersMenu.push(
     //     {
