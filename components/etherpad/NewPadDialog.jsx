@@ -76,9 +76,7 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
             frontmatter = {
                 type: docType,
                 [parent.toLowerCase()]: dirname(selectedDropDown),
-                title: title,
-                parentType: parent.toLowerCase(),
-                parentName: dirname(selectedDropDown)
+                title: title
             };
         }
         const initialContent = matter.stringify('\n', frontmatter);
@@ -129,6 +127,8 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
     };
 
     const handleDocTypeChange = async (x) => {
+
+        console.log('handleDocTypeChange:x: ', x)
         setAvailableParents(parentContentElements[x] ?? [])
         setDocType(x);
 

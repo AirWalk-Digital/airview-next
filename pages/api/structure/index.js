@@ -29,16 +29,19 @@ export default async function handler(req, res) {
         // const parents = ['solutions', 'patterns', 'product', 'design', 'knowledge']
         const getListOfKeys = (data) => Object.keys(data);
         const parents = getListOfKeys(siteConfig.content);
-        // console.log('API:/api/structure:item', item)
+        // console.log('API:/api/structure:parents', parents)
 
         // console.log('API:/api/structure:parents', parents)
 
-        for (let y of parents) {
-          if (item[y]) {
+        for (let key in siteConfig.content) {
+
+          const y = siteConfig.content[key];
+
+          if (item[y.reference]) {
             // let directory = item[y].includes("/") ? item[y].split("/")[1] : '';
 
             // let directory = path.dirname(item[y]);
-            let directory = item[y];
+            let directory = item[y.reference];
             // console.log('API:/api/structure:directory', directory, ' ; ', item[y])
 
             // Check if the key exists in the relatedContent object
