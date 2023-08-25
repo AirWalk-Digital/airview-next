@@ -127,12 +127,8 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
     };
 
     const handleDocTypeChange = async (x) => {
-
-        console.log('handleDocTypeChange:x: ', x)
         setAvailableParents(parentContentElements[x] ?? [])
         setDocType(x);
-
-
     };
 
     const handleDropDownChange = (event) => {
