@@ -19,6 +19,12 @@ import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
 import { TableOfContents } from '@/components/content';
 import { ContentWrapperContext } from '@/components/content';
 import { Etherpad } from '@/components/etherpad';
+import { useSelector, useDispatch } from 'react-redux'
+import store from '@/lib/redux/store'
+import { setBranch } from '@/lib/redux/reducers/branchSlice'
+
+import { useRouter } from 'next/router'
+
 import deepEqual from 'deep-equal';
 import path from 'path';
 
@@ -55,6 +61,20 @@ export function ContentPage({
 
   // ControlBar
   const [controlBarOpen, setControlBarOpen] = useState(false);
+
+  const queryBranch = useRouter()?.query?.branch ?? null; // this loads direct links to the content using ?branch=whatever query parameter
+  const currentState = store.getState();
+  const reduxBranch = currentState.branch.name;
+  if (queryBranch != reduxBranch) {
+    console.log('queryBranch: ', queryBranch, ' : ', reduxBranch)
+    // const dispatch = useDispatch()
+    // dispatch(setBranch(queryBranch))
+    // setControlBarOpen(true)
+    // setChangeBranch(true)
+  } // set the branch from the query parameter ?branch=
+
+
+
   const handleEditMode = (mode) => {
     setEditMode(mode)
     setMenuOpen(!mode)
@@ -71,6 +91,12 @@ export function ContentPage({
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
   const { primary, relatedContent } = menuStructure || {};
+
+  function handleRefresh() {
+    // console.log('ContentPage:handleRefresh:context: ', context)
+    handleContentChange(context.file)
+  }
+
   function handlePrint() {
     setPrint(!print);
     setMenuOpen(print);
@@ -116,6 +142,7 @@ export function ContentPage({
           <ControlBar open={controlBarOpen} height={64}
             handleEdit={handleEditMode}
             handlePrint={handlePrint}
+            handleRefresh={handleRefresh}
             handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
             collection={collection}
           />
@@ -195,7 +222,7 @@ export function ContentPage({
                   handlePageReset={handlePageReset}
                   file={file}
                 />
-                { sideComponent && <SideComponent /> }
+                {sideComponent && <SideComponent />}
                 {frontmatter?.tableOfContents && <TableOfContents tableOfContents={frontmatter.tableOfContents} />}
 
                 {/* <ButtonMenu
@@ -259,9 +286,9 @@ function ContentMenu({ content, file, handleContentChange, handlePageReset, cont
             links: content[directory][collectionItem]
           }
         )
-      } 
+      }
     }
-  
+
     if (content[directory].chapters) {
       chaptersMenu.push(
         {
