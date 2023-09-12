@@ -10,6 +10,9 @@ import Script from 'next/script';
 import { MDXProvider } from '@mdx-js/react'
 import { mdComponents } from "../constants/mdxProvider";
 
+import {Provider} from 'react-redux'
+import store from '@/lib/redux/store'
+
 
 function OutputWrapper({ children }) {
   return (
@@ -46,7 +49,9 @@ function DefaultWrapper({ children }) {
               crossOrigin="anonymous"
             />
           </Head>
+         
           {children}
+          
           {/* </TransitionPage> */}
           </>
   )
@@ -59,7 +64,7 @@ export default function App({ Component, pageProps, ...appProps }) {
     if (appProps.router.pathname.startsWith('/output')) {
       return (<OutputWrapper><Component {...pageProps} /></OutputWrapper>);
     } else {
-      return (<DefaultWrapper><Component {...pageProps} /></DefaultWrapper>);
+      return (<DefaultWrapper> <Provider store={store}><Component {...pageProps} /></Provider></DefaultWrapper>);
     };
   };
 

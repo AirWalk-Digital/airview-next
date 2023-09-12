@@ -1,44 +1,51 @@
-import React, { useState, useContext } from "react";
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import { Menu as MenuIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
-import { Toolbar, AppBar, FormGroup, FormControlLabel, Switch, IconButton, TextField, Stack, Autocomplete } from '@mui/material';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
-import CloseIcon from "@mui/icons-material/Close";
+import React, { useState } from "react";
+
+import { Toolbar, AppBar,  FormControlLabel, Switch, IconButton, TextField, Stack, Autocomplete } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
-import { styled } from "@mui/material/styles";
-// import { siteConfig } from "../../site.config.js";
-import {useBranch} from '@/components/content'
+import { useSelector, useDispatch } from 'react-redux'
+import { setBranch } from '@/lib/redux/reducers/branchSlice'
+
 
 
 export function ControlBar({
-    open, height, handleEdit, pageType, handlePrint, handlePresentation, collection }) {
+    open, height, handleEdit, handleRefresh, handlePrint, handlePresentation, collection }) {
     const [edit, setEdit] = useState(false);
 
     const [changeBranch, setChangeBranch] = useState(false);
 
-    const { currentBranch, setCurrentBranch } = useBranch();
-
+    // const queryBranch = useRouter()?.query?.branch ?? null; // this loads direct links to the content using ?branch=whatever query parameter
+    const dispatch = useDispatch()
     
-    const handleBranchClick = () => {
+    const [branches, setBranches] = useState([{ name: 'main' }]);
 
+    const handleBranchClick = async () => { // handles the toggling of the "Change Branch" selector
+        // console.log('handleBranchClick:changeBranch: ', changeBranch)
         if (changeBranch) {
-            setCurrentBranch(collection.repo) // default the branch back
+            await dispatch(setBranch(collection.branch)) // default the branch back
+            // console.log('handleBranchClick:reset: ', collection.branch)
+            handleRefresh(); // reset the page
+        } else {
+            fetchBranches(collection);
         }
         setChangeBranch(!changeBranch);
-
     };
 
+    function fetchBranches(collection) {
+        const branches = async () => {
+            const res = await fetch(`/api/repo/get-branches?owner=${collection.owner}&repo=${collection.repo}`); // fetch draft content to add to the menus.
+            const data = await res.json();
+            setBranches(data)
+        };
+        branches()
+    }
 
-
-    function handleBranch(event, value) {
-        // console.log('handleBranch:value: ', value)
-        setCurrentBranch(value)
+    async function handleBranch(event, value) { // handles the branch selector changing
+        if (value) {
+            // console.log('handleBranch:value: ', value)
+            await dispatch(setBranch(value))
+            handleRefresh(); // reset the page
+        }
         // setSelectedBranch(value);
     }
 
@@ -83,7 +90,7 @@ export function ControlBar({
 
 
                     } label="Change Branch" />
-                    {changeBranch && collection && <FormControlLabel control={<BranchSelector branch={currentBranch} handleBranch={handleBranch} />} label="" />}
+                    {changeBranch && collection && <FormControlLabel control={<BranchSelector defaultBranch={collection.branch} handleBranch={handleBranch} branches={branches} />} label="" />}
                 </div>
                 <div>
                     {handlePrint && <FormControlLabel control={<IconButton
@@ -107,10 +114,16 @@ export function ControlBar({
 
 }
 
-function BranchSelector({ handleBranch, branch }) {
-    const branches = [
-        { name: 'main' },
-    ]
+function BranchSelector({ defaultBranch, handleBranch, branches }) {
+    const { name: reduxBranch } = useSelector((state) => state.branch);
+    let branch;
+
+    if (reduxBranch !== 'none') {
+        branch = defaultBranch
+    } else {
+        branch = reduxBranch
+    }
+
     return (
 
         <Stack spacing={2} sx={{ width: 300 }}>

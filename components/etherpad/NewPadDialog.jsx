@@ -44,11 +44,25 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
                         parentContentElements[collection] = [];
                     }
                     parentContentElements[collection].push(contentType);
+                    // parentContentElements[collection].unshift('None');
                 });
             }
         });
 
+        for (let [key] of Object.entries(parentContentElements)) {
+            parentContentElements[key].unshift('None')
+        }
+
         return parentContentElements;
+    };
+
+    const parentReference = (siteConfig, parent) => {
+        for (let [key, content] of Object.entries(siteConfig.content)) {
+            if (key === parent) {
+                return content.reference;
+            }
+        }
+        return null;
     };
 
     const parentContentElements = getParentContentElements(siteConfig);
@@ -62,10 +76,11 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
         // console.log('create new pad: ', title, ' / ', selectedDropDown, ' / ', parent);
         let pad = uuidv4();  // Generate a unique padID
 
-
+        const parentRef = parentReference(siteConfig, parent)
+        // console.log('parentRef: ', parentRef);
 
         let frontmatter;
-        if (parent === 'None') {
+        if (!parentRef) {
             // define the object for when parent === 'None'
             frontmatter = {
                 type: docType,
@@ -75,15 +90,19 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
             // define the object for when parent !== 'None'
             frontmatter = {
                 type: docType,
-                [parent.toLowerCase()]: dirname(selectedDropDown),
-                title: title,
-                parentType: parent.toLowerCase(),
-                parentName: dirname(selectedDropDown)
+                [parentRef.toLowerCase()]: dirname(selectedDropDown.path),
+                title: title
             };
         }
         const initialContent = matter.stringify('\n', frontmatter);
 
         try {
+
+            // console.log('NewPadDialog:handleCreateNew:parent: ', parent)
+            // console.log('NewPadDialog:handleCreateNew:selectedDropDown: ', selectedDropDown)
+
+
+            // console.log('NewPadDialog:handleCreateNew:initialContent: ', initialContent)
             const response = await fetch(`/api/etherpad/new?padID=${pad}`, {
                 method: 'POST',
                 headers: {
@@ -108,6 +127,7 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
 
     const handleParentChange = async (parent) => {
         setParent(parent);
+        setSelectedDropDown('');
         fetch(`/api/structure?collection=${parent}`)
             .then((res) => res.json())
             .then(data => {
@@ -120,7 +140,7 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
 
 
                 // console.log('setDropDownData: ', values)
-
+                
                 setDropDownData(values);
             })
             .catch(error => {
@@ -131,18 +151,19 @@ export function NewPadDialog({ dialogOpen, handleDialog, siteContent }) {
     const handleDocTypeChange = async (x) => {
         setAvailableParents(parentContentElements[x] ?? [])
         setDocType(x);
-
+        setSelectedDropDown('');
 
     };
 
     const handleDropDownChange = (event) => {
+        console.log('event.target.value: ', event.target.value)
         setSelectedDropDown(event.target.value);
     };
 
 
 
     return (
-        <Dialog open={dialogOpen} onClose={handleDialog}>
+        <Dialog open={dialogOpen} onClose={handleDialog} fullWidth={true} maxWidth={'md'}>
             <DialogTitle>Create New</DialogTitle>
             <DialogContent>
                 {/* Title Input */}

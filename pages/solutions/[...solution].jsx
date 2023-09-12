@@ -5,6 +5,7 @@ import { ContentPage } from "@/components/content";
 import { getMenuStructure } from "@/lib/content";
 import { usePageContent } from "@/lib/hooks";
 import { ListMenu } from '@/components/dashboard/Menus'
+import { useSelector } from 'react-redux'
 
 export default function Page({
   content: initialContent,
@@ -12,7 +13,7 @@ export default function Page({
   menuStructure: initialMenuStructure,
   collection
 }) {
-
+  const { name: reduxBranch } = useSelector((state) => state.branch);
   const {
     pageContent,
     contentSource,
@@ -22,6 +23,7 @@ export default function Page({
     context,
     content,
   } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
+
 
   return (
     <ContentPage
