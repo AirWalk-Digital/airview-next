@@ -20,7 +20,7 @@ function FrameworkPanel({value, index, framework}) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {framework.mapping.map((mapping, index) => (
+            {framework.mappings && framework.mappings.map((mapping, index) => (
               <TableRow key={index}>
                 <TableCell>{mapping.domain}</TableCell>
                 <TableCell>{mapping.control_id}</TableCell>
@@ -164,20 +164,25 @@ export function ControlDataDisplay({ data }) {
 
       {activeStep === 0 && (
         <Box>
-          <Typography variant="body1" sx={{mb: '2%'}}>{data?.description || 'N/A'}</Typography>
-          
-          <Typography variant="body1">
+          <Typography variant="h4" sx={{my: '1%'}}>{data?.description || ''}</Typography>
+          <Typography variant="body1" sx={{my: '1%'}}>{data?.discussion || ''}</Typography>
+          <Typography variant="body1" sx={{my: '1%'}}>
             <strong>Provider:  </strong><Chip label={data?.csp || 'N/A'} />
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="body1" sx={{my: '1%'}}>
             <strong>Service:</strong> {data?.service || 'N/A'}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="body1" sx={{my: '1%'}}>
             <strong>Control Owner:  </strong><Chip label={data?.control_owner || 'N/A'} />
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="body1" sx={{my: '1%'}}>
             <strong>Quality Model:  </strong><Chip label={data?.quality_model || 'N/A'} />
           </Typography>
+          <Typography variant="body1" sx={{my: '1%'}}>
+            <strong>Control Owner:  </strong><Chip label={data?.control_owner || 'N/A'} />
+          </Typography>
+          
+
         </Box>
       )}
       {activeStep === 1 && (
