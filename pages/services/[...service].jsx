@@ -87,14 +87,15 @@ export async function getServerSideProps(context) {
     true,
     ".toml"
   );
+
   const controlContent = controlFiles.map(async (file) => {
     const content = await getFileContent(
       siteConfig.content.services.owner,
       siteConfig.content.services.repo,
       siteConfig.content.services.branch,
-      file
+      file.path
     );
-    return { data: parse(content), file: file };
+    return { data: parse(content), file: file.path };
   });
   
   // const util = require('util')
