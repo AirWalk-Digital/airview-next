@@ -29,6 +29,10 @@ import InfoIcon from "@mui/icons-material/Info";
 
 import dayjs from "dayjs";
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
 export function ControlOverviewItemResources({
   resourcesData,
   onManageResourceClick,
@@ -251,7 +255,7 @@ export function ControlOverviewItemResources({
             {processedResourcesData.map((resource) => {
               return (
                 <TableRow key={resource.id}>
-                  <TableCell>{resource.type}</TableCell>
+                  <TableCell>{capitalizeFirstLetter(resource.type)}</TableCell>
                   <TableCell>{resource.name}</TableCell>
                   <TableCell>{resource.environment}</TableCell>
                   <TableCell>

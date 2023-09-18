@@ -5,22 +5,17 @@ import { getAllFiles, getFileContent } from "@/lib/github";
 import { usePageContent } from "@/lib/hooks";
 import { getMenuStructure } from "@/lib/content";
 import { ContentPage } from "@/components/content";
-import { FullHeaderMenu, ControlsMenu } from '@/components/dashboard/Menus'
-import { ServicesHeader } from '@/components/dashboard/Headers'
+import { FullHeaderMenu, ControlsMenu } from "@/components/dashboard/Menus";
+import { ServicesHeader } from "@/components/dashboard/Headers";
 import { dirname } from "path";
-
 
 export default function Page({
   content: initialContent,
   file: initialFile,
   menuStructure: initialMenuStructure,
   collection,
-  controls
+  controls,
 }) {
-
-  
-
-
   const {
     pageContent,
     contentSource,
@@ -29,7 +24,12 @@ export default function Page({
     handlePageReset,
     context,
     content,
-  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
+  } = usePageContent(
+    initialContent,
+    initialFile,
+    initialMenuStructure,
+    collection,
+  );
 
   return (
     <ContentPage
@@ -43,12 +43,12 @@ export default function Page({
       context={context}
       menuComponent={FullHeaderMenu}
       contentSource={contentSource}
-      headerComponent={(props) => <ServicesHeader {...props} extraData={controls} />}
+      headerComponent={(props) => (
+        <ServicesHeader {...props} extraData={controls} />
+      )}
       sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
     />
-
-  )
-
+  );
 }
 
 export async function getServerSideProps(context) {
@@ -61,7 +61,7 @@ export async function getServerSideProps(context) {
       siteConfig.content.services.owner,
       siteConfig.content.services.repo,
       siteConfig.content.services.branch,
-      file
+      file,
     );
   }
 
@@ -71,7 +71,7 @@ export async function getServerSideProps(context) {
 
   const menuPromise = getMenuStructure(
     siteConfig,
-    siteConfig.content.providers
+    siteConfig.content.providers,
   );
   const menuStructure = await menuPromise;
   // controls
@@ -85,7 +85,7 @@ export async function getServerSideProps(context) {
     siteConfig.content.services.branch,
     controlLocation,
     true,
-    ".toml"
+    ".toml",
   );
 
   const controlContent = controlFiles.map(async (file) => {
@@ -93,14 +93,14 @@ export async function getServerSideProps(context) {
       siteConfig.content.services.owner,
       siteConfig.content.services.repo,
       siteConfig.content.services.branch,
-      file.path
+      file.path,
     );
+
     return { data: parse(content), file: file.path };
   });
-  
+
   // const util = require('util')
   // console.log('menuStructure: ', util.inspect(menuStructure, false, null, true /* enable colors */))
-  
 
   return {
     props: {

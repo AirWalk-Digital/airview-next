@@ -110,7 +110,7 @@ ControlOverviewItemDetail.propTypes = {
     PropTypes.shape({
       name: PropTypes.string,
       url: PropTypes.string,
-    })
+    }),
   ),
   controlAction: PropTypes.string,
   lifecycle: PropTypes.string,

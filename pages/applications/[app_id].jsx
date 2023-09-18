@@ -11,6 +11,7 @@ import {
   getApplications,
   getApplicationById,
   getComplianceAggregation,
+  getComplianceTotals,
 } from "../../backend/applications";
 
 import { ComplianceTable } from "../../components/airview-compliance-ui/features/compliance-table";
@@ -62,7 +63,7 @@ async function complianceOnAcceptOfRisk(data) {
   }
 }
 
-function Page({ app, applicationsData }) {
+function Page({ app, applicationsData, complianceTotals }) {
   const topBarHeight = 64;
   // // console.log('Page:app: ', app)
   let data_classification = "";
@@ -137,8 +138,8 @@ function Page({ app, applicationsData }) {
                 <MiniStatisticsCard
                   color="text.highlight"
                   title="Controls"
-                  count="132"
-                  percentage={{ value: "55%", text: "coverage" }}
+                  count={complianceTotals?.total || 0}
+                  percentage={{}}
                   icon={{ color: "error", icon: "check" }}
                 />
               </Grid>
@@ -146,7 +147,7 @@ function Page({ app, applicationsData }) {
                 <MiniStatisticsCard
                   color="text.highlight"
                   title="Sev 1"
-                  count="1"
+                  count={complianceTotals?.high || 0}
                   percentage={{ value: "", text: "non-compliances" }}
                   icon={{ color: "warning", icon: "triangle-exclamation" }}
                 />
@@ -155,7 +156,7 @@ function Page({ app, applicationsData }) {
                 <MiniStatisticsCard
                   color="text.highlight"
                   title="Sev 2"
-                  count="3"
+                  count={complianceTotals?.medium || 0}
                   percentage={{ value: "", text: "non-compliances" }}
                   icon={{ color: "error", icon: "circle-exclamation" }}
                 />
@@ -164,7 +165,7 @@ function Page({ app, applicationsData }) {
                 <MiniStatisticsCard
                   color="text.highlight"
                   title="Sev 3"
-                  count="34"
+                  count={complianceTotals?.low || 0}
                   percentage={{ value: "", text: "non-compliances" }}
                   icon={{ color: "error", icon: "info" }}
                 />
@@ -184,12 +185,14 @@ function Page({ app, applicationsData }) {
                 <Typography sx={{ width: "50%", flexShrink: 0 }}>
                   Issues and Exemptions
                 </Typography>
+                {/*
                 <Chip
                   label="5 exemptions"
                   variant="outlined"
                   sx={{ ml: "auto" }}
                 />
                 <Chip label="37" color="error" sx={{ ml: "auto", mr: "5%" }} />
+		 */}
               </AccordionSummary>
               <AccordionDetails>
                 <ComplianceTable
@@ -200,7 +203,6 @@ function Page({ app, applicationsData }) {
                   loading={false}
                   applications={applicationsData}
                 />
-                ;
               </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -233,10 +235,13 @@ export async function getServerSideProps(context) {
     const applicationsData = await getComplianceAggregation(
       context.params.app_id,
     );
+
+    const complianceTotals = await getComplianceTotals(context.params.app_id);
     return {
       props: {
         app: app,
         applicationsData,
+        complianceTotals,
       },
     };
   } catch (error) {
@@ -352,7 +357,7 @@ const ApplicationControls = ({ applicationId }) => {
         (item.status || "FLAGGED") === "FLAGGED"
           ? "Non-Compliant"
           : "Monitoring";
-      return { ...item, type: "Unknown", status: status };
+      return { ...item, status: status };
     });
   }
 
