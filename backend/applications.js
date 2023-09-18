@@ -10,7 +10,7 @@ export async function getComplianceData() {
     const apiData = await res.json();
     return apiData;
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     throw err;
   }
 }
@@ -20,7 +20,7 @@ export async function getApplications() {
     const apiData = await res.json();
     return apiData;
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     throw err;
   }
 }
@@ -33,7 +33,7 @@ export async function getComplianceTotals(applicationId) {
     const apiData = await res.json();
     return apiData;
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     throw err;
   }
 }
@@ -45,9 +45,8 @@ export async function getComplianceAggregation(applicationId) {
     );
     const apiData = await res.json();
     return apiData.map((m) => ({ ...m, instances: [] }));
-    return apiData;
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     throw err;
   }
 }
