@@ -40,7 +40,7 @@ export function ControlsMenu({
                 }}
                     scroll='paper'>
                     <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="h4">{controlUrl.selectedControl?.data?.name} ({controlUrl.selectedControl?.data?.id || 'N/A'})</Typography>
+                        <Typography variant="h4">{controlUrl.selectedControl?.data?.friendly_name || controlUrl.selectedControl?.data?.name } ({controlUrl.selectedControl?.data?.id || 'N/A'})</Typography>
                         <IconButton edge="end" color="inherit" onClick={() => setDialogOpen(false)} aria-label="close">
                             <CloseIcon />
                         </IconButton>
@@ -61,7 +61,7 @@ function createControlMenu(controls) {
     // console.log('createControlMenu:controls: ', controls)
     try {
         const links = controls.map((control) => {
-            const label = control.data.name || control.data.id || ''; // Adjust the property name according to your control data structure
+            const label = control.data.friendly_name || control.data.id || ''; // Adjust the property name according to your control data structure
             const url = control.file;
 
             return {
