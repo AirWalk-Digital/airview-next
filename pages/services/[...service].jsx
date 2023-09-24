@@ -2,7 +2,7 @@ import React from "react";
 import { siteConfig } from "../../site.config.js";
 import { parse } from "toml";
 import { getAllFiles, getFileContent } from "@/lib/github";
-import { usePageContent } from "@/lib/hooks";
+import { usePageContent, collectionName } from "@/lib/hooks";
 import { getMenuStructure } from "@/lib/content";
 import { ContentPage } from "@/components/content";
 import { FullHeaderMenu, ControlsMenu } from '@/components/dashboard/Menus'
@@ -15,7 +15,8 @@ export default function Page({
   file: initialFile,
   menuStructure: initialMenuStructure,
   collection,
-  controls
+  controls,
+  context: initialContext
 }) {
 
   
@@ -29,7 +30,8 @@ export default function Page({
     handlePageReset,
     context,
     content,
-  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
+  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection, initialContext);
+
 
   return (
     <ContentPage
@@ -52,7 +54,7 @@ export default function Page({
 }
 
 export async function getServerSideProps(context) {
-  // // // console.log(context.params.service)
+  console.log(context.params.service)
 
   const file = "services/" + context.params.service.join("/");
   let pageContent = "";
@@ -109,6 +111,8 @@ export async function getServerSideProps(context) {
       menuStructure: menuStructure || null,
       collection: siteConfig.content.providers,
       controls: await Promise.all(controlContent),
-    },
+      context: { file: file, ...collectionName(file, siteConfig.content.services) },
+      key: context.params.service
+    }
   };
 }
