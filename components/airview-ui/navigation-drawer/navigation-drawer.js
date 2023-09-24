@@ -20,14 +20,15 @@ export function NavigationDrawer({
         width: drawerWidth,
         borderRight: 0,
         borderColor: "grey.300",
-        paddingY: 6,
+        // paddingY: 6,
+        paddingY: '1%',
         paddingX: 3,
         boxSizing: "border-box",
         backgroundColor: "common.white",
         zIndex: 1200,
         overflowY: "auto",
         displayPrint: 'none',
-        borderTop: '1px solid #e0e0e0'
+        // borderTop: '1px solid #e0e0e0'
       }}
     >
       {children}

@@ -29,11 +29,11 @@ export function ServicesHeader({ frontmatter, extraData }) {
   }
 
   return (
-    <MuiContainer maxWidth={false} sx={{ paddingTop: 0, paddingBottom: 0 }}>
+    <MuiContainer maxWidth={false} disableGutters sx={{ paddingTop: 0, paddingBottom: 0 }}>
     {/* <Box sx={{ display: "flex" }}>{children}</Box> */}
   
       {/* <Container sx={{ px: '0px', mb: '2%' }}> */}
-      <Grid container spacing={2} alignItems="center" sx={{ mb: '3%' }}>
+      <Grid container spacing={0} alignItems="center" sx={{ mb: '1%' }}>
         <Grid item xs={8}>
           <Typography variant="h1" component="h1">{frontmatter.title}</Typography>
           <Stack direction="row" spacing={1}>

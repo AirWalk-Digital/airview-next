@@ -145,7 +145,7 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
 
 
     return (
-      <Grid container spacing={2}>
+      <Grid container spacing={0} sx={{pt: '0', pl: '0'}}>
         {/* <Grid item xs={12} sx={{ mt: '1%' }}>
           <Button variant="contained" onClick={handleToggleEditor}>
             {isEditorVisible ? 'Hide' : 'Show'} Edit
@@ -157,7 +157,7 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
             {/* <iframe name="embed_readwrite" src="https://pad.airview.airwalkconsulting.io/p/5072ba3e-90c2-409b-908b-9a89f58f85c8?showControls=true&showChat=true&showLineNumbers=true&useMonospaceFont=false" width="100%" height="600" frameborder="0"></iframe> */}
           </Grid>
         )}
-        <Grid item xs={12} md={editMode ? 6 : 12}>
+        <Grid component="etherpad" item xs={12} md={editMode ? 6 : 12} >
 
           <Content />
 

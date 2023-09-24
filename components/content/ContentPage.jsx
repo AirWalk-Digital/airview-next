@@ -12,6 +12,7 @@ import { Menu, NavigationDrawer, ButtonMenu } from '@/components/airview-ui';
 import { PagedOutput } from '@/components/display/PagedOutput';
 import { PresentationOutput } from '@/components/display/PresentationOutput';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase } from '@mui/material';
 import { FullScreenSpinner } from "@/components/dashboard/index.js";
 
@@ -44,7 +45,6 @@ export function ContentPage({
 
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
   const MenuComponent = menuComponent;
-  const HeaderComponent = headerComponent;
   const SideComponent = sideComponent;
 
   const isEmptyObject = (obj) => {
@@ -152,7 +152,7 @@ export function ContentPage({
           {menuStructure && <MenuComponent
             menu={menuStructure.primary}
             open={menuOpen}
-            top={topBarHeight}
+            top={topBarHeight + 1}
             drawerWidth={navDrawerWidth}
           />}
           <div
@@ -163,55 +163,18 @@ export function ContentPage({
 
             }}
           >
-            {
-              headerComponent ? (
-                <HeaderComponent frontmatter={frontmatter} />
-              ) : (
-                <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
-              )
-            }
-            {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
-              <Grid xs="auto" item>
-                <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
-              </Grid>
-              <Grid item>
-                <IconButton
-                  size="medium"
-                  onClick={handlePresentation}
-                  color="inherit"
-                >
-                  <SlideshowIcon />
-                </IconButton>
-              </Grid>
-              <Grid xs />
-            </Grid>
-            }
-
-            {frontmatter?.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px' }}>
-              <Grid>
-                <Alert severity="info">This is draft content from Etherpad edit here: </Alert>
-              </Grid>
-              <Grid>
-                <IconButton
-                  size="medium"
-                  // onClick={handlePresentation}
-                  color="inherit"
-                >
-                  <SlideshowIcon />
-                </IconButton>
-              </Grid>
-              <Grid />
-            </Grid>
-            }
+            
 
             <AsideAndMainContainer>
               {/* <Main sx={{}}> */}
               <Main>
+                <Banner frontmatter={frontmatter} handlePresentation={handlePresentation} headerComponent={headerComponent}/>
+              
                 <MDXProvider components={mdComponents(context)}>
                   <><Content /></>
                 </MDXProvider>
               </Main>
-              <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '' }}>
+              <Aside sx={{ displayPrint: 'none', display: print ? 'none' : '', pt: '2%' }}>
 
                 <ContentMenu
                   content={relatedContent}
@@ -265,6 +228,73 @@ export function ContentPage({
     )
   }
 }
+
+function Banner({frontmatter,handlePresentation,headerComponent }) {
+  const [environment, setEnvironment] = useState("");
+  const HeaderComponent = headerComponent;
+
+  useEffect(() => {
+    const fetchData = async () =>{
+      const resp = await fetch("/api/environment");
+      const data = await resp.json();
+      console.log(data)
+      setEnvironment(data)
+    }
+    fetchData()
+  },[]);
+
+
+return(
+  <>
+  {
+    headerComponent ? (
+      <HeaderComponent frontmatter={frontmatter} />
+    ) : (
+      <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '0%' }}>{frontmatter?.title && frontmatter.title}</Typography>
+    )
+  }
+  {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px', borderRadius: '8px' }}>
+    <Grid>
+      <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
+    </Grid>
+    <Grid>
+      <IconButton
+        size="medium"
+        onClick={handlePresentation}
+        color="inherit"
+      >
+        <SlideshowIcon />
+      </IconButton>
+    </Grid>
+    <Grid/>
+  </Grid>
+  }
+
+  {frontmatter?.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px',borderRadius: '8px' }}>
+    <Grid>
+      <Alert severity="info">This is draft content from Etherpad edit here: </Alert>
+    </Grid>
+    <Grid>
+      <IconButton
+        size="medium"
+        href={`${environment.ETHERPAD_URL}/p/${frontmatter.padID}`}
+        target="_blank"
+        rel="noopener noreferrer"  // For security reasons
+        color="inherit"
+      >
+        <EditNoteIcon />
+      </IconButton>
+    </Grid>
+    <Grid/>
+  </Grid>
+  }
+  </>
+)
+
+
+}
+
+
 
 
 function ContentMenu({ content, file, handleContentChange, handlePageReset, context }) {
