@@ -3,16 +3,17 @@ import { siteConfig } from "../../site.config.js";
 import { getFileContent } from "@/lib/github";
 import { ContentPage } from "@/components/content";
 import { getMenuStructure } from "@/lib/content";
-import { usePageContent } from "@/lib/hooks";
-import { HeaderMinimalMenu } from '@/components/dashboard/Menus'
+import { usePageContent, collectionName } from "@/lib/hooks";
+import { ListMenu } from '@/components/dashboard/Menus'
 
 export default function Page({
   content: initialContent,
   file: initialFile,
   menuStructure: initialMenuStructure,
-  collection
-}) {
+  collection,
+  context: initialContext
 
+}) {
   const {
     pageContent,
     contentSource,
@@ -21,7 +22,8 @@ export default function Page({
     handlePageReset,
     context,
     content,
-  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
+  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection, initialContext);
+
 
   return (
     <ContentPage
@@ -33,7 +35,7 @@ export default function Page({
       handlePageReset={handlePageReset}
       collection={collection}
       context={context}
-      menuComponent={HeaderMinimalMenu}
+      menuComponent={ListMenu}
       contentSource={contentSource}
     />
 
@@ -41,7 +43,7 @@ export default function Page({
 }
 
 export async function getServerSideProps(context) {
-  const file = "products/" + context.params.product.join("/");
+  const file = "products/" + context.params.product.join("/") ;
   let pageContent = "";
   if (!file.endsWith(".etherpad")) {
     pageContent = await getFileContent(
@@ -69,6 +71,9 @@ export async function getServerSideProps(context) {
       file: file,
       menuStructure: menuStructure || null,
       collection: siteConfig.content.products,
+      context: { file: file, ...collectionName(file, siteConfig.content.products) },
+      key: context.params.product
+
     },
   };
 }

@@ -1,6 +1,8 @@
 import React from 'react'
 import { NavigationDrawer, Menu } from '@/components/airview-ui';
-import Link from '@mui/material/Link';
+// import Link from '@mui/material/Link';
+import Link from 'next/link'
+
 
 function convertToObjectArray(inputObject) {
   const result = [];

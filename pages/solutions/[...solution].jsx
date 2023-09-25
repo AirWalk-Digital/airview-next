@@ -3,7 +3,7 @@ import { siteConfig } from "../../site.config.js";
 import { getFileContent } from "@/lib/github";
 import { ContentPage } from "@/components/content";
 import { getMenuStructure } from "@/lib/content";
-import { usePageContent } from "@/lib/hooks";
+import { usePageContent, collectionName } from "@/lib/hooks";
 import { ListMenu } from '@/components/dashboard/Menus'
 import { useSelector } from 'react-redux'
 
@@ -11,9 +11,10 @@ export default function Page({
   content: initialContent,
   file: initialFile,
   menuStructure: initialMenuStructure,
-  collection
+  collection,
+  context: initialContext
+
 }) {
-  const { name: reduxBranch } = useSelector((state) => state.branch);
   const {
     pageContent,
     contentSource,
@@ -22,7 +23,7 @@ export default function Page({
     handlePageReset,
     context,
     content,
-  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
+  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection, initialContext);
 
 
   return (
@@ -71,6 +72,9 @@ export async function getServerSideProps(context) {
       file: file,
       menuStructure: menuStructure || null,
       collection: siteConfig.content.solutions,
+      context: { file: file, ...collectionName(file, siteConfig.content.solutions) },
+      key: context.params.solution
+
     },
   };
 }
