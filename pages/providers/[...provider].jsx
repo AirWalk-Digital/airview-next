@@ -3,14 +3,15 @@ import { siteConfig } from "../../site.config.js";
 import { getFileContent } from "@/lib/github";
 import { ContentPage } from "@/components/content";
 import { getMenuStructure } from "@/lib/content";
-import { usePageContent } from "@/lib/hooks";
+import { usePageContent, collectionName } from "@/lib/hooks";
 import { ListMenu } from '@/components/dashboard/Menus'
 
 export default function Page({
   content: initialContent,
   file: initialFile,
   menuStructure: initialMenuStructure,
-  collection
+  collection,
+  context: initialContext
 }) {
 
   const {
@@ -21,7 +22,7 @@ export default function Page({
     handlePageReset,
     context,
     content,
-  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection);
+  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection, initialContext);
 
   return (
     <ContentPage
@@ -68,6 +69,7 @@ export async function getServerSideProps(context) {
       content: pageContentText || null,
       file: file,
       menuStructure: menuStructure || null,
+      context: { file: file, ...collectionName(file, siteConfig.content.providers) },
       collection: siteConfig.content.providers,
     },
   };
