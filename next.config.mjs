@@ -25,6 +25,7 @@ const withMDX = createMDX({
 
 const nextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "tsx"],
+  transpilePackages: ['@mdxeditor/editor', 'react-diff-view'],
   swcMinify: false,
   reactStrictMode: true,
   images: {
@@ -74,35 +75,39 @@ const nextConfig = {
   // },
 };
 
-export default withSentryConfig(
-  withMDX(nextConfig),
-  {
-    // For all available options, see:
-    // https://github.com/getsentry/sentry-webpack-plugin#options
+export default withMDX(nextConfig)
 
-    // Suppresses source map uploading logs during build
-    silent: true,
 
-    org: "airwalk-digital",
-    project: "airview-mdx-deck",
-  },
-  {
-    // For all available options, see:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-    // Upload a larger set of source maps for prettier stack traces (increases build time)
-    widenClientFileUpload: true,
+// export default withSentryConfig(
+//   withMDX(nextConfig),
+//   {
+//     // For all available options, see:
+//     // https://github.com/getsentry/sentry-webpack-plugin#options
 
-    // Transpiles SDK to be compatible with IE11 (increases bundle size)
-    transpileClientSDK: true,
+//     // Suppresses source map uploading logs during build
+//     silent: true,
 
-    // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-    tunnelRoute: "/monitoring",
+//     org: "airwalk-digital",
+//     project: "airview-mdx-deck",
+//   },
+//   {
+//     // For all available options, see:
+//     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-    // Hides source maps from generated client bundles
-    hideSourceMaps: true,
+//     // Upload a larger set of source maps for prettier stack traces (increases build time)
+//     widenClientFileUpload: true,
 
-    // Automatically tree-shake Sentry logger statements to reduce bundle size
-    disableLogger: true,
-  }
-);
+//     // Transpiles SDK to be compatible with IE11 (increases bundle size)
+//     transpileClientSDK: true,
+
+//     // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+//     tunnelRoute: "/monitoring",
+
+//     // Hides source maps from generated client bundles
+//     hideSourceMaps: true,
+
+//     // Automatically tree-shake Sentry logger statements to reduce bundle size
+//     disableLogger: true,
+//   }
+// );

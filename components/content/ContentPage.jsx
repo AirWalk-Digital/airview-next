@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { baseTheme } from '../../constants/baseTheme';
 import { MDXProvider } from "@mdx-js/react";
 import { mdComponents } from "../../constants/mdxProvider.js";
+import Editor from '@/components/editor'
 
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -85,7 +86,7 @@ export function ContentPage({
   const [menuOpen, setMenuOpen] = useState(true);
   const [print, setPrint] = useState(false);
   const [presentation, setPresentation] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(true); ////-----------------------------true for testing edit mode
 
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
@@ -106,12 +107,15 @@ export function ContentPage({
     setPresentation(!presentation);
   };
 
+  
   // let Content = <h1>tesr</h1>;
   // let Content = FullScreenSpinner ;
 
   const Content = () => {
     if (context && context.file && context.file.endsWith('.etherpad')) {
       return <Etherpad file={context.file} frontMatterCallback={frontMatterCallback} editMode={editMode} />
+    } else if (context && pageContent.content && pageContent.frontmatter && editMode) {
+      return <Editor markdown={content} context={context}/> ;
     } else if (context && pageContent.content && pageContent.frontmatter) {
       const Page = pageContent.content;
       return <Page />;
@@ -168,7 +172,7 @@ export function ContentPage({
             <AsideAndMainContainer>
               {/* <Main sx={{}}> */}
               <Main>
-                <Banner frontmatter={frontmatter} handlePresentation={handlePresentation} headerComponent={headerComponent}/>
+                <Banner frontmatter={frontmatter} handlePresentation={handlePresentation} headerComponent={headerComponent} editMode={editMode}/>
               
                 <MDXProvider components={mdComponents(context)}>
                   <><Content /></>
@@ -229,7 +233,7 @@ export function ContentPage({
   }
 }
 
-function Banner({frontmatter,handlePresentation,headerComponent }) {
+function Banner({frontmatter,handlePresentation,headerComponent,editMode }) {
   const [environment, setEnvironment] = useState("");
   const HeaderComponent = headerComponent;
 
@@ -253,7 +257,7 @@ return(
       <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '0%' }}>{frontmatter?.title && frontmatter.title}</Typography>
     )
   }
-  {frontmatter?.format === 'presentation' && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px', borderRadius: '8px' }}>
+  {frontmatter?.format === 'presentation' && !editMode && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px', borderRadius: '8px' }}>
     <Grid>
       <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
     </Grid>

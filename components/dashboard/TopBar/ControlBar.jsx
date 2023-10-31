@@ -9,8 +9,9 @@ import { setBranch } from '@/lib/redux/reducers/branchSlice'
 
 
 export function ControlBar({
-    open, height, handleEdit, handleRefresh, handlePrint, handlePresentation, collection }) {
+    open, height, handleEdit, handleRefresh, handlePrint, handlePresentation, collection: initialCollection }) {
     const [edit, setEdit] = useState(false);
+    const [collection, setCollection] = useState(initialCollection);
 
     const [changeBranch, setChangeBranch] = useState(false);
 
@@ -19,16 +20,17 @@ export function ControlBar({
     
     const [branches, setBranches] = useState([{ name: 'main' }]);
 
-    const handleBranchClick = async () => { // handles the toggling of the "Change Branch" selector
+    const handleBranchClick = async (open = 'ignore') => { // handles the toggling of the "Change Branch" selector
         // console.log('handleBranchClick:changeBranch: ', changeBranch)
         if (changeBranch) {
-            await dispatch(setBranch(collection.branch)) // default the branch back
+            await dispatch(setBranch(collection)) // default the branch back
             // console.log('handleBranchClick:reset: ', collection.branch)
             handleRefresh(); // reset the page
         } else {
             fetchBranches(collection);
         }
         setChangeBranch(!changeBranch);
+        if (open == 'open') { setChangeBranch(true) } else if (open == 'close') { setChangeBranch(false) };
     };
 
     function fetchBranches(collection) {
@@ -42,8 +44,14 @@ export function ControlBar({
 
     async function handleBranch(event, value) { // handles the branch selector changing
         if (value) {
-            // console.log('handleBranch:value: ', value)
-            await dispatch(setBranch(value))
+            
+            const newCollection = {...collection, branch: value } 
+            console.log('ControlBar:handleBranch:collection: ', collection)
+
+            console.log('ControlBar:handleBranch:newCollection: ', newCollection)
+            // await dispatch(setBranch(newCollection))
+             await dispatch(setBranch(newCollection))
+            
             handleRefresh(); // reset the page
         }
         // setSelectedBranch(value);
@@ -68,6 +76,7 @@ export function ControlBar({
         // localStorage.setItem('editMode', JSON.stringify(editMode));
         if (typeof handleEdit === 'function') {
             handleEdit(!edit);
+            if (edit) {handleBranchClick('close')} else {handleBranchClick('open')};
             setEdit(!edit)
 
         } else {
@@ -90,7 +99,7 @@ export function ControlBar({
 
 
                     } label="Change Branch" />
-                    {changeBranch && collection && <FormControlLabel control={<BranchSelector defaultBranch={collection.branch} handleBranch={handleBranch} branches={branches} />} label="" />}
+                    {(changeBranch || edit ) && collection && <FormControlLabel control={<BranchSelector defaultBranch={collection.branch} handleBranch={handleBranch} branches={branches} />} label="" />}
                 </div>
                 <div>
                     {handlePrint && <FormControlLabel control={<IconButton
@@ -118,7 +127,7 @@ function BranchSelector({ defaultBranch, handleBranch, branches }) {
     const { name: reduxBranch } = useSelector((state) => state.branch);
     let branch;
 
-    if (reduxBranch !== 'none') {
+    if (reduxBranch?.name !== 'none') {
         branch = defaultBranch
     } else {
         branch = reduxBranch
