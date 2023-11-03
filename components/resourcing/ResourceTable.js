@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import {
-    Box, Table, TableBody, TableCell, TableHead, TableRow, Paper, Select, MenuItem, InputLabel, FormControl,
+    Box, Chip, Table, TableBody, TableCell, TableHead, TableRow, Paper, Select, MenuItem, InputLabel, FormControl,
     Dialog, DialogContent, DialogTitle, Button
 } from '@mui/material';
+
 
 function determineColor(daysAllocated, daysHypo) {
     const hypo = parseInt(daysHypo, 10);
@@ -12,6 +13,7 @@ function determineColor(daysAllocated, daysHypo) {
 }
 
 function Row({ data, displayedMonths, setPopupContent, setShowPopup }) {
+
     return (
         <TableRow>
             <TableCell style={{ whiteSpace: 'nowrap', width: 'max-content' }}>
@@ -37,7 +39,13 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup }) {
                     }}
                 >
                     {data.booked.some(item => item.month === month) &&
-                        data.booked.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.Days, 10), 0)}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%'
+                        }}><Chip sx={{ color: 'white' }} variant="outlined" color="info" label={data.booked.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.Days, 10), 0)} /></div>
+                    }
                 </TableCell>
             ))}
         </TableRow>
@@ -54,11 +62,18 @@ export function ResourceTable({ data }) {
     const months = Array.from(new Set(data.flatMap(item => item.booked.map(b => b.month)))).sort();
     const displayedMonths = months.slice(monthStartIndex, monthStartIndex + 3);
 
+    // Function to sort users by displayName and filter out users with null displayName
+    const sortUsersByName = (users) => {
+        return users
+            .filter(user => user.displayName != null) // This removes users with null displayName
+            .sort((a, b) => a.displayName.localeCompare(b.displayName));
+    };
+
     useEffect(() => {
         if (disciplineFilter) {
-            setFilteredData(data.filter(item => item.department === disciplineFilter));
+            setFilteredData(sortUsersByName(data.filter(item => item.department === disciplineFilter)));
         } else {
-            setFilteredData(data);
+            setFilteredData(sortUsersByName(data));
         }
     }, [disciplineFilter, data]);
 
@@ -87,7 +102,7 @@ export function ResourceTable({ data }) {
                 <Button variant="contained" disabled={monthStartIndex + 3 >= months.length} onClick={() => setMonthStartIndex(prev => prev + 1)}>Next</Button>
             </Box>
 
-            <Table style={{ tableLayout: 'fixed' }}>
+            <Table size="small" style={{ tableLayout: 'fixed' }}>
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
