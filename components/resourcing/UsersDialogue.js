@@ -17,11 +17,13 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 // Import your JSON data here. In a real-world scenario, you would load this data from a file or API
 
-export const UsersDialog = ({ open, onClose, users, resourcingData, resources }) => {
+export const UsersDialog = ({ open, onClose, resourcingData, resources }) => {
     const [view, setView] = useState(1);
     const propData = resourcingData;
     const [departmentFilter, setDepartmentFilter] = useState('');
     const [departments, setDepartments] = useState([]);
+
+    // console.log('resourcingData', resourcingData)
 
     useEffect(() => {
         // Extract distinct departments from the resources
@@ -46,15 +48,30 @@ export const UsersDialog = ({ open, onClose, users, resourcingData, resources })
     };
 
     // Function to handle adding a user
-    const handleAddUser = (user) => {
-        onAddUser(user);
-        onClose(); // Close the dialog after adding a user
-    };
 
-    const onAddUser = (user) => {
-        const recordProposal = {'employee': user.mail, 'customer' : resourcingData.Customer, 'project': resourcingData.Description, 'role' : resourcingData.role, 'monthlyDetails': resourcingData.monthlyDetails} 
+    const onAddUser = async (user) => {
+        const recordProposal = {'employee': user.mail, 'displayName' : user.displayName, 'customer' : resourcingData.Customer, 'project': resourcingData.Description, 'code': resourcingData.Code, 'role' : resourcingData.role, 'monthlyDetails': resourcingData.monthlyDetails} 
         console.log('added:', recordProposal)
-        
+        try {
+            const response = await fetch('/api/resourcing/placeholder', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(recordProposal),
+            });
+      
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+      
+            const result = await response.json();
+            console.log(result); // Process the response as needed
+            onClose(); // Close the dialog after adding a user
+
+          } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+          }
     }
     // Function to check if a user should be included in View 1
     const isUserEligibleForView1 = (user) => {
@@ -62,7 +79,7 @@ export const UsersDialog = ({ open, onClose, users, resourcingData, resources })
         // Check if user has no jobs or less than 5 days allocated in any month specified in propData
         const eligibleMonths = Object.keys(propData.monthlyDetails);
         return eligibleMonths.every(month => {
-            const bookingInMonth = user.booked.find(booking => booking.month === month);
+            const bookingInMonth = user.jobs.find(booking => booking.month === month);
             // If no booking for that month or less than 5 days allocated, user is eligible
             return !bookingInMonth || bookingInMonth.days_allocated < 5;
         });
@@ -125,7 +142,7 @@ export const UsersDialog = ({ open, onClose, users, resourcingData, resources })
                 {usersToDisplay.map((user, index) => (
                     <ListItem button key={index}
                     secondaryAction={
-                        <IconButton edge="end" onClick={() => handleAddUser(user)} >
+                        <IconButton edge="end" onClick={() => onAddUser(user)} >
                           <AddCircleIcon />
                         </IconButton>
                       }>

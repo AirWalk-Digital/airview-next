@@ -1,53 +1,231 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Stack, Dialog, DialogContent, DialogTitle, Chip, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Paper, Select, MenuItem, InputLabel, FormControl
+    Stack,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    Chip,
+    IconButton,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    Paper,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
+    Skeleton,
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import PersonIcon from '@mui/icons-material/Person';
-import { UsersDialog } from '@/components/resourcing'
+import { UsersDialog } from '@/components/resourcing';
+
+function DemandTableSkeleton() {
+    return (
+        <Table size="small" style={{ tableLayout: 'auto' }}>
+            <TableHead>
+                <TableRow>
+                    <TableCell colSpan={5}>
+                        <Skeleton variant="rectangular" width="100%" height={20} />
+                    </TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {[...Array(5)].map((_, i) => (
+                    <TableRow key={i}>
+                        {[...Array(5)].map((_, index) => (
+                            <TableCell key={index}>
+                                <Skeleton variant="text" />
+                            </TableCell>
+                        ))}
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    );
+}
+
+function Resources({ role, resources }) {
+    // console.log('Resource:role: ', role)
+    const [resource, setResource] = useState(null);
+    const [popupContent, setPopupContent] = useState(null);
+    const [showPopup, setShowPopup] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            // console.log('Resource:useEffect')
+            // console.log('Resource:role.code: ', role.Code)
+            try {
+                const response = await fetch('/api/resourcing/placeholder?code=' + role.Code);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const fetchedData = await response.json();
+                // console.log('Resource:response: ', response)
+
+                const jsonParsedData = JSON.parse(fetchedData.content)
+                // console.log('Resource:jsonParsedData: ', jsonParsedData)
+
+                setResource(jsonParsedData); // Adjust according to actual API response
+                console.log('Resource:jsonParsedData: ', jsonParsedData)
 
 
-export function DemandTable({ data, users, resources}) {
+            } catch (err) {
+                console.error('Resource:ERROR: ', err)
+            }
+        };
+
+        fetchData();
+    }, [showPopup]);
+
+    const handleDelete = async (event) => {
+        console.debug('Resource:handleDelete: ', event)
+        try {
+            const response = await fetch(`/api/resourcing/placeholder?code=${event.Code}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            setResource(null);
+            const result = await response.json();
+            console.log(result); // Process the response as needed
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+
+    }
+
+    return (
+        <><Stack direction="row" spacing={1} alignItems="center">
+
+            {resource && <Chip variant="outlined" label={resource.displayName} icon={<PersonIcon />} onDelete={() => handleDelete(role)} />}
+            <IconButton
+                onClick={() => {
+                    setPopupContent(role);
+                    setShowPopup(true);
+                }}>
+                <AddCircleIcon />
+            </IconButton>
+        </Stack>
+            {popupContent && <UsersDialog open={showPopup} onClose={() => setShowPopup(false)} resourcingData={popupContent} resources={resources} />}
+        </>
+
+    );
+}
+
+export function DemandTable({ users }) {
     const [filteredData, setFilteredData] = useState([]);
     const [customerFilter, setCustomerFilter] = useState('');
-    const [showPopup, setShowPopup] = useState(false);
-    const [popupContent, setPopupContent] = useState(null);
-    const [displayedMonths] = useState([
-        "2023-11-01T00:00:00.000", "2023-12-01T00:00:00.000", "2024-01-01T00:00:00.000"
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [data, setData] = useState(null);
+    const [resources, setResources] = useState(null);
+    const [monthStartIndex, setMonthStartIndex] = useState(0);
+    const [months, setMonths] = useState([
+        '2023-11-01T00:00:00.000', '2023-12-01T00:00:00.000', '2024-01-01T00:00:00.000',
     ]);
 
     useEffect(() => {
-        let groupedData = [];
-
-        data.forEach(item => {
-            Object.keys(item.Roles || {}).forEach(month => {
-                item.Roles[month].forEach(roleDetail => {
-                    const existingEntry = groupedData.find(
-                        e => e.Customer === item.Customer &&
-                            e.Description === item.Description &&
-                            e.role === roleDetail.role
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const response = await fetch('/api/resourcing/resources?demand=true');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const fetchedData = await response.json();
+                if (fetchedData.content) {
+                    const jsonParsedData = JSON.parse(fetchedData.content)
+                    // console.log('jsonParsedData: ', jsonParsedData)
+                    setData(jsonParsedData); // Adjust according to actual API response
+                    setMonths(
+                        Array.from(
+                            new Set(
+                                jsonParsedData.flatMap(item => Object.keys(item.Roles))
+                            )
+                        ).sort()
                     );
 
-                    if (existingEntry) {
-                        existingEntry.monthlyDetails[month] = roleDetail;
-                    } else {
-                        groupedData.push({
-                            Customer: item.Customer,
-                            Description: item.Description,
-                            role: roleDetail.role,
-                            monthlyDetails: { [month]: roleDetail }
-                        });
-                    }
+                    setIsLoading(false);
+                } else {
+                    setIsLoading(true);
+                }
+            } catch (err) {
+                setError(err.message);
+                setIsLoading(false);
+            }
+
+            try {
+                const response = await fetch('/api/resourcing/resources');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const fetchedData = await response.json();
+                if (fetchedData.content) {
+                    const jsonParsedData = JSON.parse(fetchedData.content)
+                    // console.log('jsonParsedData: ', jsonParsedData)
+                    setResources(jsonParsedData); // Adjust according to actual API response
+                    setIsLoading(false);
+                } else {
+                    setIsLoading(true);
+                }
+            } catch (err) {
+                setError(err.message);
+                setIsLoading(false);
+            }
+
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (data) {
+            let groupedData = [];
+
+            data.forEach(item => {
+                Object.keys(item.Roles || {}).forEach(month => {
+                    item.Roles[month].forEach(roleDetail => {
+                        const existingEntry = groupedData.find(
+                            e => e.Customer === item.Customer &&
+                                // e.Description === roleDetail.Description &&
+                                e.role === roleDetail.role
+                        );
+
+                        if (existingEntry) {
+                            existingEntry.monthlyDetails[month] = roleDetail;
+                        } else {
+                            groupedData.push({
+                                Customer: item.Customer,
+                                Code: item.Code,
+                                Description: item.Description,
+                                role: roleDetail.role,
+                                monthlyDetails: { [month]: roleDetail }
+                            });
+                        }
+                    });
                 });
             });
-        });
 
-        if (customerFilter) {
-            setFilteredData(groupedData.filter(item => item.Customer === customerFilter));
-        } else {
-            setFilteredData(groupedData);
+            if (customerFilter) {
+                setFilteredData(groupedData.filter(item => item.Customer === customerFilter));
+            } else {
+                setFilteredData(groupedData);
+                // console.log('groupedData: ', groupedData)
+            }
         }
-    }, [customerFilter, data, displayedMonths]);
+    }, [customerFilter, data]);
+
+    if (isLoading) {
+        return <DemandTableSkeleton />;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    const displayedMonths = months ? months.slice(monthStartIndex, monthStartIndex + 3) : [];
 
     return (
         <Paper>
@@ -61,7 +239,7 @@ export function DemandTable({ data, users, resources}) {
                     <MenuItem value="">
                         <em>None</em>
                     </MenuItem>
-                    {Array.from(new Set(data.map(item => item.Customer))).map(customer => (
+                    {Array.from(new Set(data?.map(item => item.Customer))).map(customer => (
                         <MenuItem key={customer} value={customer}>
                             {customer}
                         </MenuItem>
@@ -89,18 +267,7 @@ export function DemandTable({ data, users, resources}) {
                             <TableCell>{item.Description}</TableCell>
                             <TableCell>{item.role}</TableCell>
                             <TableCell>
-                                <Stack direction="row" spacing={1}>
-                                    <Resources />
-
-                                    <IconButton
-                                    onClick={() => {
-                                        
-                                        setPopupContent(item);
-                                        setShowPopup(true);
-                                    }}>
-                                        <AddCircleIcon />
-                                    </IconButton>
-                                </Stack>
+                                <Resources role={item} resources={resources}/>
                             </TableCell>
                             {displayedMonths.map(month => (
                                 <TableCell key={month} style={{ backgroundColor: (item.monthlyDetails && item.monthlyDetails[month] && item.monthlyDetails[month].days_allocated) ? 'blue' : 'transparent' }} >
@@ -119,20 +286,7 @@ export function DemandTable({ data, users, resources}) {
                 </TableBody>
             </Table>
 
-
-            {popupContent && <UsersDialog open={showPopup} onClose={() => setShowPopup(false)} resourcingData={popupContent} users={users} resources={resources}/>}
-                
         </Paper>
     );
 }
 
-
-
-function Resources() {
-    return (
-        <Stack spacing={1}>
-            <Chip variant="outlined" label="user one sdlkjsdlkjsd" icon={<PersonIcon />} />
-            <Chip variant="outlined" label="user" icon={<PersonIcon />} />
-        </Stack>
-    )
-}
