@@ -90,7 +90,7 @@ const ResourceTableSkeleton = () => {
     );
 };
 
-export function ResourceTable() {
+export function ResourceTable({bench = false}) {
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState([]);
     const [disciplineFilter, setDisciplineFilter] = useState('');

@@ -15,6 +15,7 @@ import CardContent from '@mui/material/CardContent';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import UploadIcon from '@mui/icons-material/Upload';
+import PersonIcon from '@mui/icons-material/Person';
 
 export default function Page() {
   const [value, setValue] = useState(0);
@@ -30,7 +31,9 @@ export default function Page() {
         <Tabs value={value} onChange={handleChange}>
           <Tab icon={<ReceiptIcon />} iconPosition="start" label="Demand" index="0" />
           <Tab icon={<SupervisedUserCircleIcon />} iconPosition="start" label="Resources" index="1" />
-          <Tab icon={<UploadIcon />} iconPosition="start" label="Upload" index="2" />
+          <Tab icon={<PersonIcon />} iconPosition="start" label="Bench" index="2" />
+
+          <Tab icon={<UploadIcon />} iconPosition="start" label="Upload" index="3" />
 
         </Tabs>
       </Box>
@@ -42,6 +45,9 @@ export default function Page() {
         <ResourceTable  />
       </TabPanel>
       <TabPanel value={value} index={2}>
+        <ResourceTable bench={true}/>
+      </TabPanel>
+      <TabPanel value={value} index={3}>
         <FileUpload />
       </TabPanel>
     </Box>

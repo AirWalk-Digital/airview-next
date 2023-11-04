@@ -76,7 +76,7 @@ function Resources({ role, resources }) {
         };
 
         fetchData();
-    }, [showPopup]);
+    }, [ role, showPopup]);
 
     const handleDelete = async (event) => {
         console.debug('Resource:handleDelete: ', event)
@@ -229,7 +229,7 @@ export function DemandTable({ users }) {
 
     return (
         <Paper>
-            <FormControl fullWidth variant="outlined" style={{ marginBottom: '20px' }}>
+            {/* <FormControl fullWidth variant="outlined" style={{ marginBottom: '20px' }}>
                 <InputLabel>Filter by Customer</InputLabel>
                 <Select
                     value={customerFilter}
@@ -245,12 +245,46 @@ export function DemandTable({ users }) {
                         </MenuItem>
                     ))}
                 </Select>
-            </FormControl>
+            </FormControl> */}
 
             <Table size="small" style={{ tableLayout: 'auto' }}>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Customer</TableCell>
+                        <TableCell>Customer
+                            <Select
+                                value='{}'
+                                onChange={(e) => setCustomerFilter(e.target.value)}
+                                displayEmpty
+                                size="small"
+                                // sx={{ ml: 1 }}
+                                sx={{
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none',
+                                    },
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none',
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none',
+                                        outline: 'none',
+                                    },
+                                    '&.MuiSelect-select:focus': {
+                                        backgroundColor: 'transparent',
+                                    },
+                                }}
+                            >
+                                <MenuItem value="">
+                                    <em>None</em>
+                                </MenuItem>
+                                {Array.from(new Set(data?.map(item => item.Customer) || []))
+                                    .sort() // This will sort the array alphabetically
+                                    .map(customer => (
+                                        <MenuItem key={customer} value={customer}>
+                                            {customer}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </TableCell>
                         <TableCell>Description</TableCell>
                         <TableCell>Role</TableCell>
                         <TableCell>Proposed Resource</TableCell>
@@ -267,7 +301,7 @@ export function DemandTable({ users }) {
                             <TableCell>{item.Description}</TableCell>
                             <TableCell>{item.role}</TableCell>
                             <TableCell>
-                                <Resources role={item} resources={resources}/>
+                                <Resources role={item} resources={resources} />
                             </TableCell>
                             {displayedMonths.map(month => (
                                 <TableCell key={month} style={{ backgroundColor: (item.monthlyDetails && item.monthlyDetails[month] && item.monthlyDetails[month].days_allocated) ? 'blue' : 'transparent' }} >
