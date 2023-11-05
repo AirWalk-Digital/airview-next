@@ -56,9 +56,9 @@ function Resources({ role, resources }) {
     useEffect(() => {
         const fetchData = async () => {
             // console.log('Resource:useEffect')
-            // console.log('Resource:role.code: ', role.Code)
+            console.log('Resource:role: ', role)
             try {
-                const response = await fetch('/api/resourcing/placeholder?code=' + role.Code);
+                const response = await fetch('/api/resourcing/placeholder?code=' + role.Code + '&role_id=' + String(role.role_id));
                 if (!response.ok) throw new Error('Network response was not ok');
                 const fetchedData = await response.json();
                 // console.log('Resource:response: ', response)
@@ -67,7 +67,7 @@ function Resources({ role, resources }) {
                 // console.log('Resource:jsonParsedData: ', jsonParsedData)
 
                 setResource(jsonParsedData); // Adjust according to actual API response
-                console.log('Resource:jsonParsedData: ', jsonParsedData)
+                // console.log('Resource:jsonParsedData: ', jsonParsedData)
 
 
             } catch (err) {
@@ -76,12 +76,12 @@ function Resources({ role, resources }) {
         };
 
         fetchData();
-    }, [ role, showPopup]);
+    }, [role, showPopup]);
 
     const handleDelete = async (event) => {
         console.debug('Resource:handleDelete: ', event)
         try {
-            const response = await fetch(`/api/resourcing/placeholder?code=${event.Code}`, {
+            const response = await fetch(`/api/resourcing/placeholder?code=${event.Code}&id=${event.role_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +101,8 @@ function Resources({ role, resources }) {
     }
 
     return (
-        <><Stack direction="row" spacing={1} alignItems="center">
+        <><Stack direction="row" spacing={1} justifyContent="flex-end"
+            alignItems="center">
 
             {resource && <Chip variant="outlined" label={resource.displayName} icon={<PersonIcon />} onDelete={() => handleDelete(role)} />}
             <IconButton
@@ -201,6 +202,8 @@ export function DemandTable({ users }) {
                                 Code: item.Code,
                                 Description: item.Description,
                                 role: roleDetail.role,
+                                role_id: roleDetail.role_id,
+                                grade: roleDetail.grade,
                                 monthlyDetails: { [month]: roleDetail }
                             });
                         }
@@ -252,7 +255,7 @@ export function DemandTable({ users }) {
                     <TableRow>
                         <TableCell>Customer
                             <Select
-                                value='{}'
+                                value=''
                                 onChange={(e) => setCustomerFilter(e.target.value)}
                                 displayEmpty
                                 size="small"
@@ -274,7 +277,6 @@ export function DemandTable({ users }) {
                                 }}
                             >
                                 <MenuItem value="">
-                                    <em>None</em>
                                 </MenuItem>
                                 {Array.from(new Set(data?.map(item => item.Customer) || []))
                                     .sort() // This will sort the array alphabetically
@@ -287,10 +289,10 @@ export function DemandTable({ users }) {
                         </TableCell>
                         <TableCell>Description</TableCell>
                         <TableCell>Role</TableCell>
-                        <TableCell>Proposed Resource</TableCell>
+                        <TableCell>Resource</TableCell>
 
                         {displayedMonths.map(month => (
-                            <TableCell key={month}>{new Date(month).toLocaleString('default', { month: 'long' })}</TableCell>
+                            <TableCell align="center" key={month}>{new Date(month).toLocaleString('default', { month: 'long' })}</TableCell>
                         ))}
                     </TableRow>
                 </TableHead>
@@ -299,19 +301,21 @@ export function DemandTable({ users }) {
                         <TableRow key={index}>
                             <TableCell>{item.Customer}</TableCell>
                             <TableCell>{item.Description}</TableCell>
-                            <TableCell>{item.role}</TableCell>
+                            <TableCell>{item.role} {item.grade !== 'N/A' ? `[${item.grade}]` : ''}</TableCell>
                             <TableCell>
                                 <Resources role={item} resources={resources} />
                             </TableCell>
                             {displayedMonths.map(month => (
-                                <TableCell key={month} style={{ backgroundColor: (item.monthlyDetails && item.monthlyDetails[month] && item.monthlyDetails[month].days_allocated) ? 'blue' : 'transparent' }} >
+                                <TableCell key={month}
+                                // style={{ backgroundColor: (item.monthlyDetails && item.monthlyDetails[month] && item.monthlyDetails[month].days_allocated) ? 'blue' : 'transparent' }} 
+                                >
                                     <div style={{
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
                                         height: '100%'
                                     }}>
-                                        {item.monthlyDetails && item.monthlyDetails[month] && <Chip color="primary" label={item.monthlyDetails[month].days_allocated} />}
+                                        {item.monthlyDetails && item.monthlyDetails[month] && <Chip sx={{ minWidth: '100px' }} color="primary" label={item.monthlyDetails[month].days_allocated} />}
                                     </div>
                                 </TableCell>
                             ))}

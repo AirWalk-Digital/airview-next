@@ -17,21 +17,41 @@ import {
     DialogContent,
     DialogTitle,
     Button,
-    Skeleton
+    Skeleton,
+    Stack
 } from '@mui/material';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 
 function determineColor(daysAllocated, daysHypo) {
     const hypo = parseInt(daysHypo, 10);
-    if (daysAllocated > hypo + 3) return 'red';
-    if (daysAllocated < hypo - 1) return 'blue';
-    return 'green';
+    if (daysAllocated > hypo + 3) return 'error';
+    if (daysAllocated < hypo - 1) return 'primary';
+    return 'success';
 }
 
-function Row({ data, displayedMonths, setPopupContent, setShowPopup }) {
-    console.debug('Row: ', data)
+function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder }) {
+    // console.debug('Row: ', data)
+    if (placeholder) {
+        console.debug('Placeholder: ', placeholder)
+    }
+    // {
+    //     "name": "PRISACARIU, Vlad",
+    //     "resource_bu": "arwuk_cons",
+    //     "nobody": "N",
+    //     "jobs": [],
+    //     "displayName": "Vlad Prisacariu",
+    //     "givenName": "Vlad",
+    //     "surname": "Prisacariu",
+    //     "jobTitle": "Graduate Engineer",
+    //     "mail": "vlad.prisacariu@airwalkconsulting.com",
+    //     "officeLocation": "Sheffield",
+    //     "department": "Engineering",
+    //     "managerEmail": "mark.cuckson@airwalkconsulting.com"
+    //   }
+
     return (
         <TableRow>
             <TableCell style={{ whiteSpace: 'nowrap', width: 'max-content' }}>
@@ -43,22 +63,50 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup }) {
 
             {displayedMonths.map(month => (
                 <TableCell
+                    align="center"
+                    size="small"
+                    sx={{ width: '100px' }}
                     key={month}
-                    style={{
-                        backgroundColor: data.jobs.some(item => item.month === month) ?
-                            determineColor(data.jobs.find(item => item.month === month).days_allocated,
-                                data.jobs.find(item => item.month === month).days_hypo)
-                            : 'transparent'
-                    }}
+                    // style={{
+                    //     backgroundColor: data.jobs.some(item => item.month === month) ?
+                    //         determineColor(data.jobs.find(item => item.month === month).days_allocated,
+                    //             data.jobs.find(item => item.month === month).days_hypo)
+                    //         : 'transparent'
+                    // }}
                     onClick={() => {
                         const monthData = data.jobs.find(item => item.month === month);
                         setPopupContent(monthData ? monthData.jobs : null);
                         setShowPopup(true);
                     }}
-                >
-                    {data.jobs.some(item => item.month === month) &&
-                        <Chip sx={{ color: 'white' }} variant="outlined" color="info" label={data.jobs.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.days, 10), 0)} />
-                    }
+                ><Stack direction="row" spacing={1} justifyContent="center"
+                    alignItems="center">
+                        {data.jobs.some(item => item.month === month) &&
+
+                            <Chip
+                                sx={{
+                                    color: 'white',
+                                    minWidth: (placeholder?.monthlyDetails?.[month]?.days_allocated > 0) ? '50px' : '100px',
+                                }}
+                                color={
+                                    data.jobs.some(item => item.month === month) ?
+                                        determineColor(data.jobs.find(item => item.month === month).days_allocated,
+                                            data.jobs.find(item => item.month === month).days_hypo)
+                                        : 'transparent'
+                                } label={data.jobs.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.days, 10), 0)} />
+                        }
+                        {
+                            placeholder &&
+                            placeholder.monthlyDetails &&
+                            placeholder.monthlyDetails[month] && (
+                                // <WorkOutlineIcon />
+                                <Chip
+                                icon={<WorkOutlineIcon />}
+                                    sx={{ color: 'primary' }}
+                                    label={placeholder.monthlyDetails[month].days_allocated}
+                                />
+                            )
+                        }
+                    </Stack>
                 </TableCell>
             ))}
         </TableRow>
@@ -90,7 +138,7 @@ const ResourceTableSkeleton = () => {
     );
 };
 
-export function ResourceTable({bench = false}) {
+export function ResourceTable({ bench = false }) {
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState([]);
     const [disciplineFilter, setDisciplineFilter] = useState('');
@@ -99,6 +147,7 @@ export function ResourceTable({bench = false}) {
     const [popupContent, setPopupContent] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [placeholder, setPlaceholder] = useState(null);
     const [months, setMonths] = useState([]);
     //   const [months, setMonths] = useState([]);
 
@@ -120,9 +169,50 @@ export function ResourceTable({bench = false}) {
                 setIsLoading(false);
             }
         };
+        const fetchPlaceholderData = async () => {
+
+            try {
+                const response = await fetch('/api/resourcing/placeholder');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const fetchedData = await response.json();
+                console.debug('Resource:placeholder: ', fetchedData.content)
+
+                // const jsonParsedData = JSON.parse(fetchedData.content.length > 0 ? fetchedData.content : null)
+                setPlaceholder(groupByMailAndSumDays(fetchedData.content)); // Adjust according to actual API response
+                // console.debug('Resource:placeholder: ', jsonParsedData)
+
+            } catch (err) {
+                console.error('Resource:ERROR: ', err)
+            }
+        };
 
         fetchData();
+        fetchPlaceholderData();
     }, []);
+
+    function groupByMailAndSumDays(data) {
+        const groupedData = {};
+
+        data.forEach(item => {
+            if (!groupedData[item.resource]) {
+                groupedData[item.resource] = { displayName: item.displayName, monthlyDetails: {} };
+                Object.keys(item.monthlyDetails).forEach(month => {
+                    groupedData[item.resource].monthlyDetails[month] = { days_allocated: item.monthlyDetails[month].days_allocated };
+                })
+          } else {
+                Object.keys(item.monthlyDetails).forEach(month => {
+                    if (!groupedData[item.resource].monthlyDetails[month]) {
+                        groupedData[item.resource].monthlyDetails[month] = { days_allocated: item.monthlyDetails[month].days_allocated };
+                    } else {
+                        groupedData[item.resource].monthlyDetails[month].days_allocated += item.monthlyDetails[month].days_allocated;
+                    }
+                });
+            }
+        });
+
+        return groupedData;
+    }
+
 
     useEffect(() => {
         const sortUsersByName = (users) => {
@@ -130,16 +220,33 @@ export function ResourceTable({bench = false}) {
                 .filter(user => user.displayName != null)
                 .sort((a, b) => a.displayName.localeCompare(b.displayName));
         };
-        console.debug(data)
-        if (data && !isLoading) {
-            if (disciplineFilter) {
-                setFilteredData(sortUsersByName(data.filter(item => item.department === disciplineFilter)));
-            } else {
-                setFilteredData(sortUsersByName(data));
-            }
-        }
-    }, [disciplineFilter, data]);
 
+        const filterRowsWithNoJobsInDisplayedMonths = (users) => {
+            return users.filter(user =>
+                displayedMonths.some(month =>
+                    !user.jobs.some(job => job.month === month)
+                )
+            );
+        };
+
+        // console.debug(data)
+        if (data && !isLoading) {
+            let usersToDisplay = sortUsersByName(data);
+
+            if (disciplineFilter) {
+                usersToDisplay = usersToDisplay.filter(item => item.department === disciplineFilter);
+            }
+
+            if (bench) { // Only apply this filter if bench prop is true
+                usersToDisplay = filterRowsWithNoJobsInDisplayedMonths(usersToDisplay);
+            }
+
+            setFilteredData(usersToDisplay);
+        }
+    }, [disciplineFilter, data, bench, displayedMonths]);
+
+
+    // console.log('placeholder: ', placeholder)
     // Ensure we only proceed if data is an array
     // const isDataArray = Array.isArray(data);
     // const months = isDataArray ? Array.from(new Set(data.flatMap(item => item.booked.map(b => b.month)))).sort() : [];
@@ -185,7 +292,7 @@ export function ResourceTable({bench = false}) {
                         <TableCell>Name</TableCell>
                         <TableCell>Discipline
                             <Select
-                                value='{}'
+                                value=''
                                 onChange={(e) => setDisciplineFilter(e.target.value)}
                                 displayEmpty
                                 size="small"
@@ -207,7 +314,7 @@ export function ResourceTable({bench = false}) {
                                 }}
                             >
                                 <MenuItem value="">
-                                    <em>None</em>
+
                                 </MenuItem>
                                 {Array.from(new Set(data?.map(item => item.department) || []))
                                     .sort() // This will sort the array alphabetically
@@ -219,7 +326,7 @@ export function ResourceTable({bench = false}) {
 
                             </Select>
                         </TableCell>
-                        {displayedMonths.map((month, index) => (<TableCell key={month} sx={{ pl: index === 1 ? '0px' : '8px' }}>
+                        {displayedMonths.map((month, index) => (<TableCell align='center' key={month} sx={{ mx: '5px', width: '120px', pl: index === 0 ? '0px' : '5px', pr: index === 2 ? '0px' : '5px' }}>
                             {index === 0 && (
                                 <IconButton
                                     // sx={{ position: 'absolute', right: 8, top: 8 }}
@@ -247,7 +354,15 @@ export function ResourceTable({bench = false}) {
                 </TableHead>
                 <TableBody>
                     {filteredData.map(item => (
-                        <Row key={item.name} data={item} displayedMonths={displayedMonths} setPopupContent={setPopupContent} setShowPopup={setShowPopup} />
+                        <Row
+                            key={item.name}
+                            data={item}
+                            displayedMonths={displayedMonths}
+                            setPopupContent={setPopupContent}
+                            setShowPopup={setShowPopup}
+                            placeholder={placeholder && placeholder[item.mail] ? placeholder[item.mail] : null}
+                        />
+
                     ))}
                 </TableBody>
             </Table>

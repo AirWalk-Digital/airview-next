@@ -6,7 +6,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Select from '@mui/material/Select';
@@ -14,6 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { DialogContent } from '@mui/material';
 
 // Import your JSON data here. In a real-world scenario, you would load this data from a file or API
 
@@ -23,7 +25,7 @@ export const UsersDialog = ({ open, onClose, resourcingData, resources }) => {
     const [departmentFilter, setDepartmentFilter] = useState('');
     const [departments, setDepartments] = useState([]);
 
-    // console.log('resourcingData', resourcingData)
+    console.log('resourcingData', resourcingData)
 
     useEffect(() => {
         // Extract distinct departments from the resources
@@ -50,7 +52,7 @@ export const UsersDialog = ({ open, onClose, resourcingData, resources }) => {
     // Function to handle adding a user
 
     const onAddUser = async (user) => {
-        const recordProposal = {'employee': user.mail, 'displayName' : user.displayName, 'customer' : resourcingData.Customer, 'project': resourcingData.Description, 'code': resourcingData.Code, 'role' : resourcingData.role, 'monthlyDetails': resourcingData.monthlyDetails} 
+        const recordProposal = {'resource': user.mail, 'role_id' : resourcingData.role_id, 'displayName' : user.displayName, 'customer' : resourcingData.Customer, 'project': resourcingData.Description, 'code': resourcingData.Code, 'role' : resourcingData.role, 'monthlyDetails': resourcingData.monthlyDetails} 
         console.log('added:', recordProposal)
         try {
             const response = await fetch('/api/resourcing/placeholder', {
@@ -104,15 +106,17 @@ export const UsersDialog = ({ open, onClose, resourcingData, resources }) => {
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
             <DialogTitle>
-                {view === 1 ? 'Users with No Jobs or Less Than 5 Days Allocated' : 'All Users'}
+                {/* {view === 1 ? 'Available Users' : 'Employees'} */}
+                Select Resource
                 <IconButton aria-label="close" onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
-            <Box textAlign="center" p={2}>
+            <DialogContent>
+            <Stack direction="row" spacing={2}   justifyContent="space-between">
                  {/* Department Filter Dropdown */}
-                 <FormControl fullWidth>
-                    <InputLabel id="department-select-label">Department</InputLabel>
+                 <FormControl size="small">
+                    {/* <InputLabel id="department-select-label">Department</InputLabel> */}
                     <Select
                         labelId="department-select-label"
                         id="department-select"
@@ -129,15 +133,19 @@ export const UsersDialog = ({ open, onClose, resourcingData, resources }) => {
                         ))}
                     </Select>
                 </FormControl>
-                <Button onClick={() => setView(1)} color="primary" variant={view === 1 ? 'contained' : 'text'}>
-                    View 1
+                <ButtonGroup
+  disableElevation
+  variant="contained">
+                <Button onClick={() => setView(1)} variant={view === 1 ? 'contained' : 'text'}>
+                    Available
                 </Button>
-                <Button onClick={() => setView(2)} color="secondary" variant={view === 2 ? 'contained' : 'text'}>
-                    View 2
+                <Button onClick={() => setView(2)}  variant={view === 2 ? 'contained' : 'text'}>
+                    Everyone
                 </Button>
+                </ButtonGroup>
                 {/* Dropdown or text input to filter by department */}
                 {/* Implement the department filter input here */}
-            </Box>
+            </Stack>
             <List>
                 {usersToDisplay.map((user, index) => (
                     <ListItem button key={index}
@@ -153,6 +161,7 @@ export const UsersDialog = ({ open, onClose, resourcingData, resources }) => {
                     </ListItem>
                 ))}
             </List>
+            </DialogContent>
         </Dialog>
     );
 };
