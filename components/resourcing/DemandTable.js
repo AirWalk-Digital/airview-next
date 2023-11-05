@@ -81,7 +81,7 @@ function Resources({ role, resources }) {
     const handleDelete = async (event) => {
         console.debug('Resource:handleDelete: ', event)
         try {
-            const response = await fetch(`/api/resourcing/placeholder?code=${event.Code}&id=${event.role_id}`, {
+            const response = await fetch(`/api/resourcing/placeholder?code=${event.Code}&role_id=${event.role_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
