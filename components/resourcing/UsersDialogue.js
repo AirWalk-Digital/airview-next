@@ -104,7 +104,7 @@ export const UsersDialog = ({ open, onClose, resourcingData, resources }) => {
     const usersToDisplay = processData(view, resources);
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+        <Dialog open={open} onClose={onClose} fullWidth >
             <DialogTitle>
                 {/* {view === 1 ? 'Available Users' : 'Employees'} */}
                 Select Resource

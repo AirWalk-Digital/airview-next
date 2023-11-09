@@ -3,6 +3,7 @@ import {
     Box,
     Chip,
     Table,
+    Switch, FormGroup, FormControlLabel,
     TableBody,
     TableCell,
     TableHead,
@@ -25,6 +26,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
+import InfoIcon from '@mui/icons-material/Info';
+import CloseIcon from '@mui/icons-material/Close';
 
 function determineColor(daysAllocated, daysHypo) {
     const hypo = parseInt(daysHypo, 10);
@@ -33,18 +36,89 @@ function determineColor(daysAllocated, daysHypo) {
     return 'success';
 }
 
+function UserPopup({ data, open, handleClose }) {
+    // Example toggles' state
+    const [toggle1, setToggle1] = useState(false);
+    const [toggle2, setToggle2] = useState(false);
+    const [toggle3, setToggle3] = useState(false);
+
+    // Handle toggle change
+    const handleToggleChange = (toggleSetter) => (event) => {
+        toggleSetter(event.target.checked);
+    };
+
+    return (
+        <Dialog open={open} onClose={handleClose} fullWidth>
+            <DialogTitle>
+                {data.displayName || data.name}
+                <IconButton onClick={handleClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent>
+                <FormGroup>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={toggle1}
+                                onChange={handleToggleChange(setToggle1)}
+                            />
+                        }
+                        label="SC Cleared"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={toggle2}
+                                onChange={handleToggleChange(setToggle2)}
+                            />
+                        }
+                        label="TIR"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={toggle3}
+                                onChange={handleToggleChange(setToggle3)}
+                            />
+                        }
+                        label="Mansion House"
+                    />
+                </FormGroup>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+
 function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder }) {
     // console.debug('Row: ', data)
     // if (placeholder) {
     //     console.debug('Placeholder: ', placeholder)
     // }
     // {
+    const [popupOpen, setPopupOpen] = useState(false);
+
+    const handleInfoClick = () => {
+        setPopupOpen(!popupOpen);
+    };
+
+    const handleClose = () => {
+        setPopupOpen(false);
+    };
 
 
     return (
         <TableRow>
             <TableCell style={{ whiteSpace: 'nowrap', width: 'max-content' }}>
-                {data.displayName || data.name}
+                <Stack direction="row" spacing={1}
+                    justifyContent="space-between"
+                    alignItems="center">
+                    {data.displayName || data.name}
+                    <InfoIcon onClick={handleInfoClick} />
+                </Stack>
+                {popupOpen && <UserPopup data={data} open={popupOpen} handleClose={handleClose} />}
+
             </TableCell>
             <TableCell style={{ whiteSpace: 'nowrap', width: 'max-content' }}>
                 {data.department || "Associate"}
@@ -69,28 +143,28 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                     }}
                 ><Stack direction="row" spacing={1} justifyContent="center"
                     alignItems="center">
-                        
-                        {data.jobs.some(item => item.month === month) && data.jobs.find(item => item.month === month).holiday &&
-                        <Chip
-                        icon={<BeachAccessIcon />}
-                            sx={{ color: 'primary' }}
-                            label={data.jobs.find(item => item.month === month).holiday}
-                        />
-                        
-                        }    
-{
+
+                        {data.jobs.some(item => item.month === month) && data.jobs.find(item => item.month === month).holiday > 0 &&
+                            <Chip
+                                icon={<BeachAccessIcon />}
+                                sx={{ color: 'primary' }}
+                                label={data.jobs.find(item => item.month === month).holiday}
+                            />
+
+                        }
+                        {
                             placeholder &&
                             placeholder.monthlyDetails &&
                             placeholder.monthlyDetails[month] && (
                                 // <WorkOutlineIcon />
                                 <Chip
-                                icon={<WorkOutlineIcon />}
+                                    icon={<WorkOutlineIcon />}
                                     sx={{ color: 'primary' }}
                                     label={placeholder.monthlyDetails[month].days_allocated}
                                 />
                             )
                         }
-                        {data.jobs.some(item => item.month === month) &&
+                        {data.jobs.some(item => item.month === month) && data.jobs.find(item => item.month === month).days_allocated > 0 &&
 
                             <Chip
                                 sx={{
@@ -105,7 +179,7 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                                         : 'transparent'
                                 } label={data.jobs.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.days, 10), 0)} />
                         }
-                        
+
                     </Stack>
                 </TableCell>
             ))}
@@ -199,7 +273,7 @@ export function ResourceTable({ bench = false }) {
                 Object.keys(item.monthlyDetails).forEach(month => {
                     groupedData[item.resource].monthlyDetails[month] = { days_allocated: item.monthlyDetails[month].days_allocated };
                 })
-          } else {
+            } else {
                 Object.keys(item.monthlyDetails).forEach(month => {
                     if (!groupedData[item.resource].monthlyDetails[month]) {
                         groupedData[item.resource].monthlyDetails[month] = { days_allocated: item.monthlyDetails[month].days_allocated };
@@ -229,29 +303,26 @@ export function ResourceTable({ bench = false }) {
             );
         };
 
-        
-        
+
+
         const filterRowsWithNoJobsAndLessHolidays = (users, displayedMonths) => {
             return users.filter(user => {
-              // Criteria 1: Check if the user has no jobs in one of the displayed months
-              const hasNoJobsInDisplayedMonths = displayedMonths.some(month =>
-                !user.jobs.some(job => job.month.startsWith(month))
-              );
-          
-              // Criteria 2: Check if the user has 3 or less days allocated than days_hypo
-              const hasLessDaysAllocated = user.jobs.some(job =>
-                job.days_allocated + 3 <= job.days_hypo
-              );
-          
-              // Criteria 3: Check if the user has a holiday within the month that is 3 less than days_hypo
-              const hasLessHolidayThanDaysHypo = user.jobs.some(job =>
-                job.holiday && job.days_hypo - job.holiday >= 3
-              );
-          
-              // Return true if any of the criteria are met
-              return hasNoJobsInDisplayedMonths || hasLessDaysAllocated || hasLessHolidayThanDaysHypo;
+                // Condition 1: Check if the user has no jobs in one or more of the displayed months
+                const hasNoJobsInDisplayedMonths = displayedMonths.some(month =>
+                    !user.jobs.some(job => job.month.startsWith(month))
+                );
+
+                // Condition 2: Check if days_allocated plus holiday is less than days_hypo minus 3, using 20 if days_hypo is undefined
+                const hasLessDaysAllocated = user.jobs.some(job => {
+                    const holiday = job.holiday || 0; // If there is no holiday, default to 0
+                    const daysHypo = job.days_hypo || 20; // Use 20 if days_hypo is not defined
+                    return (job.days_allocated + holiday) < (daysHypo - 3);
+                });
+
+                // Return true if either condition is met
+                return hasNoJobsInDisplayedMonths || hasLessDaysAllocated;
             });
-          };
+        };
 
         console.debug(data)
         if (data && !isLoading) {
@@ -391,8 +462,12 @@ export function ResourceTable({ bench = false }) {
                 </TableBody>
             </Table>
 
-            <Dialog open={showPopup} onClose={() => setShowPopup(false)}>
-                <DialogTitle>Job Details</DialogTitle>
+            <Dialog fullWidth open={showPopup} onClose={() => setShowPopup(false)}>
+                <DialogTitle>Job Details
+                <IconButton onClick={() => setShowPopup(false)} sx={{ position: 'absolute', right: 8, top: 8 }}>
+                    <CloseIcon />
+                </IconButton>
+                </DialogTitle>
                 <DialogContent>
                     {popupContent && popupContent.map(job => (
                         <div key={typeof job.job_s_ord_code === 'string' ? job.job_s_ord_code : job.description}>
