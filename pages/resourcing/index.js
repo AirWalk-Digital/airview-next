@@ -3,7 +3,7 @@
 import { ResourceTable, DemandTable, FileUpload } from '@/components/resourcing'
 import { useState, useEffect } from "react";
 // import resourcing from './js_resource_full.json';
-import users from './users.json';
+// import users from './users.json';
 // import demand from './demand.json';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -39,7 +39,7 @@ export default function Page() {
       </Box>
 
       <TabPanel value={value} index={0}>
-        <DemandTable users={users} />
+        <DemandTable />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <ResourceTable  />

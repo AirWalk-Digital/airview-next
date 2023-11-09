@@ -24,6 +24,7 @@ import {
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 
 function determineColor(daysAllocated, daysHypo) {
     const hypo = parseInt(daysHypo, 10);
@@ -34,23 +35,11 @@ function determineColor(daysAllocated, daysHypo) {
 
 function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder }) {
     // console.debug('Row: ', data)
-    if (placeholder) {
-        console.debug('Placeholder: ', placeholder)
-    }
+    // if (placeholder) {
+    //     console.debug('Placeholder: ', placeholder)
+    // }
     // {
-    //     "name": "PRISACARIU, Vlad",
-    //     "resource_bu": "arwuk_cons",
-    //     "nobody": "N",
-    //     "jobs": [],
-    //     "displayName": "Vlad Prisacariu",
-    //     "givenName": "Vlad",
-    //     "surname": "Prisacariu",
-    //     "jobTitle": "Graduate Engineer",
-    //     "mail": "vlad.prisacariu@airwalkconsulting.com",
-    //     "officeLocation": "Sheffield",
-    //     "department": "Engineering",
-    //     "managerEmail": "mark.cuckson@airwalkconsulting.com"
-    //   }
+
 
     return (
         <TableRow>
@@ -65,7 +54,7 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                 <TableCell
                     align="center"
                     size="small"
-                    sx={{ width: '100px' }}
+                    // sx={{ width: '100px' }}
                     key={month}
                     // style={{
                     //     backgroundColor: data.jobs.some(item => item.month === month) ?
@@ -80,21 +69,16 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                     }}
                 ><Stack direction="row" spacing={1} justifyContent="center"
                     alignItems="center">
-                        {data.jobs.some(item => item.month === month) &&
-
-                            <Chip
-                                sx={{
-                                    color: 'white',
-                                    minWidth: (placeholder?.monthlyDetails?.[month]?.days_allocated > 0) ? '50px' : '100px',
-                                }}
-                                color={
-                                    data.jobs.some(item => item.month === month) ?
-                                        determineColor(data.jobs.find(item => item.month === month).days_allocated,
-                                            data.jobs.find(item => item.month === month).days_hypo)
-                                        : 'transparent'
-                                } label={data.jobs.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.days, 10), 0)} />
-                        }
-                        {
+                        
+                        {data.jobs.some(item => item.month === month) && data.jobs.find(item => item.month === month).holiday &&
+                        <Chip
+                        icon={<BeachAccessIcon />}
+                            sx={{ color: 'primary' }}
+                            label={data.jobs.find(item => item.month === month).holiday}
+                        />
+                        
+                        }    
+{
                             placeholder &&
                             placeholder.monthlyDetails &&
                             placeholder.monthlyDetails[month] && (
@@ -106,6 +90,22 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                                 />
                             )
                         }
+                        {data.jobs.some(item => item.month === month) &&
+
+                            <Chip
+                                sx={{
+                                    color: 'white',
+                                    width: '100%'
+                                    // minWidth: (placeholder?.monthlyDetails?.[month]?.days_allocated > 0) ? '50px' : '100px',
+                                }}
+                                color={
+                                    data.jobs.some(item => item.month === month) ?
+                                        determineColor(data.jobs.find(item => item.month === month).days_allocated,
+                                            data.jobs.find(item => item.month === month).days_hypo)
+                                        : 'transparent'
+                                } label={data.jobs.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.days, 10), 0)} />
+                        }
+                        
                     </Stack>
                 </TableCell>
             ))}
@@ -229,7 +229,31 @@ export function ResourceTable({ bench = false }) {
             );
         };
 
-        // console.debug(data)
+        
+        
+        const filterRowsWithNoJobsAndLessHolidays = (users, displayedMonths) => {
+            return users.filter(user => {
+              // Criteria 1: Check if the user has no jobs in one of the displayed months
+              const hasNoJobsInDisplayedMonths = displayedMonths.some(month =>
+                !user.jobs.some(job => job.month.startsWith(month))
+              );
+          
+              // Criteria 2: Check if the user has 3 or less days allocated than days_hypo
+              const hasLessDaysAllocated = user.jobs.some(job =>
+                job.days_allocated + 3 <= job.days_hypo
+              );
+          
+              // Criteria 3: Check if the user has a holiday within the month that is 3 less than days_hypo
+              const hasLessHolidayThanDaysHypo = user.jobs.some(job =>
+                job.holiday && job.days_hypo - job.holiday >= 3
+              );
+          
+              // Return true if any of the criteria are met
+              return hasNoJobsInDisplayedMonths || hasLessDaysAllocated || hasLessHolidayThanDaysHypo;
+            });
+          };
+
+        console.debug(data)
         if (data && !isLoading) {
             let usersToDisplay = sortUsersByName(data);
 
@@ -238,7 +262,7 @@ export function ResourceTable({ bench = false }) {
             }
 
             if (bench) { // Only apply this filter if bench prop is true
-                usersToDisplay = filterRowsWithNoJobsInDisplayedMonths(usersToDisplay);
+                usersToDisplay = filterRowsWithNoJobsAndLessHolidays(usersToDisplay, displayedMonths);
             }
 
             setFilteredData(usersToDisplay);
@@ -326,7 +350,7 @@ export function ResourceTable({ bench = false }) {
 
                             </Select>
                         </TableCell>
-                        {displayedMonths.map((month, index) => (<TableCell align='center' key={month} sx={{ mx: '5px', width: '120px', pl: index === 0 ? '0px' : '5px', pr: index === 2 ? '0px' : '5px' }}>
+                        {displayedMonths.map((month, index) => (<TableCell align='center' key={month} sx={{ mx: '5px', pl: index === 0 ? '0px' : '5px', pr: index === 2 ? '0px' : '5px' }}>
                             {index === 0 && (
                                 <IconButton
                                     // sx={{ position: 'absolute', right: 8, top: 8 }}

@@ -119,7 +119,7 @@ function Resources({ role, resources }) {
     );
 }
 
-export function DemandTable({ users }) {
+export function DemandTable() {
     const [filteredData, setFilteredData] = useState([]);
     const [customerFilter, setCustomerFilter] = useState('');
     const [isLoading, setIsLoading] = useState(true);

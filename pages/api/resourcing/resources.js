@@ -2,7 +2,7 @@
 
 import formidable from 'formidable-serverless';
 import { promises as fs } from 'fs';
-import { parseExcelXml, expandResourceData, calculateDemand } from '@/lib/loaders'; // Adjust the path as necessary
+import { parseExcelXml, expandResourceData, calculateDemand, timesheetPortalHolidays, combineResourcesWithHolidays } from '@/lib/loaders'; // Adjust the path as necessary
 import { cacheWrite, cacheRead } from '@/lib/redis';
 
 import users from './users.json';
@@ -45,7 +45,12 @@ export default async function handler(req, res) {
                 // console.debug('/api/upload: ', jsonData);
 
                 const resourceData = expandResourceData(jsonData, users)
-                
+
+                const holidays = await timesheetPortalHolidays(process.env.TSP_CLIENT_ID, process.env.TSP_CLIENT_SECRET)
+                // const groupedHolidays = groupLeaveData()
+                const resourceDataWithHolidays = combineResourcesWithHolidays(resourceData, holidays)
+                // res.status(200).json({'resource': resourceData, 'holidays': holidays}); // Respond with JSON data                
+
                 const demandData = calculateDemand(resourceData)
 
                 try {
@@ -63,14 +68,16 @@ export default async function handler(req, res) {
                 }
 
                 try {
-                    await cacheWrite(cacheKey, JSON.stringify(resourceData)); // attempt to cache data
-                    res.status(200).json(resourceData); // Respond with JSON data
+                    await cacheWrite(cacheKey, JSON.stringify(resourceDataWithHolidays)); // attempt to cache data
+                    res.status(200).json(resourceDataWithHolidays); // Respond with JSON data
                 } catch (cacheError) {
                     // If cacheWrite fails, log the error and send a 500 response
                     console.error('[API/resourcing/resources/POST][Cache Write Error (', cacheKey, ')]:', cacheError);
                     res.status(500).json({ error: 'Failed to write to cache.' });
                     return; // Stop further execution
                 }
+
+
             } catch (error) {
                 return res.status(500).json({ error: error.message });
             }
@@ -79,26 +86,26 @@ export default async function handler(req, res) {
         }
     } else if (req.method === 'GET') {
 
-        if (req.query.demand ==='true') {
+        if (req.query.demand === 'true') {
             try {
-                const obj = await cacheRead('geco-demand')             
-              // console.log('API:Cache: ', req.query.key, ' : ', obj );
-              res.status(200).json({ content: obj })
+                const obj = await cacheRead('geco-demand')
+                // console.log('API:Cache: ', req.query.key, ' : ', obj );
+                res.status(200).json({ content: obj })
             } catch (error) {
-              // console.log(error)
-              res.status(500).json({error: 'error fetching from cache: ' + error})
+                // console.log(error)
+                res.status(500).json({ error: 'error fetching from cache: ' + error })
             }
         } else {
 
-        try {
-            const obj = await cacheRead(cacheKey)             
-          // console.log('API:Cache: ', req.query.key, ' : ', obj );
-          res.status(200).json({ content: obj })
-        } catch (error) {
-          // console.log(error)
-          res.status(500).json({error: 'error fetching from cache: ' + error})
+            try {
+                const obj = await cacheRead(cacheKey)
+                // console.log('API:Cache: ', req.query.key, ' : ', obj );
+                res.status(200).json({ content: obj })
+            } catch (error) {
+                // console.log(error)
+                res.status(500).json({ error: 'error fetching from cache: ' + error })
+            }
         }
-    }
 
 
     } else {
