@@ -24,7 +24,7 @@
         "mobilePhone": "07946018562",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Progtramme Management",
+        "department": "DCC Bullet",
         "manager_email": "maj.shafi@airwalkconsulting.com"
     },
     {
@@ -38,7 +38,7 @@
         "mobilePhone": null,
         "officeLocation": null,
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Atlas",
         "manager_email": "tom.heyes@airwalkconsulting.com"
     },
     {
@@ -82,34 +82,6 @@
         "preferredLanguage": null,
         "department": null,
         "manager_email": null
-    },
-    {
-        "id": "f659fe3d-cb33-45f7-b265-efcda0142f50",
-        "displayName": "Adam Domanski",
-        "userPrincipalName": "adam.domanski@airwalkconsulting.com",
-        "givenName": "Adam",
-        "surname": "Domanski",
-        "jobTitle": "Engineer",
-        "mail": "adam.domanski@airwalkconsulting.com",
-        "mobilePhone": "07584418370",
-        "officeLocation": "London",
-        "preferredLanguage": "en-GB",
-        "department": "Associate",
-        "manager_email": null
-    },
-    {
-        "id": "3a31af5a-b25a-4eb8-9cfb-6eaa382e5edf",
-        "displayName": "Adam Wilson",
-        "userPrincipalName": "adam.wilson@airwalkconsulting.com",
-        "givenName": "Adam",
-        "surname": "Wilson",
-        "jobTitle": "Senior Consultant",
-        "mail": "adam.wilson@airwalkconsulting.com",
-        "mobilePhone": "07535809502",
-        "officeLocation": "London",
-        "preferredLanguage": "en-GB",
-        "department": "Product Delivery",
-        "manager_email": "craig.duffus@airwalkconsulting.com"
     },
     {
         "id": "24303a3c-ba3d-4801-954a-f8efcd774de8",
@@ -290,7 +262,7 @@
         "mobilePhone": "07375505509",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Atlas",
         "manager_email": "tom.heyes@airwalkconsulting.com"
     },
     {
@@ -301,6 +273,34 @@
         "surname": null,
         "jobTitle": null,
         "mail": "Ahammond@airwalkconsulting.com",
+        "mobilePhone": null,
+        "officeLocation": null,
+        "preferredLanguage": null,
+        "department": null,
+        "manager_email": null
+    },
+    {
+        "id": "1a699363-ce9f-4354-801a-c448e0033af6",
+        "displayName": "AI Chatbot for Confluence access",
+        "userPrincipalName": "aichatbotconfluenceaccess@airwalkconsulting.com",
+        "givenName": "AI Chatbot",
+        "surname": "Confluence access",
+        "jobTitle": null,
+        "mail": "aichatbotconfluenceaccess@airwalkconsulting.com",
+        "mobilePhone": null,
+        "officeLocation": null,
+        "preferredLanguage": null,
+        "department": null,
+        "manager_email": null
+    },
+    {
+        "id": "a94f04b0-e825-4276-9dc5-23be326d9a97",
+        "displayName": "AI Chatbot for Confluence Accesss 2",
+        "userPrincipalName": "aichatbotconfluenceaccess2@airwalkconsulting.com",
+        "givenName": "AI Chatbot",
+        "surname": "Confluence Accesss 2",
+        "jobTitle": null,
+        "mail": "aichatbotconfluenceaccess2@airwalkconsulting.com",
         "mobilePhone": null,
         "officeLocation": null,
         "preferredLanguage": null,
@@ -599,7 +599,7 @@
         "officeLocation": "London",
         "preferredLanguage": null,
         "department": "Operations",
-        "manager_email": "ben.walker@airwalkconsulting.com"
+        "manager_email": null
     },
     {
         "id": "50200c73-4668-4742-9749-d8e09d6aedc0",
@@ -640,7 +640,7 @@
         "mobilePhone": "07495899979",
         "officeLocation": "London",
         "preferredLanguage": "en-US",
-        "department": "PMO",
+        "department": "DCC Atlas",
         "manager_email": "louis.maxwell@airwalkconsulting.com"
     },
     {
@@ -668,7 +668,7 @@
         "mobilePhone": "07957644748",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Atlas",
         "manager_email": "taz.hussain@airwalkconsulting.com"
     },
     {
@@ -682,7 +682,7 @@
         "mobilePhone": null,
         "officeLocation": null,
         "preferredLanguage": null,
-        "department": "AWC Partners",
+        "department": "Engineering",
         "manager_email": null
     },
     {
@@ -724,7 +724,7 @@
         "mobilePhone": "07496865138",
         "officeLocation": "London",
         "preferredLanguage": "en-GB",
-        "department": "Product Delivery",
+        "department": "DCC Bullet",
         "manager_email": "craig.duffus@airwalkconsulting.com"
     },
     {
@@ -738,7 +738,7 @@
         "mobilePhone": "07496811693",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Bullet",
         "manager_email": "craig.duffus@airwalkconsulting.com"
     },
     {
@@ -1176,20 +1176,6 @@
         "manager_email": "jim.lamb@airwalkconsulting.com"
     },
     {
-        "id": "ffbab824-11db-4ca6-9b03-7951854d6eea",
-        "displayName": "Byron Sorgdrager",
-        "userPrincipalName": "byron.sorgdrager@airwalkconsulting.com",
-        "givenName": "Byron",
-        "surname": "Sorgdrager",
-        "jobTitle": "Engineer (Interim)",
-        "mail": "byron.sorgdrager@airwalkconsulting.com",
-        "mobilePhone": "+447828316872",
-        "officeLocation": null,
-        "preferredLanguage": null,
-        "department": "Engineering",
-        "manager_email": null
-    },
-    {
         "id": "38507b0e-c4f1-483f-9ce0-4e0d888fc96f",
         "displayName": "Carlos Preuschoff",
         "userPrincipalName": "c.preuschoff_reply.com#EXT#@airwalkconsulting.onmicrosoft.com",
@@ -1201,20 +1187,6 @@
         "officeLocation": null,
         "preferredLanguage": null,
         "department": null,
-        "manager_email": null
-    },
-    {
-        "id": "0753d570-38ea-4b80-945d-d2feb89bca35",
-        "displayName": "Callum Spencer",
-        "userPrincipalName": "callum.spencer@airwalkconsulting.com",
-        "givenName": "Callum",
-        "surname": "Spencer",
-        "jobTitle": "Senior Consultant",
-        "mail": "callum.spencer@airwalkconsulting.com",
-        "mobilePhone": "0739 953 5833",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Engineering",
         "manager_email": null
     },
     {
@@ -1246,20 +1218,6 @@
         "manager_email": null
     },
     {
-        "id": "087de4b9-896c-4bb0-96c8-2cd6bddad57f",
-        "displayName": "Charlotte Young",
-        "userPrincipalName": "charlotte.young@airwalkconsulting.com",
-        "givenName": "Charlotte",
-        "surname": "Young",
-        "jobTitle": "Senior Consultant",
-        "mail": "charlotte.young@airwalkconsulting.com",
-        "mobilePhone": "07870 617720",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Service Management",
-        "manager_email": null
-    },
-    {
         "id": "2c07c9fa-f6dd-4a14-ad55-42352094a673",
         "displayName": "Clare Flynn",
         "userPrincipalName": "clare.flynn@airwalkconsulting.com",
@@ -1270,7 +1228,7 @@
         "mobilePhone": "07946018566",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Tytans",
         "manager_email": "clare.flynn@airwalkconsulting.com"
     },
     {
@@ -1284,22 +1242,8 @@
         "mobilePhone": "07741590409",
         "officeLocation": "London",
         "preferredLanguage": "en-GB",
-        "department": "Programme Management",
+        "department": "DCC",
         "manager_email": "alex.hammond@airwalkconsulting.com"
-    },
-    {
-        "id": "9266a863-bea9-4476-bfef-edbee1c3babd",
-        "displayName": "Clare Zilinckas",
-        "userPrincipalName": "clare.zilinckas@airwalkconsulting.com",
-        "givenName": "Clare",
-        "surname": "Zilinckas",
-        "jobTitle": "Senior Consultant",
-        "mail": "clare.zilinckas@airwalkconsulting.com",
-        "mobilePhone": "07496382448",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "PMO",
-        "manager_email": null
     },
     {
         "id": "c3ffd0ef-8d12-4c75-a403-76cbb6fa3c9b",
@@ -1354,36 +1298,8 @@
         "mobilePhone": "07814522707\u202c",
         "officeLocation": "London",
         "preferredLanguage": "en-GB",
-        "department": "Product Delivery",
-        "manager_email": "darren.womack@airwalkconsulting.com"
-    },
-    {
-        "id": "fb3bb6dc-616a-4b92-9a61-de9bc60748d4",
-        "displayName": "Craig Tubb",
-        "userPrincipalName": "craig.tubb@airwalkconsulting.com",
-        "givenName": "Craig",
-        "surname": "Tubb",
-        "jobTitle": "Senior Consultant",
-        "mail": "craig.tubb@airwalkconsulting.com",
-        "mobilePhone": "07920405757",
-        "officeLocation": "London",
-        "preferredLanguage": "en-GB",
-        "department": "Engineering",
-        "manager_email": null
-    },
-    {
-        "id": "69d82bf8-4f1e-420a-a3da-8978703d53f5",
-        "displayName": "Dan Bovenzi",
-        "userPrincipalName": "Daniel.Bovenzi@airwalkconsulting.com",
-        "givenName": "Dan",
-        "surname": "Bovenzi",
-        "jobTitle": "Senior Consultant",
-        "mail": "Daniel.Bovenzi@airwalkconsulting.com",
-        "mobilePhone": null,
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Architecture",
-        "manager_email": "rob.ellison@airwalkconsulting.com"
+        "department": "DCC Bullet",
+        "manager_email": "alex.hammond@airwalkconsulting.com"
     },
     {
         "id": "844b0343-d03a-45e4-a2e9-e43624a99355",
@@ -1426,34 +1342,6 @@
         "preferredLanguage": null,
         "department": "Architecture",
         "manager_email": "matt.ward@airwalkconsulting.com"
-    },
-    {
-        "id": "c9c3284c-d59c-4e4c-9781-7d445d432b5d",
-        "displayName": "Dave Chapple",
-        "userPrincipalName": "dave.chapple@airwalkconsulting.com",
-        "givenName": "Dave",
-        "surname": "Chapple",
-        "jobTitle": "Senior Consultant",
-        "mail": "dave.chapple@airwalkconsulting.com",
-        "mobilePhone": "07495900012",
-        "officeLocation": "London",
-        "preferredLanguage": "en-GB",
-        "department": "Service Management",
-        "manager_email": "adrian.cloke@airwalkconsulting.com"
-    },
-    {
-        "id": "c6cef7c4-0231-4d00-809c-536b07458027",
-        "displayName": "Dave Otter",
-        "userPrincipalName": "david.otter@airwalkconsulting.com",
-        "givenName": "Dave",
-        "surname": "Otter",
-        "jobTitle": "Head of Talent",
-        "mail": "david.otter@airwalkconsulting.com",
-        "mobilePhone": "07957647460",
-        "officeLocation": "London",
-        "preferredLanguage": "en-GB",
-        "department": "Operations",
-        "manager_email": "Justin@airwalkconsulting.com"
     },
     {
         "id": "dcb4bd5c-3fa3-47b3-86de-f1e6bf0f6737",
@@ -1550,22 +1438,8 @@
         "mobilePhone": null,
         "officeLocation": null,
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Tytans",
         "manager_email": "tyrone.griffiths@airwalkconsulting.com"
-    },
-    {
-        "id": "27f223aa-5e1b-4287-9702-0bef6164e74b",
-        "displayName": "Eden Finch",
-        "userPrincipalName": "eden.finch@airwalkconsulting.com",
-        "givenName": "Eden",
-        "surname": "Finch",
-        "jobTitle": "People Operations Co-ordinator",
-        "mail": "eden.finch@airwalkconsulting.com",
-        "mobilePhone": "07538718692",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Operations",
-        "manager_email": "hollie.alexander@airwalkconsulting.com"
     },
     {
         "id": "06a16875-077d-41e0-87b9-6742de7e2bf3",
@@ -1580,20 +1454,6 @@
         "preferredLanguage": null,
         "department": null,
         "manager_email": null
-    },
-    {
-        "id": "13672a40-be1d-4d74-99ad-3d12e9999a50",
-        "displayName": "Ella Jennings",
-        "userPrincipalName": "ella.jennings@airwalkconsulting.com",
-        "givenName": "Ella",
-        "surname": "Jennings",
-        "jobTitle": "Content Marketing Manager",
-        "mail": "ella.jennings@airwalkconsulting.com",
-        "mobilePhone": "07946018848",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Operations",
-        "manager_email": "emma.smith@airwalkconsulting.com"
     },
     {
         "id": "ecd4d917-29de-45ed-8dec-569edad33a29",
@@ -1624,20 +1484,6 @@
         "manager_email": "alex.hammond@airwalkconsulting.com"
     },
     {
-        "id": "300a6297-c608-4569-94e0-0690c3ddada4",
-        "displayName": "Emmanuel Chukwu",
-        "userPrincipalName": "emmanuel.chukwu@airwalkconsulting.com",
-        "givenName": "Emmanuel",
-        "surname": "Chukwu",
-        "jobTitle": "Senior Consultant",
-        "mail": "emmanuel.chukwu@airwalkconsulting.com",
-        "mobilePhone": "07497112032",
-        "officeLocation": "Sheffield",
-        "preferredLanguage": null,
-        "department": "Engineering",
-        "manager_email": "vishal.bhalla@airwalkconsulting.com"
-    },
-    {
         "id": "a08585af-363a-432e-a653-0ab40c843f6b",
         "displayName": "AWC Partners - Enquiries",
         "userPrincipalName": "enquiry@awc-partners.com",
@@ -1662,7 +1508,7 @@
         "mobilePhone": "07939874458",
         "officeLocation": "Sheffield",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Atlas",
         "manager_email": "jenny.rose@airwalkconsulting.com"
     },
     {
@@ -1676,7 +1522,7 @@
         "mobilePhone": null,
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Tytans",
         "manager_email": "paul.barrett@airwalkconsulting.com"
     },
     {
@@ -1690,7 +1536,7 @@
         "mobilePhone": "07538317605",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Bullet",
         "manager_email": "anthony.condon@airwalkconsulting.com"
     },
     {
@@ -1722,20 +1568,6 @@
         "manager_email": "phil.notley@airwalkconsulting.com"
     },
     {
-        "id": "c63e62e2-d04a-4107-b43e-75242a7228c7",
-        "displayName": "Greg White",
-        "userPrincipalName": "greg.white@airwalkconsulting.com",
-        "givenName": "Greg",
-        "surname": "White",
-        "jobTitle": "Senior Consultant",
-        "mail": "greg.white@airwalkconsulting.com",
-        "mobilePhone": null,
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Architecture",
-        "manager_email": null
-    },
-    {
         "id": "0a269ace-8753-4b7a-a1a9-787f0f50331b",
         "displayName": "Guy Fabron",
         "userPrincipalName": "Guy.Fabron@airwalkconsulting.com",
@@ -1760,7 +1592,7 @@
         "mobilePhone": null,
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Product Delivery",
+        "department": "DCC Tytans",
         "manager_email": "tyrone.griffiths@airwalkconsulting.com"
     },
     {
@@ -1803,7 +1635,7 @@
         "officeLocation": "London",
         "preferredLanguage": "en-GB",
         "department": "Operations",
-        "manager_email": "david.otter@airwalkconsulting.com"
+        "manager_email": null
     },
     {
         "id": "5df158e4-3757-4369-ae7a-fbe92ee112e8",
@@ -1834,20 +1666,6 @@
         "manager_email": "rob.ellison@airwalkconsulting.com"
     },
     {
-        "id": "60c98ce7-7846-4be4-a92c-07809d198041",
-        "displayName": "Ian Kelly",
-        "userPrincipalName": "ian.kelly@airwalkconsulting.com",
-        "givenName": "Ian",
-        "surname": "Kelly",
-        "jobTitle": "Senior Consultant",
-        "mail": "ian.kelly@airwalkconsulting.com",
-        "mobilePhone": " 07734822599",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Engineering",
-        "manager_email": null
-    },
-    {
         "id": "e3369112-d40f-48f4-907f-59c74550bf1d",
         "displayName": "Idon Wong",
         "userPrincipalName": "idon.wong@airwalkconsulting.com",
@@ -1860,20 +1678,6 @@
         "preferredLanguage": "en-GB",
         "department": "Engineering",
         "manager_email": "jim.lamb@airwalkconsulting.com"
-    },
-    {
-        "id": "d7b64ac4-dc45-4274-bc31-eaca39891dbb",
-        "displayName": "Imran Aslam",
-        "userPrincipalName": "imran.aslam@airwalkconsulting.com",
-        "givenName": "Imran",
-        "surname": "Aslam",
-        "jobTitle": "Senior Consultant",
-        "mail": "imran.aslam@airwalkconsulting.com",
-        "mobilePhone": "07958197375",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Engineering",
-        "manager_email": "paul.hasenfuss@airwalkconsulting.com"
     },
     {
         "id": "e599f56a-87fc-4c67-be8f-44fa774d5dc5",
@@ -1914,7 +1718,7 @@
         "mobilePhone": "07495899955",
         "officeLocation": "London",
         "preferredLanguage": "en-GB",
-        "department": "Programme Management",
+        "department": "DCC Tytans",
         "manager_email": "clare.flynn@airwalkconsulting.com"
     },
     {
@@ -1946,20 +1750,6 @@
         "manager_email": "rob.ellison@airwalkconsulting.com"
     },
     {
-        "id": "46ca4b8d-b295-4204-9094-fce37e15c94f",
-        "displayName": "James  Humphreys",
-        "userPrincipalName": "james.humphreys@airwalkconsulting.com",
-        "givenName": "James",
-        "surname": "Humphreys",
-        "jobTitle": "Consultant",
-        "mail": "james.humphreys@airwalkconsulting.com",
-        "mobilePhone": null,
-        "officeLocation": null,
-        "preferredLanguage": null,
-        "department": "Engineering",
-        "manager_email": null
-    },
-    {
         "id": "d63de3c6-2435-4680-8f66-3e049fa6e558",
         "displayName": "James Mak",
         "userPrincipalName": "james.mak@airwalkconsulting.com",
@@ -1984,22 +1774,8 @@
         "mobilePhone": "07497112025",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "PMO",
+        "department": "DCC Tytans",
         "manager_email": "clare.flynn@airwalkconsulting.com"
-    },
-    {
-        "id": "97f39508-7890-46bd-b5bf-189b00a0ba92",
-        "displayName": "James Stanley",
-        "userPrincipalName": "james.stanley@airwalkconsulting.com",
-        "givenName": "James",
-        "surname": "Stanley",
-        "jobTitle": null,
-        "mail": "james.stanley@airwalkconsulting.com",
-        "mobilePhone": "0776 500 1884",
-        "officeLocation": null,
-        "preferredLanguage": null,
-        "department": null,
-        "manager_email": null
     },
     {
         "id": "fcc5cbfb-d3bd-48a0-ae68-4470807a2f52",
@@ -2030,20 +1806,6 @@
         "manager_email": null
     },
     {
-        "id": "d53a2704-c505-4c3c-9a43-7baa19e062be",
-        "displayName": "Jennifer Michael",
-        "userPrincipalName": "jennifer.michael@airwalkconsulting.com",
-        "givenName": "Jennifer",
-        "surname": "Michael",
-        "jobTitle": "Senior Consultant",
-        "mail": "jennifer.michael@airwalkconsulting.com",
-        "mobilePhone": "07494017820",
-        "officeLocation": "London",
-        "preferredLanguage": "en-GB",
-        "department": "Programme Management",
-        "manager_email": null
-    },
-    {
         "id": "62fb26ef-c713-4595-872d-ef4a55d35288",
         "displayName": "Jenny Rose",
         "userPrincipalName": "jenny.rose@airwalkconsulting.com",
@@ -2054,7 +1816,7 @@
         "mobilePhone": null,
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Product Delivery",
+        "department": "DCC Atlas",
         "manager_email": "steve.isbell@airwalkconsulting.com"
     },
     {
@@ -2070,20 +1832,6 @@
         "preferredLanguage": null,
         "department": "Reply HR",
         "manager_email": "hollie.alexander@airwalkconsulting.com"
-    },
-    {
-        "id": "6555ff43-edf2-4271-8da9-a5d74dc65cbc",
-        "displayName": "Jessica Tolley",
-        "userPrincipalName": "jessica.tolley@airwalkconsulting.com",
-        "givenName": "Jessica",
-        "surname": "Tolley",
-        "jobTitle": "Senior Consultant",
-        "mail": "jessica.tolley@airwalkconsulting.com",
-        "mobilePhone": "+44(0) 208 142 8686",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Architecture",
-        "manager_email": null
     },
     {
         "id": "f8d0a98c-dfe1-4a1a-9677-950e2828d28c",
@@ -2142,24 +1890,10 @@
         "manager_email": null
     },
     {
-        "id": "8ba2aa8c-8101-4ad5-8b12-0e274a60901e",
-        "displayName": "John Helsby",
-        "userPrincipalName": "john.helsby@airwalkconsulting.com",
-        "givenName": "John",
-        "surname": "Helsby",
-        "jobTitle": "Work Experience",
-        "mail": "john.helsby@airwalkconsulting.com",
-        "mobilePhone": null,
-        "officeLocation": "Sheffield",
-        "preferredLanguage": null,
-        "department": "Engineering",
-        "manager_email": null
-    },
-    {
         "id": "989b19c4-7d31-4ba9-b93f-bb3e49b1f755",
         "displayName": "John Roberts",
         "userPrincipalName": "john.roberts@airwalkconsulting.com",
-        "givenName": "Johm",
+        "givenName": "John",
         "surname": "Roberts",
         "jobTitle": "Senior Consultant",
         "mail": "john.roberts@airwalkconsulting.com",
@@ -2208,7 +1942,7 @@
         "mobilePhone": "+447967332645",
         "officeLocation": "London",
         "preferredLanguage": "en-GB",
-        "department": "Core",
+        "department": "Operations",
         "manager_email": "company@airwalkconsulting.com"
     },
     {
@@ -2222,7 +1956,7 @@
         "mobilePhone": "07375505220",
         "officeLocation": "London",
         "preferredLanguage": "en-GB",
-        "department": "Product Delivery",
+        "department": "DCC Bullet",
         "manager_email": "craig.duffus@airwalkconsulting.com"
     },
     {
@@ -2245,12 +1979,12 @@
         "userPrincipalName": "karen.turnbull@airwalkconsulting.com",
         "givenName": "Karen",
         "surname": "Turnbull",
-        "jobTitle": "Senior Consultant (Interim)",
+        "jobTitle": "Senior Consultant",
         "mail": "karen.turnbull@airwalkconsulting.com",
         "mobilePhone": "+447932661988",
         "officeLocation": "London",
         "preferredLanguage": "en-GB",
-        "department": "HoP R&R Team",
+        "department": "DCC",
         "manager_email": null
     },
     {
@@ -2264,50 +1998,8 @@
         "mobilePhone": "07950740439",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC",
         "manager_email": "Jason@airwalkconsulting.com"
-    },
-    {
-        "id": "aeff67c2-8102-4567-8cf6-638da6d6a695",
-        "displayName": "Kendrick Ng",
-        "userPrincipalName": "kendrick.ng@airwalkconsulting.com",
-        "givenName": "Kendrick",
-        "surname": "Ng",
-        "jobTitle": "Senior Consultant",
-        "mail": "kendrick.ng@airwalkconsulting.com",
-        "mobilePhone": null,
-        "officeLocation": "Hong Kong",
-        "preferredLanguage": null,
-        "department": "Engineering",
-        "manager_email": null
-    },
-    {
-        "id": "f52017d9-5b23-40af-93d9-25ee8eff5835",
-        "displayName": "Khavir Ali",
-        "userPrincipalName": "khavir.ali@airwalkconsulting.com",
-        "givenName": "Khavir",
-        "surname": "Ali",
-        "jobTitle": "Senior Consultant",
-        "mail": "khavir.ali@airwalkconsulting.com",
-        "mobilePhone": "07931503290",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Engineering",
-        "manager_email": "tom.allen@airwalkconsulting.com"
-    },
-    {
-        "id": "3514306b-8b14-46a2-bc93-43fe1f34ecab",
-        "displayName": "Laura Smith",
-        "userPrincipalName": "laura.smith@airwalkconsulting.com",
-        "givenName": "Laura",
-        "surname": "Smith",
-        "jobTitle": "Business Operations Lead",
-        "mail": "laura.smith@airwalkconsulting.com",
-        "mobilePhone": "07946018846",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Operations",
-        "manager_email": "phil.notley@airwalkconsulting.com"
     },
     {
         "id": "a2ef9e51-35c3-4526-a7be-fc3687922b16",
@@ -2352,20 +2044,6 @@
         "manager_email": "jim.lamb@airwalkconsulting.com"
     },
     {
-        "id": "ee1ed39b-68f5-4a2d-9338-4f46d266e819",
-        "displayName": "Lewis Desforges",
-        "userPrincipalName": "lewis.desforges@airwalkconsulting.com",
-        "givenName": "Lewis",
-        "surname": "Desforges",
-        "jobTitle": "Senior Consultant",
-        "mail": "lewis.desforges@airwalkconsulting.com",
-        "mobilePhone": "07398 827604",
-        "officeLocation": "London",
-        "preferredLanguage": "en-GB",
-        "department": "Engineering",
-        "manager_email": null
-    },
-    {
         "id": "e30043fd-5993-49ad-8af3-f5b8673cd408",
         "displayName": "Louis Maxwell",
         "userPrincipalName": "louis.maxwell@airwalkconsulting.com",
@@ -2376,7 +2054,7 @@
         "mobilePhone": null,
         "officeLocation": null,
         "preferredLanguage": null,
-        "department": "Product Delivery",
+        "department": "DCC Atlas",
         "manager_email": "steve.isbell@airwalkconsulting.com"
     },
     {
@@ -2390,7 +2068,7 @@
         "mobilePhone": "+44(0) 208 142 8686",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Atlas",
         "manager_email": "steve.isbell@airwalkconsulting.com"
     },
     {
@@ -2432,7 +2110,7 @@
         "mobilePhone": "07946018559",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Bullet",
         "manager_email": "craig.duffus@airwalkconsulting.com"
     },
     {
@@ -2446,7 +2124,7 @@
         "mobilePhone": "07950740411",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "PMO",
+        "department": "DCC Tytans",
         "manager_email": "tyrone.griffiths@airwalkconsulting.com"
     },
     {
@@ -2572,7 +2250,7 @@
         "mobilePhone": "07375505272",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Tytans",
         "manager_email": "tyrone.griffiths@airwalkconsulting.com"
     },
     {
@@ -2600,7 +2278,7 @@
         "mobilePhone": "07497112024",
         "officeLocation": "Sheffield",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Bullet",
         "manager_email": "craig.duffus@airwalkconsulting.com"
     },
     {
@@ -2628,7 +2306,7 @@
         "mobilePhone": "+447398827632",
         "officeLocation": "Sheffield",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Bullet",
         "manager_email": "anthony.onyekweli@airwalkconsulting.com"
     },
     {
@@ -2688,20 +2366,6 @@
         "manager_email": "clare.mitchell@airwalkconsulting.com"
     },
     {
-        "id": "963ef23e-b829-4a82-88fc-8b02be1ea1b7",
-        "displayName": "Nick Wilkins",
-        "userPrincipalName": "nick.wilkins@airwalkconsulting.com",
-        "givenName": "Nick",
-        "surname": "Wilkins",
-        "jobTitle": "Senior Consultant",
-        "mail": "nick.wilkins@airwalkconsulting.com",
-        "mobilePhone": "07535806685",
-        "officeLocation": "London",
-        "preferredLanguage": "en-US",
-        "department": "PMO",
-        "manager_email": null
-    },
-    {
         "id": "b5fc6772-df63-4af0-89b4-feacf419469e",
         "displayName": "Nikil Chitturi",
         "userPrincipalName": "nikil.chitturi@airwalkconsulting.com",
@@ -2713,34 +2377,6 @@
         "officeLocation": null,
         "preferredLanguage": null,
         "department": null,
-        "manager_email": null
-    },
-    {
-        "id": "8a16374a-b784-4c84-ab43-3bb5662eab0d",
-        "displayName": "Nizam Khan",
-        "userPrincipalName": "nizam.khan@airwalkconsulting.com",
-        "givenName": "Nizam",
-        "surname": "Khan",
-        "jobTitle": "Senior Consultant",
-        "mail": "nizam.khan@airwalkconsulting.com",
-        "mobilePhone": "07506524537",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Architecture",
-        "manager_email": null
-    },
-    {
-        "id": "3d17fcd5-21dc-4ac7-a7ae-317f299a00a6",
-        "displayName": "Olufemi Oyekanmi",
-        "userPrincipalName": "olufemi.oyekanmi@airwalkconsulting.com",
-        "givenName": "Olufemi",
-        "surname": "Oyekanmi",
-        "jobTitle": "Engineer (Interim)",
-        "mail": "olufemi.oyekanmi@airwalkconsulting.com",
-        "mobilePhone": "07735725841",
-        "officeLocation": null,
-        "preferredLanguage": null,
-        "department": "Engineering",
         "manager_email": null
     },
     {
@@ -2768,36 +2404,8 @@
         "mobilePhone": "07956130358",
         "officeLocation": "Manchester",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Tytans",
         "manager_email": "tyrone.griffiths@airwalkconsulting.com"
-    },
-    {
-        "id": "684d3666-98e4-4269-985c-b0d7362e9ea2",
-        "displayName": "Paul Butler",
-        "userPrincipalName": "Paul.Butler@airwalkconsulting.com",
-        "givenName": "Paul",
-        "surname": "Butler",
-        "jobTitle": "Senior Consultant",
-        "mail": "Paul.Butler@airwalkconsulting.com",
-        "mobilePhone": "07950740418",
-        "officeLocation": "Sheffield",
-        "preferredLanguage": null,
-        "department": "Product Delivery",
-        "manager_email": "craig.duffus@airwalkconsulting.com"
-    },
-    {
-        "id": "7e8fbfe7-4d90-440b-8d2e-a79fdff3fc30",
-        "displayName": "Paul Gill",
-        "userPrincipalName": "paul.gill@airwalkconsulting.com",
-        "givenName": "Paul",
-        "surname": "Gill",
-        "jobTitle": "Senior Talent Acquisition Specialist",
-        "mail": "paul.gill@airwalkconsulting.com",
-        "mobilePhone": "0739 953 5828",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Operations",
-        "manager_email": "phil.notley@airwalkconsulting.com"
     },
     {
         "id": "2e2e799c-cd39-43ad-9d6c-307027eedf21",
@@ -2810,22 +2418,8 @@
         "mobilePhone": "07375505236",
         "officeLocation": "Sheffield",
         "preferredLanguage": "en-GB",
-        "department": "Product Delivery Discipline",
+        "department": "DCC Atlas",
         "manager_email": "steve.isbell@airwalkconsulting.com"
-    },
-    {
-        "id": "81e023a6-4537-4f98-b3e0-8afaf3a273c1",
-        "displayName": "Paul Lancashire",
-        "userPrincipalName": "paul.lancashire@airwalkconsulting.com",
-        "givenName": "Paul",
-        "surname": "Lancashire",
-        "jobTitle": "Senior Consultant",
-        "mail": "paul.lancashire@airwalkconsulting.com",
-        "mobilePhone": null,
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Architecture",
-        "manager_email": null
     },
     {
         "id": "ff68b936-c641-4df7-971d-ef95024cf62c",
@@ -2838,7 +2432,7 @@
         "mobilePhone": null,
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Product Delivery",
+        "department": "DCC Bullet",
         "manager_email": "craig.duffus@airwalkconsulting.com"
     },
     {
@@ -3048,7 +2642,7 @@
         "mobilePhone": null,
         "officeLocation": "Edinburgh",
         "preferredLanguage": null,
-        "department": "Program Management",
+        "department": "DCC Atlas",
         "manager_email": "steve.isbell@airwalkconsulting.com"
     },
     {
@@ -3090,7 +2684,7 @@
         "mobilePhone": null,
         "officeLocation": "Sheffield",
         "preferredLanguage": null,
-        "department": "Service Management",
+        "department": "DCC Bullet",
         "manager_email": "craig.duffus@airwalkconsulting.com"
     },
     {
@@ -3148,6 +2742,34 @@
         "preferredLanguage": "en-GB",
         "department": "Architecture",
         "manager_email": "rob.ellison@airwalkconsulting.com"
+    },
+    {
+        "id": "52eb9b75-543c-4a8d-81eb-b1c25d29053f",
+        "displayName": "Shaun Laughton (Test)",
+        "userPrincipalName": "shaun.laughton_awrsandbox.onmicrosoft.com#EXT#@airwalkconsulting.onmicrosoft.com",
+        "givenName": "Shaun",
+        "surname": "Laughton",
+        "jobTitle": null,
+        "mail": "shaun.laughton@awrsandbox.onmicrosoft.com",
+        "mobilePhone": null,
+        "officeLocation": null,
+        "preferredLanguage": "en-US",
+        "department": null,
+        "manager_email": null
+    },
+    {
+        "id": "d571ce68-e043-4b9b-b85f-8332b9408409",
+        "displayName": "Shaun Laughton 2 (Test)",
+        "userPrincipalName": "shaun.laughton2_awrsandbox.onmicrosoft.com#EXT#@airwalkconsulting.onmicrosoft.com",
+        "givenName": "Shaun",
+        "surname": "Laughton",
+        "jobTitle": null,
+        "mail": "shaun.laughton2@awrsandbox.onmicrosoft.com",
+        "mobilePhone": null,
+        "officeLocation": null,
+        "preferredLanguage": "en-US",
+        "department": null,
+        "manager_email": null
     },
     {
         "id": "6f08b277-bb38-49e9-97fc-5a1f125b5c86",
@@ -3230,22 +2852,8 @@
         "mobilePhone": "07494017822",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "PMO",
+        "department": "DCC Bullet",
         "manager_email": "craig.duffus@airwalkconsulting.com"
-    },
-    {
-        "id": "ecd2e1c6-5fea-4617-939f-e80cea7a1c0e",
-        "displayName": "Stephen Doyle",
-        "userPrincipalName": "stephen.doyle@airwalkconsulting.com",
-        "givenName": "Stephen",
-        "surname": "Doyle",
-        "jobTitle": "Senior Consultant",
-        "mail": "stephen.doyle@airwalkconsulting.com",
-        "mobilePhone": "07946018560",
-        "officeLocation": "London",
-        "preferredLanguage": null,
-        "department": "Product Delivery",
-        "manager_email": "tyrone.griffiths@airwalkconsulting.com"
     },
     {
         "id": "4cc270ce-05d2-4dd6-bb21-6ecb6dae269e",
@@ -3258,8 +2866,8 @@
         "mobilePhone": null,
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Product Delivery",
-        "manager_email": "darren.womack@airwalkconsulting.com"
+        "department": "DCC Atlas",
+        "manager_email": "Ahammond@airwalkconsulting.com"
     },
     {
         "id": "d1b53537-fa5a-4975-9397-21ecbb2d2f77",
@@ -3314,7 +2922,7 @@
         "mobilePhone": "07375505238",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Atlas",
         "manager_email": "steve.isbell@airwalkconsulting.com"
     },
     {
@@ -3342,7 +2950,7 @@
         "mobilePhone": "07494498860",
         "officeLocation": "London",
         "preferredLanguage": "en-US",
-        "department": "PMO",
+        "department": "DCC Tytans",
         "manager_email": "paul.barrett@airwalkconsulting.com"
     },
     {
@@ -3398,7 +3006,7 @@
         "mobilePhone": "07832956907",
         "officeLocation": "London",
         "preferredLanguage": null,
-        "department": "Programme Management",
+        "department": "DCC Atlas",
         "manager_email": "steve.isbell@airwalkconsulting.com"
     },
     {
@@ -3454,8 +3062,8 @@
         "mobilePhone": "07917192350",
         "officeLocation": "Manchester",
         "preferredLanguage": "en-GB",
-        "department": "Programme Managment",
-        "manager_email": "darren.womack@airwalkconsulting.com"
+        "department": "DCC Tytans",
+        "manager_email": "alex.hammond@airwalkconsulting.com"
     },
     {
         "id": "b7a2dd25-ffe6-4df1-909a-5ccb53cff6f7",
@@ -3496,7 +3104,7 @@
         "mobilePhone": null,
         "officeLocation": null,
         "preferredLanguage": null,
-        "department": null,
+        "department": "Associate",
         "manager_email": null
     },
     {
@@ -3540,5 +3148,19 @@
         "preferredLanguage": "en-GB",
         "department": "Architecture",
         "manager_email": "rob.ellison@airwalkconsulting.com"
+    },
+    {
+        "id": "e4bcc077-0837-4496-ba90-d8677bc5b0ba",
+        "displayName": "Yogesh Patel",
+        "userPrincipalName": "yogesh.patel@airwalkconsulting.com",
+        "givenName": "Yogesh",
+        "surname": "Patel",
+        "jobTitle": null,
+        "mail": "yogesh.patel@airwalkconsulting.com",
+        "mobilePhone": null,
+        "officeLocation": null,
+        "preferredLanguage": null,
+        "department": null,
+        "manager_email": null
     }
 ]

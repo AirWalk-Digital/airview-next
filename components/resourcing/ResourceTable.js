@@ -22,6 +22,7 @@ import {
     Stack
 } from '@mui/material';
 
+
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
@@ -38,30 +39,136 @@ function determineColor(daysAllocated, daysHypo) {
 
 function UserPopup({ data, open, handleClose }) {
     // Example toggles' state
-    const [toggle1, setToggle1] = useState(false);
-    const [toggle2, setToggle2] = useState(false);
-    const [toggle3, setToggle3] = useState(false);
+    const [toggleSC, setToggleSC] = useState(false);
+    const [toggleTIR, setToggleTIR] = useState(false);
+    const [toggleMH, setToggleMH] = useState(false);
+    const [resource, setResource] = useState(null);
+
+    const updateUser = async () => {
+        const recordProposal = { 'resource': data.mail, 'sc': toggleSC, 'tir': toggleTIR, 'mh': toggleMH }
+        console.log('updated:', recordProposal)
+        try {
+            const response = await fetch('/api/resourcing/resources', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(recordProposal),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result); // Process the response as needed
+
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
 
     // Handle toggle change
     const handleToggleChange = (toggleSetter) => (event) => {
         toggleSetter(event.target.checked);
     };
 
+    useEffect(() => {
+        if (resource) {
+            setToggleSC(resource.sc);
+            setToggleTIR(resource.tir);
+            setToggleMH(resource.mh);
+        }
+    }, [resource]);
+
+    useEffect(() => {
+        if (resource) {
+            updateUser();
+        }
+    }, [toggleSC, toggleTIR, toggleMH]);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+
+            try {
+                const response = await fetch('/api/resourcing/resources?resource=' + data.mail);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const fetchedData = await response.json();
+                // console.log('Resource:response: ', response)
+
+
+                if (fetchedData.content && fetchedData.content.length > 0) {
+                    const jsonParsedData = JSON.parse(fetchedData.content)
+                    setResource(jsonParsedData); // Adjust according to actual API response
+                } else { // record doesn't exist yet
+                    const recordProposal = { 'resource': data.mail, 'sc': false, 'tir': false, 'mh': false }
+
+                    setResource(recordProposal); // Adjust according to actual API response
+                }
+
+
+                // console.log('Resource:jsonParsedData: ', jsonParsedData)
+
+
+            } catch (err) {
+                console.error('Resource:ERROR: ', err)
+            }
+        };
+
+        fetchData();
+    }, []);
+
+
+
+
+    const LoadingSkeleton = () => {
+        return (
+            <FormGroup>
+                {Array.from(new Array(3)).map((_, index) => (
+                    <FormControlLabel
+                        key={index}
+                        control={<Skeleton variant="rectangular" width={40} height={20} />}
+                        label={<Skeleton variant="text" width={100} />}
+                    />
+                ))}
+            </FormGroup>
+        );
+    };
+
+    if (!resource) {
+        return (
+            <Dialog open={open} onClose={handleClose} fullWidth>
+                <DialogTitle>
+                    {data.displayName || data.name} {" - " + data.jobTitle || ""}
+                    <IconButton onClick={handleClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <LoadingSkeleton />
+                </DialogContent>
+            </Dialog>
+        );
+    }
+
+
     return (
         <Dialog open={open} onClose={handleClose} fullWidth>
             <DialogTitle>
-                {data.displayName || data.name}
+                {data.displayName || data.name} {" - " + data.jobTitle || ""}
                 <IconButton onClick={handleClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
             <DialogContent>
+
                 <FormGroup>
                     <FormControlLabel
                         control={
                             <Switch
-                                checked={toggle1}
-                                onChange={handleToggleChange(setToggle1)}
+                                checked={toggleSC}
+                                onChange={handleToggleChange(setToggleSC)}
                             />
                         }
                         label="SC Cleared"
@@ -69,8 +176,8 @@ function UserPopup({ data, open, handleClose }) {
                     <FormControlLabel
                         control={
                             <Switch
-                                checked={toggle2}
-                                onChange={handleToggleChange(setToggle2)}
+                                checked={toggleTIR}
+                                onChange={handleToggleChange(setToggleTIR)}
                             />
                         }
                         label="TIR"
@@ -78,8 +185,8 @@ function UserPopup({ data, open, handleClose }) {
                     <FormControlLabel
                         control={
                             <Switch
-                                checked={toggle3}
-                                onChange={handleToggleChange(setToggle3)}
+                                checked={toggleMH}
+                                onChange={handleToggleChange(setToggleMH)}
                             />
                         }
                         label="Mansion House"
@@ -91,7 +198,26 @@ function UserPopup({ data, open, handleClose }) {
 }
 
 
-function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder }) {
+function ResourceInfo({ info }) {
+
+    if (info) {
+        return (
+            <Stack
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="center"
+                spacing={0.5}
+            >
+                {info.sc && <Chip size="small" label="SC" variant="outlined" />}
+                {info.mh && <Chip size="small" label="MH" variant="outlined" />}
+                {info.tir && <Chip size="small" label="TIR" variant="outlined" />}
+            </Stack>
+        )
+    }
+}
+
+
+function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder, refreshData }) {
     // console.debug('Row: ', data)
     // if (placeholder) {
     //     console.debug('Placeholder: ', placeholder)
@@ -115,9 +241,14 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                     justifyContent="space-between"
                     alignItems="center">
                     {data.displayName || data.name}
+                    {data.info && <ResourceInfo info={data.info} />}
                     <InfoIcon onClick={handleInfoClick} />
+
                 </Stack>
-                {popupOpen && <UserPopup data={data} open={popupOpen} handleClose={handleClose} />}
+                {popupOpen && <UserPopup data={data} open={popupOpen} handleClose={() => {
+                    handleClose();
+                    refreshData();  // <-- Invoke refreshData after closing the popup
+                }}  />}
 
             </TableCell>
             <TableCell style={{ whiteSpace: 'nowrap', width: 'max-content' }}>
@@ -225,24 +356,24 @@ export function ResourceTable({ bench = false }) {
     const [months, setMonths] = useState([]);
     //   const [months, setMonths] = useState([]);
 
-
+    const refreshData = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch('/api/resourcing/demand');
+            if (!response.ok) throw new Error('Network response was not ok');
+            const fetchedData = await response.json();
+            const jsonParsedData = JSON.parse(fetchedData.content)
+            setData(jsonParsedData); // Adjust according to actual API response
+            setMonths(Array.from(new Set(jsonParsedData.flatMap(item => item.jobs.map(b => b.month)))).sort())
+            setIsLoading(false);
+        } catch (err) {
+            setError(err.message);
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const response = await fetch('/api/resourcing/resources');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const fetchedData = await response.json();
-                const jsonParsedData = JSON.parse(fetchedData.content)
-                setData(jsonParsedData); // Adjust according to actual API response
-                setMonths(Array.from(new Set(jsonParsedData.flatMap(item => item.jobs.map(b => b.month)))).sort())
-                setIsLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setIsLoading(false);
-            }
-        };
+        
         const fetchPlaceholderData = async () => {
 
             try {
@@ -260,7 +391,7 @@ export function ResourceTable({ bench = false }) {
             }
         };
 
-        fetchData();
+        refreshData();
         fetchPlaceholderData();
     }, []);
 
@@ -312,11 +443,18 @@ export function ResourceTable({ bench = false }) {
                     !user.jobs.some(job => job.month.startsWith(month))
                 );
 
-                // Condition 2: Check if days_allocated plus holiday is less than days_hypo minus 3, using 20 if days_hypo is undefined
+                // Condition 2: Check if days_allocated plus holiday is less than days_hypo minus 3, using 18 if days_hypo is undefined
+                // Only for jobs within the displayed months
                 const hasLessDaysAllocated = user.jobs.some(job => {
+                    const isInDisplayedMonths = displayedMonths.some(displayedMonth => job.month.startsWith(displayedMonth));
+                    if (!isInDisplayedMonths) {
+                        return false; // Skip this job if it's not in one of the displayed months
+                    }
+
                     const holiday = job.holiday || 0; // If there is no holiday, default to 0
-                    const daysHypo = job.days_hypo || 20; // Use 20 if days_hypo is not defined
-                    return (job.days_allocated + holiday) < (daysHypo - 3);
+                    const daysHypo = job.days_hypo || 18; // Use 18 if days_hypo is not defined
+                    const days_allocated = job.days_allocated || 0;
+                    return (days_allocated + holiday) < (daysHypo - 3);
                 });
 
                 // Return true if either condition is met
@@ -455,6 +593,7 @@ export function ResourceTable({ bench = false }) {
                             displayedMonths={displayedMonths}
                             setPopupContent={setPopupContent}
                             setShowPopup={setShowPopup}
+                            refreshData={refreshData}
                             placeholder={placeholder && placeholder[item.mail] ? placeholder[item.mail] : null}
                         />
 
@@ -464,9 +603,9 @@ export function ResourceTable({ bench = false }) {
 
             <Dialog fullWidth open={showPopup} onClose={() => setShowPopup(false)}>
                 <DialogTitle>Job Details
-                <IconButton onClick={() => setShowPopup(false)} sx={{ position: 'absolute', right: 8, top: 8 }}>
-                    <CloseIcon />
-                </IconButton>
+                    <IconButton onClick={() => setShowPopup(false)} sx={{ position: 'absolute', right: 8, top: 8 }}>
+                        <CloseIcon />
+                    </IconButton>
                 </DialogTitle>
                 <DialogContent>
                     {popupContent && popupContent.map(job => (

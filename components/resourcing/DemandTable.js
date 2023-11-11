@@ -135,7 +135,7 @@ export function DemandTable() {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('/api/resourcing/resources?demand=true');
+                const response = await fetch('/api/resourcing/demand?demand=true');
                 if (!response.ok) throw new Error('Network response was not ok');
                 const fetchedData = await response.json();
                 if (fetchedData.content) {
@@ -160,7 +160,7 @@ export function DemandTable() {
             }
 
             try {
-                const response = await fetch('/api/resourcing/resources');
+                const response = await fetch('/api/resourcing/demand');
                 if (!response.ok) throw new Error('Network response was not ok');
                 const fetchedData = await response.json();
                 if (fetchedData.content) {

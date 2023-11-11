@@ -1,103 +1,38 @@
-// pages/resources/resources.js
-
-import formidable from 'formidable-serverless';
-import { promises as fs } from 'fs';
-import { parseExcelXml, expandResourceData, calculateDemand, timesheetPortalHolidays, combineResourcesWithHolidays } from '@/lib/loaders'; // Adjust the path as necessary
-import { cacheWrite, cacheRead } from '@/lib/redis';
-
-import users from './users.json';
-
-
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
-
-
-
+import { cacheWrite, cacheRead, cacheDelete, cacheSearch } from '@/lib/redis';
 
 export default async function handler(req, res) {
-    const cacheKey = 'geco-all-resources'
     if (req.method === 'POST') {
-        // Parse the multipart form data
-        const data = await new Promise((resolve, reject) => {
-            const form = new formidable.IncomingForm();
-            form.parse(req, (err, fields, files) => {
-                if (err) return reject(err);
-                resolve(files);
-            });
-        });
-
         try {
-            // Access the uploaded file
-            const file = data.file instanceof Array ? data.file[0] : data.file;
-            if (!file) {
-                throw new Error('No file uploaded.');
+            // Extract data from the request body
+            const data = req.body;
+            const cacheKeyResource = 'geco-resource-' + req.body.resource
+
+            try { // write the placeholder data per job
+                await cacheWrite(cacheKeyResource, JSON.stringify(data)); // attempt to cache data
+            } catch (cacheError) {
+                // If cacheWrite fails, log the error and send a 500 response
+                res.status(500).json({ error: 'Failed to write to cache.' });
+                console.error('[API/resourcing/resources/POST][Cache Write Error (Job)]:', cacheError);
             }
+            // try { // write placeholder data per resource
+            //     await cacheWrite(cacheKeyResource, JSON.stringify(data)); // attempt to cache data
+            // } catch (cacheError) {
+            //     // If cacheWrite fails, log the error and send a 500 response
+            //     res.status(500).json({ error: 'Failed to write to cache.' });
+            //     console.error('[API/resourcing/placeholder/POST][Cache Write Error (Resource)]:', cacheError);
+            // }
 
-            // Read the file from the uploaded path
-            const content = await fs.readFile(file.path, 'utf-8');
-
-            // Process the file content through parseExcelXml
-            try {
-                const jsonData = await parseExcelXml(content);
-                // console.debug('/api/upload: ', jsonData);
-
-                const resourceData = expandResourceData(jsonData, users)
-
-                const holidays = await timesheetPortalHolidays(process.env.TSP_CLIENT_ID, process.env.TSP_CLIENT_SECRET)
-                // const groupedHolidays = groupLeaveData()
-                const resourceDataWithHolidays = combineResourcesWithHolidays(resourceData, holidays)
-                // res.status(200).json({'resource': resourceData, 'holidays': holidays}); // Respond with JSON data                
-
-                const demandData = calculateDemand(resourceData)
-
-                try {
-                    await cacheWrite('geco-excel-conversion', JSON.stringify(jsonData)); // attempt to cache data
-                } catch (cacheError) {
-                    // If cacheWrite fails, log the error but dont send a 500 response
-                    console.error('[API/resourcing/resources/POST][Cache Write Error (geco-excel-conversion)]:', cacheError);
-                }
-                try {
-                    await cacheWrite('geco-demand', JSON.stringify(demandData)); // attempt to cache data
-                } catch (cacheError) {
-                    // If cacheWrite fails, log the error and send a 500 response
-                    res.status(500).json({ error: 'Failed to write to cache.' });
-                    console.error('[API/resourcing/resources/POST][Cache Write Error (geco-demand)]:', cacheError);
-                }
-
-                try {
-                    await cacheWrite(cacheKey, JSON.stringify(resourceDataWithHolidays)); // attempt to cache data
-                    res.status(200).json(resourceDataWithHolidays); // Respond with JSON data
-                } catch (cacheError) {
-                    // If cacheWrite fails, log the error and send a 500 response
-                    console.error('[API/resourcing/resources/POST][Cache Write Error (', cacheKey, ')]:', cacheError);
-                    res.status(500).json({ error: 'Failed to write to cache.' });
-                    return; // Stop further execution
-                }
-
-
-            } catch (error) {
-                return res.status(500).json({ error: error.message });
-            }
+            res.status(200).json({ status: 'Success', message: 'Resource Updated' });
         } catch (error) {
-            return res.status(500).json({ error: error.message });
+            // Handle any errors
+            res.status(500).json({ status: 'Error', message: error.message });
         }
     } else if (req.method === 'GET') {
 
-        if (req.query.demand === 'true') {
+        if (req.query.resource) {
             try {
-                const obj = await cacheRead('geco-demand')
-                // console.log('API:Cache: ', req.query.key, ' : ', obj );
-                res.status(200).json({ content: obj })
-            } catch (error) {
-                // console.log(error)
-                res.status(500).json({ error: 'error fetching from cache: ' + error })
-            }
-        } else {
+                const cacheKey = 'geco-resource-' + req.query.resource
 
-            try {
                 const obj = await cacheRead(cacheKey)
                 // console.log('API:Cache: ', req.query.key, ' : ', obj );
                 res.status(200).json({ content: obj })
@@ -105,12 +40,48 @@ export default async function handler(req, res) {
                 // console.log(error)
                 res.status(500).json({ error: 'error fetching from cache: ' + error })
             }
+        } else { // return all
+            try {
+
+                const cacheKey = 'geco-resource*'
+                const keys = await cacheSearch(cacheKey);
+                
+
+                // If keys is null or undefined, handle the error or send an empty array response.
+                if (!keys || keys.length === 0) {
+                    res.status(200).json({ content: [] });
+                    return;
+                }
+
+                let placeholderData = [];
+                const cacheAll = await Promise.all(keys.map(item => cacheRead(item)));
+
+                // console.log('API:/api/etherpad/imported: ', padMeta)
+            
+                cacheAll.forEach((item, index) => {
+                  item = JSON.parse(item);
+                  placeholderData.push(item);
+                })
+                console.log(placeholderData)
+                res.status(200).json({ content: placeholderData });
+            } catch (error) {
+                // console.log(error)
+                res.status(500).json({ error: 'error fetching from cache: ' + error })
+            }
         }
-
-
+    } else if (req.method === 'DELETE') {
+        try {
+            const cacheKey = 'geco-placeholder-' + req.query.code + '-' + req.query.role_id
+            await cacheDelete(cacheKey); // assuming cacheDelete is a function you have for deleting cache
+            res.status(200).json({ status: 'Success', message: `Data deleted from cache` });
+        } catch (error) {
+            console.error('[API/resourcing/placeholder/DELETE][Cache Delete Error]:', error);
+            res.status(500).json({ status: 'Error', message: 'Failed to delete from cache : ' + error });
+        }
     } else {
-        // Handle any other HTTP method
-        res.setHeader('Allow', ['POST, GET']);
+        // If the request is not POST, GET, or DELETE, return a 405 Method Not Allowed error
+        res.setHeader('Allow', ['POST', 'GET', 'DELETE']);
         res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
+

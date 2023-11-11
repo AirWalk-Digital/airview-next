@@ -51,7 +51,7 @@ export const FileUpload = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('/api/resourcing/resources', {
+      const response = await fetch('/api/resourcing/demand', {
         method: 'POST',
         body: formData,
       });
