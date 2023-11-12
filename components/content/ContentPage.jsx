@@ -86,7 +86,7 @@ export function ContentPage({
   const [menuOpen, setMenuOpen] = useState(true);
   const [print, setPrint] = useState(false);
   const [presentation, setPresentation] = useState(false);
-  const [editMode, setEditMode] = useState(true); ////-----------------------------true for testing edit mode
+  const [editMode, setEditMode] = useState(false); ////-----------------------------true for testing edit mode
 
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);

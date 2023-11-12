@@ -465,13 +465,17 @@ export function ResourceTable({ bench = false }) {
         console.debug(data)
         if (data && !isLoading) {
             let usersToDisplay = sortUsersByName(data);
+            usersToDisplay = usersToDisplay.filter(item => item.department != 'Operations');
 
             if (disciplineFilter) {
+                usersToDisplay = sortUsersByName(data);
                 usersToDisplay = usersToDisplay.filter(item => item.department === disciplineFilter);
             }
 
             if (bench) { // Only apply this filter if bench prop is true
                 usersToDisplay = filterRowsWithNoJobsAndLessHolidays(usersToDisplay, displayedMonths);
+                usersToDisplay = usersToDisplay.filter(item => item.department != 'Operations');
+
             }
 
             setFilteredData(usersToDisplay);
