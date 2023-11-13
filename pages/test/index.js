@@ -1,26 +1,25 @@
+// You can use this code in a separate component that's imported in your pages.
+// import type { CodeBlockEditorDescriptor } from '@mdxeditor/editor';
+import Editor from '@/components/editor'
+import { useState, useEffect } from "react";
+import dynamic from 'next/dynamic'
 
-import React, {useState, useEffect} from 'react';
-
-const Applications = () => {
-  const [state, setState] = useState([]);
-  useEffect(() => {
-    const getData = async () =>{
-      
-    const response = await fetch("/api/compliance/applications/")
-      // // console.log(response)
-      const data =await response.json();
-      // // console.log(data)
-      setState(data);
-    }
-    getData()
-  },[])
-
-  return (<div>
-
-	    {state.map(m => <li>{JSON.stringify(m)}</li>)}
-	  </div>)
+export default function Page() {
+  const mkdown = `hello
+<Alert>test</Alert>
+more
+`
+  const [markdown, setMarkdown] = useState(mkdown);
 
 
+
+const EditorClient = dynamic(() => Promise.resolve(Editor), {
+  ssr: true,
+});
+
+  // const [markdown, setMarkdown] = useState('hello');
+
+  return (
+    <EditorClient markdown={markdown} context={[]}/>
+  )
 }
-
-export default Applications
