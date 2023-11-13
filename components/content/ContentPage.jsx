@@ -272,7 +272,7 @@ return(
 
   {frontmatter?.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px',borderRadius: '8px' }}>
     <Grid>
-      <Alert severity="info">This is draft content from Etherpad edit here: </Alert>
+      <Alert severity="info">This is draft content from Etherpad. edit here: </Alert>
     </Grid>
     <Grid>
       <IconButton

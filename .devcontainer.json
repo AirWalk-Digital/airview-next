@@ -15,9 +15,6 @@
 	},
 	"vscode": {
 		"extensions": [
-			"bungcip.better-toml",
-			"GitHub.copilot",
-			"GitHub.copilot-labs",
 			"GitHub.github-vscode-theme",
 			"GitHub.vscode-pull-request-github"
 		]
