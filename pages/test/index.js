@@ -2,9 +2,14 @@
 // import type { CodeBlockEditorDescriptor } from '@mdxeditor/editor';
 import Editor from '@/components/editor'
 import { useState, useEffect } from "react";
+import dynamic from 'next/dynamic'
 
 export default function Page() {
-  const [markdown, setMarkdown] = useState('hello<Alert>test</Alert>');
+  const mkdown = `hello
+<Alert>test</Alert>
+more
+`
+  const [markdown, setMarkdown] = useState(mkdown);
 
 
 

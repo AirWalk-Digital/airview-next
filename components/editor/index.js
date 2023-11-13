@@ -159,7 +159,7 @@ function Editor({ markdown: initialMarkdown, context }) {
         onChange={editorCallback}
         markdown={markdown}
         plugins={[
-          // catchAllPlugin(),
+          catchAllPlugin(),
           codeBlockPlugin({ codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor] }),
           diffSourcePlugin({ diffMarkdown: initialMarkdown, viewMode: 'source' }),
           headingsPlugin(),
