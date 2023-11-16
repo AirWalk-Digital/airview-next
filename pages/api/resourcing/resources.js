@@ -5,7 +5,7 @@ export default async function handler(req, res) {
         try {
             // Extract data from the request body
             const data = req.body;
-            const cacheKeyResource = 'geco-resource-' + req.body.resource
+            const cacheKeyResource = '{geco-resource}-' + req.body.resource
 
             try { // write the placeholder data per job
                 await cacheWrite(cacheKeyResource, JSON.stringify(data)); // attempt to cache data
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
         if (req.query.resource) {
             try {
-                const cacheKey = 'geco-resource-' + req.query.resource
+                const cacheKey = '{geco-resource}-' + req.query.resource
 
                 const obj = await cacheRead(cacheKey)
                 // console.log('API:Cache: ', req.query.key, ' : ', obj );

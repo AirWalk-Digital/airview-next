@@ -136,7 +136,7 @@ export default async function handler(req, res) {
 
             try {
                 const obj = await cacheRead(cacheKey)
-                const resourceData = await cacheMRead(extractEmailsForRedis(obj), 'geco-resource-')
+                const resourceData = await cacheMRead(extractEmailsForRedis(obj), '{geco-resource}-')
                 // console.log(resourceData)
                 const mergedResourceData = mergeApiAndRedisResults(obj, resourceData)
                 // console.log('API:Cache: ', req.query.key, ' : ', obj );
