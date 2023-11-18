@@ -39,5 +39,5 @@ source .env* && FONTAWESOME_NPM_AUTH_TOKEN=$FONTAWESOME_NPM_AUTH_TOKEN docker bu
 
 # Local Run
 
-docker run -d -p 3001:3000 ghcr.io/airwalk-digital/airview-mdx-deck:local
+docker run -d -p 3001:3000 ghcr.io/airwalk-digital/airview-next:local
 

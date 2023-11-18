@@ -89,7 +89,7 @@ export default withMDX(nextConfig)
 //     silent: true,
 
 //     org: "airwalk-digital",
-//     project: "airview-mdx-deck",
+//     project: "airview-next",
 //   },
 //   {
 //     // For all available options, see:
