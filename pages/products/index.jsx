@@ -6,7 +6,14 @@ import { HeaderMinimalMenu } from '@/components/dashboard/Menus'
 import { usePageMenu } from "@/lib/hooks";
 
 
-export default function Page({ tiles, menuStructure: initialMenuStructure, collection }) {
+export default function Page({ tiles, menuStructure: initialMenuStructure, collection , loading}) {
+
+
+  if (loading) {
+    return (
+      <IndexView menuStructure={null} title="Products" tiles={null} menuComponent={HeaderMinimalMenu} loading={true}/>
+    )
+  }
 
   const { menuStructure  } = usePageMenu(initialMenuStructure, collection);
 

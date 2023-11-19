@@ -27,6 +27,15 @@ export default function Page({ tiles, menuStructure: initialMenuStructure, colle
 export async function getServerSideProps(context) {
 
   const tiles = await getFrontMatter(siteConfig.content.solutions);
+
+  
+  const filteredTiles = tiles.filter(tile => {
+    const parts = tile.file.split('/'); // Split the file path by '/'
+    const fileName = parts[parts.length - 1]; // Get the last part (file name)
+    // Check if the path has exactly 3 parts and the file name is 'index.md' or 'index.mdx'
+    return parts.length === 3 && (fileName === '_index.md' || fileName === '_index.mdx');
+  });
+
   const menuPromise = getMenuStructure(
     siteConfig,
     siteConfig.content.solutions
@@ -36,7 +45,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       menuStructure: menuStructure,
-      tiles: tiles,
+      tiles: filteredTiles,
       collection: siteConfig.content.solutions,
     },
   };

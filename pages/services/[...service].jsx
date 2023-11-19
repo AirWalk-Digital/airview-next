@@ -15,7 +15,8 @@ export default function Page({
   menuStructure: initialMenuStructure,
   collection,
   controls,
-  context: initialContext
+  context: initialContext,
+  loading
 }) {
   const {
     pageContent,
@@ -44,12 +45,13 @@ export default function Page({
         <ServicesHeader {...props} extraData={controls} />
       )}
       sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
+      loading={loading}
     />
   );
 }
 
 export async function getServerSideProps(context) {
-  console.log(context.params.service)
+  // console.log(context.params.service)
 
   const file = "services/" + context.params.service.join("/");
   let pageContent = "";

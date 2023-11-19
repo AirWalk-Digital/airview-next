@@ -6,8 +6,14 @@ import { ListMenu } from '@/components/dashboard/Menus'
 import { usePageMenu } from "@/lib/hooks";
 
 
-export default function Page({ tiles, menuStructure: initialMenuStructure, collection }) {
+export default function Page({ tiles, menuStructure: initialMenuStructure, collection, loading }) {
 
+
+  if (loading) {
+    return (
+      <IndexView menuStructure={null} title="Customers" tiles={null} menuComponent={ListMenu} loading={true}/>
+    )
+  }
   const { menuStructure  } = usePageMenu(initialMenuStructure, collection);
 
   return (
