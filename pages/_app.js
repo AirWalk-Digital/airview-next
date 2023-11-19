@@ -1,4 +1,7 @@
 import Head from "next/head";
+import React from "react";
+import Router from "next/router";
+
 import { siteConfig } from "../site.config.js";
 // import MDXProvider from "../components/MDXProvider";
 import { AnimatePresence } from "framer-motion";
@@ -58,18 +61,36 @@ function DefaultWrapper({ children }) {
 };
 
 export default function App({ Component, pageProps, ...appProps }) {
-
+  const [loading, setLoading] = React.useState(false);
+      React.useEffect(() => {
+        const start = () => {
+          console.log("start");
+          setLoading(true);
+        };
+        const end = () => {
+          console.log("finished");
+          setLoading(false);
+        };
+        Router.events.on("routeChangeStart", start);
+        Router.events.on("routeChangeComplete", end);
+        Router.events.on("routeChangeError", end);
+        return () => {
+          Router.events.off("routeChangeStart", start);
+          Router.events.off("routeChangeComplete", end);
+          Router.events.off("routeChangeError", end);
+        };
+      }, []);
   const getContent = () => {
     // array of all the paths that doesn't need layout
     if (appProps.router.pathname.startsWith('/output')) {
-      return (<OutputWrapper><Component {...pageProps} /></OutputWrapper>);
+      return (<OutputWrapper><Component {...pageProps} loading={loading}/></OutputWrapper>);
     } else {
-      return (<DefaultWrapper> <Provider store={store}><Component {...pageProps} /></Provider></DefaultWrapper>);
+      return (<DefaultWrapper> <Provider store={store}><Component {...pageProps} loading={loading}/></Provider></DefaultWrapper>);
     };
   };
 
 
-
+  
   return (
     // <ThemeProvider theme={theme}>
     // <ErrorBoundary>
@@ -78,5 +99,6 @@ export default function App({ Component, pageProps, ...appProps }) {
       {getContent()}
     </MDXProvider>
     // </ErrorBoundary>
-  );
+  )
+
 }

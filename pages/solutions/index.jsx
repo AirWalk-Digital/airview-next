@@ -6,9 +6,17 @@ import { ListMenu } from '@/components/dashboard/Menus'
 import { usePageMenu } from "@/lib/hooks";
 
 
-export default function Page({ tiles, menuStructure: initialMenuStructure, collection }) {
+export default function Page({ tiles, menuStructure: initialMenuStructure, collection, loading }) {
 
-  const { menuStructure  } = usePageMenu(initialMenuStructure, collection);
+  // console.debug('/solutions:loading: ', loading )
+
+  if (loading) {
+    return (
+      <IndexView menuStructure={null} title="Solutions" tiles={null} menuComponent={ListMenu} loading={true}/>
+    )
+  }
+
+  const { menuStructure } = usePageMenu(initialMenuStructure, collection);
 
   return (
     <IndexView menuStructure={menuStructure} title="Solutions" tiles={tiles} menuComponent={ListMenu} />
@@ -17,7 +25,7 @@ export default function Page({ tiles, menuStructure: initialMenuStructure, colle
 
 
 export async function getServerSideProps(context) {
- 
+
   const tiles = await getFrontMatter(siteConfig.content.solutions);
   const menuPromise = getMenuStructure(
     siteConfig,

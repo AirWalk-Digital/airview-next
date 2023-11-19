@@ -1,4 +1,4 @@
-FROM node:18.14-alpine
+FROM node:18.18-alpine
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=vscode
 ARG USER_UID=1000

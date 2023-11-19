@@ -1,54 +1,51 @@
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import { Box } from '@mui/material';
-import { Stack } from '@mui/material'
-import { Chip } from '@mui/material'
+import { Box, Typography, Stack, Chip, Link, Grid } from '@mui/material';
 
 export function Tile({ name, url, image }) {
   return (
-    <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+    <Grid item xs={12} sm={6} md={4} lg={3} sx={{ mb: '20px' }}>
       <Link href={url} underline="none">
         <Box
           sx={{
             position: 'relative',
-            bgcolor: 'background.paper',
+            bgcolor: image ? 'background.paper' : 'background.primary', // Ensure this is the correct color value
             boxShadow: 0,
-            borderColor: 'primary',
+            borderColor: 'primary.main',
             border: 1,
             borderRadius: 2,
             p: 2,
-            minHeight: 300,
+            minHeight: 200, // Adjust based on your needs
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
+          {image && (
+            <Box
+              component="img"
+              src={image}
+              alt={name}
+              sx={{
+                maxHeight: '140px', // Maximum height for images
+                maxWidth: '100%',  // Maximum width for images
+                objectFit: 'contain', // Adjusts the size of the image within the given dimensions
+                mb: 1, // Margin between image and text
+              }}
+            />
+          )}
           <Box
             sx={{
-              position: 'absolute',
-              bottom: '20px', // Adjust the desired spacing here
-              left: '20px', // Adjust the desired spacing here
-              right: '20px', // Adjust the desired spacing here
-              top: '50%',
-              transform: 'translateY(-50%)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-           {image && <img src={image} alt={name} style={{ maxWidth: '100%', maxHeight: '100%' }} /> }
-          </Box>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: image ? 0 : 75,
-              left: 0,
-              right: 0,
-              p: 2,
+              mt: 2, // Margin top
+              color: image ? 'text.primary' : 'white', // Explicit white color for text
+              fontSize: '1rem',
+              fontWeight: 'bold',
               textAlign: 'center',
-              color: 'text.primary',
-              fontSize: 24,
-              fontWeight: 'medium',
+              wordWrap: 'break-word',
             }}
           >
-            {name}
+            <Typography variant="h4" sx={{ color: image ? 'text.primary' :'white !important' }}>
+              {name}
+            </Typography>
           </Box>
         </Box>
       </Link>

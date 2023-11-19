@@ -119,68 +119,11 @@ function Resources({ role, resources }) {
     );
 }
 
-export function DemandTable() {
+export function DemandTable({isLoading, months, data, error, resources} ) {
     const [filteredData, setFilteredData] = useState([]);
     const [customerFilter, setCustomerFilter] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [data, setData] = useState(null);
-    const [resources, setResources] = useState(null);
     const [monthStartIndex, setMonthStartIndex] = useState(0);
-    const [months, setMonths] = useState([
-        '2023-11-01T00:00:00.000', '2023-12-01T00:00:00.000', '2024-01-01T00:00:00.000',
-    ]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const response = await fetch('/api/resourcing/demand?demand=true');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const fetchedData = await response.json();
-                if (fetchedData.content) {
-                    const jsonParsedData = JSON.parse(fetchedData.content)
-                    // console.log('jsonParsedData: ', jsonParsedData)
-                    setData(jsonParsedData); // Adjust according to actual API response
-                    setMonths(
-                        Array.from(
-                            new Set(
-                                jsonParsedData.flatMap(item => Object.keys(item.Roles))
-                            )
-                        ).sort()
-                    );
-
-                    setIsLoading(false);
-                } else {
-                    setIsLoading(true);
-                }
-            } catch (err) {
-                setError(err.message);
-                setIsLoading(false);
-            }
-
-            try {
-                const response = await fetch('/api/resourcing/demand');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const fetchedData = await response.json();
-                if (fetchedData.content) {
-                    const jsonParsedData = JSON.parse(fetchedData.content)
-                    // console.log('jsonParsedData: ', jsonParsedData)
-                    setResources(jsonParsedData); // Adjust according to actual API response
-                    setIsLoading(false);
-                } else {
-                    setIsLoading(true);
-                }
-            } catch (err) {
-                setError(err.message);
-                setIsLoading(false);
-            }
-
-        };
-
-        fetchData();
-    }, []);
-
+    
     useEffect(() => {
         if (data) {
             let groupedData = [];
@@ -287,7 +230,7 @@ export function DemandTable() {
                                     ))}
                             </Select>
                         </TableCell>
-                        <TableCell>Description</TableCell>
+                        <TableCell>JSO</TableCell>
                         <TableCell>Role</TableCell>
                         <TableCell>Resource</TableCell>
 

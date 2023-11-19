@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, LinearProgress } from '@mui/material';
 import { baseTheme } from '../../constants/baseTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,15 +15,16 @@ export function IndexView({
   tiles,
   menuStructure,
   title, 
-  menuComponent
+  menuComponent,
+  loading
 }) {
 
-  console.log('IndexView:menuStructure: ', menuStructure)
+  // console.log('IndexView:menuStructure: ', menuStructure)
 
   const MenuComponent = menuComponent;
 
   const navDrawerWidth = 300;
-  const topBarHeight = 64;
+  const topBarHeight = 65;
   const [menuOpen, setMenuOpen] = useState(true);
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
@@ -35,12 +36,12 @@ export function IndexView({
         menu={true}
         topBarHeight={topBarHeight} />
 
-      {menuStructure && menuStructure.primary && <MenuComponent
-        menu={menuStructure.primary}
+      <MenuComponent
+        menu={menuStructure?.primary ? menuStructure?.primary : null}
         open={menuOpen}
         top={topBarHeight}
         drawerWidth={navDrawerWidth}
-      />}
+      />
       <div
         style={{
           marginTop: topBarHeight,
@@ -48,8 +49,8 @@ export function IndexView({
         }}
       ><Box sx={{ px: '5%' }}>
           <Typography variant="h1" component="h1">{title}</Typography>
-          <Container maxWidth="lg" sx={{ maxHeight: '100vh', mt: '10%' }}>
-            <Grid container spacing={4} alignItems="stretch">
+          <Container maxWidth="lg" sx={{ maxHeight: '100vh', mt: '2%' }}>
+            <Grid container spacing={2} alignItems="stretch">
               {tiles ? (
                 tiles.map((c, i) => (
                   <Tile
@@ -63,7 +64,7 @@ export function IndexView({
                     }
                   />
                 ))) : (
-                null
+                <LinearIndeterminate/>
               )}
             </Grid>
           </Container>
@@ -75,4 +76,10 @@ export function IndexView({
 }
 
 
-
+function LinearIndeterminate() {
+  return (
+    <Box sx={{ width: '100%' }}>
+      <LinearProgress />
+    </Box>
+  );
+}
