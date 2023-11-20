@@ -45,7 +45,7 @@ export default function Page({
         <ServicesHeader {...props} extraData={controls} />
       )}
       sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
-      loading={loading}
+      isLoading={loading}
     />
   );
 }

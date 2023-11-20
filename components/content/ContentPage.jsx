@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { baseTheme } from '../../constants/baseTheme';
 import { MDXProvider } from "@mdx-js/react";
 import { mdComponents } from "../../constants/mdxProvider.js";
-import Editor from '@/components/editor'
+import { Editor } from '@/components/editor'
 
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,7 +14,7 @@ import { PagedOutput } from '@/components/display/PagedOutput';
 import { PresentationOutput } from '@/components/display/PresentationOutput';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase } from '@mui/material';
+import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase, LinearProgress, Skeleton, Paper } from '@mui/material';
 import { FullScreenSpinner } from "@/components/dashboard/index.js";
 
 import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
@@ -41,7 +41,8 @@ export function ContentPage({
   context,
   menuComponent,
   headerComponent = null,
-  sideComponent = null
+  sideComponent = null,
+  isLoading
 }) {
 
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
@@ -89,6 +90,7 @@ export function ContentPage({
   const [editMode, setEditMode] = useState(false); ////-----------------------------true for testing edit mode
 
 
+
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
 
   const { primary, relatedContent } = menuStructure || {};
@@ -107,15 +109,13 @@ export function ContentPage({
     setPresentation(!presentation);
   };
 
-  
+
   // let Content = <h1>tesr</h1>;
   // let Content = FullScreenSpinner ;
 
   const Content = () => {
     if (context && context.file && context.file.endsWith('.etherpad')) {
       return <Etherpad file={context.file} frontMatterCallback={frontMatterCallback} editMode={editMode} />
-    } else if (context && pageContent.content && pageContent.frontmatter && editMode) {
-      return <Editor markdown={content} context={context}/> ;
     } else if (context && pageContent.content && pageContent.frontmatter) {
       const Page = pageContent.content;
       return <Page />;
@@ -130,7 +130,13 @@ export function ContentPage({
     }
   }, [pageContent.frontmatter]);
 
-  if (!print && !presentation) {
+
+  if (isLoading) {
+    return <ContentSkeleton topBarHeight={topBarHeight} />
+  }
+
+
+  if (!print && !presentation && !editMode) {
     return (
       <ContentWrapperContext>
         <ThemeProvider theme={baseTheme}>
@@ -167,13 +173,13 @@ export function ContentPage({
 
             }}
           >
-            
+
 
             <AsideAndMainContainer>
               {/* <Main sx={{}}> */}
               <Main>
-                <Banner frontmatter={frontmatter} handlePresentation={handlePresentation} headerComponent={headerComponent} editMode={editMode}/>
-              
+                <Banner frontmatter={frontmatter} handlePresentation={handlePresentation} headerComponent={headerComponent} editMode={editMode} />
+
                 <MDXProvider components={mdComponents(context)}>
                   <><Content /></>
                 </MDXProvider>
@@ -230,70 +236,98 @@ export function ContentPage({
         </PresentationOutput>
       </ContentWrapperContext>
     )
+  } else if (editMode) {
+    return (
+      <ContentWrapperContext>
+        <ThemeProvider theme={baseTheme}>
+          <CssBaseline />
+          <TopBar onNavButtonClick={handleOnNavButtonClick}
+            navOpen={menuOpen}
+            menu={true}
+            topBarHeight={topBarHeight}
+            handlePrint={handlePrint}
+            handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
+            handleMore={() => setControlBarOpen(controlBarOpen => !controlBarOpen)}
+          />
+          <ControlBar open={controlBarOpen} height={64}
+            handleEdit={handleEditMode}
+            handlePrint={handlePrint}
+            handleRefresh={handleRefresh}
+            handlePresentation={frontmatter?.format === 'presentation' ? handlePresentation : null}
+            collection={collection}
+          />
+          <div style={{ marginTop: topBarHeight + 10 , paddingLeft: 0, zIndex: 999}}>
+            <Editor markdown={content} context={context} />
+
+          </div>
+        </ThemeProvider>
+      </ContentWrapperContext>
+    )
+
   }
 }
 
-function Banner({frontmatter,handlePresentation,headerComponent,editMode }) {
+function Banner({ frontmatter, handlePresentation, headerComponent, editMode }) {
   const [environment, setEnvironment] = useState("");
   const HeaderComponent = headerComponent;
 
   useEffect(() => {
-    const fetchData = async () =>{
+    const fetchData = async () => {
       const resp = await fetch("/api/environment");
       const data = await resp.json();
       console.log(data)
       setEnvironment(data)
     }
     fetchData()
-  },[]);
+  }, []);
 
 
-return(
-  <>
-  {
-    headerComponent ? (
-      <HeaderComponent frontmatter={frontmatter} />
-    ) : (
-      <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '0%' }}>{frontmatter?.title && frontmatter.title}</Typography>
-    )
-  }
-  {frontmatter?.format === 'presentation' && !editMode && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px', borderRadius: '8px' }}>
-    <Grid>
-      <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
-    </Grid>
-    <Grid>
-      <IconButton
-        size="medium"
-        onClick={handlePresentation}
-        color="inherit"
-      >
-        <SlideshowIcon />
-      </IconButton>
-    </Grid>
-    <Grid/>
-  </Grid>
-  }
+  return (
+    <>
+      {
+        headerComponent ? (
+          <HeaderComponent frontmatter={frontmatter} />
+        ) : (
+          <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '0%' }}>{frontmatter?.title && frontmatter.title}</Typography>
+        )
+      }
+      {frontmatter?.format === 'presentation' && !editMode && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px', borderRadius: '8px' }}>
+        <Grid>
+          <Alert severity="info">This is a presentation. View in presentation mode by clicking </Alert>
+        </Grid>
+        <Grid>
+          <IconButton
+            size="medium"
+            onClick={handlePresentation}
+            color="inherit"
+          >
+            <SlideshowIcon />
+          </IconButton>
+        </Grid>
+        <Grid />
+      </Grid>
+      }
 
-  {frontmatter?.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px',borderRadius: '8px' }}>
-    <Grid>
-      <Alert severity="info">This is draft content from Etherpad. edit here: </Alert>
-    </Grid>
-    <Grid>
-      <IconButton
-        size="medium"
-        href={`${environment.ETHERPAD_URL}/p/${frontmatter.padID}`}
-        target="_blank"
-        rel="noopener noreferrer"  // For security reasons
-        color="inherit"
-      >
-        <EditNoteIcon />
-      </IconButton>
-    </Grid>
-    <Grid/>
-  </Grid>
-  }
-  </>
-)
+      {frontmatter?.padID && <Grid container alignItems="center" spacing={1} style={{ textAlign: 'center' }} sx={{ background: 'rgb(229, 246, 253)', px: '10px', borderRadius: '8px' }}>
+        <Grid>
+          <Alert severity="info">This is draft content from Etherpad. edit here: </Alert>
+        </Grid>
+        <Grid>
+          <IconButton
+            size="medium"
+            href={`${environment.ETHERPAD_URL}/p/${frontmatter.padID}`}
+            target="_blank"
+            rel="noopener noreferrer"  // For security reasons
+            color="inherit"
+          >
+            <EditNoteIcon />
+          </IconButton>
+        </Grid>
+        <Grid />
+      </Grid>
+      }
+    </>
+  )
 
 
 }
@@ -301,13 +335,10 @@ return(
 
 
 
-function ContentMenu({ content, file, handleContentChange, handlePageReset, context }) {
+function ContentMenu({ content, file, handleContentChange, handlePageReset, context, loading = false }) {
   // let directory = file?.includes("/") ? file.split("/")[1] : file;
 
-  let directory = path.dirname(file);
-
-  // console.log('ContentMenu:directory ', directory)
-  // console.log('ContentMenu:collection ', context)
+  let directory = file ? path.dirname(file) : null;
 
   let chaptersMenu = []
   if (content && content[directory]) {
@@ -492,3 +523,46 @@ const capitalizeFirstLetter = (string) => {
 };
 
 
+
+
+function ContentSkeleton({ topBarHeight }) {
+
+  return (
+    <ThemeProvider theme={baseTheme}>
+      <CssBaseline />
+      <TopBar onNavButtonClick={null}
+        navOpen={false}
+        menu={true}
+        topBarHeight={topBarHeight}
+        handlePrint={null}
+        handlePresentation={null}
+      />
+
+
+      <div
+        style={{
+          marginTop: topBarHeight,
+          paddingLeft: 0,
+        }}
+      >
+
+
+        <AsideAndMainContainer>
+          <Main sx={{}}>
+            <LinearIndeterminate />
+          </Main>
+        </AsideAndMainContainer>
+      </div>
+    </ThemeProvider>)
+
+}
+
+
+
+function LinearIndeterminate() {
+  return (
+    <Box sx={{ width: '100%' }}>
+      <LinearProgress />
+    </Box>
+  );
+}

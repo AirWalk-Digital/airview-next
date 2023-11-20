@@ -10,7 +10,7 @@ import { Menu, NavigationDrawer, ButtonMenu } from '@/components/airview-ui';
 import { PagedOutput } from '@/components/display/PagedOutput';
 import { PresentationOutput } from '@/components/display/PresentationOutput';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
-import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase } from '@mui/material';
+import { IconButton, Typography, MenuItem, Box, Alert, Grid, ButtonBase, LinearProgress, Skeleton } from '@mui/material';
 
 import { AsideAndMainContainer, Aside, Main } from '@/components/airview-ui';
 
@@ -27,10 +27,16 @@ export function ContentView({
   isError = false
 }) {
 
+  console.log('loading: ', isLoading)
+
+  const navDrawerWidth = 300;
+  const topBarHeight = 65;
+  if (!isLoading) {
+    return <ContentSkeleton topBarHeight={topBarHeight} />
+  }
 
   // console.log('SolutionView:menuStructure: ', menuStructure)
-  const navDrawerWidth = 300;
-  const topBarHeight = 64;
+
   const [menuOpen, setMenuOpen] = useState(true);
   const [print, setPrint] = useState(false);
   const [presentation, setPresentation] = useState(false);
@@ -294,3 +300,68 @@ const L2Menu = ({ menu }) => {
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+
+
+function ContentSkeleton ({topBarHeight}) {
+
+  return (
+  <ThemeProvider theme={baseTheme}>
+        <CssBaseline />
+        <TopBar onNavButtonClick={handleOnNavButtonClick}
+          navOpen={false}
+          menu={true}
+          topBarHeight={topBarHeight}
+          handlePrint={null}
+          handlePresentation={null}
+        />
+
+        <ContentMenu
+          menu={null}
+          open={false}
+          top={topBarHeight}
+          drawerWidth={0}
+        />
+        <div
+          style={{
+            marginTop: topBarHeight,
+            paddingLeft: 0,
+          }}
+        >
+      <Skeleton variant="text" >
+
+          <Typography variant="h1" component="h1" sx={{ pl: 0, mx: '2%' }}>{frontmatter?.title && frontmatter.title}</Typography>
+          </Skeleton>
+          
+
+  
+
+          <AsideAndMainContainer>
+            <Main sx={{}}>
+             {null}
+            </Main>
+            <Aside sx={{ mt: '1%', displayPrint: 'none', display: print ? 'none' : '' }}>
+              <AsideMenu
+                content={null}
+                // chapters={chapters}
+                // knowledge={knowledge}
+                // designs={designs}
+                siteConfig={siteConfig}
+                handleContentClick={handleContentClick}
+                file={file}
+              />
+              {/* <ButtonMenu
+                menuTitle="Controls"
+                menuItems={createControlMenu(controls)}
+                initialCollapsed={false}
+                loading={false}
+                fetching={false}
+                handleButtonClick={handleControlClick}
+              /> */}
+
+            </Aside>
+          </AsideAndMainContainer>
+        </div>
+      </ThemeProvider>)
+
+}
