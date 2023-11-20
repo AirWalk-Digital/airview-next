@@ -1,5 +1,6 @@
 FROM node:18.18-alpine AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat gcompat
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -12,6 +13,8 @@ RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
 
 
 FROM node:18.18-alpine AS builder
+RUN apk add --no-cache libc6-compat gcompat
+RUN ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -21,7 +24,6 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
 FROM node:18.18-alpine AS runner
-RUN apk add --no-cache libc6-compat gcompat
 
 WORKDIR /app
 
