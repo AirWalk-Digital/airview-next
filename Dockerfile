@@ -14,7 +14,7 @@ RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
 
 FROM node:18.18-alpine AS builder
 RUN apk add --no-cache libc6-compat gcompat
-RUN apk add --no-cache g++ make python
+RUN apk add --no-cache g++ make 
 
 # RUN ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
 WORKDIR /app
