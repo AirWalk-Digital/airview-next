@@ -21,7 +21,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
 FROM node:18.18-alpine AS runner
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat gcompat
 
 WORKDIR /app
 
