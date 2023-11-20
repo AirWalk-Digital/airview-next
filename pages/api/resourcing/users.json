@@ -1661,7 +1661,7 @@
         "officeLocation": "London",
         "preferredLanguage": null,
         "department": "Architecture",
-        "faxNumber": null,
+        "faxNumber": "OLISO, Francis",
         "manager_email": "ian.challis@airwalkconsulting.com"
     },
     {
@@ -2938,6 +2938,36 @@
         "department": "Architecture",
         "faxNumber": null,
         "manager_email": "rob.ellison@airwalkconsulting.com"
+    },
+    {
+        "id": "52eb9b75-543c-4a8d-81eb-b1c25d29053f",
+        "displayName": "Shaun Laughton (Test)",
+        "userPrincipalName": "shaun.laughton_awrsandbox.onmicrosoft.com#EXT#@airwalkconsulting.onmicrosoft.com",
+        "givenName": "Shaun",
+        "surname": "Laughton",
+        "jobTitle": null,
+        "mail": "shaun.laughton@awrsandbox.onmicrosoft.com",
+        "mobilePhone": null,
+        "officeLocation": null,
+        "preferredLanguage": "en-US",
+        "department": null,
+        "faxNumber": null,
+        "manager_email": null
+    },
+    {
+        "id": "d571ce68-e043-4b9b-b85f-8332b9408409",
+        "displayName": "Shaun Laughton 2 (Test)",
+        "userPrincipalName": "shaun.laughton2_awrsandbox.onmicrosoft.com#EXT#@airwalkconsulting.onmicrosoft.com",
+        "givenName": "Shaun",
+        "surname": "Laughton",
+        "jobTitle": null,
+        "mail": "shaun.laughton2@awrsandbox.onmicrosoft.com",
+        "mobilePhone": null,
+        "officeLocation": null,
+        "preferredLanguage": "en-US",
+        "department": null,
+        "faxNumber": null,
+        "manager_email": null
     },
     {
         "id": "6f08b277-bb38-49e9-97fc-5a1f125b5c86",
