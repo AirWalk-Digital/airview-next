@@ -11,7 +11,7 @@ RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
     find /app/node_modules/ ! -user root | xargs chown root:root
 
 
-FROM node:18.14-alpine AS builder
+FROM node:18.18-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
