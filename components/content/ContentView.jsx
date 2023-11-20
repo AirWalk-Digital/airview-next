@@ -22,7 +22,9 @@ export function ContentView({
   menuStructure,
   pageStructure,
   handleContentClick,
-  siteConfig = null
+  siteConfig = null,
+  isLoading = true,
+  isError = false
 }) {
 
 

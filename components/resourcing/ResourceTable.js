@@ -30,10 +30,17 @@ import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from '@mui/icons-material/Close';
 
-function determineColor(daysAllocated, daysHypo) {
-    const hypo = parseInt(daysHypo, 10);
-    if (daysAllocated > hypo + 3) return 'error';
-    if (daysAllocated < hypo - 1) return 'primary';
+function determineColor(mo) {
+    // Provide default values when fields are null
+    const hypo = parseInt(mo.days_hypo, 10) || 0;
+    const working = parseInt(mo.days_working, 10) || 0;
+    const holiday = parseInt(mo.holiday, 10) || 0;
+    const days = parseInt(mo.days_allocated, 10) || 0;
+    // if (!mo.days_working) {
+        // console.log('determineColor: ', holiday )
+    // }
+    if ((days + holiday) > working) return 'error';
+    if ((days + holiday) < hypo) return 'primary';
     return 'success';
 }
 
@@ -248,7 +255,7 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                 {popupOpen && <UserPopup data={data} open={popupOpen} handleClose={() => {
                     handleClose();
                     refreshData();  // <-- Invoke refreshData after closing the popup
-                }}  />}
+                }} />}
 
             </TableCell>
             <TableCell style={{ whiteSpace: 'nowrap', width: 'max-content' }}>
@@ -269,6 +276,7 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                     // }}
                     onClick={() => {
                         const monthData = data.jobs.find(item => item.month === month);
+                        console.log('monthData: ', monthData)
                         setPopupContent(monthData ? monthData.jobs : null);
                         setShowPopup(true);
                     }}
@@ -305,8 +313,7 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                                 }}
                                 color={
                                     data.jobs.some(item => item.month === month) ?
-                                        determineColor(data.jobs.find(item => item.month === month).days_allocated,
-                                            data.jobs.find(item => item.month === month).days_hypo)
+                                        determineColor(data.jobs.find(item => item.month === month))
                                         : 'transparent'
                                 } label={data.jobs.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.days, 10), 0)} />
                         }
@@ -356,6 +363,12 @@ export function ResourceTable({ bench = false }) {
     const [months, setMonths] = useState([]);
     //   const [months, setMonths] = useState([]);
 
+    const [filterRedMonths, setFilterRedMonths] = useState(false);
+    const [filterTIR, setFilterTIR] = useState(false);
+    const [filterSC, setFilterSC] = useState(false);
+    const [filterMH, setFilterMH] = useState(false);
+
+
     const refreshData = async () => {
         setIsLoading(true);
         try {
@@ -373,7 +386,7 @@ export function ResourceTable({ bench = false }) {
     };
 
     useEffect(() => {
-        
+
         const fetchPlaceholderData = async () => {
 
             try {
@@ -393,6 +406,7 @@ export function ResourceTable({ bench = false }) {
 
         refreshData();
         fetchPlaceholderData();
+
     }, []);
 
     function groupByMailAndSumDays(data) {
@@ -420,6 +434,12 @@ export function ResourceTable({ bench = false }) {
 
 
     useEffect(() => {
+        const sortUsersByNameN = (users) => {
+            return users
+                .filter(user => user.displayName != null)
+                .sort((a, b) => a.displayName.localeCompare(b.displayName));
+        };
+        
         const sortUsersByName = (users) => {
             return users
                 .filter(user => user.displayName != null)
@@ -462,8 +482,11 @@ export function ResourceTable({ bench = false }) {
             });
         };
 
-        console.debug(data)
+        // console.debug(data)
         if (data && !isLoading) {
+
+            console.log('Null Users: ', data.filter(user => user.displayName === null))
+
             let usersToDisplay = sortUsersByName(data);
             usersToDisplay = usersToDisplay.filter(item => item.department != 'Operations');
 
@@ -477,10 +500,36 @@ export function ResourceTable({ bench = false }) {
                 usersToDisplay = usersToDisplay.filter(item => item.department != 'Operations');
 
             }
-
+            if (filterRedMonths) {
+                usersToDisplay = usersToDisplay.filter(user => {
+                    // Check if any job matches the criteria
+                    const hasRedMonth = user.jobs.some(job => {
+                        const isDisplayedMonth = displayedMonths.includes(job.month);
+                        const color = determineColor(job);
+                        // console.log(`Job Month: ${job.month}, Displayed: ${isDisplayedMonth}, Color: ${color}`);
+                        return isDisplayedMonth && color === 'error';
+                    });
+            
+                    // console.log(`User: ${user.name}, Has Red Month: ${hasRedMonth}`);
+                    return hasRedMonth;
+                });
+            }
+    
+            if (filterTIR) {
+                usersToDisplay = usersToDisplay.filter(user => user.info?.tir);
+            }
+    
+            if (filterSC) {
+                usersToDisplay = usersToDisplay.filter(user => user.info?.sc);
+            }
+    
+            if (filterMH) {
+                usersToDisplay = usersToDisplay.filter(user => user.info?.mh);
+            }
             setFilteredData(usersToDisplay);
         }
-    }, [disciplineFilter, data, bench, displayedMonths]);
+        
+    }, [filterRedMonths, filterTIR, filterSC, filterMH, disciplineFilter, data, bench, displayedMonths]);
 
 
     // console.log('placeholder: ', placeholder)
@@ -522,6 +571,48 @@ export function ResourceTable({ bench = false }) {
                 <Button variant="contained" disabled={monthStartIndex === 0} onClick={() => setMonthStartIndex(prev => prev - 1)}>Previous</Button>
                 <Button variant="contained" disabled={monthStartIndex + 3 >= months.length} onClick={() => setMonthStartIndex(prev => prev + 1)}>Next</Button>
             </Box> */}
+
+            <Box padding={2}>
+                <FormGroup row>
+
+
+                {/* <FormControlLabel
+                        control={<Select
+                            value={disciplineFilter}
+                            onChange={(e) => setDisciplineFilter(e.target.value)}
+                            label="Filter by Discipline"
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            {Array.from(new Set(data?.map(item => item.department) || [])).map(discipline => (
+                                <MenuItem key={discipline} value={discipline}>
+                                    {discipline}
+                                </MenuItem>
+                            ))}
+                        </Select>}
+                        label="Filter Discipline"
+                    /> */}
+
+
+                    <FormControlLabel
+                        control={<Switch checked={filterRedMonths} onChange={e => setFilterRedMonths(e.target.checked)} />}
+                        label="Over allocated"
+                    />
+                    <FormControlLabel
+                        control={<Switch checked={filterTIR} onChange={e => setFilterTIR(e.target.checked)} />}
+                        label="TIR"
+                    />
+                    <FormControlLabel
+                        control={<Switch checked={filterSC} onChange={e => setFilterSC(e.target.checked)} />}
+                        label="SC"
+                    />
+                    <FormControlLabel
+                        control={<Switch checked={filterMH} onChange={e => setFilterMH(e.target.checked)} />}
+                        label="Mansion House"
+                    />
+                </FormGroup>
+            </Box>
 
             <Table size="small" style={{ tableLayout: 'fixed' }}>
                 <TableHead>
@@ -606,19 +697,36 @@ export function ResourceTable({ bench = false }) {
             </Table>
 
             <Dialog fullWidth open={showPopup} onClose={() => setShowPopup(false)}>
-                <DialogTitle>Job Details
-                    <IconButton onClick={() => setShowPopup(false)} sx={{ position: 'absolute', right: 8, top: 8 }}>
-                        <CloseIcon />
-                    </IconButton>
-                </DialogTitle>
-                <DialogContent>
-                    {popupContent && popupContent.map(job => (
-                        <div key={typeof job.job_s_ord_code === 'string' ? job.job_s_ord_code : job.description}>
-                            <strong>{job.description}</strong> ({job.days} days) for {typeof job.customer === 'string' ? job.customer : 'OTHER'}
-                        </div>
+    <DialogTitle>
+        Job Details
+        <IconButton onClick={() => setShowPopup(false)} sx={{ position: 'absolute', right: 8, top: 8 }}>
+            <CloseIcon />
+        </IconButton>
+    </DialogTitle>
+    <DialogContent>
+        {popupContent && (
+            <Table size="small">
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Days</TableCell>
+                        <TableCell>JSO</TableCell>
+                        <TableCell>Customer</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {popupContent.map(job => (
+                        <TableRow key={typeof job.job_s_ord_code === 'string' ? job.job_s_ord_code : job.description}>
+                            <TableCell>{job.days}</TableCell>
+                            <TableCell>{job.description} {typeof job.contract_type === 'string' ? job.contract_type : 'N/A'}</TableCell>
+                            <TableCell>{typeof job.customer === 'string' ? job.customer : 'OTHER'}</TableCell>
+                        </TableRow>
                     ))}
-                </DialogContent>
-            </Dialog>
+                </TableBody>
+            </Table>
+        )}
+    </DialogContent>
+</Dialog>
+
         </Paper>
     );
 }

@@ -3,7 +3,7 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkUnwrapImages from "remark-unwrap-images";
 import createMDX from "@next/mdx";
-import { withSentryConfig } from "@sentry/nextjs";
+// import { withSentryConfig } from "@sentry/nextjs";
 
 const remarkPlugins = [
   remarkGfm,
@@ -89,7 +89,7 @@ export default withMDX(nextConfig)
 //     silent: true,
 
 //     org: "airwalk-digital",
-//     project: "airview-mdx-deck",
+//     project: "airview-next",
 //   },
 //   {
 //     // For all available options, see:

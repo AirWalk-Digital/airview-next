@@ -1,4 +1,4 @@
-FROM node:18.14-alpine
+FROM node:18.18-alpine
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=vscode
 ARG USER_UID=1000
@@ -38,6 +38,6 @@ RUN doas chown -R $USERNAME /tmp/npm
 RUN npm config set prefix /tmp/npm
 RUN yarn config set prefix /tmp/npm
 RUN cd /tmp/npm && npm i
-RUN git clone https://github.com/AirWalk-Digital/airview-mdx.git /tmp/airview-mdx && cd /tmp/airview-mdx && npm i && npm link
+# RUN git clone https://github.com/AirWalk-Digital/airview-mdx.git /tmp/airview-mdx && cd /tmp/airview-mdx && npm i && npm link
 
 

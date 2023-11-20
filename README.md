@@ -16,7 +16,7 @@ Create presentation decks using MDX, React, and [Next.js](https://nextjs.org/).
 
 ## Getting Started
 
-1. Clone the project: `git clone https://github.com/AirWalk-Digital/airview-mdx-deck`
+1. Clone the project: `git clone https://github.com/AirWalk-Digital/airview-next`
 2. Install dependencies: `yarn`
 3. Run the dev server: `npm run dev` or `yarn dev`
 4. Edit the first slide in `/markdwon/test.mdx` and save to [**see changes**](http://localhost:3000/files/ppt/test.mdx)!
@@ -32,7 +32,7 @@ Create presentation decks using MDX, React, and [Next.js](https://nextjs.org/).
 use the docker image with Etherpad:
 
 ```bash
-source .env* && docker run -d --env ETHERPAD_API_KEY=$ETHERPAD_API_KEY --env ETHERPAD_BASE_URL=$ETHERPAD_BASE_URL -p 8080:3000 --name mdx-deck ghcr.io/airwalk-digital/airview-mdx-deck:local
+source .env* && docker run -d --env ETHERPAD_API_KEY=$ETHERPAD_API_KEY --env ETHERPAD_BASE_URL=$ETHERPAD_BASE_URL -p 8080:3000 --name mdx-deck ghcr.io/airwalk-digital/airview-next:local
 ```
 
 [**browse pads**](http://localhost:8080/

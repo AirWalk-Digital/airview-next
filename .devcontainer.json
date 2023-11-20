@@ -1,7 +1,7 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details or
 // https://aka.ms/vscode-dev-containers/definitions for sample configurations.
 {
-  "name": "MDXP Development",
+  "name": "Airview Next",
   "dockerFile": "Dockerfile.vscode",
   "remoteUser": "vscode",
   "mounts": [
@@ -29,6 +29,6 @@
   },
   "postCreateCommand": "",
   "postAttachCommand": {
-    "fix npm" : "rm -Rf /workspaces/mdx-deck-etherpad/node_modules && ln -s /tmp/npm/node_modules /workspaces/mdx-deck-etherpad/node_modules"
+    "fix npm" : "rm -Rf /workspaces/airview-next/node_modules && ln -s /tmp/npm/node_modules /workspaces/airview-next/node_modules"
   }
 }
