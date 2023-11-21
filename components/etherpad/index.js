@@ -1,2 +1,2 @@
 export { NewPadDialog } from './NewPadDialog';
-export { Etherpad } from './Etherpad'
+export { Etherpad } from './Etherpad';

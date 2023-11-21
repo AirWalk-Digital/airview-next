@@ -1,10 +1,10 @@
 import React from "react";
 import { siteConfig } from "../../site.config.js";
 import { getFileContent } from "@/lib/github";
-import { ContentPage } from "@/components/content";
+import { ContentPage } from "@/components/layouts";
 import { getMenuStructure } from "@/lib/content";
 import { usePageContent, collectionName } from "@/lib/hooks";
-import { ListMenu } from '@/components/dashboard/Menus'
+import { ListMenu } from '@/components/menus'
 
 export default function Page({
   content: initialContent,

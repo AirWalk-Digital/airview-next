@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, } from 'react';
-import { TopBar } from '@/components/dashboard';
+import { TopBar } from '@/components/appbar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import SlideshowIcon from '@mui/icons-material/Slideshow';

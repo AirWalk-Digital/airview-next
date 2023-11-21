@@ -4,18 +4,18 @@ import { useEffect, useState, useRef } from 'react';
 // import { MDXProvider } from "@mdx-js/react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
-import SlidePage from "@/components/display/SlidePage";
-import PrintSlide from "@/components/display/PrintSlide";
-import MDXViewer from "@/components/display/MDXViewer";
+import SlidePage from "@/components/slides/SlidePage";
+import PrintSlide from "@/components/slides/PrintSlide";
+// import MDXViewer from "@/components/display/MDXViewer";
 import Image from "next/image";
 
 // fix for Roadmap, Nest
 import { TitleSlide, Header, Banner, Footer, Insights, Chevrons, Nest, Roadmap, Layout, Column, Item, Slide, HeaderCard } from 'airview-mdx'
 
 // import Cover from "./Cover";
-import SpeakerNotes from "@/components/presentations/SpeakerNotes";
-import Step from "@/components/presentations/Step";
-import Steps from "@/components/presentations/Steps";
+import SpeakerNotes from "@/components/slides/SpeakerNotes";
+import Step from "@/components/slides/Step";
+import Steps from "@/components/slides/Steps";
 import { motion } from "framer-motion";
 
 // MUI Components
@@ -31,7 +31,7 @@ import { motion } from "framer-motion";
 // import { Insight, InsightTable, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
 // import {FaIcon, Icon} from './Images.jsx';
 import { FaIcon, Icon } from 'airview-mdx';
-import { ProgressTable } from '../components/Tables.jsx';
+import { ProgressTable } from '@/components/layouts';
 // import { HeaderCard, Nest } from './Cards';
 // import { HeaderCard } from './Cards';
 // import { Font } from './Styling';
@@ -239,7 +239,7 @@ export const mdComponents = (baseContext) => ({
   // layouts
   SlidePage,
   PrintSlide,
-  MDXViewer,
+  // MDXViewer,
   SpeakerNotes,
   Step,
   Steps,

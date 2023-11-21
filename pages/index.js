@@ -27,7 +27,7 @@ import { IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { siteConfig } from "../site.config.js";
 
-import { TopBar } from '@/components/dashboard';
+import { TopBar } from '@/components/appbar';
 import { ScrollToTop } from '@/components/utils/ScrollToTop'
 import {ScrollToBottom }from '@/components/utils/ScrollToBottom'
 

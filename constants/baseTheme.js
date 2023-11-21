@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import { deepmerge } from "@mui/utils";
-import { getContrastYIQ } from './../components/utils/colors';
+import { getContrastYIQ } from '@/lib/utils/colors';
 
 import "@fontsource/heebo"; // Defaults to weight 400.
 import "@fontsource/heebo/200.css"; // Defaults to weight 400.

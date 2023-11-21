@@ -4,9 +4,9 @@ import { parse } from "toml";
 import { getAllFiles, getFileContent } from "@/lib/github";
 import { usePageContent, collectionName } from "@/lib/hooks";
 import { getMenuStructure } from "@/lib/content";
-import { ContentPage } from "@/components/content";
-import { FullHeaderMenu, ControlsMenu } from "@/components/dashboard/Menus";
-import { ServicesHeader } from "@/components/dashboard/Headers";
+import { ContentPage } from "@/components/layouts";
+import { FullHeaderMenu, ControlsMenu } from "@/components/menus";
+import { ServicesHeader } from "@/components/headers";
 import { dirname } from "path";
 
 export default function Page({
