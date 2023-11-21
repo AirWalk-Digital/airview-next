@@ -316,9 +316,25 @@ function Row({ data, displayedMonths, setPopupContent, setShowPopup, placeholder
                                     data.jobs.some(item => item.month === month) ?
                                         determineColor(data.jobs.find(item => item.month === month))
                                         : 'transparent'
-                                } label={data.jobs.find(item => item.month === month).jobs.reduce((sum, job) => sum + parseInt(job.days, 10), 0)} />
+                                } 
+                                label={data.jobs.find(item => item.month === month).days_allocated} />
                         }
+                        {data.jobs.some(item => item.month === month) && data.jobs.find(item => item.month === month).days_forecast > 0 &&
 
+<Chip
+    sx={{
+        color: 'grey',
+        width: '100%'
+        // minWidth: (placeholder?.monthlyDetails?.[month]?.days_allocated > 0) ? '50px' : '100px',
+    }}
+    
+    // color={
+    //     data.jobs.some(item => item.month === month) ?
+    //         determineColor(data.jobs.find(item => item.month === month))
+    //         : 'transparent'
+    // } 
+    label={data.jobs.find(item => item.month === month).days_forecast} />
+}
                     </Stack>
                 </TableCell>
             ))}
