@@ -1,6 +1,6 @@
 // You can use this code in a separate component that's imported in your pages.
 // import type { CodeBlockEditorDescriptor } from '@mdxeditor/editor';
-import Editor from '@/components/editor'
+import { Editor } from '@/components/editor'
 import { useState, useEffect } from "react";
 import dynamic from 'next/dynamic'
 
