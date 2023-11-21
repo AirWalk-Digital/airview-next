@@ -39,6 +39,7 @@ function determineColor(mo) {
     // if (!mo.days_working) {
         // console.log('determineColor: ', holiday )
     // }
+    if (hypo === 0 ) { return 'primary'}
     if ((days + holiday) > working) return 'error';
     if ((days + holiday) < hypo) return 'primary';
     return 'success';
