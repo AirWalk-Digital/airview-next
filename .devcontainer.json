@@ -16,7 +16,8 @@
 	"vscode": {
 		"extensions": [
 			"GitHub.github-vscode-theme",
-			"GitHub.vscode-pull-request-github"
+			"GitHub.vscode-pull-request-github",
+			"esbenp.prettier-vscode"
 		]
 	}
   },

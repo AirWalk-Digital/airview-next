@@ -28,8 +28,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { siteConfig } from "../site.config.js";
 
 import { TopBar } from '@/components/appbar';
-import { ScrollToTop } from '@/components/utils/ScrollToTop'
-import {ScrollToBottom }from '@/components/utils/ScrollToBottom'
+import { ScrollToTop } from '@/lib/utils/ScrollToTop'
+import { ScrollToBottom }from '@/lib/utils/ScrollToBottom'
 
 
 
