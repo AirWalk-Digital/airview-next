@@ -1,62 +1,168 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import TextField from '@mui/material/TextField';
-import SendIcon from '@mui/icons-material/Send';
-import Grid from '@mui/material/Grid';
-import Message from './Message';
-import InputAdornment from '@mui/material/InputAdornment';
-import RelatedContent from './RelatedContent';
-import Box from '@mui/material/Box';
+import React, { useState, useEffect, useRef } from "react";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
+import SendIcon from "@mui/icons-material/Send";
+import Grid from "@mui/material/Grid";
+import Message from "./Message";
+import InputAdornment from "@mui/material/InputAdornment";
+import RelatedContent from "./RelatedContent";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 export function Chatbot() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const topBarHeight = 65; // Adjust this to match the actual height of your TopBar
+  const endpoint = "/api/chat"; // Replace with your API endpoint
+  // useEffect(() => {
+  //   // Simulate streaming messages
+  //   const interval = setInterval(() => {
+  //     const newMessage = {
+  //       author: Math.random() > 0.5 ? 'bot' : 'human',
+  //       content: 'Sample message. Lorem ipsum, ',
+  //       actions: ['thumb up', 'thumb down', 'log a ticket'],
+  //     };
+  //     setMessages(msgs => [...msgs, newMessage]);
+  //   }, 3000);
+
+  //   return () => clearInterval(interval);
+  // }, []);
 
   useEffect(() => {
-    // Simulate streaming messages
-    const interval = setInterval(() => {
-      const newMessage = {
-        author: Math.random() > 0.5 ? 'bot' : 'human',
-        content: 'Sample message. Lorem ipsum, ',
-        actions: ['thumb up', 'thumb down', 'log a ticket'],
-      };
-      setMessages(msgs => [...msgs, newMessage]);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = () => {
-    // Implement your send message logic
+  const handleInputChange = (event) => {
+    setInput(event.target.value);
+  };
+
+  const sendMessage = async (event) => {
+    event.preventDefault();
+    if (!input.trim()) return; // Prevent sending empty messages
+    setIsLoading(true);
+  
+    const userMessage = {
+      id: `user-${Date.now()}`,
+      content: input,
+      role: "user",
+    };
+  
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+  
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: [...messages, userMessage] }),
+      });
+  
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+  
+      const reader = response.body.getReader();
+      let decoder = new TextDecoder();
+      
+      const processChunk = async () => {
+        const { value, done } = await reader.read();
+        if (done) {
+          setIsLoading(false);
+          return;
+        }
+  
+        const textChunk = decoder.decode(value, { stream: true });
+        setMessages((prevMessages) => {
+          // Find if bot's response is already being displayed
+          const botResponseIndex = prevMessages.findIndex(m => m.id === 'bot-response');
+          if (botResponseIndex !== -1) {
+            // Update existing bot response
+            const updatedMessages = [...prevMessages];
+            updatedMessages[botResponseIndex] = {
+              ...updatedMessages[botResponseIndex],
+              content: updatedMessages[botResponseIndex].content + textChunk
+            };
+            return updatedMessages;
+          } else {
+            // Add new bot response
+            return [...prevMessages, { id: 'bot-response', content: textChunk, role: 'bot' }];
+          }
+        });
+  
+        // Process next chunk
+        processChunk();
+      };
+  
+      // Start processing the stream
+      processChunk();
+  
+    } catch (error) {
+      setErrorMessage(`Failed to send message: ${error.message}`);
+      setOpenSnackbar(true);
+      setIsLoading(false);
+    } finally {
+      setInput("");
+    }
+  };
+  
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
   };
 
   return (
-    <Grid container sx={{ height: `calc(100vh - ${topBarHeight}px)`, width: '100%', marginTop: `${topBarHeight}px` }}>
-      <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <Box sx={{ overflowY: 'auto', flexGrow: 1, padding: 2 }}>
+    <Grid
+      container
+      sx={{
+        height: `calc(100vh - ${topBarHeight}px)`,
+        width: "100%",
+        marginTop: `${topBarHeight}px`,
+      }}
+    >
+      <Grid
+        item
+        xs={4}
+        sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+      >
+        <Box sx={{ overflowY: "auto", flexGrow: 1, padding: 2 }}>
           {messages.map((msg, index) => (
-            <Message key={index} message={msg} isLast={index === messages.length - 1} />
+            <Message
+              key={index}
+              message={msg}
+              isLast={index === messages.length - 1}
+            />
           ))}
           <div ref={messagesEndRef} />
         </Box>
-        <Box sx={{ position: 'sticky', bottom: 0, backgroundColor: 'background.paper', padding: 2 }}>
-          <Divider />
+        <Box
+          component="form"
+          onSubmit={sendMessage}
+          sx={{
+            position: "sticky",
+            bottom: 0,
+            backgroundColor: "background.paper",
+            padding: 2,
+          }}
+        >
           <TextField
             fullWidth
-            label="Type a message"
-            variant="outlined"
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            label="Talk to me"
+            // variant="outlined"
+            value={input} // Bind the input state to the TextField
+            onChange={handleInputChange} // Update state on input change
+            onKeyPress={(e) => e.key === "Enter" && sendMessage(e)} // Send message on Enter key press
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={() => handleSendMessage()}>
-                    <SendIcon />
+                  <IconButton type="submit" disabled={isLoading}>
+                    {!isLoading ? <SendIcon /> : <CircularProgress />}
                   </IconButton>
                 </InputAdornment>
               ),
@@ -64,9 +170,23 @@ export function Chatbot() {
           />
         </Box>
       </Grid>
-      <Grid item xs={8} sx={{ overflowY: 'auto', height: '100%', padding: 2 }}>
+      <Grid item xs={8} sx={{ overflowY: "auto", height: "100%", padding: 2 }}>
         <RelatedContent />
       </Grid>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 }

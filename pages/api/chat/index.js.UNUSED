@@ -1,0 +1,120 @@
+import { NextRequest, NextResponse } from "next/server";
+import { ChatOpenAI } from "langchain/chat_models/openai";
+import { BytesOutputParser } from "langchain/schema/output_parser";
+import { RunnableSequence } from "langchain/schema/runnable";
+import { PromptTemplate } from "langchain/prompts";
+
+import { OpenAIStream, StreamingTextResponse } from 'ai'
+
+
+export const runtime = "edge";
+
+const formatMessage = (message) => {
+  return `${message.role}: ${message.content}`;
+};
+
+const TEMPLATE = `You are a pirate named Patchy. All responses must be extremely verbose and in pirate dialect.
+
+Current conversation:
+{chat_history}
+
+User: {input}
+AI:`;
+
+/**
+ * This handler initializes and calls a simple chain with a prompt,
+ * chat model, and output parser. See the docs for more information:
+ *
+ * https://js.langchain.com/docs/guides/expression_language/cookbook#prompttemplate--llm--outputparser
+ */
+export default async function POST(req) {
+  try {
+    const stream = await runLLMChain(req);
+    const stream = OpenAIStream(response)
+ 
+  return new StreamingTextResponse(stream)
+    console.log("Sending stream response");
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/plain",
+      },
+    });
+  } catch (e) {
+    console.error("Error in API handler:", e.message);
+    return new Response(JSON.stringify({ error: e.message }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+}
+
+
+async function runLLMChain(req) {
+  // Create encoding to convert token (string) to Uint8Array
+  const encoder = new TextEncoder();
+
+  // Create a TransformStream for writing the response as the tokens as generated
+  const stream = new TransformStream();
+  const writer = stream.writable.getWriter();
+  const body = await req.json();
+  const messages = Array.isArray(body.messages) ? body.messages : [];
+  console.log("/api/chat:messages: ", messages[0]);
+
+  const formattedPreviousMessages =
+    messages.length > 0 ? messages.slice(0, -1).map(formatMessage) : [];
+  const currentMessageContent = messages[messages.length - 1].content;
+  console.log("/api/chat:currentMessageContent: ", currentMessageContent);
+
+  const prompt = PromptTemplate.fromTemplate(TEMPLATE);
+  // res.writeHead(200, {
+  //   "Content-Type": "application/octet-stream"
+  // , "Transfer-Encoding": "chunked" });
+
+  // const model = new ChatOpenAI({
+  //   temperature: 0.8,
+  //   openAIApiKey: process.env.OPEN_API_KEY,
+  // });
+
+  const model = new ChatOpenAI({
+    temperature: 0.8,
+    openAIApiKey: process.env.OPEN_API_KEY,
+    streaming: true,
+    callbacks: [
+      {
+        async handleLLMNewToken(token) {
+          console.log("/api/chat:token: ", token);
+          await writer.ready;
+          await writer.write(encoder.encode(`${token}`));
+        },
+        async handleLLMEnd() {
+          console.log("/api/chat:END");
+
+          await writer.ready;
+          await writer.close();
+        },
+      },
+    ],
+  });
+
+  const outputParser = new BytesOutputParser();
+
+  // await model.call(currentMessageContent)
+
+  const chain = RunnableSequence.from([prompt, model, outputParser]);
+
+  await chain.invoke({
+    chat_history: formattedPreviousMessages.join("\n"),
+    input: currentMessageContent,
+  });
+  // const chain = prompt.pipe(model).pipe(outputParser);
+  // Return the readable stream
+  return stream.readable;
+  // await chain.stream({
+  //   chat_history: formattedPreviousMessages.join("\n"),
+  //   input: currentMessageContent,
+  // });
+
+  // return new StreamingTextResponse(stream);
+}

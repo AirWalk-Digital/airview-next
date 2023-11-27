@@ -10,24 +10,24 @@ import Actions from './Actions';
 import Box from '@mui/material/Box';
 
 export default function Message({ message, isLast }) {
-  const { author, content } = message;
-  const isBot = author === 'bot';
+  const { role, content } = message;
+  const isBot = role === 'bot';
 
   const avatar = (
-    <Avatar sx={{ bgcolor: isBot ? blue[500] : grey[500] }}>
+    <Avatar sx={{ bgcolor: isBot ? blue[500] : grey[500], width: 30, height: 30 }}>
       {isBot ? <BotIcon /> : <PersonIcon />}
     </Avatar>
   );
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: isBot ? 'flex-start' : 'flex-end', marginY: 2 }}>
-      {isBot && avatar}
+    <Box sx={{ display: 'flex', justifyContent: !isBot ? 'flex-start' : 'flex-end', marginY: 2 }}>
+      {!isBot && avatar}
       <Card variant="outlined" sx={{
         maxWidth: 345,
         borderRadius: '20px',
         bgcolor: isBot ? blue[50] : grey[50],
-        marginLeft: isBot ? 1 : 0,
-        marginRight: isBot ? 0 : 1,
+        marginLeft: isBot ? 0 : 1 ,
+        marginRight: isBot ? 1 : 0,
         elevation: 0  // Removes the drop shadow
       }}>
         <CardContent>
@@ -37,7 +37,7 @@ export default function Message({ message, isLast }) {
         </CardContent>
         {isLast && <Actions />}
       </Card>
-      {!isBot && avatar}
+      {isBot && avatar}
     </Box>
   );
 }
