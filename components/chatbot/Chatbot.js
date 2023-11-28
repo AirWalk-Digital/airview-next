@@ -153,7 +153,7 @@ export function Chatbot() {
         >
           <TextField
             fullWidth
-            label="Talk to me"
+            label="Ask me a question"
             // variant="outlined"
             value={input} // Bind the input state to the TextField
             onChange={handleInputChange} // Update state on input change
