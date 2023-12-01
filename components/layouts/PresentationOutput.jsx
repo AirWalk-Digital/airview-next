@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import CloseIcon from '@mui/icons-material/Close';
 import PrintIcon from '@mui/icons-material/Print';
 import dynamic from 'next/dynamic'
-import { FullScreenSpinner } from '@/components/dashboard/index.js';
+import { FullScreenSpinner } from '@/components/loaders';
 import { useMDX } from '@/lib/content/mdx'
 import { theme } from '../../constants/theme';
 import { CurrentSlideProvider } from "../../context/CurrentSlideContext";

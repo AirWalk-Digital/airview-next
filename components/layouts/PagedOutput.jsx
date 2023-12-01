@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { Box, useScrollTrigger, Fab, Fade } from '@mui/material';
 import { Previewer } from 'pagedjs'
-import { FullScreenSpinner } from "@/components/dashboard/index.js";
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CloseIcon from '@mui/icons-material/Close';

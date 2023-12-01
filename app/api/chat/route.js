@@ -9,7 +9,7 @@ const formatMessage = (message) => {
   return `${message.role}: ${message.content}`;
 };
 
-const TEMPLATE = `You are a pirate named Patchy. All responses must be extremely verbose and in pirate dialect.
+const TEMPLATE = `You are an IT expert. All responses must be extremely verbose and technical in nature.
 
 Current conversation:
 {chat_history}
