@@ -385,6 +385,7 @@ export function ResourceTable({ bench = false }) {
     const [filterSC, setFilterSC] = useState(false);
     const [filterMH, setFilterMH] = useState(false);
 
+    const displayedMonths = months ? months.slice(monthStartIndex, monthStartIndex + 3) : [];
 
     const refreshData = async () => {
         setIsLoading(true);
@@ -463,13 +464,13 @@ export function ResourceTable({ bench = false }) {
                 .sort((a, b) => a.displayName.localeCompare(b.displayName));
         };
 
-        const filterRowsWithNoJobsInDisplayedMonths = (users) => {
-            return users.filter(user =>
-                displayedMonths.some(month =>
-                    !user.jobs.some(job => job.month === month)
-                )
-            );
-        };
+        // const filterRowsWithNoJobsInDisplayedMonths = (users) => {
+        //     return users.filter(user =>
+        //         displayedMonths.some(month =>
+        //             !user.jobs.some(job => job.month === month)
+        //         )
+        //     );
+        // };
 
 
 
@@ -554,7 +555,6 @@ export function ResourceTable({ bench = false }) {
     // const isDataArray = Array.isArray(data);
     // const months = isDataArray ? Array.from(new Set(data.flatMap(item => item.booked.map(b => b.month)))).sort() : [];
     // const disciplines = isDataArray ? Array.from(new Set(data.map(item => item.department))) : [];
-    const displayedMonths = months ? months.slice(monthStartIndex, monthStartIndex + 3) : [];
 
     if (isLoading) {
         return <ResourceTableSkeleton />;

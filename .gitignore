@@ -44,3 +44,5 @@ yarn-error.log*
 components/dashboard-demo/
 /.env
 .archive/
+
+app/api/chat/chroma

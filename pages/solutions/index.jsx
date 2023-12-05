@@ -1,6 +1,6 @@
 import React from "react";
 import { siteConfig } from "../../site.config.js";
-import { IndexView } from "@/components/content";
+import { IndexView } from "@/components/layouts";
 import { getMenuStructure, getFrontMatter } from "@/lib/content";
 import { ListMenu } from '@/components/menus'
 import { usePageMenu } from "@/lib/hooks";
