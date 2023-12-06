@@ -89,7 +89,7 @@ export function Chatbot() {
             return updatedMessages;
           } else {
             // Add new bot response
-            return [...prevMessages, { id: 'bot-response', content: textChunk, role: 'bot' }];
+            return [...prevMessages, { id: `bot-${Date.now()}`, content: textChunk, role: 'bot' }];
           }
         });
   

@@ -167,11 +167,11 @@ Standalone question:`);
 
   const branch = RunnableBranch.from([
     [
-        (input) => input.chatHistory.length,
+        (input) => input.chatHistory,
       answerQuestionChain,
     ],
     [
-        (input) => !!input.chatHistory && input.chatHistory.length,
+        (input) => !input.chatHistory,
       generateQuestionChain,
     ],
     answerQuestionChain,
