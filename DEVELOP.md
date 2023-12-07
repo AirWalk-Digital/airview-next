@@ -23,13 +23,15 @@ Delete everything: `FLUSHALL`
 
 # Etherpad
 
-
-
 docker run -d --name etherpad -p 9001:9001 node bash -c "git clone https://github.com/ether/etherpad-lite.git ; cd etherpad-lite ; src/bin/run.sh --root"
-
  
-
 docker exec etherpad cat /etherpad-lite/APIKEY.txt
+
+# Setup and .dot files
+
+You need an .env.local (see the example)
+
+And an .npmrc file for FontAwesome
 
 
 # Local build
