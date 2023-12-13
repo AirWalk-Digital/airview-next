@@ -5,7 +5,7 @@
 ```bash
 docker run --name redis -d -p 6379:6379 redis
 
-robe@robs-mbp ~ % docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+docker run -d --name redis -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 ```
 
 ## Connecting to Redis

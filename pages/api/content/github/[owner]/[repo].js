@@ -1,43 +1,42 @@
-import {getAllFiles, getFileContent} from "@/lib/github";
+import { getAllFiles, getFileContent, commitFileToBranch } from "@/lib/github";
 import path from 'path';
 import mime from 'mime-types';
-// example: http://localhost:3000/api/content/github/owner/repo?path=docs/
 
 export default async function handler(req, res) {
   try {
-    if (typeof req.query.path !== "string") {
-      res.status(400).send();
+    const { owner, repo, branch = 'main', path: filepath } = req.query;
+
+    if (!owner || !repo || typeof filepath !== "string") {
+      res.status(400).json({ error: 'Missing required parameters: owner, repo, or path' });
       return;
     }
 
-    const owner = req.query.owner;
-    const repo = req.query.repo;
-    let filepath = req.query.path;
-    let branch = req.query.branch || 'main';
-    if (filepath.endsWith("/")) {
-      // Remove trailing slash
-      filepath = filepath.slice(0, -1);
-      // // // console.log(path);
-      // Get the list of files for the given path and its subdirectories
-      const files = await getAllFiles(owner, repo, branch, filepath);
-
-      res.status(200).json({ files });
-
+    if (req.method === "GET") {
+      if (filepath.endsWith("/")) {
+        // Remove trailing slash
+        const trimmedPath = filepath.slice(0, -1);
+        const files = await getAllFiles(owner, repo, branch, trimmedPath);
+        res.status(200).json({ files });
+      } else {
+        const data = await getFileContent(owner, repo, branch, filepath);
+        const extension = path.extname(filepath);
+        const contentType = mime.lookup(extension) || 'application/octet-stream';
+        res.setHeader("Content-Type", contentType);
+        res.send(data);
+      }
+    } else if (req.method === "POST") {
+      const { content, message } = req.body;
+      if (!content || !message) {
+        res.status(400).json({ error: 'Missing required parameters: content or message' });
+        return;
+      }
+      const commitResponse = await commitFileToBranch(owner, repo, branch, filepath, content, message);
+      res.status(201).json(commitResponse);
     } else {
-      // Get the content of a specific file
-      // // // console.log('Getting file content');
-      const data = await getFileContent(owner, repo, branch, filepath);
-      const extension = path.extname(filepath);
-      const contentType = mime.lookup(extension) || 'application/octet-stream';
-      // console.log('api:data: ', contentType, data);
-      res.setHeader("Content-Type", contentType);
-      res.send(data);
-      // res.end(Buffer.from(data, "base64"));
-      // const content = Buffer.from(data.content ?? "", "base64").toString("utf8");
-      // res.status(200).json({ data });
+      res.setHeader('Allow', ['GET', 'POST']);
+      res.status(405).json({ error: `Method ${req.method} Not Allowed` });
     }
   } catch (err) {
-    // console.log(err);
-    res.status(500).send();
+    res.status(500).json({ error: err.message });
   }
 }
