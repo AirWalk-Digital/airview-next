@@ -36,6 +36,7 @@ import * as matter from 'gray-matter';
 // const { MDXEditor, codeBlockPlugin, diffSourcePlugin, headingsPlugin, frontmatterPlugin, listsPlugin, linkPlugin, linkDialogPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, UndoRedo, InsertTable, InsertCodeBlock, InsertFrontmatter, CreateLink, InsertThematicBreak, DiffSourceToggleWrapper } = await import('@mdxeditor/editor')
 import { useState, useRef, createContext } from "react";
 import Button from "@mui/material/Button";
+
 const EditorStateContext = createContext();
 import store from "@/lib/redux/store";
 import {
@@ -48,6 +49,7 @@ import {
   Alert,
   Grid,
   TextField,
+  Fab
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
@@ -163,7 +165,7 @@ export function Editor({ markdown: initialMarkdown, context, callbackSave, enabl
     <EditorStateContext.Provider
       value={{ changed, editorCallback, ref, reduxCollection, context, callbackSave }}
     >
-      {/* <EditorErrorBoundary markdown={markdown} editorCallback={editorCallback}> */}
+      <EditorErrorBoundary markdown={markdown} callbackSave={callbackSave} initialMarkdown={initialMarkdown} ref={ref}>
       <MDXEditor
         ref={ref}
         onChange={editorCallback}
@@ -185,17 +187,24 @@ export function Editor({ markdown: initialMarkdown, context, callbackSave, enabl
           tablePlugin(),
           thematicBreakPlugin(),
           markdownShortcutPlugin(),
-          catchAllPlugin(),
+          // catchAllPlugin(),
 
           toolbarPlugin({
             toolbarContents: () => (<> <UndoRedo /><BlockTypeSelect /><BoldItalicUnderlineToggles /><CreateLink /><InsertTable /><InsertCodeBlock /><InsertThematicBreak /><InsertFrontmatter />
               <DiffSourceToggleWrapper />
-              <SaveButton />
             </>)
           })
         ]}
-      />
-      {/* </EditorErrorBoundary> */}
+      /> <Fab color="primary" aria-label="save" enabled={changed} style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={() => {
+        const text = ref.current?.getMarkdown();
+        // console.log("Editor:save: ", text);
+        // console.log("Editor:collection: ", reduxCollection);
+        callbackSave(text);
+
+      }}>
+      <SaveIcon />
+    </Fab>
+      </EditorErrorBoundary>
     </EditorStateContext.Provider>
   );
 }
@@ -234,7 +243,7 @@ class EditorErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error(error);
+    // console.error(error);
   }
 
   render() {
@@ -244,7 +253,9 @@ class EditorErrorBoundary extends React.Component {
       return (
         <FallbackEditor
           markdown={this.props.markdown}
-          editorCallback={this.props.editorCallback}
+          callbackSave={this.props.callbackSave}
+          initialMarkdown={this.props.initialMarkdown}
+          ref={this.props.ref}
         />
       );
 
@@ -260,74 +271,95 @@ class EditorErrorBoundary extends React.Component {
   }
 }
 
-function FallbackEditor({ markdown, editorCallback }) {
+
+function FallbackMDXeditor({markdown,callbackSave,initialMarkdown,ref}) {
+
+return (<>
+<MDXEditor
+        ref={ref}
+        onChange={editorCallback}
+        onError={(msg) => console.warn("Error in markdown: ", msg)}
+        markdown={markdown}
+        plugins={[
+          diffSourcePlugin({
+            diffMarkdown: initialMarkdown,
+            viewMode: "source",
+          }),
+          codeBlockPlugin({ codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor] }),
+          headingsPlugin(),
+          frontmatterPlugin(),
+          listsPlugin(),
+          linkPlugin(),
+          imagePlugin(),
+          linkDialogPlugin(),
+          quotePlugin(),
+          tablePlugin(),
+          thematicBreakPlugin(),
+          markdownShortcutPlugin(),
+          // catchAllPlugin(),
+
+          toolbarPlugin({
+            toolbarContents: () => (<> <UndoRedo /><BlockTypeSelect /><BoldItalicUnderlineToggles /><CreateLink /><InsertTable /><InsertCodeBlock /><InsertThematicBreak /><InsertFrontmatter />
+              <DiffSourceToggleWrapper />
+              <SaveButton />
+            </>)
+          })
+        ]}
+      />
+      <Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16, z }} onClick={handleSave}>
+        <SaveIcon />
+      </Fab></>
+
+)
+
+}
+
+
+function FallbackEditor({ markdown: initialMarkdown, callbackSave }) {
+  const [markdown, setMarkdown] = useState(initialMarkdown);
+
+  const handleSave = () => {
+    console.log("Content saved");
+    callbackSave(markdown);
+  };
+
   return (
-    <>
-      {/* <Box sx={{ flexGrow: 1 }}> */}
-      {/* <AppBar position="static"> */}
-      {/* <Toolbar variant="dense"> */}
+    <div style={{ height: '100vh' }}> {/* Adjust this to fit your layout */}
       <Grid container>
-        <Grid item xs={10}>
-          {/* <Typography variant="p" component="div" sx={{ flexGrow: 1 }}>
-        </Typography> */}
+        <Grid item xs={12}>
           <Alert size="medium" severity="warning">
             Using the fallback editor
           </Alert>
         </Grid>
-        <Grid item xs={2}>
-          <SaveButton />
-        </Grid>
       </Grid>
-      {/* </Toolbar> */}
-      {/* </AppBar> */}
-      {/* </Box> */}
 
-      {/* <Alert severity="warning">Using the fallback editor <SaveButton /></Alert> */}
       <TextField
         sx={{
           mt: "2%",
+          // height: "calc(100% - 148px)", // Adjust this based on your layout
           height: "100%",
           "& .MuiInputBase-root": {
             height: "100%",
           },
           "& .MuiInputBase-input": {
             height: "100%",
+            overflow: 'auto',
           },
         }}
         id="outlined-multiline-static"
         label="Markdown or MDX"
         multiline
         fullWidth
-        onChange={(event) => {
-          editorCallback(event.target.value);
-        }}
-        rows={4}
+        onChange={(event) => setMarkdown(event.target.value)}
         defaultValue={markdown}
-        height={"100%"}
-        inputProps={{
-          style: {
-            height: "100%",
-          },
-        }}
+        inputProps={{ style: { height: '100%' } }}
       />
-    </>
-  );
 
-  return (
-    <Grid
-      container
-      alignItems="center"
-      spacing={4}
-      style={{ textAlign: "center" }}
-      sx={{ background: "rgb(229, 246, 253)", px: "10px", borderRadius: "8px" }}
-    >
-      <Grid>
-        <Alert severity="warning">
-          Using the fallback editor <SaveButton />
-        </Alert>
-      </Grid>
-      <Grid></Grid>
-      <Grid />
-    </Grid>
+      <Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleSave}>
+        <SaveIcon />
+      </Fab>
+    </div>
   );
 }
+
+

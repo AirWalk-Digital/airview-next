@@ -50,24 +50,24 @@ export const siteConfig = {
       reference: "design", // how the collection is referred to in frontmatter links
       collections: ["knowledge"],
     },
-    // customers: {
-    //   source: "github", // The source of the content
-    //   repo: "airwalk_patterns", // The name of the repo
-    //   owner: "airwalk-digital", // The owner of the repo
-    //   branch: "main",
-    //   path: "customers", // the base path for the content
-    //   reference: "customer", // how the collection is referred to in frontmatter links
-    //   collections: ["knowledge", "projects"],
-    // },
-    // projects: {
-    //   source: "github", // The source of the content
-    //   repo: "airwalk_patterns", // The name of the repo
-    //   owner: "airwalk-digital", // The owner of the repo
-    //   branch: "main",
-    //   path: "projects", // the base path for the content
-    //   reference: "project", // how the collection is referred to in frontmatter links
-    //   collections: ["knowledge"],
-    // },
+    customers: {
+      source: "github", // The source of the content
+      repo: "airwalk_patterns", // The name of the repo
+      owner: "airwalk-digital", // The owner of the repo
+      branch: "main",
+      path: "customers", // the base path for the content
+      reference: "customer", // how the collection is referred to in frontmatter links
+      collections: ["knowledge", "projects"],
+    },
+    projects: {
+      source: "github", // The source of the content
+      repo: "airwalk_patterns", // The name of the repo
+      owner: "airwalk-digital", // The owner of the repo
+      branch: "main",
+      path: "projects", // the base path for the content
+      reference: "project", // how the collection is referred to in frontmatter links
+      collections: ["knowledge"],
+    },
     products: {
       source: 'github', // The source of the content
       repo: 'airwalk_patterns', // The name of the repo

@@ -5,7 +5,7 @@
   "dockerFile": "Dockerfile.vscode",
   "remoteUser": "vscode",
   "mounts": [
-    "source=/home/ubuntu/vscode/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    "source=/Users/robe/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
   ],
   "forwardPorts": [8080],
 

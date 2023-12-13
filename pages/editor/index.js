@@ -44,7 +44,7 @@ export default function Page() {
 <Alert param1="value1" param2="value2">test</Alert>
 more
 `;
-  const [markdown, setMarkdown] = useState(mkdown);
+  
 
   function callbackSave(content) {
     console.log("content: ", content);
