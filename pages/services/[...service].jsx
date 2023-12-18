@@ -37,7 +37,7 @@ export default function Page({
       menuStructure={menuStructure}
       handleContentChange={handleContentChange}
       handlePageReset={handlePageReset}
-      collection={collection}
+      collection={initialContext}
       context={context}
       menuComponent={FullHeaderMenu}
       contentSource={contentSource}

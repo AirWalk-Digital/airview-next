@@ -7,7 +7,7 @@
   "mounts": [
     "source=/Users/robe/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
   ],
-  "forwardPorts": [8080],
+  "forwardPorts": [3000, 6006],
 
   "customizations": {
     "codespaces": {
@@ -23,13 +23,18 @@
   },
 
   "portsAttributes": {
-    "8080": {
-      "label": "LocalDev",
-      "onAutoForward": "openPreview"
+    "3000": {
+      "label": "Next JS",
+      "onAutoForward": "silent"
+    },
+    "6006": {
+      "label": "Storybook",
+      "onAutoForward": "silent"
     }
   },
   "postCreateCommand": "",
   "postAttachCommand": {
-    "fix npm" : "rm -Rf /workspaces/airview-next/node_modules && ln -s /tmp/npm/node_modules /workspaces/airview-next/node_modules"
+    // "fix npm" : "rm -Rf /workspaces/airview-next/node_modules && ln -s /tmp/npm/node_modules /workspaces/airview-next/node_modules"
+    "install modules" : "cd /workspaces/airview-next && npm i"
   }
 }

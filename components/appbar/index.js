@@ -1,2 +1,3 @@
 export { TopBar } from "./TopBar";
-export { ControlBar } from './ControlBar'
+export { ControlBar } from "./ControlBar";
+export { NewContentDialog } from "./NewContentDialog";

@@ -9,7 +9,9 @@
     "export": "next build && next export",
     "rebuild": "cp package* /tmp/npm/ && cd /tmp/npm && npm i",
     "pull-packages": "cp /tmp/npm/package* /workspaces/airview-next/",
-    "lint": "next lint"
+    "lint": "next lint",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -85,12 +87,21 @@
     "@codedependant/semantic-release-docker": "^4.3.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^9.0.2",
+    "@storybook/addon-essentials": "^7.6.4",
+    "@storybook/addon-interactions": "^7.6.4",
+    "@storybook/addon-links": "^7.6.4",
+    "@storybook/addon-onboarding": "^1.0.10",
+    "@storybook/blocks": "^7.6.4",
+    "@storybook/nextjs": "^7.6.4",
+    "@storybook/react": "^7.6.4",
+    "@storybook/test": "^7.6.4",
     "@types/node": "18.11.18",
     "@types/react": "^17.0.16",
     "babel-plugin-styled-components": "^1.12.0",
     "cheerio": "^1.0.0-rc.12",
     "prettier": "3.1.0",
-    "semantic-release": "^21.0.2"
+    "semantic-release": "^21.0.2",
+    "storybook": "^7.6.4"
   },
   "engines": {
     "node": ">=18.14.0"
