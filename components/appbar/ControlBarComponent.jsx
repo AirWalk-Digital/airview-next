@@ -16,6 +16,10 @@ export function ControlBarComponent({
     // const [collection, setCollection] = useState(initialCollection);
 
     const [changeBranch, setChangeBranch] = useState(context.branch != collection.branch);
+    console.log('ControlBarComponent:context: ', context)
+    console.log('ControlBarComponent:changeBranch: ', changeBranch)
+    console.log('ControlBarComponent:collection: ', collection)
+
 
     const [branch, setBranch] = useState(context.branch);
 
@@ -32,25 +36,14 @@ export function ControlBarComponent({
         setChangeBranch(!changeBranch);
         if (open == 'open') { setChangeBranch(true) } else if (open == 'close') { setChangeBranch(false) };
     };
-
-   
-    
-    // function fetchBranches(collection) {
-    //     const branches = async () => {
-    //         const res = await fetch(`/api/repo/get-branches?owner=${collection.owner}&repo=${collection.repo}`); // fetch draft content to add to the menus.
-    //         const data = await res.json();
-    //         setBranches(data)
-    //     };
-    //     branches()
-    // }
     
     async function onBranchChange(event, value) { // handles the branch selector changing
         if (value) {
             
             const newContext = {...collection, branch: value } 
-            console.log('ControlBar:handleBranch:collection: ', collection)
+            console.log('ControlBarComponent:handleBranch:collection: ', collection)
             setBranch(value)
-            console.log('ControlBar:handleBranch:newContext: ', newContext)
+            console.log('ControlBarComponent:handleBranch:newContext: ', newContext)
             // await dispatch(setBranch(newCollection))
             //  await dispatch(setBranch(newCollection))
             onContextUpdate(newContext)

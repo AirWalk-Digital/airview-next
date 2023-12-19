@@ -97,6 +97,12 @@ export function ContentPage({
 
   const editFromQuery = useRouter()?.query?.edit ?? null; // ?edit=true query parameter
   const queryBranch = useRouter()?.query?.branch ?? null; // ?branch=whatever query parameter
+  const navDrawerWidth = 300;
+  const topBarHeight = controlBarOpen ? 64 + 64 : 64;
+  const [menuOpen, setMenuOpen] = useState(menuOpenInitial);
+  const [print, setPrint] = useState(false);
+  const [presentation, setPresentation] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     // update the frontmatter
@@ -112,6 +118,7 @@ export function ContentPage({
 
     if (editFromQuery) {
       setEditMode(true);
+      setControlBarOpen(true)
     } // set the edit mode from the query parameter ?edit=true
 
     if (
@@ -127,19 +134,16 @@ export function ContentPage({
         reduxContext?.branch ?? null
       );
       const newContext = { ...context, branch: queryBranch };
+      console.debug("ContentPage:newContext: ", newContext);
+
       dispatch(setBranch(newContext));
       handleContentChange(context.file);
+      setControlBarOpen(true);
       // setControlBarOpen(true)
       // setChangeBranch(true)
     } // set the branch from the query parameter ?branch=
   }, []);
 
-  const navDrawerWidth = 300;
-  const topBarHeight = controlBarOpen ? 64 + 64 : 64;
-  const [menuOpen, setMenuOpen] = useState(menuOpenInitial);
-  const [print, setPrint] = useState(false);
-  const [presentation, setPresentation] = useState(false);
-  const [editMode, setEditMode] = useState(false);
 
   const handleEditMode = (mode) => {
     setEditMode(mode);
