@@ -40,6 +40,7 @@ export const siteConfig = {
       branch: "main",
       path: "knowledge", // the base path for the content
       reference: "knowledge", // how the collection is referred to in frontmatter links
+      menu: {component: "DummyMenu", collection: null } // the menu to use on the left
     },
     designs: {
       source: "github", // The source of the content
@@ -67,6 +68,8 @@ export const siteConfig = {
       path: "projects", // the base path for the content
       reference: "project", // how the collection is referred to in frontmatter links
       collections: ["knowledge"],
+      menu: {component: "FullHeaderMenu", collection: "customers" } // the menu to use on the left and the baseline for the menu
+
     },
     products: {
       source: 'github', // The source of the content

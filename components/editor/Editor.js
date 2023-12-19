@@ -32,6 +32,8 @@ import {
 import "@mdxeditor/editor/style.css";
 import { $createParagraphNode, $createTextNode, ElementNode } from "lexical";
 import * as matter from 'gray-matter';
+import Paper from "@mui/material/Paper";
+import { AsideAndMainContainer, Aside, Main } from "@/components/layouts";
 
 // const { MDXEditor, codeBlockPlugin, diffSourcePlugin, headingsPlugin, frontmatterPlugin, listsPlugin, linkPlugin, linkDialogPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, UndoRedo, InsertTable, InsertCodeBlock, InsertFrontmatter, CreateLink, InsertThematicBreak, DiffSourceToggleWrapper } = await import('@mdxeditor/editor')
 import { useState, useRef, createContext } from "react";
@@ -139,8 +141,10 @@ export function Editor({ markdown: initialMarkdown, context, callbackSave, enabl
   const currentState = store.getState();
   const reduxCollection = currentState.branch[collection];
   console.log("Editor:context: ", context);
-  console.log("Editor:currentState: ", currentState);
   console.log("Editor:reduxCollection: ", reduxCollection);
+  console.log("Editor:initialMarkdown: ", initialMarkdown);
+  
+
 
   const editorCallback = (callback) => {
     // console.log("Editor:editorCallback: ", callback);
@@ -165,6 +169,8 @@ export function Editor({ markdown: initialMarkdown, context, callbackSave, enabl
     <EditorStateContext.Provider
       value={{ changed, editorCallback, ref, reduxCollection, context, callbackSave }}
     >
+        <Paper sx={{px: '1%'}} elevation={0} >
+
       <EditorErrorBoundary markdown={markdown} callbackSave={callbackSave} initialMarkdown={initialMarkdown} ref={ref}>
       <MDXEditor
         ref={ref}
@@ -205,6 +211,8 @@ export function Editor({ markdown: initialMarkdown, context, callbackSave, enabl
       <SaveIcon />
     </Fab>
       </EditorErrorBoundary>
+      </Paper>
+
     </EditorStateContext.Provider>
   );
 }
@@ -251,6 +259,7 @@ class EditorErrorBoundary extends React.Component {
       // Render an alternative component or message when an error occurs
 
       return (
+
         <FallbackEditor
           markdown={this.props.markdown}
           callbackSave={this.props.callbackSave}
@@ -324,42 +333,126 @@ function FallbackEditor({ markdown: initialMarkdown, callbackSave }) {
   };
 
   return (
-    <div style={{ height: '100vh' }}> {/* Adjust this to fit your layout */}
-      <Grid container>
-        <Grid item xs={12}>
-          <Alert size="medium" severity="warning">
-            Using the fallback editor
-          </Alert>
-        </Grid>
+    <Grid
+      container
+      direction="column"
+      style={{ height: 'calc(100vh - 50px)' }}  >
+      <Grid item>
+        <Alert severity="warning">
+          Using the fallback editor
+        </Alert>
       </Grid>
-
-      <TextField
-        sx={{
-          mt: "2%",
-          // height: "calc(100% - 148px)", // Adjust this based on your layout
-          height: "100%",
-          "& .MuiInputBase-root": {
-            height: "100%",
-          },
-          "& .MuiInputBase-input": {
-            height: "100%",
-            overflow: 'auto',
-          },
-        }}
-        id="outlined-multiline-static"
-        label="Markdown or MDX"
-        multiline
-        fullWidth
-        onChange={(event) => setMarkdown(event.target.value)}
-        defaultValue={markdown}
-        inputProps={{ style: { height: '100%' } }}
-      />
+      <Grid item style={{ flex: 1, overflow: 'auto' }}>
+        <TextField
+          id="outlined-multiline-static"
+          multiline
+          fullWidth
+          variant="outlined"
+          // style={{ height: '100%', minHeight: 'calc(100vh - 350px)' }}
+          onChange={(event) => setMarkdown(event.target.value)}
+          defaultValue={markdown}        
+          sx={{
+            mt: "1%",
+            "& .MuiInputBase-input": {
+              // height: "100%",
+              // overflowY: 'auto', 
+            },
+            "& .MuiInputBase-root": {
+              // minHeight: 'calc(100vh - 200px)',
+              minHeight: 'calc(100vh - 250px)',
+              alignItems: 'baseline'
+            },
+          }}
+        />
+      </Grid>
 
       <Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleSave}>
         <SaveIcon />
       </Fab>
-    </div>
+
+    </Grid>
   );
-}
+
+  return (
+    <AsideAndMainContainer>
+    {/* <Main sx={{}}> */}
+    <Main>
+      <Grid
+  container
+  direction="row"
+  justifyContent="center"
+  alignItems="stretch"
+  height="100%"
+>
+<Grid item xs={12}>
+
+
+<Grid
+  container
+  direction="column"
+  justifyContent="flex-start"
+  alignItems="stretch"
+  style={{ display: 'flex' }} // Add this line
+>
+      <Grid item xs={12}>
+        <Alert severity="warning">
+          Using the fallback editor
+        </Alert>
+      </Grid>
+      <Grid item xs={12} style={{ display: 'flex', height: '100%' }}>
+              <TextField
+  id="outlined-multiline-static"
+  multiline
+  fullWidth
+  onChange={(event) => setMarkdown(event.target.value)}
+  defaultValue={markdown}
+  variant="outlined"
+  style={{ marginTop: "1%", flex: 1, overflow: 'auto', boxSizing: 'border-box' }}
+/>
+      </Grid>
+  </Grid>
+  </Grid>
+
+
+
+</Grid>
+
+<Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleSave}>
+<SaveIcon />
+</Fab>
+</Main>
+</AsideAndMainContainer>
+  )
+  };
+
+{/* 
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Grid container style={{ flex: 1, overflow: 'hidden' }}>
+      <Grid item xs={12}>
+        <Alert severity="warning">
+          Using the fallback editor
+        </Alert>
+      </Grid>
+      <Grid item xs={12} style={{ flexGrow: 1, overflow: 'auto' }}>
+        <TextField
+          id="outlined-multiline-static"
+          // label="Markdown or MDX"
+          multiline
+          fullWidth
+          onChange={(event) => setMarkdown(event.target.value)}
+          defaultValue={markdown}
+          variant="outlined"
+          style={{ marginTop: "1%", height: '100%', width: '100%', overflow: 'auto', boxSizing: 'border-box' }}
+        />
+      </Grid>
+    </Grid>
+  
+    <Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleSave}>
+      <SaveIcon />
+    </Fab>
+  </div>
+  
+  ); */}
 
 

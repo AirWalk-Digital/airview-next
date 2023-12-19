@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState, useCallback } from "react";
 
 import { baseTheme } from "../../constants/baseTheme";
@@ -54,7 +55,11 @@ export function ContentPage({
   headerComponent = null,
   sideComponent = null,
   isLoading,
+  menuOpen: menuOpenInitial = true,
 }) {
+  console.debug("ContentPage:menuComponent: ", menuComponent);
+  console.debug("ContentPage:content: ", content);
+
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
   const MenuComponent = menuComponent;
   const SideComponent = sideComponent;
@@ -77,9 +82,10 @@ export function ContentPage({
   ); // Make sure to include frontmatter in the dependency array
 
   // ControlBar
-  const [controlBarOpen, setControlBarOpen] = useState(false);
+  const [controlBarOpen, setControlBarOpen] = useState(
+    useRouter()?.query?.edit ?? false
+  );
 
-  const queryBranch = useRouter()?.query?.branch ?? null; // this loads direct links to the content using ?branch=whatever query parameter
   const currentState = store.getState();
   // const reduxContext = currentState;
   const reduxContext = currentState.branch[context.path];
@@ -87,32 +93,53 @@ export function ContentPage({
 
   console.debug("ContentPage:reduxContext: ", reduxContext);
 
-  if (
-    reduxContext &&
-    reduxContext.branch &&
-    queryBranch &&
-    queryBranch != reduxContext.branch
-  ) {
-    console.log(
-      "ContentPage:queryBranch(in URI): ",
-      queryBranch,
-      " : ",
-      reduxContext?.branch ?? null
-    );
-    // const dispatch = useDispatch()
-    // dispatch(setBranch(queryBranch))
-    // setControlBarOpen(true)
-    // setChangeBranch(true)
-  } // set the branch from the query parameter ?branch=
+  const dispatch = useDispatch();
+
+  const editFromQuery = useRouter()?.query?.edit ?? null; // ?edit=true query parameter
+  const queryBranch = useRouter()?.query?.branch ?? null; // ?branch=whatever query parameter
+
+  useEffect(() => {
+    // update the frontmatter
+    if (pageContent.frontmatter) {
+      setFrontmatter(pageContent.frontmatter);
+    }
+  }, [pageContent.frontmatter]);
+
+  useEffect(() => {
+    // run and reprocess the files and branches.
+    console.debug("ContentPage:queryBranch: ", queryBranch);
+    console.debug("ContentPage:editFromQuery: ", editFromQuery);
+
+    if (editFromQuery) {
+      setEditMode(true);
+    } // set the edit mode from the query parameter ?edit=true
+
+    if (
+      reduxContext &&
+      reduxContext.branch &&
+      queryBranch &&
+      queryBranch != reduxContext.branch
+    ) {
+      console.log(
+        "ContentPage:queryBranch(in URI): ",
+        queryBranch,
+        " : ",
+        reduxContext?.branch ?? null
+      );
+      const newContext = { ...context, branch: queryBranch };
+      dispatch(setBranch(newContext));
+      handleContentChange(context.file);
+      // setControlBarOpen(true)
+      // setChangeBranch(true)
+    } // set the branch from the query parameter ?branch=
+  }, []);
 
   const navDrawerWidth = 300;
   const topBarHeight = controlBarOpen ? 64 + 64 : 64;
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(menuOpenInitial);
   const [print, setPrint] = useState(false);
   const [presentation, setPresentation] = useState(false);
-  const [editMode, setEditMode] = useState(
-    Boolean(useRouter()?.query?.edit ?? false)
-  ); ////-----------------------------true for testing edit mode
+  const [editMode, setEditMode] = useState(false);
 
   const handleEditMode = (mode) => {
     setEditMode(mode);
@@ -147,7 +174,15 @@ export function ContentPage({
       "Airview commit"
     );
 
-    commitFileChanges(reduxContext.owner, reduxContext.repo, reduxContext.branch, context.file, content, 'Airview commit');
+    const normalizedFile = context.file.replace(/^\/+/, "");
+    commitFileChanges(
+      reduxContext.owner,
+      reduxContext.repo,
+      reduxContext.branch,
+      normalizedFile,
+      content,
+      "Airview commit"
+    );
     // const currentState = store.getState();
     // const reduxCollection = currentState.branch[collection];
     // console.log("Editor:context: ", context);
@@ -171,13 +206,6 @@ export function ContentPage({
       return <FullScreenSpinner />;
     }
   };
-
-  useEffect(() => {
-    // update the frontmatter
-    if (pageContent.frontmatter) {
-      setFrontmatter(pageContent.frontmatter);
-    }
-  }, [pageContent.frontmatter]);
 
   if (isLoading) {
     return <ContentSkeleton topBarHeight={topBarHeight} />;
@@ -212,8 +240,9 @@ export function ContentPage({
             }
             collection={collection}
             context={reduxContext}
+            editMode={editMode}
           />
-    
+
           {menuStructure && (
             <MenuComponent
               menu={menuStructure.primary}
@@ -341,7 +370,8 @@ export function ContentPage({
               frontmatter?.format === "presentation" ? handlePresentation : null
             }
             collection={collection}
-            context={reduxContext}          />
+            context={reduxContext}
+          />
           <div
             style={{
               marginTop: topBarHeight + 10,
@@ -464,6 +494,15 @@ function ContentMenu({
 }) {
   // let directory = file?.includes("/") ? file.split("/")[1] : file;
 
+
+
+  const onContentClick = (callback) => {
+    console.log("ContentPage:ContentMenu:onContentClick: ", callback);
+    
+    handleContentChange(callback, true)
+  };
+
+
   let directory = file ? path.dirname(file) : null;
 
   let chaptersMenu = [];
@@ -528,7 +567,7 @@ function ContentMenu({
           initialCollapsed={false}
           loading={false}
           fetching={false}
-          handleButtonClick={handleContentChange}
+          handleButtonClick={onContentClick}
         />
       </>
     );

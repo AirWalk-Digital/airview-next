@@ -29,6 +29,7 @@ export function ControlBar({
   handlePresentation,
   collection,
   context: initialContext,
+  editMode = false
 }) {
   const [isAddOpen, setIsAddOpen] = useState(false);
 
@@ -57,50 +58,7 @@ export function ControlBar({
 
     handleRefresh(); // reset the page
   };
-  //   async function handleBranch(event, value) {
-  //     // handles the branch selector changing
-  //     if (value) {
-  //       const newCollection = { ...collection, branch: value };
-  //       console.log("ControlBar:handleBranch:collection: ", collection);
-
-  //       console.log("ControlBar:handleBranch:newCollection: ", newCollection);
-  //       // await dispatch(setBranch(newCollection))
-  //       await dispatch(setBranch(newCollection));
-
-  //       handleRefresh(); // reset the page
-  //     }
-  //     // setSelectedBranch(value);
-  //   }
-
-  //   const handlePresentationClick = () => {
-  //     if (typeof handlePresentation === "function") {
-  //       handlePresentation();
-  //     } else {
-  //       console.error("TopBar: Error: handlePresentation is not a function");
-  //     }
-  //   };
-  //   const handlePrintClick = () => {
-  //     if (typeof handlePrint === "function") {
-  //       handlePrint();
-  //     } else {
-  //       console.error("TopBar: Error: handlePrint is not a function");
-  //     }
-  //   };
-
-  //   const handleEditClick = () => {
-  //     // localStorage.setItem('editMode', JSON.stringify(editMode));
-  //     if (typeof handleEdit === "function") {
-  //       handleEdit(!edit);
-  //       if (edit) {
-  //         handleBranchClick("close");
-  //       } else {
-  //         handleBranchClick("open");
-  //       }
-  //       setEdit(!edit);
-  //     } else {
-  //       console.error("TopBar: Error: handleEdit is not a function");
-  //     }
-  //   };
+ 
   const onAddClicked = (result) => {
     setIsAddOpen(true);
   };
@@ -156,6 +114,7 @@ export function ControlBar({
         context={context}
         branches={branches}
         fetchBranches={fetchBranches}
+        editMode={editMode}
       />
       <NewContentDialog
         dialogOpen={isAddOpen}

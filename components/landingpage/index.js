@@ -1,45 +1,51 @@
-
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import SlideshowIcon from '@mui/icons-material/Slideshow';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
-import { ThemeProvider } from '@mui/material/styles';
-import { baseTheme } from '@/constants/baseTheme';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import { Menu as MenuIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import SlideshowIcon from "@mui/icons-material/Slideshow";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CssBaseline from "@mui/material/CssBaseline";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
+import { ThemeProvider } from "@mui/material/styles";
+import { baseTheme } from "@/constants/baseTheme";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import {
+  Menu as MenuIcon,
+  ExpandMore as ExpandMoreIcon,
+} from "@mui/icons-material";
+import ArrowBackIosNewOutlinedIcon from "@mui/icons-material/ArrowBackIosNewOutlined";
 
 import React, { useState } from "react";
-import Paper from '@mui/material/Paper';
+import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import { IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { siteConfig } from "../site.config.js";
+import { siteConfig } from "../../site.config.js";
 
-import { TopBar } from '@/components/appbar';
-import { ScrollToTop } from '@/lib/utils/ScrollToTop'
-import { ScrollToBottom }from '@/lib/utils/ScrollToBottom'
-
-
+import { TopBar } from "@/components/appbar";
+import { ScrollToTop } from "@/lib/utils/ScrollToTop";
+import { ScrollToBottom } from "@/lib/utils/ScrollToBottom";
 
 const SiteSection = ({ title, description, link }) => {
-
-  
   return (
     <Grid item xs={4} md={4}>
-      <Paper variant='outlined' sx={{ height: '100%', borderRadius: '16px', p: 3, display: 'flex', flexDirection: 'column' }}>
-
+      <Paper
+        variant="outlined"
+        sx={{
+          height: "100%",
+          borderRadius: "16px",
+          p: 3,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Typography variant="h5" component="h5" gutterBottom>
           {title}
         </Typography>
@@ -47,41 +53,49 @@ const SiteSection = ({ title, description, link }) => {
           {description}
         </Typography>
         <Box sx={{ flex: 1 }} />
-        <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
-          <Link href={link} sx={{ textDecoration: 'none' }}>
-            <Button variant="outlined" color="primary" sx={{ display: 'block', mt: '3%' }}>
+        <Box sx={{ display: "flex", justifyContent: "center", m: 2 }}>
+          <Link href={link} sx={{ textDecoration: "none" }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{ display: "block", mt: "3%" }}
+            >
               View
             </Button>
           </Link>
         </Box>
       </Paper>
     </Grid>
-  )
-}
+  );
+};
 const LandingPage = () => {
   return (
     <ThemeProvider theme={baseTheme}>
       <CssBaseline />
-      <TopBar logo={false}/>
+      <TopBar logo={false} />
       {/* Hero Section */}
       <section
         style={{
-          marginTop: '50px',
+          marginTop: "50px",
           // // position: 'relative',
-          minHeight: '100vh',
-          display: 'flex',
+          minHeight: "100vh",
+          display: "flex",
           // alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: "flex-end",
           background: `url("/backgrounds/image17-bg.jpeg") no-repeat`,
-          backgroundSize: 'auto 100%',
-          backgroundPosition: 'right',
-          backgroundAttachment: 'fixed',
+          backgroundSize: "auto 100%",
+          backgroundPosition: "right",
+          backgroundAttachment: "fixed",
         }}
       >
-        <Container maxWidth="lg" sx={{ height: '100vh' }}>
+        <Container maxWidth="lg" sx={{ height: "100vh" }}>
           <Grid container spacing={4} alignItems="stretch">
-            <Grid item xs={12} md={12} sx={{ mb: '20px' }}>
-              <Typography variant="h2" component="h2" sx={{ fontWeight: 'bold', mt: '50px' }}>
+            <Grid item xs={12} md={12} sx={{ mb: "20px" }}>
+              <Typography
+                variant="h2"
+                component="h2"
+                sx={{ fontWeight: "bold", mt: "50px" }}
+              >
                 Airview
               </Typography>
               <Typography variant="h5" component="h5" gutterBottom>
@@ -92,37 +106,70 @@ const LandingPage = () => {
               </Button>
             </Grid>
           </Grid>
-          <Grid container spacing={4} alignItems="stretch" sx={{ my: '0px' }}>
-
-            {siteConfig.content.frameworks && <SiteSection title='Frameworks & Standards' description='View the compliance frameworks that guide our IT policy as well as standards to help adoption.' link='/frameworks' />}
-            {siteConfig.content.services && <SiteSection title='Providers & Services' description='View the catalogue of Services available, complete with patterns, implementation guides and quality controls.' link='/services' />}
-            {siteConfig.content.applications && <SiteSection title='Applications' description='Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance.' link='/applications' />}
-            {siteConfig.content.customers && <SiteSection title='Customers & Projects' description="Customers and the projects we've done for them." link='/customers' />}
-            {siteConfig.content.solutions && <SiteSection title='Solutions' description="Solutions and Propositions." link='/solutions' />}
-            {siteConfig.content.products && <SiteSection title='Products' description="Products." link='/products' />}
-
-                     </Grid>
+          <Grid container spacing={4} alignItems="stretch" sx={{ my: "0px" }}>
+            {siteConfig.content.frameworks && (
+              <SiteSection
+                title="Frameworks & Standards"
+                description="View the compliance frameworks that guide our IT policy as well as standards to help adoption."
+                link="/frameworks"
+              />
+            )}
+            {siteConfig.content.services && (
+              <SiteSection
+                title="Providers & Services"
+                description="View the catalogue of Services available, complete with patterns, implementation guides and quality controls."
+                link="/services"
+              />
+            )}
+            {siteConfig.content.applications && (
+              <SiteSection
+                title="Applications"
+                description="Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance."
+                link="/applications"
+              />
+            )}
+            {siteConfig.content.customers && (
+              <SiteSection
+                title="Customers & Projects"
+                description="Customers and the projects we've done for them."
+                link="/customers"
+              />
+            )}
+            {siteConfig.content.solutions && (
+              <SiteSection
+                title="Solutions"
+                description="Solutions and Propositions."
+                link="/solutions"
+              />
+            )}
+            {siteConfig.content.products && (
+              <SiteSection
+                title="Products"
+                description="Products."
+                link="/products"
+              />
+            )}
+          </Grid>
         </Container>
       </section>
-
-
 
       {/* Features Section */}
       <section
         style={{
-          background: '#f5f5f5',
-          display: 'flex'
+          background: "#f5f5f5",
+          display: "flex",
         }}
       >
-        <Container maxWidth="lg" sx={{ my: '20px' }} >
+        <Container maxWidth="lg" sx={{ my: "20px" }}>
           <Grid container spacing={4} alignItems="center">
-
             <Grid item xs={12} md={6}>
               <Typography variant="h3" component="h3" gutterBottom>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               </Typography>
               <Typography variant="body1" gutterBottom>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eu ipsum enim.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
+                eu ipsum enim. Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. Morbi eu ipsum enim.
               </Typography>
               <Button variant="outlined" color="primary">
                 Learn More
@@ -131,21 +178,19 @@ const LandingPage = () => {
           </Grid>
         </Container>
       </section>
-        <ScrollToTop/>
-        <ScrollToBottom/>
+      <ScrollToTop />
+      <ScrollToBottom />
       {/* Other Sections */}
       {/* Add more sections with similar structure for the rest of the landing page content */}
     </ThemeProvider>
   );
 };
 
-
 export default LandingPage;
 
 // const pageTitle = "Documentation View";
 
 // const content = null;
-
 
 // const navItems = [
 //   {
@@ -233,7 +278,6 @@ export default LandingPage;
 //     <ThemeProvider theme={theme}>
 //       <CssBaseline />
 
-
 //       {/* <Search
 //         open={searchOpen}
 //         onRequestToClose={() => setSearchOpen(false)}
@@ -290,7 +334,7 @@ export default LandingPage;
 //               fetching={isFetching}
 //             />
 //             <StyledWysiwyg loading={isLoading} fetching={isFetching}>
-//               {content} 
+//               {content}
 //             </StyledWysiwyg>
 //           </Main>
 //           <Aside>
@@ -302,7 +346,7 @@ export default LandingPage;
 //               fetching={isFetching}
 //             />
 //           </Aside>
-//         </AsideAndMainContainer> 
+//         </AsideAndMainContainer>
 //       </div> */}
 //     </ThemeProvider>
 //   );

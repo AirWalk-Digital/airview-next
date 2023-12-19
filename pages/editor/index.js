@@ -14,7 +14,8 @@ export default function Page() {
   const owner = "airwalk-digital";
   const repo = "airwalk_patterns";
   const branch = "1-rob-ellison";
-  const path = "README.md";
+  // const path = "README.md";
+  const path = "/solutions/cloud_architecture/architecture_presentation.ppt.mdx";
 
   useEffect(() => {
     async function loadFile() {
@@ -64,7 +65,7 @@ more
 
   return (
     <EditorClient
-      markdown={fileContent}
+      markdown={mkdown}
       context={[]}
       callbackSave={callbackSave}
     />

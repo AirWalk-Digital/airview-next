@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation'
 
 import { Toolbar, AppBar,  FormControlLabel, Switch, IconButton, TextField, Stack, Autocomplete } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
@@ -10,14 +11,12 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
 export function ControlBarComponent({
-    open, height, handleEdit, handlePrint, handleAdd, handlePresentation, collection, context, branches, top='64px', onContextUpdate, fetchBranches = () => {} }) {
-    const [edit, setEdit] = useState(false);
+    open, height, handleEdit, handlePrint, handleAdd, handlePresentation, collection, context, branches, top='64px', onContextUpdate, fetchBranches = () => {} }, editMode) {
+    const [edit, setEdit] = useState(editMode);
     // const [collection, setCollection] = useState(initialCollection);
 
-    const [changeBranch, setChangeBranch] = useState(false);
+    const [changeBranch, setChangeBranch] = useState(context.branch != collection.branch);
 
-    // const queryBranch = useRouter()?.query?.branch ?? null; // this loads direct links to the content using ?branch=whatever query parameter
-    
     const [branch, setBranch] = useState(context.branch);
 
     const onBranchToggle = async (open = 'ignore') => { // handles the toggling of the "Change Branch" selector
@@ -34,6 +33,8 @@ export function ControlBarComponent({
         if (open == 'open') { setChangeBranch(true) } else if (open == 'close') { setChangeBranch(false) };
     };
 
+   
+    
     // function fetchBranches(collection) {
     //     const branches = async () => {
     //         const res = await fetch(`/api/repo/get-branches?owner=${collection.owner}&repo=${collection.repo}`); // fetch draft content to add to the menus.
