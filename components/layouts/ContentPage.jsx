@@ -243,7 +243,7 @@ export function ContentPage({
               frontmatter?.format === "presentation" ? handlePresentation : null
             }
             collection={collection}
-            context={reduxContext}
+            context={context}
             editMode={editMode}
           />
 
@@ -374,7 +374,7 @@ export function ContentPage({
               frontmatter?.format === "presentation" ? handlePresentation : null
             }
             collection={collection}
-            context={reduxContext}
+            context={context}
           />
           <div
             style={{
