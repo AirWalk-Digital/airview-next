@@ -14,6 +14,8 @@ export const siteConfig = {
       path: "services", // the base path for the content
       reference: "service", // how the collection is referred to in frontmatter links
       collections: ["knowledge", "designs"],
+      menu: {component: "FullHeaderMenu", collection: "providers" } // the menu to use on the left and the baseline for the menu
+
     },
     providers: {
       source: "github", // The source of the content
@@ -32,6 +34,8 @@ export const siteConfig = {
       path: "solutions", // the base path for the content
       reference: "solution", // how the collection is referred to in frontmatter links
       collections: ["knowledge", "designs"],
+      menu: {component: "ListMenu", collection: "solutions" } // the menu to use on the left and the baseline for the menu
+
     },
     knowledge: {
       source: "github", // The source of the content

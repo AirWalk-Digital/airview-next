@@ -2,15 +2,11 @@ import React from "react";
 import { siteConfig } from "../../site.config.js";
 import { parse } from "toml";
 import { getAllFiles, getFileContent } from "@/lib/github";
-import { usePageContent, collectionName, usePageMenu } from "@/lib/hooks";
+import { usePageContent, collectionName, usePageMenu, LeftMenuFunction, LeftMenu, LeftMenuOpen } from "@/lib/hooks";
 import { getMenuStructure, groupMenu, getFrontMatter } from "@/lib/content";
 
 import { ContentPage, IndexView } from "@/components/layouts";
-import {
-  FullHeaderMenu,
-  HeaderMinimalMenu,
-  DummyMenu,
-} from "@/components/menus";
+
 // import { ServicesHeader } from "@/components/headers";
 import LandingPage from "@/components/landingpage";
 import { dirname } from "path";
@@ -24,39 +20,6 @@ export default function Page({
 }) {
 
 
-  const LeftMenuOpen = (context) => {
-
-    if (context && context.menu && context.menu.component) {
-
-      switch (context.menu.component) {
-
-        case "DummyMenu":
-
-          return false;
-        default:
-          return true;
-      }
-    } else {
-      return true;
-    }
-  };
-
-  const LeftMenuFunction = (context) => {
-    if (context && context.menu && context.menu.component) {
-      switch (context.menu.component) {
-        case "DummyMenu":
-          return DummyMenu;
-        case "FullHeaderMenu":
-          return FullHeaderMenu;
-        case "HeaderMinimalMenu":
-          return HeaderMinimalMenu;
-        default:
-          return FullHeaderMenu;
-      }
-    } else {
-      return FullHeaderMenu;
-    }
-  };
 
 
 
@@ -74,7 +37,7 @@ export default function Page({
         />
       );
     }
-    const { menuStructure } = usePageMenu(initialMenuStructure, collection);
+    const { menuStructure } = usePageMenu(initialContext);
 
     return (
       <IndexView
@@ -93,7 +56,6 @@ export default function Page({
       handlePageReset,
       context,
       content,
-      frontMatterCallback,
       editMode,
     } = usePageContent(
       initialContent,
@@ -106,7 +68,6 @@ export default function Page({
     return (
       <ContentPage
         pageContent={pageContent}
-        // file={initialFile}
         content={content}
         menuStructure={menuStructure}
         handleContentChange={handleContentChange}
@@ -118,12 +79,6 @@ export default function Page({
         headerComponent={null}
         sideComponent={null}
         menuOpen={LeftMenuOpen(context)}
-        // contentSource={contentSource}
-        // editMode={editMode}
-        // headerComponent={(props) => (
-        //   <ServicesHeader {...props} extraData={controls} />
-        // )}
-        // sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
       />
     );
   }

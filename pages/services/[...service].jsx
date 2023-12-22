@@ -2,7 +2,9 @@ import React from "react";
 import { siteConfig } from "../../site.config.js";
 import { parse } from "toml";
 import { getAllFiles, getFileContent } from "@/lib/github";
-import { usePageContent, collectionName } from "@/lib/hooks";
+// import { usePageContent, collectionName } from "@/lib/hooks";
+import { usePageContent, collectionName, usePageMenu, LeftMenuFunction, LeftMenu, LeftMenuOpen } from "@/lib/hooks";
+
 import { getMenuStructure } from "@/lib/content";
 import { ContentPage } from "@/components/layouts";
 import { FullHeaderMenu, ControlsMenu } from "@/components/menus";
@@ -18,6 +20,7 @@ export default function Page({
   context: initialContext,
   loading
 }) {
+
   const {
     pageContent,
     contentSource,
@@ -26,27 +29,49 @@ export default function Page({
     handlePageReset,
     context,
     content,
-  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection, initialContext);
+    editMode,
+  } = usePageContent(
+    initialContent,
+    initialContext
+  );
 
+  
 
   return (
     <ContentPage
-      pageContent={pageContent}
-      file={initialFile}
-      content={content}
-      menuStructure={menuStructure}
-      handleContentChange={handleContentChange}
-      handlePageReset={handlePageReset}
-      collection={initialContext}
-      context={context}
-      menuComponent={FullHeaderMenu}
-      contentSource={contentSource}
-      headerComponent={(props) => (
-        <ServicesHeader {...props} extraData={controls} />
-      )}
-      sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
-      isLoading={loading}
-    />
+    pageContent={pageContent}
+    content={content}
+    menuStructure={menuStructure}
+    handleContentChange={handleContentChange}
+    handlePageReset={handlePageReset}
+    collection={initialContext}
+    context={context}
+    menuComponent={LeftMenuFunction(context)}
+    isLoading={loading}
+    headerComponent={null}
+    sideComponent={null}
+    menuOpen={LeftMenuOpen(context)}
+    headerComponent={(props) => (
+      <ServicesHeader {...props} extraData={controls} />
+    )}
+    sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
+  />
+    // <ContentPage
+    //   pageContent={pageContent}
+    //   content={content}
+    //   menuStructure={menuStructure}
+    //   handleContentChange={handleContentChange}
+    //   handlePageReset={handlePageReset}
+    //   collection={initialContext}
+    //   context={context}
+    //   menuComponent={FullHeaderMenu}
+    //   contentSource={contentSource}
+    //   headerComponent={(props) => (
+    //     <ServicesHeader {...props} extraData={controls} />
+    //   )}
+    //   sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
+    //   isLoading={loading}
+    // />
   );
 }
 
@@ -104,9 +129,8 @@ export async function getServerSideProps(context) {
   return {
     props: {
       content: pageContentText || null,
-      file: file,
-      menuStructure: menuStructure || null,
-      collection: siteConfig.content.providers,
+      // menuStructure: menuStructure || null,
+      // collection: siteConfig.content.providers,
       controls: await Promise.all(controlContent),
       context: { file: file, ...collectionName(file, siteConfig.content.services) },
       key: context.params.service

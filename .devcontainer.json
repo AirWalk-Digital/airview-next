@@ -15,10 +15,14 @@
 	},
 	"vscode": {
 		"extensions": [
-			"GitHub.github-vscode-theme",
-			"GitHub.vscode-pull-request-github",
-			"esbenp.prettier-vscode"
-		]
+      "GitHub.github-vscode-theme",
+      "GitHub.vscode-pull-request-github",
+      "esbenp.prettier-vscode",
+      "GitHub.copilot-labs",
+      "VisualStudioExptTeam.vscodeintellicode",
+      "dsznajder.es7-react-js-snippets",
+      "dbaeumer.vscode-eslint"
+    ]
 	}
   },
 

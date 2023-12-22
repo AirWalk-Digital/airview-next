@@ -31,7 +31,7 @@ import {
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
 import { $createParagraphNode, $createTextNode, ElementNode } from "lexical";
-import * as matter from 'gray-matter';
+import * as matter from "gray-matter";
 import Paper from "@mui/material/Paper";
 import { AsideAndMainContainer, Aside, Main } from "@/components/layouts";
 
@@ -51,35 +51,34 @@ import {
   Alert,
   Grid,
   TextField,
-  Fab
+  Fab,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 function convertMdastToLexical(mdastNode) {
   switch (mdastNode.type) {
-    case 'mdxJsxTextElement':
+    case "mdxJsxTextElement":
       return convertJsxElement(mdastNode);
-    case 'text':
+    case "text":
       return mdastNode.value;
     // Handle other MDAST node types if needed
     default:
-      return '';
+      return "";
   }
 }
 
 function convertJsxElement(jsxNode) {
   const tagName = jsxNode.name;
-  const attributes = jsxNode.attributes.map(attr => `${attr.name}="${attr.value}"`).join(' ');
-  const children = jsxNode.children.map(convertMdastToLexical).join('');
+  const attributes = jsxNode.attributes
+    .map((attr) => `${attr.name}="${attr.value}"`)
+    .join(" ");
+  const children = jsxNode.children.map(convertMdastToLexical).join("");
 
   return `<${tagName} ${attributes}>${children}</${tagName}>`;
 }
 
-
 const catchAllVisitor = {
   testNode: () => true,
-
-  
 
   visitNode: ({ mdastNode, actions, lexicalParent }) => {
     const paragraph = $createParagraphNode();
@@ -95,7 +94,7 @@ const catchAllVisitor = {
       const lexicalContent = convertMdastToLexical(mdastNode);
       console.log("Editor:catchAllPluging:lexicalContent: ", lexicalContent); // Check how it looks in the console
       // paragraph.append($createTextNode(mdastNode.children[0].value));
-      paragraph.append($createTextNode(lexicalContent))
+      paragraph.append($createTextNode(lexicalContent));
     } catch (err) {
       console.debug("Editor:catchAllPlugin:mdastNode: ", mdastNode);
       console.error("Editor:catchAllPlugin:error: ", err);
@@ -103,7 +102,6 @@ const catchAllVisitor = {
     console.log("Editor:catchAllPluging:paragraph: ", paragraph); // Check how it looks in the console
     lexicalParent.append(paragraph);
     console.log("Editor:catchAllPluging:lexicalParent: ", lexicalParent); // Check how it looks in the console
-
   },
 };
 
@@ -133,7 +131,12 @@ const PlainTextCodeEditorDescriptor = {
   },
 };
 
-export function Editor({ markdown: initialMarkdown, context, callbackSave, enabled=true }) {
+export function Editor({
+  markdown: initialMarkdown,
+  context,
+  callbackSave,
+  enabled = true,
+}) {
   const [markdown, setMarkdown] = useState(initialMarkdown);
   const [changed, setChanged] = useState(false); // enable/disable the save button
   const ref = useRef();
@@ -143,17 +146,16 @@ export function Editor({ markdown: initialMarkdown, context, callbackSave, enabl
   console.log("Editor:context: ", context);
   console.log("Editor:reduxCollection: ", reduxCollection);
   console.log("Editor:initialMarkdown: ", initialMarkdown);
-  
-
 
   const editorCallback = (callback) => {
     // console.log("Editor:editorCallback: ", callback);
     // console.log("Editor:initialMarkdown: ", initialMarkdown);
     setMarkdown(callback);
     // setChanged(callback !== initialMarkdown)
-    const { data, content } = matter(callback.trim())
+    const { data, content } = matter(callback.trim());
     if (
-      content !== initialMarkdown.trim() && enabled
+      content !== initialMarkdown.trim() &&
+      enabled
       // context?.branch != reduxCollection?.branch
     ) {
       console.debug("Editor:isEditable");
@@ -163,56 +165,83 @@ export function Editor({ markdown: initialMarkdown, context, callbackSave, enabl
     }
   };
 
-  
-
   return (
     <EditorStateContext.Provider
-      value={{ changed, editorCallback, ref, reduxCollection, context, callbackSave }}
+      value={{
+        changed,
+        editorCallback,
+        ref,
+        reduxCollection,
+        context,
+        callbackSave,
+      }}
     >
-        <Paper sx={{px: '1%'}} elevation={0} >
+      <Paper sx={{ px: "1%" }} elevation={0}>
+        <EditorErrorBoundary
+          markdown={markdown}
+          callbackSave={callbackSave}
+          initialMarkdown={initialMarkdown}
+          ref={ref}
+        >
+          <MDXEditor
+            ref={ref}
+            onChange={editorCallback}
+            onError={(msg) => console.warn("Error in markdown: ", msg)}
+            markdown={markdown}
+            plugins={[
+              diffSourcePlugin({
+                diffMarkdown: initialMarkdown,
+                viewMode: "rich-text",
+              }),
+              codeBlockPlugin({
+                codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor],
+              }),
+              headingsPlugin(),
+              frontmatterPlugin(),
+              listsPlugin(),
+              linkPlugin(),
+              imagePlugin(),
+              linkDialogPlugin(),
+              quotePlugin(),
+              tablePlugin(),
+              thematicBreakPlugin(),
+              markdownShortcutPlugin(),
+              // catchAllPlugin(),
 
-      <EditorErrorBoundary markdown={markdown} callbackSave={callbackSave} initialMarkdown={initialMarkdown} ref={ref}>
-      <MDXEditor
-        ref={ref}
-        onChange={editorCallback}
-        onError={(msg) => console.warn("Error in markdown: ", msg)}
-        markdown={markdown}
-        plugins={[
-          diffSourcePlugin({
-            diffMarkdown: initialMarkdown,
-            viewMode: "rich-text",
-          }),
-          codeBlockPlugin({ codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor] }),
-          headingsPlugin(),
-          frontmatterPlugin(),
-          listsPlugin(),
-          linkPlugin(),
-          imagePlugin(),
-          linkDialogPlugin(),
-          quotePlugin(),
-          tablePlugin(),
-          thematicBreakPlugin(),
-          markdownShortcutPlugin(),
-          // catchAllPlugin(),
-
-          toolbarPlugin({
-            toolbarContents: () => (<> <UndoRedo /><BlockTypeSelect /><BoldItalicUnderlineToggles /><CreateLink /><InsertTable /><InsertCodeBlock /><InsertThematicBreak /><InsertFrontmatter />
-              <DiffSourceToggleWrapper />
-            </>)
-          })
-        ]}
-      /> <Fab color="primary" aria-label="save" enabled={changed} style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={() => {
-        const text = ref.current?.getMarkdown();
-        // console.log("Editor:save: ", text);
-        // console.log("Editor:collection: ", reduxCollection);
-        callbackSave(text);
-
-      }}>
-      <SaveIcon />
-    </Fab>
-      </EditorErrorBoundary>
+              toolbarPlugin({
+                toolbarContents: () => (
+                  <>
+                    {" "}
+                    <UndoRedo />
+                    <BlockTypeSelect />
+                    <BoldItalicUnderlineToggles />
+                    <CreateLink />
+                    <InsertTable />
+                    <InsertCodeBlock />
+                    <InsertThematicBreak />
+                    <InsertFrontmatter />
+                    <DiffSourceToggleWrapper />
+                  </>
+                ),
+              }),
+            ]}
+          />{" "}
+          <Fab
+            color="primary"
+            aria-label="save"
+            enabled={changed}
+            style={{ position: "fixed", bottom: 16, right: 16 }}
+            onClick={() => {
+              const text = ref.current?.getMarkdown();
+              // console.log("Editor:save: ", text);
+              // console.log("Editor:collection: ", reduxCollection);
+              callbackSave(text);
+            }}
+          >
+            <SaveIcon />
+          </Fab>
+        </EditorErrorBoundary>
       </Paper>
-
     </EditorStateContext.Provider>
   );
 }
@@ -232,7 +261,6 @@ function SaveButton() {
         // console.log("Editor:save: ", text);
         // console.log("Editor:collection: ", reduxCollection);
         callbackSave(text);
-
       }}
     >
       Save
@@ -259,7 +287,6 @@ class EditorErrorBoundary extends React.Component {
       // Render an alternative component or message when an error occurs
 
       return (
-
         <FallbackEditor
           markdown={this.props.markdown}
           callbackSave={this.props.callbackSave}
@@ -280,11 +307,10 @@ class EditorErrorBoundary extends React.Component {
   }
 }
 
-
-function FallbackMDXeditor({markdown,callbackSave,initialMarkdown,ref}) {
-
-return (<>
-<MDXEditor
+function FallbackMDXeditor({ markdown, callbackSave, initialMarkdown, ref }) {
+  return (
+    <>
+      <MDXEditor
         ref={ref}
         onChange={editorCallback}
         onError={(msg) => console.warn("Error in markdown: ", msg)}
@@ -294,7 +320,9 @@ return (<>
             diffMarkdown: initialMarkdown,
             viewMode: "source",
           }),
-          codeBlockPlugin({ codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor] }),
+          codeBlockPlugin({
+            codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor],
+          }),
           headingsPlugin(),
           frontmatterPlugin(),
           listsPlugin(),
@@ -308,21 +336,35 @@ return (<>
           // catchAllPlugin(),
 
           toolbarPlugin({
-            toolbarContents: () => (<> <UndoRedo /><BlockTypeSelect /><BoldItalicUnderlineToggles /><CreateLink /><InsertTable /><InsertCodeBlock /><InsertThematicBreak /><InsertFrontmatter />
-              <DiffSourceToggleWrapper />
-              <SaveButton />
-            </>)
-          })
+            toolbarContents: () => (
+              <>
+                {" "}
+                <UndoRedo />
+                <BlockTypeSelect />
+                <BoldItalicUnderlineToggles />
+                <CreateLink />
+                <InsertTable />
+                <InsertCodeBlock />
+                <InsertThematicBreak />
+                <InsertFrontmatter />
+                <DiffSourceToggleWrapper />
+                <SaveButton />
+              </>
+            ),
+          }),
         ]}
       />
-      <Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16, z }} onClick={handleSave}>
+      <Fab
+        color="primary"
+        aria-label="save"
+        style={{ position: "fixed", bottom: 16, right: 16, z }}
+        onClick={handleSave}
+      >
         <SaveIcon />
-      </Fab></>
-
-)
-
+      </Fab>
+    </>
+  );
 }
-
 
 function FallbackEditor({ markdown: initialMarkdown, callbackSave }) {
   const [markdown, setMarkdown] = useState(initialMarkdown);
@@ -333,16 +375,11 @@ function FallbackEditor({ markdown: initialMarkdown, callbackSave }) {
   };
 
   return (
-    <Grid
-      container
-      direction="column"
-      style={{ height: 'calc(100vh - 50px)' }}  >
+    <Grid container direction="column" style={{ height: "calc(100vh - 50px)" }}>
       <Grid item>
-        <Alert severity="warning">
-          Using the fallback editor
-        </Alert>
+        <Alert severity="warning">Using the fallback editor</Alert>
       </Grid>
-      <Grid item style={{ flex: 1, overflow: 'auto' }}>
+      <Grid item style={{ flex: 1, overflow: "auto" }}>
         <TextField
           id="outlined-multiline-static"
           multiline
@@ -350,82 +387,90 @@ function FallbackEditor({ markdown: initialMarkdown, callbackSave }) {
           variant="outlined"
           // style={{ height: '100%', minHeight: 'calc(100vh - 350px)' }}
           onChange={(event) => setMarkdown(event.target.value)}
-          defaultValue={markdown}        
+          defaultValue={markdown}
           sx={{
             mt: "1%",
             "& .MuiInputBase-input": {
               // height: "100%",
-              // overflowY: 'auto', 
+              // overflowY: 'auto',
             },
             "& .MuiInputBase-root": {
               // minHeight: 'calc(100vh - 200px)',
-              minHeight: 'calc(100vh - 250px)',
-              alignItems: 'baseline'
+              minHeight: "calc(100vh - 250px)",
+              alignItems: "baseline",
             },
           }}
         />
       </Grid>
 
-      <Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleSave}>
+      <Fab
+        color="primary"
+        aria-label="save"
+        style={{ position: "fixed", bottom: 16, right: 16 }}
+        onClick={handleSave}
+      >
         <SaveIcon />
       </Fab>
-
     </Grid>
   );
 
   return (
     <AsideAndMainContainer>
-    {/* <Main sx={{}}> */}
-    <Main>
-      <Grid
-  container
-  direction="row"
-  justifyContent="center"
-  alignItems="stretch"
-  height="100%"
->
-<Grid item xs={12}>
+      {/* <Main sx={{}}> */}
+      <Main>
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="stretch"
+          height="100%"
+        >
+          <Grid item xs={12}>
+            <Grid
+              container
+              direction="column"
+              justifyContent="flex-start"
+              alignItems="stretch"
+              style={{ display: "flex" }} // Add this line
+            >
+              <Grid item xs={12}>
+                <Alert severity="warning">Using the fallback editor</Alert>
+              </Grid>
+              <Grid item xs={12} style={{ display: "flex", height: "100%" }}>
+                <TextField
+                  id="outlined-multiline-static"
+                  multiline
+                  fullWidth
+                  onChange={(event) => setMarkdown(event.target.value)}
+                  defaultValue={markdown}
+                  variant="outlined"
+                  style={{
+                    marginTop: "1%",
+                    flex: 1,
+                    overflow: "auto",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
 
+        <Fab
+          color="primary"
+          aria-label="save"
+          style={{ position: "fixed", bottom: 16, right: 16 }}
+          onClick={handleSave}
+        >
+          <SaveIcon />
+        </Fab>
+      </Main>
+    </AsideAndMainContainer>
+  );
+}
 
-<Grid
-  container
-  direction="column"
-  justifyContent="flex-start"
-  alignItems="stretch"
-  style={{ display: 'flex' }} // Add this line
->
-      <Grid item xs={12}>
-        <Alert severity="warning">
-          Using the fallback editor
-        </Alert>
-      </Grid>
-      <Grid item xs={12} style={{ display: 'flex', height: '100%' }}>
-              <TextField
-  id="outlined-multiline-static"
-  multiline
-  fullWidth
-  onChange={(event) => setMarkdown(event.target.value)}
-  defaultValue={markdown}
-  variant="outlined"
-  style={{ marginTop: "1%", flex: 1, overflow: 'auto', boxSizing: 'border-box' }}
-/>
-      </Grid>
-  </Grid>
-  </Grid>
-
-
-
-</Grid>
-
-<Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleSave}>
-<SaveIcon />
-</Fab>
-</Main>
-</AsideAndMainContainer>
-  )
-  };
-
-{/* 
+{
+  /* 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
     <Grid container style={{ flex: 1, overflow: 'hidden' }}>
@@ -453,6 +498,5 @@ function FallbackEditor({ markdown: initialMarkdown, callbackSave }) {
     </Fab>
   </div>
   
-  ); */}
-
-
+  ); */
+}
