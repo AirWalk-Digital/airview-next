@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Toolbar,
@@ -21,25 +21,70 @@ import { toSnakeCase } from "@/lib/utils/stringUtils";
 import { useRouter } from 'next/navigation'
 
 export function ControlBar({
-  open,
+  open: controlBarOpen,
   height,
   handleEdit,
   handleRefresh,
   handlePrint,
   handlePresentation,
   collection,
-  context: initialContext,
-  editMode = false
+  context,
+  editMode,
+  setControlBarOpen
 }) {
   const [isAddOpen, setIsAddOpen] = useState(false);
+  // const [controlBarOpen, setControlBarOpen] = useState(open);
 
-
-  const [context, setContext] = useState(initialContext);
+  // const [context, setContext] = useState(initialContext);
+  // const [editMode, setEditMode] = useState(false);
   // const queryBranch = useRouter()?.query?.branch ?? null; // this loads direct links to the content using ?branch=whatever query parameter
   const dispatch = useDispatch();
 
   const [branches, setBranches] = useState([{ name: "main" }]);
-  const router = useRouter()
+  // const router = useRouter()
+
+  // const editFromQuery = useRouter()?.query?.edit ?? null; // ?edit=true query parameter
+  // const queryBranch = useRouter()?.query?.branch ?? null; // ?branch=whatever query parameter
+
+  console.debug("ControlBar:context: ", context);
+  console.debug("ControlBar:collection: ", collection);
+  console.debug("ControlBar:editMode: ", editMode);
+
+  useEffect(() => {
+      // run and reprocess the files and branches.
+      console.debug("ControlBar:useEffect:context: ", context);
+  
+      // if (editFromQuery !== null) {
+      //   console.debug("ControlBar:editFromQuery: ", editFromQuery);
+      //   setEditMode(true);
+      //   setControlBarOpen(true)
+      // } // set the edit mode from the query parameter ?edit=true
+  
+      if (
+        context &&
+        context.branch &&
+        collection &&
+        collection.branch != context.branch
+      ) {
+        console.log(
+          "ControlBar:queryBranch(in URI): ",
+          collection?.branch ?? null, 
+          " : ",
+          context?.branch ?? null
+        );
+        // const newContext = { ...context, branch: queryBranch };
+        // console.debug("ContentPage:newContext: ", newContext);
+  
+        // dispatch(setBranch(newContext));
+        // handleContentChange(context.file);
+        setControlBarOpen(true);
+        // setControlBarOpen(true)
+        // setChangeBranch(true)
+      } // set the branch from the query parameter ?branch=
+    }, [context]);
+  
+
+
 
   function fetchBranches(collection) {
     const branches = async () => {
@@ -52,7 +97,7 @@ export function ControlBar({
     branches();
   }
   const onContextUpdate = async (context) => {
-    setContext(context);
+    // setContext(context);
     console.debug("ControlBar:onContextUpdate: ", context);
     await dispatch(setBranch(context)); // set the branch
 
@@ -102,7 +147,7 @@ export function ControlBar({
   return (
     <>
       <ControlBarComponent
-        open={open}
+        open={controlBarOpen}
         top={height}
         handleEdit={handleEdit}
         handleRefresh={handleRefresh}
@@ -113,8 +158,9 @@ export function ControlBar({
         collection={collection}
         context={context}
         branches={branches}
-        fetchBranches={fetchBranches}
         editMode={editMode}
+        fetchBranches={fetchBranches}
+
       />
       <NewContentDialog
         dialogOpen={isAddOpen}

@@ -44,7 +44,7 @@ import path from "path";
 
 export function ContentPage({
   pageContent,
-  file,
+  // file,
   content,
   menuStructure,
   handleContentChange,
@@ -52,13 +52,15 @@ export function ContentPage({
   collection,
   context,
   menuComponent,
+  isLoading,
+  // editMode: editModeInitial,
   headerComponent = null,
   sideComponent = null,
-  isLoading,
   menuOpen: menuOpenInitial = true,
 }) {
   console.debug("ContentPage:menuComponent: ", menuComponent);
-  console.debug("ContentPage:content: ", content);
+  console.debug("ContentPage:context: ", context);
+  console.debug("ContentPage:menuOpenInitial: ", menuOpenInitial);
 
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
   const MenuComponent = menuComponent;
@@ -82,9 +84,12 @@ export function ContentPage({
   ); // Make sure to include frontmatter in the dependency array
 
   // ControlBar
-  const [controlBarOpen, setControlBarOpen] = useState(
-    useRouter()?.query?.edit ?? false
-  );
+  // const [controlBarOpen, setControlBarOpen] = useState(
+  //   useRouter()?.query?.edit ?? false
+  // );
+
+
+  const [controlBarOpen, setControlBarOpen] = useState(false);
 
   const currentState = store.getState();
   // const reduxContext = currentState;
@@ -95,14 +100,34 @@ export function ContentPage({
 
   const dispatch = useDispatch();
 
-  const editFromQuery = useRouter()?.query?.edit ?? null; // ?edit=true query parameter
-  const queryBranch = useRouter()?.query?.branch ?? null; // ?branch=whatever query parameter
+  // const editFromQuery = useRouter()?.query?.edit ?? null; // ?edit=true query parameter
+  // const queryBranch = useRouter()?.query?.branch ?? null; // ?branch=whatever query parameter
   const navDrawerWidth = 300;
   const topBarHeight = controlBarOpen ? 64 + 64 : 64;
   const [menuOpen, setMenuOpen] = useState(menuOpenInitial);
   const [print, setPrint] = useState(false);
   const [presentation, setPresentation] = useState(false);
   const [editMode, setEditMode] = useState(false);
+
+
+  const editFromQuery = Boolean(useRouter()?.query?.edit ?? false); // ?edit=true query parameter
+
+
+  console.debug("ContentPage:editMode: ", editMode);
+  // console.debug("ContentPage:editModeInitial: ", editModeInitial);
+
+  useEffect(() => {
+    // set edit mode
+    console.debug("ContentPage:editFromQuery: ", editFromQuery);
+    if (editFromQuery) {
+      setEditMode(editFromQuery);
+      setMenuOpen(false);
+      setControlBarOpen(true);
+    }
+    
+  }, []);
+
+
 
   useEffect(() => {
     // update the frontmatter
@@ -111,43 +136,46 @@ export function ContentPage({
     }
   }, [pageContent.frontmatter]);
 
-  useEffect(() => {
-    // run and reprocess the files and branches.
-    console.debug("ContentPage:queryBranch: ", queryBranch);
-    console.debug("ContentPage:editFromQuery: ", editFromQuery);
+  // useEffect(() => {
+  //   // run and reprocess the files and branches.
+  //   console.debug("ContentPage:queryBranch: ", queryBranch);
+  //   console.debug("ContentPage:editFromQuery: ", editFromQuery);
 
-    if (editFromQuery) {
-      setEditMode(true);
-      setControlBarOpen(true)
-    } // set the edit mode from the query parameter ?edit=true
+  //   if (editFromQuery) {
+  //     setEditMode(true);
+  //     setControlBarOpen(true)
+  //   } // set the edit mode from the query parameter ?edit=true
 
-    if (
-      reduxContext &&
-      reduxContext.branch &&
-      queryBranch &&
-      queryBranch != reduxContext.branch
-    ) {
-      console.log(
-        "ContentPage:queryBranch(in URI): ",
-        queryBranch,
-        " : ",
-        reduxContext?.branch ?? null
-      );
-      const newContext = { ...context, branch: queryBranch };
-      console.debug("ContentPage:newContext: ", newContext);
+  //   if (
+  //     reduxContext &&
+  //     reduxContext.branch &&
+  //     queryBranch &&
+  //     queryBranch != reduxContext.branch
+  //   ) {
+  //     console.log(
+  //       "ContentPage:queryBranch(in URI): ",
+  //       queryBranch,
+  //       " : ",
+  //       reduxContext?.branch ?? null
+  //     );
+  //     const newContext = { ...context, branch: queryBranch };
+  //     console.debug("ContentPage:newContext: ", newContext);
 
-      dispatch(setBranch(newContext));
-      handleContentChange(context.file);
-      setControlBarOpen(true);
-      // setControlBarOpen(true)
-      // setChangeBranch(true)
-    } // set the branch from the query parameter ?branch=
-  }, []);
+  //     dispatch(setBranch(newContext));
+  //     handleContentChange(context.file);
+  //     setControlBarOpen(true);
+  //     // setControlBarOpen(true)
+  //     // setChangeBranch(true)
+  //   } // set the branch from the query parameter ?branch=
+  // }, []);
 
 
   const handleEditMode = (mode) => {
+    console.debug("ContentPage:handleEditMode: ", mode);
     setEditMode(mode);
+    if (menuOpenInitial) {
     setMenuOpen(!mode);
+    }
   };
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
@@ -245,6 +273,7 @@ export function ContentPage({
             collection={collection}
             context={context}
             editMode={editMode}
+            setControlBarOpen={setControlBarOpen}
           />
 
           {menuStructure && (
@@ -292,7 +321,7 @@ export function ContentPage({
                   // designs={designs}
                   handleContentChange={handleContentChange}
                   handlePageReset={handlePageReset}
-                  file={file}
+                  file={context.file}
                 />
                 {sideComponent && <SideComponent />}
                 {frontmatter?.tableOfContents && (
@@ -375,6 +404,8 @@ export function ContentPage({
             }
             collection={collection}
             context={context}
+            editMode={editMode}
+            setControlBarOpen={setControlBarOpen}
           />
           <div
             style={{
@@ -385,7 +416,7 @@ export function ContentPage({
           >
             <Editor
               markdown={content}
-              context={reduxContext}
+              context={context}
               callbackSave={onSave}
             />
           </div>

@@ -23,7 +23,7 @@ export default function Page({
     handlePageReset,
     context,
     content,
-  } = usePageContent(initialContent, initialFile, initialMenuStructure, collection, initialContext);
+  } = usePageContent(initialContent, initialContext);
 
 
   return (

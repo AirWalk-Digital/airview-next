@@ -11,15 +11,27 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
 export function ControlBarComponent({
-    open, height, handleEdit, handlePrint, handleAdd, handlePresentation, collection, context, branches, top='64px', onContextUpdate, fetchBranches = () => {} }, editMode) {
-    const [edit, setEdit] = useState(editMode);
+    open, height, handleEdit, handlePrint, handleAdd, handlePresentation, collection, context, branches, top='64px', onContextUpdate, editMode, fetchBranches = () => {} }) {
+    // const [edit, setEdit] = useState(editMode);
     // const [collection, setCollection] = useState(initialCollection);
 
-    const [changeBranch, setChangeBranch] = useState(context.branch != collection.branch);
+    const [changeBranch, setChangeBranch] = useState(false);
     console.log('ControlBarComponent:context: ', context)
     console.log('ControlBarComponent:changeBranch: ', changeBranch)
     console.log('ControlBarComponent:collection: ', collection)
+    console.log('ControlBarComponent:editMode: ', editMode)
 
+
+    useEffect(() => {
+
+
+    if (context.branch != collection.branch) {
+        setBranch(context.branch);
+        setChangeBranch(true);
+    }
+
+
+}, [context]);
 
     const [branch, setBranch] = useState(context.branch);
 
@@ -76,17 +88,18 @@ export function ControlBarComponent({
     };
 
     const onEditClick = () => { // onEdit
+        console.debug('ControlBarComponent:onEditClick')
         // localStorage.setItem('editMode', JSON.stringify(editMode));
         if (typeof handleEdit === 'function') {
-            handleEdit(!edit);
+            handleEdit(!editMode);
             // if (edit) {onBranchToggle('close')} else {onBranchToggle('open')}; // show / hide the branch selector
             // if (edit) {setChangeBranch(false)} else {setChangeBranch(true)}; // show / hide the branch selector
-            if (!edit) {
+            if (!editMode) {
                 fetchBranches(collection);
                 setChangeBranch(true)
             }; // show / hide the branch selector
 
-            setEdit(!edit)
+            // setEdit(!edit)
 
         } else {
             console.error('TopBar: Error: handleEdit is not a function');
@@ -98,7 +111,7 @@ export function ControlBarComponent({
             <Toolbar sx={{ justifyContent: 'space-between' }}>
                 <div>
                     <FormControlLabel control={
-                        <Switch checked={edit} onClick={() => onEditClick()} />
+                        <Switch checked={editMode} onClick={() => onEditClick()} />
 
 
                     } label="Edit Mode" />
@@ -111,21 +124,21 @@ export function ControlBarComponent({
                     {  changeBranch && collection && <FormControlLabel control={<BranchSelector onBranchChange={onBranchChange} branches={branches} branch={branch} />} label="" />}
                 </div>
                 <div>
-                {edit && (collection.branch !== context.branch) && <FormControlLabel control={<IconButton
+                {editMode && (collection.branch !== context.branch) && <FormControlLabel control={<IconButton
                         size="large"
                         onClick={() => handleAddClick()}
                         color="primary"
                     >
                         <AddCircleIcon />
                     </IconButton>} label="Add" />}
-                    {handlePrint && !edit && <FormControlLabel control={<IconButton
+                    {handlePrint && !editMode && <FormControlLabel control={<IconButton
                         size="large"
                         onClick={() => handlePrintClick()}
                         color="primary"
                     >
                         <PrintIcon />
                     </IconButton>} label="Print" />}
-                    {handlePresentation && !edit && <FormControlLabel control={<IconButton
+                    {handlePresentation && !editMode && <FormControlLabel control={<IconButton
                         size="large"
                         onClick={() => handlePresentationClick()}
                         color="primary"

@@ -18,20 +18,17 @@ import { dirname } from "path";
 export default function Page({
   type,
   content: initialContent,
-  file: initialFile,
-  menuStructure: initialMenuStructure,
-  collection,
   context: initialContext,
   tiles,
   loading,
 }) {
 
 
-  const LeftMenuOpen = () => {
+  const LeftMenuOpen = (context) => {
 
-    if (collection && collection.menu && collection.menu) {
+    if (context && context.menu && context.menu.component) {
 
-      switch (collection.menu.component) {
+      switch (context.menu.component) {
 
         case "DummyMenu":
 
@@ -44,9 +41,9 @@ export default function Page({
     }
   };
 
-  const LeftMenuFunction = () => {
-    if (collection && collection.menu && collection.menu.component) {
-      switch (collection.menu.component) {
+  const LeftMenuFunction = (context) => {
+    if (context && context.menu && context.menu.component) {
+      switch (context.menu.component) {
         case "DummyMenu":
           return DummyMenu;
         case "FullHeaderMenu":
@@ -84,7 +81,7 @@ export default function Page({
         menuStructure={menuStructure}
         title=""
         tiles={tiles}
-        menuComponent={LeftMenuFunction()}
+        menuComponent={LeftMenuFunction(initialContext)}
       />
     );
   } else {
@@ -96,33 +93,37 @@ export default function Page({
       handlePageReset,
       context,
       content,
+      frontMatterCallback,
+      editMode,
     } = usePageContent(
       initialContent,
-      initialFile,
-      initialMenuStructure,
-      collection,
       initialContext
     );
+
+    console.debug("[[...path]]/index:editMode: ", editMode);
+
 
     return (
       <ContentPage
         pageContent={pageContent}
-        file={initialFile}
+        // file={initialFile}
         content={content}
         menuStructure={menuStructure}
         handleContentChange={handleContentChange}
         handlePageReset={handlePageReset}
         collection={initialContext}
         context={context}
-        menuComponent={LeftMenuFunction()}
-        menuOpen={LeftMenuOpen()}
-        contentSource={contentSource}
-        
+        menuComponent={LeftMenuFunction(context)}
+        isLoading={loading}
+        headerComponent={null}
+        sideComponent={null}
+        menuOpen={LeftMenuOpen(context)}
+        // contentSource={contentSource}
+        // editMode={editMode}
         // headerComponent={(props) => (
         //   <ServicesHeader {...props} extraData={controls} />
         // )}
         // sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
-        isLoading={loading}
       />
     );
   }
@@ -201,9 +202,9 @@ export async function getServerSideProps(context) {
       props: {
         type: type,
         content: pageContentText || "",
-        file: file,
-        menuStructure: menuStructure || "",
-        collection: siteConfig.content[collection.path],
+        // file: file,
+        // menuStructure: menuStructure || "",
+        // collection: siteConfig.content[collection.path],
         context: {
           file: file,
           ...collectionName(file, siteConfig.content[context.params.path[0]]),
@@ -219,9 +220,9 @@ export async function getServerSideProps(context) {
       props: {
         type: type,
         content: null,
-        file: null,
-        menuStructure: null,
-        collection: null,
+        // file: null,
+        // menuStructure: null,
+        // collection: null,
         context: null,
         key: "home",
       },
