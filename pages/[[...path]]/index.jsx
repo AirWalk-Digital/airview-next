@@ -6,7 +6,7 @@ import { usePageContent, collectionName, usePageMenu, LeftMenuFunction, LeftMenu
 import { getMenuStructure, groupMenu, getFrontMatter } from "@/lib/content";
 
 import { ContentPage, IndexView } from "@/components/layouts";
-
+import { HeaderMinimalMenu } from "@/components/menus";
 // import { ServicesHeader } from "@/components/headers";
 import LandingPage from "@/components/landingpage";
 import { dirname } from "path";
