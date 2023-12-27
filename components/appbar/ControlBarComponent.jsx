@@ -42,11 +42,25 @@ export function ControlBarComponent({
             const newCollection = {...collection } // default the branch back
             setBranch(collection.branch)
             onContextUpdate(newCollection)
+            if (typeof window !== "undefined") {
+                let url = new URL(window.location.href);
+          
+               
+                // If there is a 'branch' query parameter, delete it
+                if (url.searchParams.has("branch")) {
+                    url.searchParams.delete("branch");
+                }
+                    
+                window.history.replaceState({}, document.title, url);
+            };
         } else {
             fetchBranches(collection);
         }
         setChangeBranch(!changeBranch);
-        if (open == 'open') { setChangeBranch(true) } else if (open == 'close') { setChangeBranch(false) };
+        if (open == 'open') { setChangeBranch(true) } else if (open == 'close') { 
+            setChangeBranch(false) 
+            
+        };
     };
     
     async function onBranchChange(event, value) { // handles the branch selector changing
@@ -107,7 +121,7 @@ export function ControlBarComponent({
     };
 
     return (
-        <AppBar position="fixed" color="white" elevation={0} sx={{ height: height, display: open ? '' : 'none', displayPrint: 'none', borderBottom: 1, borderColor: 'grey.300', top: top }}>
+        <AppBar position="fixed" color="white" elevation={0} sx={{ height: height, display: open ? '' : 'none', displayPrint: 'none', borderBottom: 1, borderColor: 'grey.300', top: top, zIndex: 1 }}>
             <Toolbar sx={{ justifyContent: 'space-between' }}>
                 <div>
                     <FormControlLabel control={
@@ -121,7 +135,7 @@ export function ControlBarComponent({
 
 
                     } label="Change Branch" />
-                    {  changeBranch && collection && <FormControlLabel control={<BranchSelector onBranchChange={onBranchChange} branches={branches} branch={branch} />} label="" />}
+                    {  changeBranch && collection && <FormControlLabel control={<BranchSelector sx={{zIndex: 999}} onBranchChange={onBranchChange} branches={branches} branch={branch} />} label="" />}
                 </div>
                 <div>
                 {editMode && (collection.branch !== context.branch) && <FormControlLabel control={<IconButton

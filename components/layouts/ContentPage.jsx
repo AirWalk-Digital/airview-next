@@ -88,7 +88,6 @@ export function ContentPage({
   //   useRouter()?.query?.edit ?? false
   // );
 
-
   const [controlBarOpen, setControlBarOpen] = useState(false);
 
   const currentState = store.getState();
@@ -109,9 +108,7 @@ export function ContentPage({
   const [presentation, setPresentation] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-
   const editFromQuery = Boolean(useRouter()?.query?.edit ?? false); // ?edit=true query parameter
-
 
   console.debug("ContentPage:editMode: ", editMode);
   // console.debug("ContentPage:editModeInitial: ", editModeInitial);
@@ -124,10 +121,7 @@ export function ContentPage({
       setMenuOpen(false);
       setControlBarOpen(true);
     }
-    
   }, []);
-
-
 
   useEffect(() => {
     // update the frontmatter
@@ -169,12 +163,23 @@ export function ContentPage({
   //   } // set the branch from the query parameter ?branch=
   // }, []);
 
-
   const handleEditMode = (mode) => {
     console.debug("ContentPage:handleEditMode: ", mode);
     setEditMode(mode);
+    if (!mode) {
+      if (typeof window !== "undefined") {
+        let url = new URL(window.location.href);
+
+        // If there is an 'edit' query parameter, delete it
+        if (url.searchParams.has("edit")) {
+          url.searchParams.delete("edit");
+        }
+
+        window.history.replaceState({}, document.title, url);
+      }
+    }
     if (menuOpenInitial) {
-    setMenuOpen(!mode);
+      setMenuOpen(!mode);
     }
   };
 
@@ -418,6 +423,7 @@ export function ContentPage({
               markdown={content}
               context={context}
               callbackSave={onSave}
+              top={topBarHeight+64}
             />
           </div>
         </ThemeProvider>
@@ -529,14 +535,11 @@ function ContentMenu({
 }) {
   // let directory = file?.includes("/") ? file.split("/")[1] : file;
 
-
-
   const onContentClick = (callback) => {
     console.log("ContentPage:ContentMenu:onContentClick: ", callback);
-    
-    handleContentChange(callback, true)
-  };
 
+    handleContentChange(callback, true);
+  };
 
   let directory = file ? path.dirname(file) : null;
 

@@ -14,15 +14,27 @@ export default function Page() {
   const owner = "airwalk-digital";
   const repo = "airwalk_patterns";
   const branch = "1-rob-ellison";
-  // const path = "README.md";
-  const path = "/solutions/cloud_architecture/architecture_presentation.ppt.mdx";
+  const path = "README.md";
+
+  const context = {
+    source: "github",
+    repo: "airwalk_patterns",
+    owner: "airwalk-digital",
+    branch: "1-rob-ellison",
+    path: "knowledge",
+    reference: "knowledge",
+    file: "README.md",
+    menu: { component: "DummyMenu", collection: null },
+  };
+
+  // const path = "/solutions/cloud_architecture/architecture_presentation.ppt.mdx";
 
   useEffect(() => {
     async function loadFile() {
       setLoading(true);
       try {
         const response = await fetch(
-          `/api/content/github/${owner}/${repo}?branch=${branch}&path=${path}`
+          `/api/content/github/${context.owner}/${context.repo}?branch=${context.branch}&path=${context.file}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -45,11 +57,10 @@ export default function Page() {
 <Alert param1="value1" param2="value2">test</Alert>
 more
 `;
-  
 
   function callbackSave(content) {
     console.log("content: ", content);
-    commitFileChanges(owner, repo, branch, path, content, 'Airview commit');
+    commitFileChanges(owner, repo, branch, path, content, "Airview commit");
     // const currentState = store.getState();
     // const reduxCollection = currentState.branch[collection];
     // console.log("Editor:context: ", context);
@@ -65,32 +76,33 @@ more
 
   return (
     <EditorClient
-      markdown={mkdown}
-      context={[]}
+      markdown={fileContent}
+      context={context}
       callbackSave={callbackSave}
     />
   );
 }
 
-
 async function commitFileChanges(owner, repo, branch, path, content, message) {
   try {
-    const response = await fetch(`/api/content/github/${owner}/${repo}?branch=${branch}&path=${path}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ content, message }),
-    });
+    const response = await fetch(
+      `/api/content/github/${owner}/${repo}?branch=${branch}&path=${path}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content, message }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Commit successful:', data);
+    console.log("Commit successful:", data);
   } catch (e) {
-    console.error('Error committing file:', e.message);
+    console.error("Error committing file:", e.message);
   }
 }
-

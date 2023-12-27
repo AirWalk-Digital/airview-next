@@ -25,6 +25,7 @@ import {
   InsertTable,
   InsertCodeBlock,
   InsertFrontmatter,
+  InsertImage,
   CreateLink,
   InsertThematicBreak,
   DiffSourceToggleWrapper,
@@ -34,6 +35,7 @@ import { $createParagraphNode, $createTextNode, ElementNode } from "lexical";
 import * as matter from "gray-matter";
 import Paper from "@mui/material/Paper";
 import { AsideAndMainContainer, Aside, Main } from "@/components/layouts";
+import path from "path";
 
 // const { MDXEditor, codeBlockPlugin, diffSourcePlugin, headingsPlugin, frontmatterPlugin, listsPlugin, linkPlugin, linkDialogPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, UndoRedo, InsertTable, InsertCodeBlock, InsertFrontmatter, CreateLink, InsertThematicBreak, DiffSourceToggleWrapper } = await import('@mdxeditor/editor')
 import { useState, useRef, createContext } from "react";
@@ -54,6 +56,10 @@ import {
   Fab,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import { styled } from "@mui/material/styles";
+
+
+
 
 function convertMdastToLexical(mdastNode) {
   switch (mdastNode.type) {
@@ -136,6 +142,7 @@ export function Editor({
   context,
   callbackSave,
   enabled = true,
+  top
 }) {
   const [markdown, setMarkdown] = useState(initialMarkdown);
   const [changed, setChanged] = useState(false); // enable/disable the save button
@@ -147,8 +154,28 @@ export function Editor({
   console.log("Editor:reduxCollection: ", reduxCollection);
   console.log("Editor:initialMarkdown: ", initialMarkdown);
 
+  const StyledMDXEditor = styled(MDXEditor)`
+  [role='toolbar'] {
+    // border: 1px solid #d1d5db;
+    // border-radius: 0.15rem;
+    // border-bottom-right-radius: 0;
+    // border-bottom-left-radius: 0;
+  }
+
+  [role='textbox'] {
+    // background-color: white;
+    // border: 1px solid #d1d5db;
+    // border-top: none;
+    // border-radius: 0.15rem;
+    // border-top-right-radius: 0;
+    // border-top-left-radius: 0;
+    height: calc(100vh -  ${top}px);
+    overflow-y: auto;
+  }
+`;
+
   const editorCallback = (callback) => {
-    // console.log("Editor:editorCallback: ", callback);
+    console.log("Editor:editorCallback: ", callback);
     // console.log("Editor:initialMarkdown: ", initialMarkdown);
     setMarkdown(callback);
     // setChanged(callback !== initialMarkdown)
@@ -164,6 +191,74 @@ export function Editor({
       setChanged(false);
     }
   };
+
+  async function imagePreviewHandler(imageSource) {
+    console.log("Editor:imagePreviewHandler: ", context, imageSource);
+    const file = path.dirname(context.file) + "/" + imageSource;
+    const filePath = file.replace(/^\/|^\.\//, ""); // strip leading slash
+    console.log("Editor:imagePreviewHandler:filePath: ", filePath);
+
+    const response = await fetch(
+      `/api/content/github/${context.owner}/${context.repo}?branch=${context.branch}&path=${filePath}`
+    );
+    console.log("Editor:imagePreviewHandler:response: ", response);
+    if (!response.ok) {
+      throw new Error(
+        `Editor:imagePreviewHandler:HTTP error! status: ${response.status}`
+      );
+    }
+    // Fetch the image as Blob directly
+    const blob = await response.blob();
+
+    // Create an object URL for the Blob
+    const imageObjectUrl = URL.createObjectURL(blob);
+    console.log("Editor:imagePreviewHandler:imageObjectUrl: ", imageObjectUrl);
+    return imageObjectUrl;
+    
+  }
+
+  async function imageUploadHandler(image) {
+    console.log("Editor:imageUploadHandler: ", context, image);
+    const formData = new FormData();
+    formData.append("image", image);
+    const file =
+      path.dirname(context.file) +
+      "/" +
+      image.name.replace(/[^a-zA-Z0-9.]/g, "").toLowerCase();
+    const fileName = image.name.replace(/[^a-zA-Z0-9.]/g, "").toLowerCase();
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onloadend = async function () {
+        const base64Image = reader.result;
+        const imageData = base64Image.split(",")[1];
+        console.log("Editor:imageUploadHandler:base64Image: ", base64Image);
+        try {
+          const url = await createFile(
+            context.owner,
+            context.repo,
+            context.branch,
+            file,
+            fileName,
+            imageData,
+            "Image uploaded from Airview"
+          );
+          if (url) {
+            resolve(url);
+          } else {
+            reject("Error uploading image");
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      reader.onerror = reject;
+
+      reader.readAsDataURL(image);
+    });
+  }
 
   return (
     <EditorStateContext.Provider
@@ -183,7 +278,7 @@ export function Editor({
           initialMarkdown={initialMarkdown}
           ref={ref}
         >
-          <MDXEditor
+          <StyledMDXEditor
             ref={ref}
             onChange={editorCallback}
             onError={(msg) => console.warn("Error in markdown: ", msg)}
@@ -206,6 +301,13 @@ export function Editor({
               tablePlugin(),
               thematicBreakPlugin(),
               markdownShortcutPlugin(),
+              imagePlugin({
+                disableImageResize: true,
+                imageUploadHandler: (image) =>
+                  Promise.resolve(imageUploadHandler(image)),
+                imagePreviewHandler: (imageSource) =>
+                  Promise.resolve(imagePreviewHandler(imageSource)),
+              }),
               // catchAllPlugin(),
 
               toolbarPlugin({
@@ -217,6 +319,7 @@ export function Editor({
                     <BoldItalicUnderlineToggles />
                     <CreateLink />
                     <InsertTable />
+                    <InsertImage />
                     <InsertCodeBlock />
                     <InsertThematicBreak />
                     <InsertFrontmatter />
@@ -266,6 +369,57 @@ function SaveButton() {
       Save
     </Button>
   );
+}
+
+async function createFile(
+  owner,
+  repo,
+  branch,
+  file,
+  fileName,
+  content,
+  message
+) {
+  // use in pages
+
+  // const file = path.basename(path);
+
+  console.debug(
+    "Editor:createFile: ",
+    owner,
+    repo,
+    branch,
+    file,
+    fileName,
+    content,
+    message
+  );
+  const filePath = file.replace(/^\/|^\.\//, "");
+
+  // return fileName;
+
+  try {
+    const response = await fetch(
+      `/api/content/github/${owner}/${repo}?branch=${branch}&path=${filePath}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content, message }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Editor:createFile:Commit successful:", data);
+    return fileName;
+  } catch (e) {
+    console.error("Editor:createFile:Error committing file:", e.message);
+    return null;
+  }
 }
 
 class EditorErrorBoundary extends React.Component {
