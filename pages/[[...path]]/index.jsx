@@ -19,11 +19,9 @@ export default function Page({
   loading,
 }) {
 
-
-
-
-
   if (type === "home") {
+    return <LandingPage />;
+  } else if (type ==='404') {
     return <LandingPage />;
   } else if (type === "index") {
     if (loading) {
@@ -88,9 +86,10 @@ export async function getServerSideProps(context) {
   let file;
   let type = "";
   let tiles = [];
-  if (context.params.path) {
+  if (context.params.path && siteConfig.content[context.params.path[0]]) {
     file = context.params.path.join("/");
     let pageContent = "";
+    
     if (!file.endsWith(".etherpad")) {
       pageContent = await getFileContent(
         siteConfig.content[context.params.path[0]].owner,
@@ -99,7 +98,7 @@ export async function getServerSideProps(context) {
         file
       );
     }
-
+  
     const menuContext = () => {
       if (siteConfig.content[context.params.path[0]].menu && siteConfig.content[context.params.path[0]].menu.collection) {
         return siteConfig.content[siteConfig.content[context.params.path[0]].menu.collection]
@@ -152,6 +151,7 @@ export async function getServerSideProps(context) {
         file = context.params.path.join("/");
         break;
     }
+ 
 
     return {
       props: {
@@ -168,7 +168,7 @@ export async function getServerSideProps(context) {
         key: context.params.path,
       },
     };
-  } else {
+  } else if (siteConfig.content[context.params.path[0]]) {
     type = "home";
 
     return {
@@ -182,5 +182,19 @@ export async function getServerSideProps(context) {
         key: "home",
       },
     };
-  }
+  } else {
+    type = "404";
+    return { notFound: true }
+  //   return {
+  //     props: {
+  //       type: type,
+  //       content: null,
+  //       // file: null,
+  //       // menuStructure: null,
+  //       // collection: null,
+  //       context: null,
+  //       key: "404",
+  //     },
+  // }
+}
 }
