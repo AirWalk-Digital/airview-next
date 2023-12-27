@@ -86,6 +86,7 @@ export async function getServerSideProps(context) {
   let file;
   let type = "";
   let tiles = [];
+  console.log("/[...path]]:getServerSideProps:context: ", context);
   if (context.params.path && siteConfig.content[context.params.path[0]]) {
     file = context.params.path.join("/");
     let pageContent = "";
@@ -168,7 +169,7 @@ export async function getServerSideProps(context) {
         key: context.params.path,
       },
     };
-  } else if (siteConfig.content[context.params.path[0]]) {
+  } else if (context.resolvedUrl === "/" ) {
     type = "home";
 
     return {
