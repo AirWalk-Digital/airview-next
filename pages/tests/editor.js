@@ -20,10 +20,10 @@ export default function Page() {
     source: "github",
     repo: "airwalk_patterns",
     owner: "airwalk-digital",
-    branch: "1-rob-ellison",
+    branch: "1-rob",
     path: "knowledge",
     reference: "knowledge",
-    file: "README.md",
+    file: "/knowledge/README.md",
     menu: { component: "DummyMenu", collection: null },
   };
 
