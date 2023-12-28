@@ -41,7 +41,7 @@ export function ControlBar({
   const dispatch = useDispatch();
 
   const [branches, setBranches] = useState([{ name: "main" }]);
-  // const router = useRouter()
+  const router = useRouter()
 
   // const editFromQuery = useRouter()?.query?.edit ?? null; // ?edit=true query parameter
   // const queryBranch = useRouter()?.query?.branch ?? null; // ?branch=whatever query parameter
