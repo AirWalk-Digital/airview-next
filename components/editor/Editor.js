@@ -174,12 +174,11 @@ export function Editor({
   const reduxCollection = currentState.branch[collection];
   console.log("Editor:context: ", context);
   console.log("Editor:reduxCollection: ", reduxCollection);
-  console.log("Editor:initialMarkdown: ", initialMarkdown);
-
+  console.log("Editor:initialMarkdown: ", initialMarkdown.substring(0, 100));
   const typographyCopy = { ...baseTheme.typography };
   delete typographyCopy.table;
   const importedCss = convertStyleObjectToCSS(typographyCopy)
-  console.log("Editor:importedCss: ", importedCss);
+  // console.log("Editor:importedCss: ", importedCss);
   const StyledMDXEditor = styled(MDXEditor)`
   font-family: "Heebo";
   font-weight: 200;

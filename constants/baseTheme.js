@@ -192,6 +192,7 @@ const baseTheme = deepmerge(
           ":not(:last-child)": {
             borderRight: "1px solid",
           },
+          borderBottom: "0.5px solid lightgray",
           color: palette.palette.text.main,
         },
       },
