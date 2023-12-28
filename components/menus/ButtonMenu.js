@@ -17,6 +17,7 @@ export function ButtonMenu({
   handleButtonClick,
   currentRoute,
   sx,
+  children,
   ...rest
 }) {
   const [collapsed, setCollapsed] = useState(
@@ -92,6 +93,7 @@ export function ButtonMenu({
                 {loading ? <Skeleton width="90%" /> : groupTitle}
               </Typography>
             )}
+            {children && children}
             <Box
               component="ul"
               sx={{
@@ -106,6 +108,8 @@ export function ButtonMenu({
                 },
               }}
             >
+
+
               {loading
                 ? [...Array(6)].map((item, index) => (
                     <Skeleton key={index} component="li" />
