@@ -27,6 +27,7 @@ import {
   InsertFrontmatter,
   InsertImage,
   CreateLink,
+  CodeMirrorEditor,
   InsertThematicBreak,
   DiffSourceToggleWrapper,
 } from "@mdxeditor/editor";
@@ -36,6 +37,8 @@ import * as matter from "gray-matter";
 import Paper from "@mui/material/Paper";
 import { AsideAndMainContainer, Aside, Main } from "@/components/layouts";
 import path from "path";
+import { baseTheme } from "../../constants/baseTheme";
+import { css } from 'styled-components';
 
 // const { MDXEditor, codeBlockPlugin, diffSourcePlugin, headingsPlugin, frontmatterPlugin, listsPlugin, linkPlugin, linkDialogPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, UndoRedo, InsertTable, InsertCodeBlock, InsertFrontmatter, CreateLink, InsertThematicBreak, DiffSourceToggleWrapper } = await import('@mdxeditor/editor')
 // import { useState, useRef, createContext } from "react";
@@ -58,8 +61,27 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import { styled } from "@mui/material/styles";
 
+const toKebabCase = (str) => {
+  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+};
 
+const convertStyleObjectToCSS = (styleObject, indent = '') => {
+  let cssString = '';
 
+  for (const [key, value] of Object.entries(styleObject)) {
+    if (typeof value === 'object') {
+      // Handle nested objects
+      cssString += `${indent}${toKebabCase(key)} {\n`;
+      cssString += convertStyleObjectToCSS(value, indent + '  ');
+      cssString += `${indent}}\n`;
+    } else {
+      // Convert style properties to CSS
+      cssString += `${indent}${toKebabCase(key)}: ${value};\n`;
+    }
+  }
+
+  return cssString;
+};
 
 function convertMdastToLexical(mdastNode) {
   switch (mdastNode.type) {
@@ -154,7 +176,14 @@ export function Editor({
   console.log("Editor:reduxCollection: ", reduxCollection);
   console.log("Editor:initialMarkdown: ", initialMarkdown);
 
+  const typographyCopy = { ...baseTheme.typography };
+  delete typographyCopy.table;
+  const importedCss = convertStyleObjectToCSS(typographyCopy)
+  console.log("Editor:importedCss: ", importedCss);
   const StyledMDXEditor = styled(MDXEditor)`
+  font-family: "Heebo";
+  font-weight: 200;
+  font-size: 14;
   [role='toolbar'] {
     // border: 1px solid #d1d5db;
     // border-radius: 0.15rem;
@@ -174,11 +203,37 @@ export function Editor({
     // border-top-left-radius: 0;
     
   }
+  [class^="_rootContentEditableWrapper"] {
+    /* Your CSS styles for elements with the matching class name here */
+    h1,h2,h3,h4,h5,h6 {
+      font-weight: 200;
+      line-height: 1.2l;
+      
+    }
+    h1 {
+      font-size: "3rem";
+    }
+    h2 {
+      font-size: "2rem";
+    }
+    h3 {
+      font-size: "1rem";
+    }
+    ${css`${importedCss}`}
+    .cm-gutters {
+      margin-right: 1%;
+      margin-left: 1%
+    }
+    .cm-scroller {
+      display: flex;
+    }
+  }
   img {
     max-width: 50%;
     height: auto;
   }
 `;
+
 
 const editorCallback = useCallback((callback) => {
   // setMarkdown(callback);
@@ -196,7 +251,11 @@ const editorPlugins = useMemo(() => [
     viewMode: "rich-text",
   }),
   codeBlockPlugin({
-    codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor],
+    codeBlockEditorDescriptors: [{
+      priority: 100,
+      match: () => true,
+      Editor: CodeMirrorEditor,
+    }],
   }),
   headingsPlugin(),
   frontmatterPlugin(),
@@ -238,6 +297,8 @@ const editorPlugins = useMemo(() => [
 
   async function imagePreviewHandler(imageSource) {
     console.log("Editor:imagePreviewHandler: ", context, imageSource);
+    if (imageSource.startsWith("http")) return imageSource;
+
     const file = path.dirname(context.file) + "/" + imageSource.replace(/^\/|^\.\//, "");
     const filePath = file.replace(/^\/|^\.\//, ""); // strip leading slash
     console.log("Editor:imagePreviewHandler:filePath: ", filePath);
