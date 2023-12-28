@@ -177,6 +177,8 @@ export function ContentPage({
 
         window.history.replaceState({}, document.title, url);
       }
+    } else {
+      handleContentChange(context.file);
     }
     if (menuOpenInitial) {
       setMenuOpen(!mode);

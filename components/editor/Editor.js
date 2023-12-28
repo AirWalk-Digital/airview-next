@@ -1,5 +1,5 @@
 import "@mdxeditor/editor/style.css";
-import React from "react";
+import React, { useState, useRef, useCallback, useMemo, createContext } from "react";
 import {
   MDXEditor,
   system,
@@ -38,7 +38,7 @@ import { AsideAndMainContainer, Aside, Main } from "@/components/layouts";
 import path from "path";
 
 // const { MDXEditor, codeBlockPlugin, diffSourcePlugin, headingsPlugin, frontmatterPlugin, listsPlugin, linkPlugin, linkDialogPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, UndoRedo, InsertTable, InsertCodeBlock, InsertFrontmatter, CreateLink, InsertThematicBreak, DiffSourceToggleWrapper } = await import('@mdxeditor/editor')
-import { useState, useRef, createContext } from "react";
+// import { useState, useRef, createContext } from "react";
 import Button from "@mui/material/Button";
 
 const EditorStateContext = createContext();
@@ -161,7 +161,10 @@ export function Editor({
     // border-bottom-right-radius: 0;
     // border-bottom-left-radius: 0;
   }
-
+  [class*="_contentEditable_"] {
+    height: calc(100vh - ${top}px);
+    overflow-y: auto;
+  }
   [role='textbox'] {
     // background-color: white;
     // border: 1px solid #d1d5db;
@@ -169,32 +172,73 @@ export function Editor({
     // border-radius: 0.15rem;
     // border-top-right-radius: 0;
     // border-top-left-radius: 0;
-    height: calc(100vh -  ${top}px);
-    overflow-y: auto;
+    
+  }
+  img {
+    max-width: 50%;
+    height: auto;
   }
 `;
 
-  const editorCallback = (callback) => {
-    console.log("Editor:editorCallback: ", callback);
-    // console.log("Editor:initialMarkdown: ", initialMarkdown);
-    setMarkdown(callback);
-    // setChanged(callback !== initialMarkdown)
-    const { data, content } = matter(callback.trim());
-    if (
-      content !== initialMarkdown.trim() &&
-      enabled
-      // context?.branch != reduxCollection?.branch
-    ) {
-      console.debug("Editor:isEditable");
-      setChanged(true);
-    } else {
-      setChanged(false);
-    }
-  };
+const editorCallback = useCallback((callback) => {
+  // setMarkdown(callback);
+  // const { content } = matter(callback.trim());
+  // if (content !== initialMarkdown.trim() && enabled) {
+  //   setChanged(true);
+  // } else {
+  //   setChanged(false);
+  // }
+}, [initialMarkdown, enabled]);
+
+const editorPlugins = useMemo(() => [
+  diffSourcePlugin({
+    diffMarkdown: initialMarkdown,
+    viewMode: "rich-text",
+  }),
+  codeBlockPlugin({
+    codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor],
+  }),
+  headingsPlugin(),
+  frontmatterPlugin(),
+  listsPlugin(),
+  linkPlugin(),
+  imagePlugin(),
+  linkDialogPlugin(),
+  quotePlugin(),
+  tablePlugin(),
+  thematicBreakPlugin(),
+  markdownShortcutPlugin(),
+  imagePlugin({
+    disableImageResize: true,
+    imageUploadHandler: (image) =>
+      Promise.resolve(imageUploadHandler(image)),
+    imagePreviewHandler: (imageSource) =>
+      Promise.resolve(imagePreviewHandler(imageSource)),
+  }),
+  // catchAllPlugin(),
+
+  toolbarPlugin({
+    toolbarContents: () => (
+      <>
+        {" "}
+        <UndoRedo />
+        <BlockTypeSelect />
+        <BoldItalicUnderlineToggles />
+        <CreateLink />
+        <InsertTable />
+        <InsertImage />
+        <InsertCodeBlock />
+        <InsertThematicBreak />
+        <InsertFrontmatter />
+        <DiffSourceToggleWrapper />
+      </>
+    ),
+  }),
+], [initialMarkdown]);
 
   async function imagePreviewHandler(imageSource) {
     console.log("Editor:imagePreviewHandler: ", context, imageSource);
-    const file = path.dirname(context.file) + "/" + imageSource;
+    const file = path.dirname(context.file) + "/" + imageSource.replace(/^\/|^\.\//, "");
     const filePath = file.replace(/^\/|^\.\//, ""); // strip leading slash
     console.log("Editor:imagePreviewHandler:filePath: ", filePath);
 
@@ -263,7 +307,6 @@ export function Editor({
   return (
     <EditorStateContext.Provider
       value={{
-        changed,
         editorCallback,
         ref,
         reduxCollection,
@@ -273,7 +316,7 @@ export function Editor({
     >
       <Paper sx={{ px: "1%" }} elevation={0}>
         <EditorErrorBoundary
-          markdown={markdown}
+          markdown={initialMarkdown}
           callbackSave={callbackSave}
           initialMarkdown={initialMarkdown}
           ref={ref}
@@ -282,57 +325,14 @@ export function Editor({
             ref={ref}
             onChange={editorCallback}
             onError={(msg) => console.warn("Error in markdown: ", msg)}
-            markdown={markdown}
-            plugins={[
-              diffSourcePlugin({
-                diffMarkdown: initialMarkdown,
-                viewMode: "rich-text",
-              }),
-              codeBlockPlugin({
-                codeBlockEditorDescriptors: [PlainTextCodeEditorDescriptor],
-              }),
-              headingsPlugin(),
-              frontmatterPlugin(),
-              listsPlugin(),
-              linkPlugin(),
-              imagePlugin(),
-              linkDialogPlugin(),
-              quotePlugin(),
-              tablePlugin(),
-              thematicBreakPlugin(),
-              markdownShortcutPlugin(),
-              imagePlugin({
-                disableImageResize: true,
-                imageUploadHandler: (image) =>
-                  Promise.resolve(imageUploadHandler(image)),
-                imagePreviewHandler: (imageSource) =>
-                  Promise.resolve(imagePreviewHandler(imageSource)),
-              }),
-              // catchAllPlugin(),
-
-              toolbarPlugin({
-                toolbarContents: () => (
-                  <>
-                    {" "}
-                    <UndoRedo />
-                    <BlockTypeSelect />
-                    <BoldItalicUnderlineToggles />
-                    <CreateLink />
-                    <InsertTable />
-                    <InsertImage />
-                    <InsertCodeBlock />
-                    <InsertThematicBreak />
-                    <InsertFrontmatter />
-                    <DiffSourceToggleWrapper />
-                  </>
-                ),
-              }),
-            ]}
-          />{" "}
+            markdown={initialMarkdown}
+            plugins={editorPlugins}
+            
+          />
           <Fab
             color="primary"
             aria-label="save"
-            enabled={changed}
+            // enabled={changed}
             style={{ position: "fixed", bottom: 16, right: 16 }}
             onClick={() => {
               const text = ref.current?.getMarkdown();
@@ -350,14 +350,14 @@ export function Editor({
 }
 
 function SaveButton() {
-  const { changed, ref, reduxCollection, context, callbackSave } =
+  const { ref, reduxCollection, context, callbackSave } =
     React.useContext(EditorStateContext);
   return (
     <Button
-      key={changed} // Force re-render when `changed` changes
+      // key={changed} // Force re-render when `changed` changes
       variant="outlined"
       size="medium"
-      disabled={!changed}
+      // disabled={!changed}
       startIcon={<SaveIcon />}
       onClick={() => {
         const text = ref.current?.getMarkdown();
@@ -437,6 +437,7 @@ class EditorErrorBoundary extends React.Component {
   }
 
   render() {
+    console.log("EditorErrorBoundary:RENDER:Error:", this.state.hasError)
     if (this.state.hasError) {
       // Render an alternative component or message when an error occurs
 
@@ -623,34 +624,3 @@ function FallbackEditor({ markdown: initialMarkdown, callbackSave }) {
   );
 }
 
-{
-  /* 
-  return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-    <Grid container style={{ flex: 1, overflow: 'hidden' }}>
-      <Grid item xs={12}>
-        <Alert severity="warning">
-          Using the fallback editor
-        </Alert>
-      </Grid>
-      <Grid item xs={12} style={{ flexGrow: 1, overflow: 'auto' }}>
-        <TextField
-          id="outlined-multiline-static"
-          // label="Markdown or MDX"
-          multiline
-          fullWidth
-          onChange={(event) => setMarkdown(event.target.value)}
-          defaultValue={markdown}
-          variant="outlined"
-          style={{ marginTop: "1%", height: '100%', width: '100%', overflow: 'auto', boxSizing: 'border-box' }}
-        />
-      </Grid>
-    </Grid>
-  
-    <Fab color="primary" aria-label="save" style={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleSave}>
-      <SaveIcon />
-    </Fab>
-  </div>
-  
-  ); */
-}

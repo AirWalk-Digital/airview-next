@@ -122,6 +122,7 @@ export function ControlBar({
         toSnakeCase(newFile.frontmatter.title) +
         "/_index.mdx";
     }
+    
     createFile(
       context.owner,
       context.repo,
@@ -256,11 +257,13 @@ async function createFile(owner, repo, branch, path, content, message, router) {
     if (exists.ok) {
       const data = await exists.text();
       console.debug("ControlBar:createFile:data", data);
-      router.push('/' + path)
+      // router.push('/' + path)
       if (data) {
-        throw new Error(`File creation error. File already exists!`);
+        throw new Error(`ControlBar:createFile:File creation error. File already exists!`);
+        router.push('/' + path + '?edit=true&branch=' + branch)
       } else {
         try {
+          const fileContent = content + '\n add content here......'
           const response = await fetch(
             `/api/content/github/${owner}/${repo}?branch=${branch}&path=${path}`,
             {
@@ -268,22 +271,23 @@ async function createFile(owner, repo, branch, path, content, message, router) {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ content, message }),
+              body: JSON.stringify({ content: fileContent, message }),
             }
           );
 
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`ControlBar:createFile:HTTP error! status: ${response.status}`);
+          } else {
+            router.push('/' + path + '?edit=true&branch=' + branch)
           }
           const data = await response.json();
           console.log("Commit successful:", data);
-          router.push('/' + path)
         } catch (e) {
-          console.error("Error committing file:", e.message);
+          console.error("ControlBar:createFile:Error committing file:", e.message);
         }
       }
     }
   } catch (e) {
-    console.error("Error reading file:", e.message);
+    console.error("ControlBar:createFile:Error reading file:", e.message);
   }
 }

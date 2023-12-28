@@ -121,9 +121,21 @@ export function NewContentDialog({
           url: file,
         }));
 
-        // console.log('setDropDownData: ', values)
+        console.log('NewContentDialog:handleParentChange:values: ', values)
 
-        setDropDownData(values);
+        setDropDownData(values.sort((a, b) => {
+          // Assuming that some objects might not have a 'label' property
+          let labelA = a.label || "";
+          let labelB = b.label || "";
+        
+          if (labelA < labelB) {
+            return -1; // a comes first
+          }
+          if (labelA > labelB) {
+            return 1; // b comes first
+          }
+          return 0; // no change in order
+        }));
       })
       .catch((error) => {
         // console.log(error)
