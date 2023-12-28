@@ -115,6 +115,7 @@ const baseTheme = deepmerge(
         overflowY: 'visible',
         lineHeight: 1,
         textOverflow: 'ellipsis',
+        display: 'inline',
         backgroundColor: palette.palette.background.muted,
         pt: '1%',
         pb: '1%',
@@ -125,7 +126,9 @@ const baseTheme = deepmerge(
         fontFamily: 'Roboto Mono',
         lineHeight: 1,
         overflow: 'visible',
-        whiteSpace: 'pre-wrap'
+        whiteSpace: 'pre-wrap',
+        display: 'inline',
+
 
       },
       p: {

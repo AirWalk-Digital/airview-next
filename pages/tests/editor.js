@@ -20,10 +20,10 @@ export default function Page() {
     source: "github",
     repo: "airwalk_patterns",
     owner: "airwalk-digital",
-    branch: "1-rob",
+    branch: "1-testing",
     path: "knowledge",
     reference: "knowledge",
-    file: "/knowledge/README.md",
+    file: "knowledge/m_d_x_test_page/_index.mdx",
     menu: { component: "DummyMenu", collection: null },
   };
 
@@ -49,7 +49,7 @@ export default function Page() {
     }
 
     loadFile();
-  }, [owner, repo, branch, path]);
+  }, []);
 
   const mkdown3 = `# heading 1`;
 
@@ -60,7 +60,7 @@ more
 
   function callbackSave(content) {
     console.log("content: ", content);
-    commitFileChanges(owner, repo, branch, path, content, "Airview commit");
+    commitFileChanges(context.owner, context.repo, context.branch, context.file, content, "Airview commit");
     // const currentState = store.getState();
     // const reduxCollection = currentState.branch[collection];
     // console.log("Editor:context: ", context);

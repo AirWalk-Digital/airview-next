@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 
 // import { MDXProvider } from "@mdx-js/react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
+import { okaidia, github } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import SlidePage from "@/components/slides/SlidePage";
 import PrintSlide from "@/components/slides/PrintSlide";
 // import MDXViewer from "@/components/display/MDXViewer";
@@ -228,9 +228,11 @@ export const mdComponents = (baseContext) => ({
       <SyntaxHighlighter
         className={className}
         language={language}
-        style={okaidia}
+        style={language ? okaidia : github}
+        wrapLongLines={language ? true : false}
+        showLineNumbers={language ? true : false}
         // customStyle={{ overflow: 'clip', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}
-        customStyle={{ fontSize: '0.75rem' }}
+        customStyle={{ display: language ? 'block' : 'inline', ...(language ? { fontSize: '0.75rem'} : { background: 'unset', padding: 'unset', fontSize: '0.85rem' })  }}
         wrapLongLines={true}
         {...props}
       />
