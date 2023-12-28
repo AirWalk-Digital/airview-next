@@ -635,7 +635,7 @@ export function ResourceTable({ bench = false }) {
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
-                        <TableCell>Discipline
+                        <TableCell>Business Unit
                             <Select
                                 value=''
                                 onChange={(e) => setDisciplineFilter(e.target.value)}
