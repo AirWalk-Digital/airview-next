@@ -3,19 +3,19 @@ import { useEffect, useState, useRef } from 'react';
 
 // import { MDXProvider } from "@mdx-js/react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import okaidia from "react-syntax-highlighter/dist/cjs/styles/prism/okaidia";
-import SlidePage from "@/components/display/SlidePage";
-import PrintSlide from "@/components/display/PrintSlide";
-import MDXViewer from "@/components/display/MDXViewer";
+import { okaidia, prism } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import SlidePage from "@/components/slides/SlidePage";
+import PrintSlide from "@/components/slides/PrintSlide";
+// import MDXViewer from "@/components/display/MDXViewer";
 import Image from "next/image";
 
 // fix for Roadmap, Nest
 import { TitleSlide, Header, Banner, Footer, Insights, Chevrons, Nest, Roadmap, Layout, Column, Item, Slide, HeaderCard } from 'airview-mdx'
 
 // import Cover from "./Cover";
-import SpeakerNotes from "@/components/presentations/SpeakerNotes";
-import Step from "@/components/presentations/Step";
-import Steps from "@/components/presentations/Steps";
+import SpeakerNotes from "@/components/slides/SpeakerNotes";
+import Step from "@/components/slides/Step";
+import Steps from "@/components/slides/Steps";
 import { motion } from "framer-motion";
 
 // MUI Components
@@ -31,7 +31,7 @@ import { motion } from "framer-motion";
 // import { Insight, InsightTable, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
 // import {FaIcon, Icon} from './Images.jsx';
 import { FaIcon, Icon } from 'airview-mdx';
-import { ProgressTable } from '../components/Tables.jsx';
+import { ProgressTable } from '@/components/layouts';
 // import { HeaderCard, Nest } from './Cards';
 // import { HeaderCard } from './Cards';
 // import { Font } from './Styling';
@@ -53,6 +53,8 @@ function MdxImage({ props, baseContext }) {
   if (isSharePointUrl(src)) {
     src = '/api/content/sharepoint?url=' + src
 
+  } else if (isExternalUrl(src)) {
+    src = src
   } else {
 
 
@@ -155,7 +157,8 @@ function MdxImage({ props, baseContext }) {
             width: '70%',
             maxHeight: '70%',
             cursor: 'zoom-in',
-            margin: 'auto'
+            margin: 'auto',
+            py: '1%'
           }}
           onClick={handleClickOpen}
         >
@@ -184,9 +187,10 @@ function MdxImage({ props, baseContext }) {
             alignItems: 'center',
             justifyContent: 'center',
             position: 'relative',
-            margin: 'auto'
+            margin: 'auto',
+            overflowY: 'visible',
           }}>
-            <img src={src} alt={alt} />
+            <img src={src} alt={alt} width='100%'/>
           </DialogContent>
         </Dialog>
       </>
@@ -214,12 +218,14 @@ export const mdComponents = (baseContext) => ({
   h3: (props) => <Typography variant="h3" id={props.id}>{props.children}</Typography>,
   h4: (props) => <Typography variant="h4" id={props.id}>{props.children}</Typography>,
   h5: (props) => <Typography variant="h5" id={props.id}>{props.children}</Typography>,
+  h6: (props) => <Typography variant="h6" id={props.id}>{props.children}</Typography>,
   p: (props) => <Typography variant="p">{props.children}</Typography>,
   img: (props) => (<MdxImage props={props} baseContext={baseContext} fill loading="lazy" />),
   strong: (props) => <Typography variant="strong">{props.children}</Typography>,
   // ul: (props) => <Typography variant="ul">{props.children}</Typography>,
-  // table: (props) => <Typography variant="table">{props.children}</Typography>,
+  table: (props) => <Typography variant="table">{props.children}</Typography>,
   // hr: (props) => null,
+  blockquote: (props) => <Typography variant="blockquote">{props.children}</Typography>,
   pre: (props) => props.children,
   code: (props) => {
     const { className } = props;
@@ -228,9 +234,11 @@ export const mdComponents = (baseContext) => ({
       <SyntaxHighlighter
         className={className}
         language={language}
-        style={okaidia}
+        style={language ? okaidia : prism}
+        wrapLongLines={language ? true : false}
+        showLineNumbers={language ? true : false}
         // customStyle={{ overflow: 'clip', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}
-        customStyle={{ fontSize: '0.75rem' }}
+        customStyle={{ display: language ? 'block' : 'inline', ...(language ? { fontSize: '0.75rem'} : { background: 'unset', padding: 'unset', fontSize: '0.85rem' })  }}
         wrapLongLines={true}
         {...props}
       />
@@ -239,7 +247,7 @@ export const mdComponents = (baseContext) => ({
   // layouts
   SlidePage,
   PrintSlide,
-  MDXViewer,
+  // MDXViewer,
   SpeakerNotes,
   Step,
   Steps,
@@ -278,6 +286,15 @@ function isSharePointUrl(url) {
     const hostname = urlObj.hostname;
     return hostname.endsWith('sharepoint.com');
   } catch {
+    return false;
+  }
+}
+
+
+function isExternalUrl(url) {
+  if (url.startsWith("http")) {
+    return true;
+  } else {
     return false;
   }
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Button } from '@mui/material';
 import { fetchPadDetails } from '@/lib/etherpad'
 import { useMDX } from '@/lib/content/mdx'
-import { FullScreenSpinner } from '@/components/dashboard';
+import { FullScreenSpinner } from '@/components/loaders';
 import * as matter from 'gray-matter';
 import { siteConfig } from "../../site.config.js";
 

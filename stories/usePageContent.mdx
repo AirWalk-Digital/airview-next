@@ -1,0 +1,34 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Hooks/usePageContent" />
+
+# usePageContent
+
+usePageContext accepts the props from getServerSideProps or getStaticProps to create and maintain the view of Page Content.
+
+## Input Props
+
+1. initialContent - the content loaded from the server.
+2. initialFile - the path of the content - rename to initialURI
+3. *initialMenuStructure - the menu structure (look to remove)*
+4. *collection - the collection (look to remove)*
+5. initialContext - the context from the server.
+
+
+## Output Props
+
+1. pageContent - the processed MDX content.
+2. content - the raw content as loaded (used in the Editor)
+3. *file - the current URI (look to remove)*
+4. *contentSource - the source of the content ['etherpad', 'github'] (is this needed?)*
+5. menuStructure - the appropriate menu structure based off the collection as a root.
+6. context - the current context
+
+## Handlers
+
+1. handleContentChange(uri, Bollean(relative)) - processes in app content navigation. `relative` signifies that it's related content to append to the url as `?page=``
+2. handlePageReset - resets the page to the baseline initialContext
+3. *setEditMode - probably not needed*
+4. *frontMatterCallback - updates the frontmatter (is this needed?)*
+
+

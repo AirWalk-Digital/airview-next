@@ -7,12 +7,21 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/context/*": ["context/*"],
-      "@/constants/*": ["constants/*"],
-      "@/airview-cms-api": ["lib/airview-cms-api"],
-      "@/lib/*": ["lib/*"],
-
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/context/*": [
+        "context/*"
+      ],
+      "@/constants/*": [
+        "constants/*"
+      ],
+      "@/airview-cms-api": [
+        "lib/airview-cms-api"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ]
     },
     "allowJs": true,
     "skipLibCheck": true,
@@ -25,12 +34,19 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

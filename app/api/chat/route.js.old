@@ -1,0 +1,135 @@
+import { NextRequest, NextResponse } from "next/server";
+import { ChatOpenAI } from "langchain/chat_models/openai";
+import { BytesOutputParser } from "langchain/schema/output_parser";
+import { PromptTemplate } from "langchain/prompts";
+import { StreamingTextResponse } from "ai";
+import { Chroma } from "langchain/vectorstores/chroma";
+import { RetrievalQAChain } from "langchain/chains";
+import { ConversationBufferMemory } from "langchain/memory";
+import { RedisVectorStore } from "langchain/vectorstores/redis";
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import {
+  RunnableSequence,
+  RunnablePassthrough,
+} from "langchain/schema/runnable";
+import { StringOutputParser } from "langchain/schema/output_parser";
+import { formatDocumentsAsString } from "langchain/util/document";
+import { createRedisInstance } from "@/lib/redis";
+import { createClient } from "redis";
+
+// export const runtime = "edge";
+
+const formatMessage = (message) => {
+  return `${message.role}: ${message.content}`;
+};
+
+const TEMPLATE = `You are an IT expert. All responses must be extremely verbose and technical in nature.
+Answer the question based only on the following context:
+{context}
+
+Current conversation:
+{chat_history}
+
+User: {input}
+AI:`;
+
+/**
+ * This handler initializes and calls a simple chain with a prompt,
+ * chat model, and output parser. See the docs for more information:
+ *
+ * https://js.langchain.com/docs/guides/expression_language/cookbook#prompttemplate--llm--outputparser
+ */
+export async function POST(req) {
+  try {
+    const body = await req.json();
+    const messages = body.messages ?? [];
+    const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
+    const currentMessageContent = messages[messages.length - 1].content;
+    const prompt = PromptTemplate.fromTemplate(TEMPLATE);
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+    
+    // const model = new ChatOpenAI({
+    //   temperature: 0.8,
+    // });
+
+    // let redisInstance = null;
+
+    // if (!redisInstance) {
+    //     redisInstance = await createRedisInstance();
+    //   }
+    // const client = createRedisInstance()
+    // await client.connect();
+    const redisInstance = createClient({
+      url: "redis://" + process.env.REDIS_HOST + ":6379" ?? "redis://localhost:6379",
+    });
+    await redisInstance.connect();
+    console.log(redisInstance);
+
+    const vectorStore = new RedisVectorStore(new OpenAIEmbeddings(), {
+      redisClient: redisInstance,
+      indexName: "github",
+      keyPrefix: 'doc'
+    });
+
+    const retriever = vectorStore.asRetriever({verbose: true});
+    console.log('Break 1')
+
+    // const chatMemory = ConversationBufferMemory(
+    //     memory_key='chat_history',
+    //     return_messages=True,
+    //     output_key='answer'
+    // )
+    // console.log('chatMemory')
+    // console.log(chatMemory)
+
+    const model = new ChatOpenAI({temperature: 1, modelName: 'gpt-3.5-turbo', openAIApiKey: OPENAI_API_KEY})
+    console.log('Break 2')
+    const chain = RetrievalQAChain.fromLLM(
+        model,
+        retriever,{
+        // memory = chatMemory,
+        inputKey: "input",
+        returnSourceDocuments: true,
+        verbose: true,
+  })
+
+    console.log('chain')
+
+    /* Simple standalone search in the vector DB */
+    // try {
+    //     const simpleRes = await vectorStore.similaritySearch("redis", 1);
+    //     console.log(simpleRes);
+    // } catch (e) {
+    //     console.log('ERROR: ', e)
+    // }
+
+
+  
+
+    
+
+    // const chain = RunnableSequence.from([
+    //   {
+    //     chat_history: formattedPreviousMessages.join("\n"),
+    //     context: retriever.pipe(formatDocumentsAsString),
+    //     input: currentMessageContent,
+    //   },
+    //   prompt,
+    //   model,
+    //   new BytesOutputParser(),
+    // ]);
+
+    // const outputParser = new BytesOutputParser();
+
+    // const chain = prompt.pipe(model).pipe(outputParser);
+
+    const stream = await chain.stream({
+      chat_history: formattedPreviousMessages.join("\n"),
+      input: currentMessageContent,
+    });
+    console.log(stream);
+    return new StreamingTextResponse(stream);
+  } catch (e) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
+}

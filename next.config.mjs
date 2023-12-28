@@ -60,6 +60,10 @@ const nextConfig = {
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false, dns: false };
+    config.externals = config.externals || [];
+    config.externals.push({
+      chromadb: "chromadb",
+    });
     // Add the alias configuration to the webpack config
     config.resolve.alias = {
       ...config.resolve.alias,

@@ -1,8 +1,8 @@
 import React from "react";
 import { siteConfig } from "../../site.config.js";
-import { IndexView } from "@/components/content";
+import { IndexView } from "@/components/layouts";
 import { getMenuStructure, groupMenu, getFrontMatter } from "@/lib/content";
-import { HeaderMinimalMenu } from '@/components/dashboard/Menus'
+import { HeaderMinimalMenu } from '@/components/menus'
 import { usePageMenu } from "@/lib/hooks";
 
 
@@ -13,7 +13,7 @@ export default function Page({ tiles, menuStructure: initialMenuStructure, colle
       <IndexView menuStructure={null} title="Providers and Services" tiles={null} menuComponent={HeaderMinimalMenu} loading={true}/>
     )
   }
-  const { menuStructure  } = usePageMenu(initialMenuStructure, collection);
+  const { menuStructure  } = usePageMenu(collection);
 
   return (
     <IndexView menuStructure={menuStructure} title="Providers and Services" tiles={tiles} menuComponent={HeaderMinimalMenu} />

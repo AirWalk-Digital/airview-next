@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { getContrastYIQ } from './../components/utils/colors';
+import { getContrastYIQ } from '@/lib/utils/colors';
 
 import { baseTheme } from './baseTheme';
 
