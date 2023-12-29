@@ -74,27 +74,66 @@ export const Simple = {
     handleRefresh: dummyFunction,
     handlePrint: dummyFunction,
     handleAdd: dummyFunction,
-    onCollectionUpdate: dummyFunction,
+    onContextUpdate: dummyFunction,
     handlePresentation: dummyFunction,
     collection: dummyCollection,
+    context: dummyCollection,
     branches: branches,
-    // branch: "main",
+    editMode: false,
+    fetchBranches: dummyFunction
   },
 };
 
 
+export const EditMode = {
+  args: {
+    open: true,
+    top: 0,
+    handleEdit: dummyFunction,
+    handleRefresh: dummyFunction,
+    handlePrint: dummyFunction,
+    handleAdd: dummyFunction,
+    onContextUpdate: dummyFunction,
+    handlePresentation: dummyFunction,
+    collection: dummyCollection,
+    context: {...dummyCollection, branch: 'branch-1'},
+    branches: branches,
+    editMode: true,
+    fetchBranches: dummyFunction
+  },
+};
+
+
+export const DefaultBranch = {
+  args: {
+    open: true,
+    top: 0,
+    handleEdit: dummyFunction,
+    handleRefresh: dummyFunction,
+    handlePrint: dummyFunction,
+    handleAdd: dummyFunction,
+    onContextUpdate: dummyFunction,
+    handlePresentation: dummyFunction,
+    collection: dummyCollection,
+    context: {...dummyCollection},
+    branches: branches,
+    editMode: true,
+    fetchBranches: dummyFunction
+  },
+};
 
 
 export const FullDemo = () => {
 
   const [collection, setCollection] = useState(dummyCollection);
-
-
+  const [editMode, setEditMode] = useState(false);
+  const [context, setContext] = useState({...dummyCollection, branch: 'main'});
+  
   function dummyFunction() {}
  
     
-  function onCollectionUpdate(collection) {
-    setCollection(collection);
+  function onContextUpdate(collection) {
+    setContext(collection);
   }
   
   return (
@@ -102,14 +141,17 @@ export const FullDemo = () => {
       <ControlBar
         open={true}
         top={0}
-        handleEdit={dummyFunction}
+        handleEdit={setEditMode}
         handleRefresh={dummyFunction}
         handlePrint={dummyFunction}
         handleAdd={dummyFunction}
         handlePresentation={dummyFunction}
-        onCollectionUpdate={onCollectionUpdate}
+        onContextUpdate={onContextUpdate}
         collection={collection}
+        context={context}
         branches={branches}
+        editMode={editMode}
+        fetchBranches={dummyFunction}
       />
       
       <div style={{position: "absolute", top: "100px"}}>Collection: {JSON.stringify(collection)}</div>

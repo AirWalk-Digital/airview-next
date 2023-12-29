@@ -1,5 +1,11 @@
 import "@mdxeditor/editor/style.css";
-import React, { useState, useRef, useCallback, useMemo, createContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+  createContext,
+} from "react";
 import {
   MDXEditor,
   system,
@@ -35,11 +41,12 @@ import "@mdxeditor/editor/style.css";
 import { $createParagraphNode, $createTextNode, ElementNode } from "lexical";
 import * as matter from "gray-matter";
 import Paper from "@mui/material/Paper";
-import { AsideAndMainContainer, Aside, Main } from "@/components/layouts";
+import { AsideAndMainContainer, Main } from "@/components/layouts/AsideAndMain";
 import path from "path";
 import { baseTheme } from "../../constants/baseTheme";
-import { css } from 'styled-components';
-
+import { css } from "styled-components";
+import CircularProgress from "@mui/material/CircularProgress";
+import Snackbar from "@mui/material/Snackbar";
 // const { MDXEditor, codeBlockPlugin, diffSourcePlugin, headingsPlugin, frontmatterPlugin, listsPlugin, linkPlugin, linkDialogPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, UndoRedo, InsertTable, InsertCodeBlock, InsertFrontmatter, CreateLink, InsertThematicBreak, DiffSourceToggleWrapper } = await import('@mdxeditor/editor')
 // import { useState, useRef, createContext } from "react";
 import Button from "@mui/material/Button";
@@ -62,17 +69,17 @@ import SaveIcon from "@mui/icons-material/Save";
 import { styled } from "@mui/material/styles";
 
 const toKebabCase = (str) => {
-  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+  return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
 };
 
-const convertStyleObjectToCSS = (styleObject, indent = '') => {
-  let cssString = '';
+const convertStyleObjectToCSS = (styleObject, indent = "") => {
+  let cssString = "";
 
   for (const [key, value] of Object.entries(styleObject)) {
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       // Handle nested objects
       cssString += `${indent}${toKebabCase(key)} {\n`;
-      cssString += convertStyleObjectToCSS(value, indent + '  ');
+      cssString += convertStyleObjectToCSS(value, indent + "  ");
       cssString += `${indent}}\n`;
     } else {
       // Convert style properties to CSS
@@ -164,10 +171,13 @@ export function Editor({
   context,
   callbackSave,
   enabled = true,
-  top
+  top,
 }) {
   const [markdown, setMarkdown] = useState(initialMarkdown);
   const [changed, setChanged] = useState(false); // enable/disable the save button
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const ref = useRef();
   let collection = context?.path || "null";
   const currentState = store.getState();
@@ -177,128 +187,142 @@ export function Editor({
   console.log("Editor:initialMarkdown: ", initialMarkdown.substring(0, 100));
   const typographyCopy = { ...baseTheme.typography };
   delete typographyCopy.table;
-  const importedCss = convertStyleObjectToCSS(typographyCopy)
+  const importedCss = convertStyleObjectToCSS(typographyCopy);
   // console.log("Editor:importedCss: ", importedCss);
   const StyledMDXEditor = styled(MDXEditor)`
-  font-family: "Heebo";
-  font-weight: 200;
-  font-size: 14;
-  [role='toolbar'] {
-    // border: 1px solid #d1d5db;
-    // border-radius: 0.15rem;
-    // border-bottom-right-radius: 0;
-    // border-bottom-left-radius: 0;
-  }
-  [class*="_contentEditable_"] {
-    height: calc(100vh - ${top}px);
-    overflow-y: auto;
-  }
-  [role='textbox'] {
-    // background-color: white;
-    // border: 1px solid #d1d5db;
-    // border-top: none;
-    // border-radius: 0.15rem;
-    // border-top-right-radius: 0;
-    // border-top-left-radius: 0;
-    
-  }
-  [class^="_rootContentEditableWrapper"] {
-    /* Your CSS styles for elements with the matching class name here */
-    h1,h2,h3,h4,h5,h6 {
-      font-weight: 200;
-      line-height: 1.2l;
-      
+    font-family: "Heebo";
+    font-weight: 200;
+    font-size: 14;
+    [role="toolbar"] {
+      // border: 1px solid #d1d5db;
+      // border-radius: 0.15rem;
+      // border-bottom-right-radius: 0;
+      // border-bottom-left-radius: 0;
     }
-    h1 {
-      font-size: "3rem";
+    [class*="_contentEditable_"] {
+      height: calc(100vh - ${top}px);
+      overflow-y: auto;
+      overflow-x: hidden;
     }
-    h2 {
-      font-size: "2rem";
+    [role="textbox"] {
+      // background-color: white;
+      // border: 1px solid #d1d5db;
+      // border-top: none;
+      // border-radius: 0.15rem;
+      // border-top-right-radius: 0;
+      // border-top-left-radius: 0;
     }
-    h3 {
-      font-size: "1rem";
+    [class^="_rootContentEditableWrapper"] {
+      /* Your CSS styles for elements with the matching class name here */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-weight: 200;
+        line-height: 1.2l;
+      }
+      h1 {
+        font-size: "3rem";
+      }
+      h2 {
+        font-size: "2rem";
+      }
+      h3 {
+        font-size: "1rem";
+      }
+      ${css`
+        ${importedCss}
+      `}
+      .cm-gutters {
+        margin-right: 1%;
+        margin-left: 1%;
+      }
+      .cm-scroller {
+        display: flex;
+      }
     }
-    ${css`${importedCss}`}
-    .cm-gutters {
-      margin-right: 1%;
-      margin-left: 1%
+    img {
+      max-width: 50%;
+      height: auto;
     }
-    .cm-scroller {
-      display: flex;
-    }
-  }
-  img {
-    max-width: 50%;
-    height: auto;
-  }
-`;
+  `;
 
+  const editorCallback = useCallback(
+    (callback) => {
+      // setMarkdown(callback);
+      // const { content } = matter(callback.trim());
+      // if (content !== initialMarkdown.trim() && enabled) {
+      //   setChanged(true);
+      // } else {
+      //   setChanged(false);
+      // }
+    },
+    [initialMarkdown, enabled]
+  );
 
-const editorCallback = useCallback((callback) => {
-  // setMarkdown(callback);
-  // const { content } = matter(callback.trim());
-  // if (content !== initialMarkdown.trim() && enabled) {
-  //   setChanged(true);
-  // } else {
-  //   setChanged(false);
-  // }
-}, [initialMarkdown, enabled]);
+  const editorPlugins = useMemo(
+    () => [
+      diffSourcePlugin({
+        diffMarkdown: initialMarkdown,
+        viewMode: "rich-text",
+      }),
+      codeBlockPlugin({
+        codeBlockEditorDescriptors: [
+          {
+            priority: 100,
+            match: () => true,
+            Editor: CodeMirrorEditor,
+          },
+        ],
+      }),
+      headingsPlugin(),
+      frontmatterPlugin(),
+      listsPlugin(),
+      linkPlugin(),
+      imagePlugin(),
+      linkDialogPlugin(),
+      quotePlugin(),
+      tablePlugin(),
+      thematicBreakPlugin(),
+      markdownShortcutPlugin(),
+      imagePlugin({
+        disableImageResize: true,
+        imageUploadHandler: (image) =>
+          Promise.resolve(imageUploadHandler(image)),
+        imagePreviewHandler: (imageSource) =>
+          Promise.resolve(imagePreviewHandler(imageSource)),
+      }),
+      // catchAllPlugin(),
 
-const editorPlugins = useMemo(() => [
-  diffSourcePlugin({
-    diffMarkdown: initialMarkdown,
-    viewMode: "rich-text",
-  }),
-  codeBlockPlugin({
-    codeBlockEditorDescriptors: [{
-      priority: 100,
-      match: () => true,
-      Editor: CodeMirrorEditor,
-    }],
-  }),
-  headingsPlugin(),
-  frontmatterPlugin(),
-  listsPlugin(),
-  linkPlugin(),
-  imagePlugin(),
-  linkDialogPlugin(),
-  quotePlugin(),
-  tablePlugin(),
-  thematicBreakPlugin(),
-  markdownShortcutPlugin(),
-  imagePlugin({
-    disableImageResize: true,
-    imageUploadHandler: (image) =>
-      Promise.resolve(imageUploadHandler(image)),
-    imagePreviewHandler: (imageSource) =>
-      Promise.resolve(imagePreviewHandler(imageSource)),
-  }),
-  // catchAllPlugin(),
-
-  toolbarPlugin({
-    toolbarContents: () => (
-      <>
-        {" "}
-        <UndoRedo />
-        <BlockTypeSelect />
-        <BoldItalicUnderlineToggles />
-        <CreateLink />
-        <InsertTable />
-        <InsertImage />
-        <InsertCodeBlock />
-        <InsertThematicBreak />
-        <InsertFrontmatter />
-        <DiffSourceToggleWrapper />
-      </>
-    ),
-  }),
-], [initialMarkdown]);
+      toolbarPlugin({
+        toolbarContents: () => (
+          <>
+            {" "}
+            <UndoRedo />
+            <BlockTypeSelect />
+            <BoldItalicUnderlineToggles />
+            <CreateLink />
+            <InsertTable />
+            <InsertImage />
+            <InsertCodeBlock />
+            <InsertThematicBreak />
+            <InsertFrontmatter />
+            <DiffSourceToggleWrapper />
+          </>
+        ),
+      }),
+    ],
+    [initialMarkdown]
+  );
 
   async function imagePreviewHandler(imageSource) {
     console.log("Editor:imagePreviewHandler: ", context, imageSource);
     if (imageSource.startsWith("http")) return imageSource;
 
-    const file = path.dirname(context.file) + "/" + imageSource.replace(/^\/|^\.\//, "");
+    const file =
+      path.dirname(context.file) + "/" + imageSource.replace(/^\/|^\.\//, "");
     const filePath = file.replace(/^\/|^\.\//, ""); // strip leading slash
     console.log("Editor:imagePreviewHandler:filePath: ", filePath);
 
@@ -318,7 +342,6 @@ const editorPlugins = useMemo(() => [
     const imageObjectUrl = URL.createObjectURL(blob);
     console.log("Editor:imagePreviewHandler:imageObjectUrl: ", imageObjectUrl);
     return imageObjectUrl;
-    
   }
 
   async function imageUploadHandler(image) {
@@ -387,22 +410,54 @@ const editorPlugins = useMemo(() => [
             onError={(msg) => console.warn("Error in markdown: ", msg)}
             markdown={initialMarkdown}
             plugins={editorPlugins}
-            
           />
           <Fab
             color="primary"
             aria-label="save"
-            // enabled={changed}
+            disabled={!enabled || isLoading}
             style={{ position: "fixed", bottom: 16, right: 16 }}
-            onClick={() => {
-              const text = ref.current?.getMarkdown();
-              // console.log("Editor:save: ", text);
-              // console.log("Editor:collection: ", reduxCollection);
-              callbackSave(text);
+            onClick={async () => {
+              setIsLoading(true);
+              setError(null);
+              try {
+                const text = ref.current?.getMarkdown();
+                await callbackSave(text);
+                setSuccess("Saved successfully");
+              } catch (err) {
+                setError(err.message);
+              } finally {
+                setIsLoading(false);
+              }
             }}
           >
-            <SaveIcon />
+            {isLoading ? <CircularProgress size={24} /> : <SaveIcon />}
           </Fab>
+          <Snackbar
+            open={!!error}
+            autoHideDuration={5000}
+            onClose={() => setError(null)}
+          >
+            <Alert
+              onClose={() => setError(null)}
+              severity="error"
+              sx={{ width: "100%" }}
+            >
+              {error}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={!!success}
+            autoHideDuration={5000}
+            onClose={() => setSuccess(null)}
+          >
+            <Alert
+              onClose={() => setSuccess(null)}
+              severity="info"
+              sx={{ width: "100%" }}
+            >
+              {success}
+            </Alert>
+          </Snackbar>
         </EditorErrorBoundary>
       </Paper>
     </EditorStateContext.Provider>
@@ -497,7 +552,7 @@ class EditorErrorBoundary extends React.Component {
   }
 
   render() {
-    console.log("EditorErrorBoundary:RENDER:Error:", this.state.hasError)
+    console.log("EditorErrorBoundary:RENDER:Error:", this.state.hasError);
     if (this.state.hasError) {
       // Render an alternative component or message when an error occurs
 
@@ -683,4 +738,3 @@ function FallbackEditor({ markdown: initialMarkdown, callbackSave }) {
     </AsideAndMainContainer>
   );
 }
-

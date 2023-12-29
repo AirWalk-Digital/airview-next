@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import { NewContentDialog } from "@/components/appbar";
+import { NewBranchDialog } from "@/components/appbar";
 import { ControlBarComponent as ControlBar } from "@/components/appbar/ControlBarComponent";
 import { toSnakeCase } from '@/lib/utils/stringUtils';
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 export default {
-  title: "App Bar/NewContentDialog",
-  component: NewContentDialog,
+  title: "App Bar/NewBranchDialog",
+  component: NewBranchDialog,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     // layout: 'centered',
@@ -14,10 +14,6 @@ export default {
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ["autodocs"],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
-  argTypes: {
-    handleAdd: { action: 'clicked' } 
-    // backgroundColor: { control: 'color' },
-  },
 };
 
 const testCollection = {
@@ -91,31 +87,65 @@ const dropDown = [
 ]
 
 
-export const DialogWithButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const Template = (args) => {
+  const [isOpen, setIsOpen] = useState(true);
   const [context, setContext] = useState({});
 
+  /**
+ * Handles the opening of the dialog.
+ */
   const handleOpen = () => {
     setIsOpen(true);
   };
-
-  const handleClose = (context) => {
-    setContext(JSON.stringify(context));
-    setIsOpen(false);
+  /**
+ * Handles the closing of the dialog. and processing the result
+ */
+  const handleClose = async (context) => {
+    console.log("context", context);
+    if (!context) {
+      setIsOpen(false);
+      return;
+    }
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    await delay(2000);
+    switch (args.result) {
+      case 'success':
+        setContext(JSON.stringify(context));
+        setIsOpen(false);
+        break;
+      case 'error':
+        throw new Error('An error occurred');
+    }
   };
 
   return (
     <div>
       <Button onClick={handleOpen}>Open Dialog</Button>
-      <NewContentDialog
+      <NewBranchDialog
         dialogOpen={isOpen}
         handleDialog={handleClose}
-        // other props you might need to pass
       />
       <div>{String(context)}</div>
     </div>
   );
 };
+export const Default = Template.bind({});
+
+Default.args = {
+  result: 'success', // default value
+  // other default args
+};
+Default.argTypes = {
+  handleDialog: { action: 'clicked' } 
+};
+
+export const APIFailure = Template.bind({});
+APIFailure.args = {
+  result: 'error', // default value
+  // other default args
+};
+
+
 
 export const WithControlBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -134,13 +164,7 @@ export const WithControlBar = () => {
     setContext(context);
   }
   const handleClose = (context) => {
-    let newContent = {}
-    if (context.frontmatter && context.frontmatter.title && context.frontmatter.type) {
-      newContent.frontmatter = context.frontmatter
-      newContent.path = context.frontmatter.type + '/' + toSnakeCase(context.frontmatter.title) + '/_index.mdx';
-
-    }
-    setContext(JSON.stringify(newContent));
+    setContext(JSON.stringify(context));
 
     setIsOpen(false);
   };
@@ -150,8 +174,8 @@ export const WithControlBar = () => {
       <ControlBar
         open={true}
         top={0}
-        handleAdd={handleAdd}
         handleEdit={dummyFunction}
+        handleAdd={dummyFunction}
         handleRefresh={dummyFunction}
         handlePrint={dummyFunction}
         handlePresentation={dummyFunction}
@@ -161,14 +185,11 @@ export const WithControlBar = () => {
         branches={branches}
         editMode={editMode}
         setControlBarOpen={dummyFunction}
-        
+        handleNewBranch={handleAdd}
       />
-     <NewContentDialog
-
+     <NewBranchDialog
         dialogOpen={isOpen}
         handleDialog={handleClose}
-        initialDropDownData={dropDown}
-        // other props you might need to pass
       />
       <div style={{position: "absolute", top: "100px"}}>Result: {String(context)}</div>
     </div>

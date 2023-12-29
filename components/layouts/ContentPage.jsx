@@ -61,7 +61,7 @@ export function ContentPage({
   console.debug("ContentPage:menuComponent: ", menuComponent);
   console.debug("ContentPage:context: ", context);
   console.debug("ContentPage:menuOpenInitial: ", menuOpenInitial);
-
+  // console.debug("ContentPage:content: ", content);
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
   const MenuComponent = menuComponent;
   const SideComponent = sideComponent;
@@ -130,38 +130,6 @@ export function ContentPage({
     }
   }, [pageContent.frontmatter]);
 
-  // useEffect(() => {
-  //   // run and reprocess the files and branches.
-  //   console.debug("ContentPage:queryBranch: ", queryBranch);
-  //   console.debug("ContentPage:editFromQuery: ", editFromQuery);
-
-  //   if (editFromQuery) {
-  //     setEditMode(true);
-  //     setControlBarOpen(true)
-  //   } // set the edit mode from the query parameter ?edit=true
-
-  //   if (
-  //     reduxContext &&
-  //     reduxContext.branch &&
-  //     queryBranch &&
-  //     queryBranch != reduxContext.branch
-  //   ) {
-  //     console.log(
-  //       "ContentPage:queryBranch(in URI): ",
-  //       queryBranch,
-  //       " : ",
-  //       reduxContext?.branch ?? null
-  //     );
-  //     const newContext = { ...context, branch: queryBranch };
-  //     console.debug("ContentPage:newContext: ", newContext);
-
-  //     dispatch(setBranch(newContext));
-  //     handleContentChange(context.file);
-  //     setControlBarOpen(true);
-  //     // setControlBarOpen(true)
-  //     // setChangeBranch(true)
-  //   } // set the branch from the query parameter ?branch=
-  // }, []);
 
   const handleEditMode = (mode) => {
     console.debug("ContentPage:handleEditMode: ", mode);
@@ -203,7 +171,7 @@ export function ContentPage({
     setPresentation(!presentation);
   }
 
-  function onSave(content) {
+  async function onSave(content) {
     console.debug(
       "ContentPage:onSave: ",
       reduxContext.owner,
@@ -213,8 +181,10 @@ export function ContentPage({
       "Airview commit"
     );
 
+
+    try {
     const normalizedFile = context.file.replace(/^\/+/, "");
-    commitFileChanges(
+    await commitFileChanges(
       reduxContext.owner,
       reduxContext.repo,
       reduxContext.branch,
@@ -222,6 +192,10 @@ export function ContentPage({
       content,
       "Airview commit"
     );
+    } catch (error) {
+      console.error("ContentPage:onSave:error: ", error);
+      throw new Error(`Error saving file: ${error.message}`);
+    }
     // const currentState = store.getState();
     // const reduxCollection = currentState.branch[collection];
     // console.log("Editor:context: ", context);
@@ -426,6 +400,7 @@ export function ContentPage({
               context={context}
               callbackSave={onSave}
               top={topBarHeight+64}
+              enabled={ collection.branch != context.branch }
             />
           </div>
         </ThemeProvider>
