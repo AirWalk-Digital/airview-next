@@ -47,7 +47,7 @@ const Template = (args) => {
     styleLink.href =
       "https://unpkg.com/@mdxeditor/editor@1.14.3/dist/style.css";
     document.head.appendChild(styleLink);
-    fetch("/_DummyMDX.mdx")
+    fetch("/ExampleMDX.mdx")
       .then((response) => response.text())
       .then((text) => setMdxContent(text));
   }, []);

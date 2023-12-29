@@ -18,7 +18,7 @@ import { ControlBarComponent } from "./ControlBarComponent";
 import { NewContentDialog, NewBranchDialog } from "@/components/appbar";
 import * as matter from "gray-matter";
 import { toSnakeCase } from "@/lib/utils/stringUtils";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 export function ControlBar({
   open: controlBarOpen,
@@ -30,7 +30,7 @@ export function ControlBar({
   collection,
   context,
   editMode,
-  setControlBarOpen
+  setControlBarOpen,
 }) {
   const [isAddOpen, setIsAddOpen] = useState(false);
   // const [controlBarOpen, setControlBarOpen] = useState(open);
@@ -41,7 +41,7 @@ export function ControlBar({
   const dispatch = useDispatch();
 
   const [branches, setBranches] = useState([{ name: "main" }]);
-  const router = useRouter()
+  const router = useRouter();
 
   // const editFromQuery = useRouter()?.query?.edit ?? null; // ?edit=true query parameter
   // const queryBranch = useRouter()?.query?.branch ?? null; // ?branch=whatever query parameter
@@ -51,45 +51,42 @@ export function ControlBar({
   console.debug("ControlBar:editMode: ", editMode);
 
   useEffect(() => {
-      // run and reprocess the files and branches.
-      console.debug("ControlBar:useEffect:context: ", context);
-  
-      // if (editFromQuery !== null) {
-      //   console.debug("ControlBar:editFromQuery: ", editFromQuery);
-      //   setEditMode(true);
-      //   setControlBarOpen(true)
-      // } // set the edit mode from the query parameter ?edit=true
-  
-      if (
-        context &&
-        context.branch &&
-        collection &&
-        collection.branch != context.branch
-      ) {
-        console.log(
-          "ControlBar:queryBranch(in URI): ",
-          collection?.branch ?? null, 
-          " : ",
-          context?.branch ?? null
-        );
-        // const newContext = { ...context, branch: queryBranch };
-        // console.debug("ContentPage:newContext: ", newContext);
-  
-        // dispatch(setBranch(newContext));
-        // handleContentChange(context.file);
-        setControlBarOpen(true);
-        // setControlBarOpen(true)
-        // setChangeBranch(true)
-      } // set the branch from the query parameter ?branch=
-    }, [context]);
-  
+    // run and reprocess the files and branches.
+    console.debug("ControlBar:useEffect:context: ", context);
 
+    // if (editFromQuery !== null) {
+    //   console.debug("ControlBar:editFromQuery: ", editFromQuery);
+    //   setEditMode(true);
+    //   setControlBarOpen(true)
+    // } // set the edit mode from the query parameter ?edit=true
 
+    if (
+      context &&
+      context.branch &&
+      collection &&
+      collection.branch != context.branch
+    ) {
+      console.log(
+        "ControlBar:queryBranch(in URI): ",
+        collection?.branch ?? null,
+        " : ",
+        context?.branch ?? null
+      );
+      // const newContext = { ...context, branch: queryBranch };
+      // console.debug("ContentPage:newContext: ", newContext);
+
+      // dispatch(setBranch(newContext));
+      // handleContentChange(context.file);
+      setControlBarOpen(true);
+      // setControlBarOpen(true)
+      // setChangeBranch(true)
+    } // set the branch from the query parameter ?branch=
+  }, [context]);
 
   function fetchBranches(collection) {
     const branches = async () => {
       const res = await fetch(
-        `/api/repo/get-branches?owner=${collection.owner}&repo=${collection.repo}`
+        `/api/repo/branch?owner=${collection.owner}&repo=${collection.repo}`
       ); // fetch draft content to add to the menus.
       const data = await res.json();
       setBranches(data);
@@ -103,34 +100,63 @@ export function ControlBar({
 
     handleRefresh(); // reset the page
   };
- 
+
   const onAddClicked = (result) => {
     setIsAddOpen(true);
   };
-
 
   const onNewBranchClicked = (result) => {
     setIsNewBranchOpen(true);
   };
 
   const handleNewBranch = async (newBranch) => {
-    console.debug("ControlBar:handleNewBranch: ", newBranch);
-    setIsNewBranchOpen(false);
-  }
+    if (!newBranch) {
+      // handle the cancel button
+      setIsNewBranchOpen(false);
+      return;
+    }
+    if (newBranch && newBranch.name) {
+      console.debug("ControlBar:handleNewBranch: ", newBranch);
+      try {
+        await createNewBranch(
+          context.owner,
+          context.repo,
+          newBranch.name,
+          collection.branch
+        );
+        setIsNewBranchOpen(false);
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams(url.search);
+          params.set("branch", newBranch.name);
+          url.search = params.toString();
+          window.location.href = url.toString();
+        }
+      } catch (e) {
+        throw new Error(`Error creating branch: ${e.message}`);
+      }
+    }
+  };
 
   const handleAdd = async (newFile) => {
+    if (!newFile) {
+      // handle the cancel button
+      setIsAddOpen(false);
+      return;
+    }
     let newContent = {};
     if (
       newFile.frontmatter &&
       newFile.frontmatter.title &&
       newFile.frontmatter.type
     ) {
-      newContent.frontmatter = newFile.frontmatter;
-      newContent.path =
-        newFile.frontmatter.type +
-        "/" +
-        toSnakeCase(newFile.frontmatter.title) +
-        "/_index.mdx";
+      try {
+        newContent.frontmatter = newFile.frontmatter;
+        newContent.path =
+          newFile.frontmatter.type +
+          "/" +
+          toSnakeCase(newFile.frontmatter.title) +
+          "/_index.mdx";
         createFile(
           context.owner,
           context.repo,
@@ -149,8 +175,11 @@ export function ControlBar({
           matter.stringify("\n", newContent.frontmatter),
           "New file created from Airview"
         );
+      } catch (e) {
+        throw new Error(`Error creating file: ${e.message}`);
+      }
     }
-    
+
     setIsAddOpen(false);
   };
 
@@ -172,80 +201,38 @@ export function ControlBar({
         fetchBranches={fetchBranches}
         handleNewBranch={onNewBranchClicked}
       />
-      <NewContentDialog
-        dialogOpen={isAddOpen}
-        handleDialog={handleAdd}
-      />
-       <NewBranchDialog
+      <NewContentDialog dialogOpen={isAddOpen} handleDialog={handleAdd} />
+      <NewBranchDialog
         dialogOpen={isNewBranchOpen}
         handleDialog={handleNewBranch}
       />
     </>
   );
 }
-//     return (
-//         <AppBar position="fixed" color="white" elevation={0} sx={{ height: height, display: open ? '' : 'none', displayPrint: 'none', borderBottom: 1, borderColor: 'grey.300', top: '64px' }}>
-//             <Toolbar sx={{ justifyContent: 'space-between' }}>
-//                 <div>
-//                     <FormControlLabel control={
-//                         <Switch checked={edit} onClick={() => handleEditClick()} />
 
-//                     } label="Edit Mode" />
+async function createNewBranch(owner, repo, branch, sourceBranch) {
+  const response = await fetch("/api/repo/branch", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      owner: owner,
+      repo: repo,
+      branch: branch,
+      sourceBranch: sourceBranch,
+    }),
+  });
 
-//                     <FormControlLabel control={
-//                         <Switch checked={changeBranch} onClick={() => handleBranchClick()} />
+  if (!response.ok) {
+    const data = await response.json();
+    console.log("ControlBar:createNewBranch:response: ", data);
+    throw new Error(`${data.error}`);
+  }
 
-//                     } label="Change Branch" />
-//                     {(changeBranch || edit ) && collection && <FormControlLabel control={<BranchSelector defaultBranch={collection.branch} handleBranch={handleBranch} branches={branches} />} label="" />}
-//                 </div>
-//                 <div>
-//                     {handlePrint && <FormControlLabel control={<IconButton
-//                         size="large"
-//                         onClick={() => handlePrintClick()}
-//                         color="primary"
-//                     >
-//                         <PrintIcon />
-//                     </IconButton>} label="Print" />}
-//                     {handlePresentation && <FormControlLabel control={<IconButton
-//                         size="large"
-//                         onClick={() => handlePresentationClick()}
-//                         color="primary"
-//                     >
-//                         <SlideshowIcon />
-//                     </IconButton>} label="View Presentation" />}
-//                 </div>
-//             </Toolbar>
-//         </AppBar>
-//     )
-
-// }
-
-// function BranchSelector({ defaultBranch, handleBranch, branches }) {
-//     const { name: reduxBranch } = useSelector((state) => state.branch);
-//     let branch;
-
-//     if (reduxBranch?.name !== 'none') {
-//         branch = defaultBranch
-//     } else {
-//         branch = reduxBranch
-//     }
-
-//     return (
-
-//         <Stack spacing={2} sx={{ width: 300 }}>
-//             <Autocomplete
-//                 id="branch"
-//                 size='small'
-//                 freeSolo
-//                 value={branch}
-//                 onChange={handleBranch}
-//                 options={branches.map((option) => option.name)}
-//                 renderInput={(params) => <TextField {...params} label="Select Branch" />}
-//             />
-//         </Stack>
-//     )
-
-// }
+  const data = await response.json();
+  return data;
+}
 
 async function createFile(owner, repo, branch, path, content, message, router) {
   // use in pages
@@ -270,11 +257,13 @@ async function createFile(owner, repo, branch, path, content, message, router) {
       console.debug("ControlBar:createFile:data", data);
       // router.push('/' + path)
       if (data) {
-        throw new Error(`ControlBar:createFile:File creation error. File already exists!`);
-        router.push('/' + path + '?edit=true&branch=' + branch)
+        throw new Error(
+          `ControlBar:createFile:File creation error. File already exists!`
+        );
+        router.push("/" + path + "?edit=true&branch=" + branch);
       } else {
         try {
-          const fileContent = content + '\n add content here......'
+          const fileContent = content + "\n add content here......";
           const response = await fetch(
             `/api/content/github/${owner}/${repo}?branch=${branch}&path=${path}`,
             {
@@ -287,14 +276,17 @@ async function createFile(owner, repo, branch, path, content, message, router) {
           );
 
           if (!response.ok) {
-            throw new Error(`ControlBar:createFile:HTTP error! status: ${response.status}`);
+            throw new Error(`Could not create file: ${response.status}`);
           } else {
-            router.push('/' + path + '?edit=true&branch=' + branch)
+            router.push("/" + path + "?edit=true&branch=" + branch);
           }
           const data = await response.json();
           console.log("Commit successful:", data);
         } catch (e) {
-          console.error("ControlBar:createFile:Error committing file:", e.message);
+          console.error(
+            "ControlBar:createFile:Error committing file:",
+            e.message
+          );
         }
       }
     }
