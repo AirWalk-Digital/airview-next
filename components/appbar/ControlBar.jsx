@@ -15,7 +15,7 @@ import SlideshowIcon from "@mui/icons-material/Slideshow";
 import { useSelector, useDispatch } from "react-redux";
 import { setBranch } from "@/lib/redux/reducers/branchSlice";
 import { ControlBarComponent } from "./ControlBarComponent";
-import { NewContentDialog } from "@/components/appbar";
+import { NewContentDialog, NewBranchDialog } from "@/components/appbar";
 import * as matter from "gray-matter";
 import { toSnakeCase } from "@/lib/utils/stringUtils";
 import { useRouter } from 'next/navigation'
@@ -34,7 +34,7 @@ export function ControlBar({
 }) {
   const [isAddOpen, setIsAddOpen] = useState(false);
   // const [controlBarOpen, setControlBarOpen] = useState(open);
-
+  const [isNewBranchOpen, setIsNewBranchOpen] = useState(false);
   // const [context, setContext] = useState(initialContext);
   // const [editMode, setEditMode] = useState(false);
   // const queryBranch = useRouter()?.query?.branch ?? null; // this loads direct links to the content using ?branch=whatever query parameter
@@ -108,6 +108,16 @@ export function ControlBar({
     setIsAddOpen(true);
   };
 
+
+  const onNewBranchClicked = (result) => {
+    setIsNewBranchOpen(true);
+  };
+
+  const handleNewBranch = async (newBranch) => {
+    console.debug("ControlBar:handleNewBranch: ", newBranch);
+    setIsNewBranchOpen(false);
+  }
+
   const handleAdd = async (newFile) => {
     let newContent = {};
     if (
@@ -121,27 +131,26 @@ export function ControlBar({
         "/" +
         toSnakeCase(newFile.frontmatter.title) +
         "/_index.mdx";
+        createFile(
+          context.owner,
+          context.repo,
+          context.branch,
+          newContent.path,
+          matter.stringify("\n", newContent.frontmatter),
+          "New file created from Airview",
+          router
+        );
+        console.debug(
+          "ControlBar:handleAdd: ",
+          context.owner,
+          context.repo,
+          context.branch,
+          newContent.path,
+          matter.stringify("\n", newContent.frontmatter),
+          "New file created from Airview"
+        );
     }
     
-    createFile(
-      context.owner,
-      context.repo,
-      context.branch,
-      newContent.path,
-      matter.stringify("\n", newContent.frontmatter),
-      "New file created from Airview",
-      router
-    );
-    console.debug(
-      "ControlBar:handleAdd: ",
-      context.owner,
-      context.repo,
-      context.branch,
-      newContent.path,
-      matter.stringify("\n", newContent.frontmatter),
-      "New file created from Airview"
-    );
-
     setIsAddOpen(false);
   };
 
@@ -161,13 +170,15 @@ export function ControlBar({
         branches={branches}
         editMode={editMode}
         fetchBranches={fetchBranches}
-
+        handleNewBranch={onNewBranchClicked}
       />
       <NewContentDialog
         dialogOpen={isAddOpen}
         handleDialog={handleAdd}
-        // initialDropDownData={dropDown}
-        // other props you might need to pass
+      />
+       <NewBranchDialog
+        dialogOpen={isNewBranchOpen}
+        handleDialog={handleNewBranch}
       />
     </>
   );

@@ -61,7 +61,7 @@ export function ContentPage({
   console.debug("ContentPage:menuComponent: ", menuComponent);
   console.debug("ContentPage:context: ", context);
   console.debug("ContentPage:menuOpenInitial: ", menuOpenInitial);
-
+  // console.debug("ContentPage:content: ", content);
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
   const MenuComponent = menuComponent;
   const SideComponent = sideComponent;
@@ -203,7 +203,7 @@ export function ContentPage({
     setPresentation(!presentation);
   }
 
-  function onSave(content) {
+  async function onSave(content) {
     console.debug(
       "ContentPage:onSave: ",
       reduxContext.owner,
@@ -214,7 +214,7 @@ export function ContentPage({
     );
 
     const normalizedFile = context.file.replace(/^\/+/, "");
-    commitFileChanges(
+    await commitFileChanges(
       reduxContext.owner,
       reduxContext.repo,
       reduxContext.branch,
@@ -426,6 +426,7 @@ export function ContentPage({
               context={context}
               callbackSave={onSave}
               top={topBarHeight+64}
+              enabled={ collection.branch != context.branch }
             />
           </div>
         </ThemeProvider>

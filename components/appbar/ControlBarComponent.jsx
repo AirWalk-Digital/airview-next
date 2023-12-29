@@ -11,7 +11,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
 export function ControlBarComponent({
-    open, height, handleEdit, handlePrint, handleAdd, handlePresentation, collection, context, branches, top='64px', onContextUpdate, editMode, fetchBranches = () => {} }) {
+    open, height, handleEdit, handlePrint, handleAdd, handlePresentation, collection, context, branches, top='64px', onContextUpdate, editMode, fetchBranches = () => {},handleNewBranch = () => {}  }) {
     // const [edit, setEdit] = useState(editMode);
     // const [collection, setCollection] = useState(initialCollection);
 
@@ -101,6 +101,15 @@ export function ControlBarComponent({
         }
     };
 
+
+    const handleNewBranchClick = () => {
+        if (typeof handleNewBranch === 'function') {
+            handleNewBranch();
+        } else {
+            console.error('TopBar: Error: handleNewBranch is not a function');
+        }
+    };
+
     const onEditClick = () => { // onEdit
         console.debug('ControlBarComponent:onEditClick')
         // localStorage.setItem('editMode', JSON.stringify(editMode));
@@ -135,7 +144,15 @@ export function ControlBarComponent({
 
 
                     } label="Change Branch" />
-                    {  changeBranch && collection && <FormControlLabel control={<BranchSelector sx={{zIndex: 999}} onBranchChange={onBranchChange} branches={branches} branch={branch} />} label="" />}
+                    {  changeBranch && collection && <><FormControlLabel control={<BranchSelector sx={{zIndex: 999}} onBranchChange={onBranchChange} branches={branches} branch={branch} collection={collection} />} label="" />
+                        <FormControlLabel control={<IconButton
+                        size="medium"
+                        onClick={() => handleNewBranchClick()}
+                        color="primary"
+                        sx={{pl: 0}}
+                    >
+                        <AddCircleIcon />
+                    </IconButton>} label="" /></>}
                 </div>
                 <div>
                 {editMode && (collection.branch !== context.branch) && <FormControlLabel control={<IconButton
@@ -144,7 +161,7 @@ export function ControlBarComponent({
                         color="primary"
                     >
                         <AddCircleIcon />
-                    </IconButton>} label="Add" />}
+                    </IconButton>} label="Add Content" />}
                     {handlePrint && !editMode && <FormControlLabel control={<IconButton
                         size="large"
                         onClick={() => handlePrintClick()}
@@ -166,7 +183,7 @@ export function ControlBarComponent({
 
 }
 
-function BranchSelector({ onBranchChange, branches, branch }) {
+function BranchSelector({ onBranchChange, branches, branch, collection }) {
     // const { name: reduxBranch } = useSelector((state) => state.branch);
     // let branch;
     console.debug('BranchSelector:branch: ', branch)
@@ -175,6 +192,12 @@ function BranchSelector({ onBranchChange, branches, branch }) {
     // } else {
     //     branch = reduxBranch
     // }
+    let error = false;
+    if (collection.branch != branch) {
+        error = false;
+    } else {
+        error = true;
+    }
 
     return (
 
@@ -186,7 +209,7 @@ function BranchSelector({ onBranchChange, branches, branch }) {
                 value={branch}
                 onChange={onBranchChange}
                 options={branches.map((option) => option.name)}
-                renderInput={(params) => <TextField {...params} label="Select Branch" />}
+                renderInput={(params) => <TextField error={error} {...params} label={error ? "Change branch!" : "Select branch"} />}
             />
         </Stack>
     )

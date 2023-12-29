@@ -18,6 +18,8 @@ import { v4 as uuidv4 } from "uuid";
 import { dirname } from "path";
 
 import { siteConfig } from "../../site.config.js";
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 export function NewContentDialog({
   dialogOpen = false,
@@ -32,6 +34,8 @@ export function NewContentDialog({
 
   const [availableParents, setAvailableParents] = useState([]);
   const [title, setTitle] = useState("");
+const [isLoading, setIsLoading] = useState(false);
+const [error, setError] = useState(null);
 
   const docTypes = Object.entries(siteConfig.content)
     .map(([key, item]) => {
@@ -104,9 +108,19 @@ export function NewContentDialog({
         title: title,
       };
     }
-    // const initialContent = matter.stringify("\n", frontmatter);
-
-    handleDialog({frontmatter: frontmatter});
+    setIsLoading(true);
+  setError(null);
+  try {
+    if (title) {
+      let prName = branchType + '/' + title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+      await handleDialog({frontmatter: frontmatter});
+    }
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+    
   };
 
   const handleParentChange = async (parent) => {
@@ -156,7 +170,7 @@ export function NewContentDialog({
   return (
     <Dialog
       open={dialogOpen}
-      onClose={handleDialog}
+      onClose={() => handleDialog(null)}
       fullWidth={true}
       maxWidth={"md"}
     >
@@ -246,9 +260,12 @@ export function NewContentDialog({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleDialog}>Cancel</Button>
-        <Button onClick={handleCreateNew}>Submit</Button>
+        <Button onClick={() => handleDialog(null)}>Cancel</Button>
+        <Button onClick={handleCreateNew} disabled={isLoading}>
+          {isLoading ? <CircularProgress size={24} /> : 'Submit'}
+        </Button>
       </DialogActions>
+      {error && <Alert severity="error">{error}</Alert>}
     </Dialog>
   );
 }
