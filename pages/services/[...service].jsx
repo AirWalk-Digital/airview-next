@@ -48,8 +48,6 @@ export default function Page({
     context={context}
     menuComponent={LeftMenuFunction(context)}
     isLoading={loading}
-    headerComponent={null}
-    sideComponent={null}
     menuOpen={LeftMenuOpen(context)}
     headerComponent={(props) => (
       <ServicesHeader {...props} extraData={controls} />

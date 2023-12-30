@@ -239,7 +239,6 @@ export const mdComponents = (baseContext) => ({
         showLineNumbers={language ? true : false}
         // customStyle={{ overflow: 'clip', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}
         customStyle={{ display: language ? 'block' : 'inline', ...(language ? { fontSize: '0.75rem'} : { background: 'unset', padding: 'unset', fontSize: '0.85rem' })  }}
-        wrapLongLines={true}
         {...props}
       />
     );
