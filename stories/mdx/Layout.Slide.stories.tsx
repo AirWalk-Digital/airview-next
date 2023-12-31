@@ -1,11 +1,19 @@
 import { Slide }from 'airview-mdx';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Slide> = {
   title: 'Slides/Slide',
   component: Slide,
   tags: ['autodocs'],
   argTypes: { zoom: { control: 'select', options: ['ppt', 'a4', 'storybook'] } },
+  decorators: [
+    (Story, context) => (
+      <Wrapper context={context}>
+        <Story />
+      </Wrapper>
+    ),
+], 
 };
 export default meta;
 

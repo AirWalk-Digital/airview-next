@@ -2,6 +2,7 @@
 import React from 'react';
 import { Chevrons } from 'airview-mdx';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Chevrons> = {
   title: 'MDX/Components/Chevrons',
@@ -13,6 +14,13 @@ const meta: Meta<typeof Chevrons> = {
       control: { type: 'select' },
     }
   },
+  decorators: [
+    (Story, context) => (
+      <Wrapper context={context}>
+        <Story />
+      </Wrapper>
+    ),
+], 
   
 };
 export default meta;

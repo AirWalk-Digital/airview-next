@@ -4,13 +4,14 @@ import { serialize } from 'next-mdx-remote/serialize';
 import remarkGfm from "remark-gfm";
 import remarkUnwrapImages from 'remark-unwrap-images';
 import { MDXRemote } from 'next-mdx-remote';
-import MDXProvider, { mdComponents } from '../../src/stories/MDXProvider';
+import { MDXProvider } from "@mdx-js/react";
+import { mdComponents } from "../../../constants/mdxProvider.js";
 
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { theme } from '../../src/theme';
-import  Zoom from '../../src/stories/Layout.Zoom'
+import { baseTheme as theme } from '../../../constants/baseTheme';
+// import  Zoom from '../../src/stories/Layout.Zoom'
 
 function getMDX(args) {
 
@@ -138,7 +139,7 @@ function Wrapper({ context, children }) {
         return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <MDXProvider>{children}</MDXProvider>
+            <MDXProvider components={mdComponents(context)}>{children}</MDXProvider>
         </ThemeProvider>
         )
     } else if (context && context.args && context.args.zoom) {

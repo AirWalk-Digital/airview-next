@@ -2,6 +2,7 @@
 import React from 'react';
 import { Icon } from 'airview-mdx';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Icon> = {
   title: 'MDX/Components/Icons',
@@ -13,7 +14,13 @@ const meta: Meta<typeof Icon> = {
       control: { type: 'select' },
     }
   },
-  
+  decorators: [
+    (Story, context) => (
+      <Wrapper context={context}>
+        <Story />
+      </Wrapper>
+    ),
+], 
 };
 export default meta;
 

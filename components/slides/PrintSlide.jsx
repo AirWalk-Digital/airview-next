@@ -97,16 +97,18 @@ function PrintSlide({ children, next }) {
   return (
     <>
       <GlobalStyles styles={globalStyles} />
+      <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} sx={{ maxWidth: '100vw', maxHeight: '100%' }}>
+
       {generatedSlides.map(d => (
-          <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{ maxWidth: '100vw', maxHeight: '100%' }}>
-    {/* // <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} > */}
-          {/* <div id="slide" style={{ width: pageSize.width, height: pageSize.height }}> */}
+          // <Zoom maxWidth={parseInt(pageSize.width)} width={parseInt(pageSize.width)} maxHeight={parseInt(pageSize.height)} height={parseInt(pageSize.height)} sx={{ maxWidth: '100vw', maxHeight: '100%' }}>
+    
           <Box id="slide">
             <Slide>{d}</Slide>
           </Box>
-        </Zoom>
+        // </Zoom>
 
       ))}
+</Zoom>      
     </>
   );
 }

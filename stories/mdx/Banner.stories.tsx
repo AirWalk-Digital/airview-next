@@ -1,5 +1,6 @@
 import { Banner } from 'airview-mdx';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Banner> = {
   title: 'MDX/Components/Banner',
@@ -10,7 +11,14 @@ const meta: Meta<typeof Banner> = {
       options: ['primary', 'secondary', 'tertiary', 'quaternary', 'highlight', 'accent', 'muted', 'paper'],
       control: { type: 'select' },
     }
-  },  
+  }, 
+  decorators: [
+    (Story, context) => (
+      <Wrapper context={context}>
+        <Story />
+      </Wrapper>
+    ),
+], 
 };
 export default meta;
 

@@ -1,5 +1,6 @@
 import { BPMN } from 'airview-mdx';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof BPMN> = {
   title: 'Visualisation/BPMN',

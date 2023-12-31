@@ -16,7 +16,7 @@ export const PresentationOutput = dynamic(() => Promise.resolve(PresentationOutp
 });
 
 
-function PresentationOutputPage({ children, handlePresentation, refresh = false, content }) {
+function PresentationOutputPage({ handlePresentation, refresh = false, content }) {
   const [pageContent, setContent] = useState({ content: undefined, frontmatter: undefined });
   const [ printView , setPrintView ] = useState(false);
   const [ viewType, setViewType ] = useState('SlidePage')
@@ -51,7 +51,7 @@ function PresentationOutputPage({ children, handlePresentation, refresh = false,
             <PrintIcon />
           </Fab>
         </Box>
-        <Box display="flex" alignItems="center" justifyContent="center" sx={{width: '90%', height: '90%', ml: '5%', mt: '5%'}}>
+        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" sx={{width: '90%', height: '90%', ml: '5%', mt: '5%'}}>
           {/* <div> */}
             <CurrentSlideProvider>
               <ModeProvider>

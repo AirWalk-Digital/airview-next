@@ -2,6 +2,7 @@
 import React from 'react';
 import { Mermaid } from 'mdx-mermaid/Mermaid';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Alert> = {
   title: 'Visualisation/Mermaid',

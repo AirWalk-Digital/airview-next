@@ -31,7 +31,7 @@ import { motion } from "framer-motion";
 // import { Insight, InsightTable, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
 // import {FaIcon, Icon} from './Images.jsx';
 import { FaIcon, Icon } from 'airview-mdx';
-import { ProgressTable } from '@/components/layouts';
+import { ProgressTable } from '@/components/layouts/Tables';
 // import { HeaderCard, Nest } from './Cards';
 // import { HeaderCard } from './Cards';
 // import { Font } from './Styling';

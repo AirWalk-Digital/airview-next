@@ -2,6 +2,7 @@
 import React from 'react';
 import Alert from '@mui/material/Alert';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Alert> = {
   title: 'MDX/Material-ui/Alert',

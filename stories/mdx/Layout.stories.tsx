@@ -1,5 +1,6 @@
 import { Layout } from 'airview-mdx';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Layout> = {
   title: 'MDX/Layouts/Layout',
@@ -12,7 +13,7 @@ const meta: Meta<typeof Layout> = {
       options: ['primary', 'secondary', 'tertiary', 'quaternary', 'highlight', 'accent', 'muted', 'paper'],
       control: { type: 'select' },
     }
-  },  
+  } 
 };
 export default meta;
 

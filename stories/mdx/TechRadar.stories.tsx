@@ -1,7 +1,8 @@
 import React from 'react';
 import { TechRadar } from 'airview-mdx';
 import { StoryObj, Meta } from '@storybook/react';
-import configify from '../../.storybook/utils/configify';
+import { Wrapper} from './utils/mdxify';
+import configify from './utils/configify';
 
 const meta: Meta<typeof TechRadar> = {
   title: 'Visualisation/TechRadar',

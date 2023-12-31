@@ -1,5 +1,6 @@
 import { Nest } from 'airview-mdx';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Nest> = {
   title: 'MDX/Components/Nest',
@@ -11,6 +12,13 @@ const meta: Meta<typeof Nest> = {
       control: { type: 'select' },
     }
   },  
+  decorators: [
+    (Story, context) => (
+      <Wrapper context={context}>
+        <Story />
+      </Wrapper>
+    ),
+], 
 };
 export default meta;
 

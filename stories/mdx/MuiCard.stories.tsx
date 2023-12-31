@@ -2,6 +2,7 @@
 import React from 'react';
 import Card from '@mui/material/Card';
 import { StoryObj, Meta } from '@storybook/react';
+import { Wrapper} from './utils/mdxify';
 
 const meta: Meta<typeof Card> = {
   title: 'MDX/Material-ui/Card',
