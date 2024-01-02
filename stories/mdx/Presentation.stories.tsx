@@ -1,4 +1,4 @@
-import { PresentationOutput }from '@/components/layouts/PresentationOutput';
+import { PresentationOutput } from '@/components/layouts/PresentationOutput';
 import { StoryObj, Meta } from '@storybook/react';
 import { Wrapper} from './utils/mdxify';
 
@@ -6,7 +6,9 @@ const meta: Meta<typeof PresentationOutput> = {
   title: 'Pages/Presentation',
   component: PresentationOutput,
   tags: ['autodocs'],
-  argTypes: { zoom: { control: 'select', options: ['ppt', 'a4', 'storybook'] } },
+  argTypes: { 
+    // zoom: { control: 'select', options: ['ppt', 'a4', 'storybook'] } 
+  },
   decorators: [
     (Story, context) => (
       <Wrapper context={context}>
