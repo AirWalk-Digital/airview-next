@@ -1,7 +1,45 @@
-import { Box, Typography, Stack, Chip, Link, Grid } from '@mui/material';
+import { Box, Typography, Stack, Chip, Link, Grid, Card } from '@mui/material';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import { CardActionArea } from '@mui/material';
+
+export function Tile({ name, url, image, description='', isHero=false }) {
+  return (
+    <Grid item xs={12} sm={6} md={4} lg={3} sx={{ mb: '20px', display: 'flex' }}>
+      <Link href={url} underline="none" sx={{ width: '100%' }}>
+      <Card variant="outlined" sx={{ minHeight: 120, maxWidth: 345, bgcolor: image ? 'background.paper' : 'background.primary' }} >
+      <CardActionArea>
+        { image && <div style={{height:"194px"}}><CardMedia
+          component="img"
+          // height="140px"
+          image={image}
+          alt=""
+          sx={{
+            height: '100%',
+            // width: isHero ? '100%' : 'unset', // Adjust width based on background
+            maxWidth: '100%',
+            objectFit: isHero ? 'cover' : 'contain' , // Use 'contain' for white background
+              }}
+        /></div>}
+        <CardContent sx={{ mt: isHero ? 0 : 1, bgcolor: isHero ? 'background.paper' : 'background.primary'}}>
+          <Typography gutterBottom variant="h5" component="div" sx={{ textAlign: 'center', wordWrap: 'break-word' }} color={(image && isHero) ? 'text.primary' :'text.invtext'}>
+            {name}
+          </Typography>
+          <Typography variant="body2" color={(image && isHero) ? 'text.primary' :'text.invtext'} >
+            {description}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+      </Link>
+    </Grid>
+  );
+}
 
 
-export function Tile({ name, url, image }) {
+
+
+export function TileOld({ name, url, image }) {
   return (
     <Grid item xs={12} sm={6} md={4} lg={3} sx={{ mb: '20px', display: 'flex' }}>
       <Link href={url} underline="none" sx={{ width: '100%' }}>
@@ -25,7 +63,7 @@ export function Tile({ name, url, image }) {
             <Box
               component="img"
               src={image}
-              alt={name}
+              alt=''
               sx={{
                 maxHeight: '140px',
                 maxWidth: '100%',

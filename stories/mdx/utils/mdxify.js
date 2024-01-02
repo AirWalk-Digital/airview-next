@@ -121,6 +121,17 @@ function useMdxSerializer(componentName, componentArgs) {
 }
 
 
+function WrapTheme( { children }) {
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+                {children}
+        </ThemeProvider>
+    )  
+}
+
+
 
 function Wrapper({ context, children }) {
 
@@ -205,4 +216,4 @@ function Wrapper({ context, children }) {
 }
 
 
-export { useMdxSerializer, getMDX, Wrapper }
+export { useMdxSerializer, getMDX, Wrapper, WrapTheme }
