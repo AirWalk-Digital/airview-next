@@ -123,7 +123,7 @@ export function DemandTable({isLoading, months, data, error, resources} ) {
     const [filteredData, setFilteredData] = useState([]);
     const [customerFilter, setCustomerFilter] = useState('');
     const [monthStartIndex, setMonthStartIndex] = useState(0);
-    
+    console.log('DemandTable:data: ', data)
     useEffect(() => {
         if (data) {
             let groupedData = [];
