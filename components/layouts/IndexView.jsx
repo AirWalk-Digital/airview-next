@@ -81,6 +81,7 @@ export function IndexView({
                     key={i}
                     name={c?.frontmatter?.title}
                     url={c?.file}
+                    isHero={c?.frontmatter?.hero}
                     image={
                       c?.frontmatter?.image
                         ? `/api/content/github/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content.providers.branch}`
