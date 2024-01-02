@@ -16,6 +16,7 @@ export function Tile({ name, url, image, description='', isHero=false }) {
           alt=""
           sx={{
             height: '100%',
+            px: isHero ? 0 : 1,
             // width: isHero ? '100%' : 'unset', // Adjust width based on background
             maxWidth: '100%',
             objectFit: isHero ? 'cover' : 'contain' , // Use 'contain' for white background
