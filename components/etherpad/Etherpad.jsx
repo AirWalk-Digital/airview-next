@@ -36,13 +36,19 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
   // };
 
   useEffect(() => { // process the rawcontent
-    const { mdxContent, frontmatter } = useMDX(content, 'mdx');
-      // console.log('Etherpad:frontmatter: ', frontmatter)
 
+
+    if (content) {
+            console.log('Etherpad:content: ', content)
+
+    const { mdxContent, frontmatter } = useMDX(content, 'mdx');
     if (mdxContent && frontmatter) {
       setPageContent({ content: mdxContent, frontmatter: frontmatter });
       frontMatterCallback(frontmatter);
     }
+      // console.log('Etherpad:frontmatter: ', frontmatter)
+    }
+    
   }, [content])
 
   // useEffect(() => {
@@ -78,7 +84,8 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
   useEffect(() => {
 
     const fetchData = async () => {
-      const cacheKey = 'etherpad:/' + file;
+      const cacheKey = 'etherpad:' + file;
+      console.log('Etherpad:useEffect:fetchData:cacheKey: ', cacheKey)
       try {
         const pad = await fetchPadDetails(cacheKey);
         return pad;
@@ -90,15 +97,19 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
 
     const fetchPadMetadata = async () => {
       const padDetails = await fetchData();
-      // console.log('useEffect:fetchPadDetails: ', padDetails);
+      console.log('Etherpad:useEffect:fetchPadDetails: ', padDetails);
 
-      if (padDetails && padDetails.rawContent && padDetails.frontmatter) {
+      if (padDetails && padDetails.rawContent && padDetails.frontmatter && padDetails.frontmatter.padID) {
         setPadId(padDetails.frontmatter.padID);
         setEditorURL(`${etherpad_host}/p/${padDetails.frontmatter.padID}?showControls=false&showChat=false&showLineNumbers=false&useMonospaceFont=false`);
         setRev(padDetails.rev);
         setRawContent(matter.stringify(padDetails.rawContent, padDetails.frontmatter));
       }
     };
+    fetchPadMetadata();
+  }, []);
+
+    useEffect(() => {
 
 
     const fetchPadContent = async () => {
@@ -113,6 +124,7 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
               .then((res) => res.json())
               .then(data => {
                 if (data.content) {
+                  console.log('Etherpad:fetchPadContent:data.content: ', data.content.text)
                   setRawContent(data.content.text);
                   setRev(newrev); // update the revision after successful fetch
                 }
@@ -133,7 +145,8 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
       fetchPadContent()
       // setTimeout(() => setRefreshToken(Math.random()), 5000);
       console.log('Etherpad:useEffect:PadRefresh')
-    } else { fetchPadMetadata() }
+    }      
+  
 
   }, [refreshToken]);
 

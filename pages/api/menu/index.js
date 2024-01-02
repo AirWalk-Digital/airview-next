@@ -30,8 +30,8 @@ export default async function handler(req, res) {
           ? initialMenuStructure.primary
           : []
       ).concat(
-        Array.isArray(padsMenu?.collections[collection.path])
-          ? padsMenu.collections[collection.path]
+        Array.isArray(padsMenu?.primary)
+          ? padsMenu.primary
           : []
       );
 
@@ -61,28 +61,32 @@ export default async function handler(req, res) {
 
 async function fetchPadMenu() {
   const newPads = await cacheSearch("etherpad:*");
-  // // console.log('cache: ', newPads)
 
   const padMeta = await Promise.all(newPads.map((item) => cacheRead(item)));
+  console.log('padMeta: ', padMeta)
+  let primary = [];
+  let relatedContent = {};
 
   padMeta.forEach((item, index) => {
     item = JSON.parse(item);
+    console.log('padMeta:item ', item)
+
     try {
-      if (!collections[item.collection]) {
-        collections[item.collection] = [];
-      }
-      collections[item.collection].push({
-        label: item.title,
-        url: item.url,
-      });
+      // if (!collections[item.collection]) {
+      //   collections[item.collection] = [];
+      // }
+      // collections[item.collection].push({
+      //   label: item.title,
+      //   url: item.url,
+      // });
 
       // find parents
       // const parents = ['solutions', 'patterns', 'product', 'design', 'knowledge']
-      const getListOfKeys = (data) => Object.keys(data);
-      const parents = getListOfKeys(siteConfig.content);
+      // const getListOfKeys = (data) => Object.keys(data);
+      // const parents = getListOfKeys(siteConfig.content);
       // console.log('API:/api/structure:parents', parents)
-
       // console.log('API:/api/structure:parents', parents)
+      let topLevel = false;
 
       for (let key in siteConfig.content) {
         const y = siteConfig.content[key];
@@ -107,15 +111,26 @@ async function fetchPadMenu() {
             label: item.title,
             url: item.url.startsWith("/") ? item.url : "/" + item.url,
           });
+          topLevel = false; // there is a parent
           // // console.log('added: ', relatedContent, item)
         }
       }
+      if (topLevel) {
+        primary.push({
+          label: item.title,
+          url: item.url.startsWith("/") ? item.url : "/" + item.url,
+        });
+      }
+
       // collections[item.collection].children = findChildren(padMeta, item);
     } catch (error) {
       console.error(error);
     }
     // // console.log('meta: ', item);
   });
+
+  console.log('API:/api/structure:return: ', {primary, relatedContent})
+  return {primary, relatedContent};
 }
 
 // merge the child entries from Etherpad
