@@ -4,6 +4,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import { baseTheme } from "../constants/baseTheme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { addDecorator } from "@storybook/react";
+// other code omitted for brevity
+
 
 const preview = {
   parameters: {
@@ -26,3 +28,4 @@ const preview = {
 
 
 export default preview;
+

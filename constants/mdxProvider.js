@@ -31,7 +31,7 @@ import { motion } from "framer-motion";
 // import { Insight, InsightTable, ChevronProcessTable, StatementBanner, Roadmap } from './Playback';
 // import {FaIcon, Icon} from './Images.jsx';
 import { FaIcon, Icon } from 'airview-mdx';
-import { ProgressTable } from '@/components/layouts';
+import { ProgressTable } from '@/components/layouts/Tables';
 // import { HeaderCard, Nest } from './Cards';
 // import { HeaderCard } from './Cards';
 // import { Font } from './Styling';
@@ -167,8 +167,7 @@ function MdxImage({ props, baseContext }) {
             alt={alt}
             onLoad={handleImageLoad}
             // maxWidth={containerSize.width * 0.7}
-            style={{ objectFit: 'contain', maxWidth: containerSize.width }}
-          />
+            style={{ objectFit: 'contain', maxWidth: containerSize.width === 0 ? '100%' : containerSize.width }}          />
         </Box>
         <Dialog
           open={open}
@@ -239,7 +238,6 @@ export const mdComponents = (baseContext) => ({
         showLineNumbers={language ? true : false}
         // customStyle={{ overflow: 'clip', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}
         customStyle={{ display: language ? 'block' : 'inline', ...(language ? { fontSize: '0.75rem'} : { background: 'unset', padding: 'unset', fontSize: '0.85rem' })  }}
-        wrapLongLines={true}
         {...props}
       />
     );

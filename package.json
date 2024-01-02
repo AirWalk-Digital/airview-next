@@ -10,7 +10,7 @@
     "rebuild": "cp package* /tmp/npm/ && cd /tmp/npm && npm i",
     "pull-packages": "cp /tmp/npm/package* /workspaces/airview-next/",
     "lint": "next lint",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build"
   },
   "dependencies": {
@@ -44,7 +44,7 @@
     "@stefanprobst/rehype-extract-toc": "^2.2.0",
     "ahooks": "^3.7.7",
     "ai": "^2.2.25",
-    "airview-mdx": "^1.5.0",
+    "airview-mdx": "^1.6.0",
     "aws-sdk": "^2.1389.0",
     "axios": "^1.6.0",
     "deep-equal": "^2.2.2",
@@ -59,6 +59,7 @@
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.0",
     "langchain": "^0.0.197-rc.1",
+    "mdx-mermaid": "^2.0.0",
     "mime-types": "^2.1.35",
     "net": "^1.0.2",
     "next": "^14.0.4",

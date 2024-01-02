@@ -91,8 +91,8 @@ const dropDown = [
 ]
 
 
-export const DialogWithButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
+export const Dialog = () => {
+  const [isOpen, setIsOpen] = useState(true);
   const [context, setContext] = useState({});
 
   const handleOpen = () => {
@@ -118,7 +118,7 @@ export const DialogWithButton = () => {
 };
 
 export const WithControlBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [context, setContext] = useState({...testCollection, branch: "branch-1"});
   const [editMode, setEditMode] = useState(true);
 
