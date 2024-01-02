@@ -167,8 +167,7 @@ function MdxImage({ props, baseContext }) {
             alt={alt}
             onLoad={handleImageLoad}
             // maxWidth={containerSize.width * 0.7}
-            style={{ objectFit: 'contain', maxWidth: containerSize.width }}
-          />
+            style={{ objectFit: 'contain', maxWidth: containerSize.width === 0 ? '100%' : containerSize.width }}          />
         </Box>
         <Dialog
           open={open}
