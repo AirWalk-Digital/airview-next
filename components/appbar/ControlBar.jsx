@@ -19,6 +19,7 @@ import { NewContentDialog, NewBranchDialog } from "@/components/appbar";
 import * as matter from "gray-matter";
 import { toSnakeCase } from "@/lib/utils/stringUtils";
 import { useRouter } from "next/navigation";
+import { raisePR } from "@/lib/github";
 
 export function ControlBar({
   open: controlBarOpen,
@@ -183,6 +184,40 @@ export function ControlBar({
     setIsAddOpen(false);
   };
 
+  const handlePR = async () => {
+    const prName = (branch) => {
+      const [branchType, ...titleParts] = branch.split("/");
+      const title = titleParts.join(" ").replace(/([a-z])([A-Z])/g, "$1 $2");
+      return `${
+        branchType.charAt(0).toUpperCase() + branchType.slice(1)
+      }: ${title
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")}`;
+    };
+    console.debug(
+      "ControlBar:handlePR: ",
+      context.owner,
+      context.repo,
+      prName(context.branch),
+      "PR created from Airview",
+      context.branch,
+      collection.branch
+    );
+    try {
+      await raisePR(
+        context.owner,
+        context.repo,
+        prName(context.branch),
+        "PR created from Airview",
+        context.branch,
+        collection.branch
+      );
+    } catch (e) {
+      throw new Error(`Error creating PR: ${e.message}`);
+    }
+  };
+
   return (
     <>
       <ControlBarComponent
@@ -200,6 +235,7 @@ export function ControlBar({
         editMode={editMode}
         fetchBranches={fetchBranches}
         handleNewBranch={onNewBranchClicked}
+        handlePR={handlePR}
       />
       <NewContentDialog dialogOpen={isAddOpen} handleDialog={handleAdd} />
       <NewBranchDialog
