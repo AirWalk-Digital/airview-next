@@ -196,6 +196,7 @@ export function ContentPage({
       console.error("ContentPage:onSave:error: ", error);
       throw new Error(`Error saving file: ${error.message}`);
     }
+    handleContentChange(context.file);
     // const currentState = store.getState();
     // const reduxCollection = currentState.branch[collection];
     // console.log("Editor:context: ", context);

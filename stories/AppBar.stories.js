@@ -1,4 +1,4 @@
-import { TopBar } from '@/components/appbar';
+import { TopBar } from '@/components/appbar/TopBar';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 export default {

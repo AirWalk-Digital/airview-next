@@ -130,6 +130,7 @@ export function ControlBar({
           const url = new URL(window.location.href);
           const params = new URLSearchParams(url.search);
           params.set("branch", newBranch.name);
+          params.set("edit", "true");
           url.search = params.toString();
           window.location.href = url.toString();
         }

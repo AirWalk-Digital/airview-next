@@ -11,7 +11,7 @@ import {
   Stack,
   Autocomplete,
   Button,
-  Snackbar
+  Snackbar,
 } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
@@ -19,8 +19,8 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 // import { useSelector, useDispatch } from 'react-redux'
 // import { setBranch } from '@/lib/redux/reducers/branchSlice'
 import ApprovalIcon from "@mui/icons-material/Approval";
-import MuiAlert from '@mui/material/Alert';
-import CircularProgress from '@mui/material/CircularProgress';
+import MuiAlert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export function ControlBarComponent({
   open,
@@ -48,7 +48,8 @@ export function ControlBarComponent({
   console.log("ControlBarComponent:collection: ", collection);
   console.log("ControlBarComponent:editMode: ", editMode);
   const [isLoading, setIsLoading] = useState(false);
-  const [showError, setShowError] = useState('');
+  const [showError, setShowError] = useState("");
+  const [showPRSuccess, setShowPRSuccess] = useState(false);
 
   useEffect(() => {
     if (context.branch != collection.branch) {
@@ -135,6 +136,7 @@ export function ControlBarComponent({
       try {
         // Replace this with your actual function
         await handlePR();
+        setShowPRSuccess(true);
       } catch (error) {
         setShowError(error.message);
       } finally {
@@ -228,7 +230,9 @@ export function ControlBarComponent({
                   </IconButton>
                 }
                 label=""
-              />
+              /></>)}
+         {editMode && changeBranch && collection && (
+        <>    
               <Button
                 variant="outlined"
                 onClick={handlePRClick}
@@ -241,15 +245,29 @@ export function ControlBarComponent({
               <Snackbar
                 open={showError}
                 autoHideDuration={6000}
-                onClose={() => setShowError('')}
+                onClose={() => setShowError("")}
               >
                 <MuiAlert
-                  onClose={() => setShowError('')}
+                  onClose={() => setShowError("")}
                   severity="error"
                   elevation={6}
                   variant="filled"
                 >
                   An error occurred while processing your request: {showError}
+                </MuiAlert>
+              </Snackbar>
+              <Snackbar
+                open={showPRSuccess}
+                autoHideDuration={6000}
+                onClose={() => setShowPRSuccess(false)}
+              >
+                <MuiAlert
+                  onClose={() => setShowPRSuccess(false)}
+                  severity="success"
+                  elevation={6}
+                  variant="filled"
+                >
+                  PR successfully created
                 </MuiAlert>
               </Snackbar>
             </>
