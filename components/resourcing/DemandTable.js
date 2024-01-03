@@ -123,7 +123,7 @@ export function DemandTable({isLoading, months, data, error, resources} ) {
     const [filteredData, setFilteredData] = useState([]);
     const [customerFilter, setCustomerFilter] = useState('');
     const [monthStartIndex, setMonthStartIndex] = useState(0);
-    
+    console.log('DemandTable:data: ', data)
     useEffect(() => {
         if (data) {
             let groupedData = [];
@@ -258,8 +258,16 @@ export function DemandTable({isLoading, months, data, error, resources} ) {
                                         alignItems: 'center',
                                         height: '100%'
                                     }}>
-                                        {item.monthlyDetails && item.monthlyDetails[month] && <Chip sx={{ minWidth: '100px' }} color="primary" label={item.monthlyDetails[month].days_allocated} />}
-                                    </div>
+                                        {item.monthlyDetails && item.monthlyDetails[month] && (
+                                            <Chip 
+                                                sx={{ minWidth: '100px' }} 
+                                                color="primary" 
+                                                label={
+                                                    parseInt(item.monthlyDetails[month].days_allocated, 10) + 
+                                                    parseInt(item.monthlyDetails[month].days_forecast, 10)
+                                                } 
+                                            />
+                                        )}                                    </div>
                                 </TableCell>
                             ))}
                         </TableRow>
