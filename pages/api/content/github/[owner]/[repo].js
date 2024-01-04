@@ -1,7 +1,11 @@
 import { getAllFiles, getFileContent, commitFileToBranch } from "@/lib/github";
 import path from 'path';
 import mime from 'mime-types';
-
+export const config = {
+  api: {
+    responseLimit: '8mb',
+  },
+}
 export default async function handler(req, res) {
   try {
     const { owner, repo, branch = 'main', path: filepath } = req.query;
@@ -22,6 +26,7 @@ export default async function handler(req, res) {
         const extension = path.extname(filepath);
         const contentType = mime.lookup(extension) || 'application/octet-stream';
         res.setHeader("Content-Type", contentType);
+        console.log("content-type: ", contentType);
         res.send(data);
       }
     } else if (req.method === "POST") {

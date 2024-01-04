@@ -46,7 +46,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 function MdxImage({ props, baseContext }) {
-  // console.debug('mdxProvider:MdxImage:baseContext: ', baseContext)
+  console.debug('mdxProvider:MdxImage:baseContext: ', baseContext)
 
   let src = props.src;
 

@@ -49,6 +49,7 @@ export default function Page({
         title=""
         tiles={tiles}
         menuComponent={LeftMenuFunction(initialContext)}
+        initialContext={initialContext}
       />
     );
   } else {

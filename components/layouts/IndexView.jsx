@@ -20,6 +20,7 @@ export function IndexView({
   menuStructure,
   title,
   menuComponent,
+  initialContext,
   loading
 }) {
 
@@ -84,7 +85,7 @@ export function IndexView({
                     isHero={c?.frontmatter?.hero}
                     image={
                       c?.frontmatter?.image
-                        ? `/api/content/github/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content.providers.branch}`
+                        ? `/api/content/github/${siteConfig.content[initialContext.path].owner}/${siteConfig.content[initialContext.path].repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content[initialContext.path].branch}`
                         : null
                     }
                   />
