@@ -14,6 +14,7 @@ export default {
   tags: ["autodocs"],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
+    result: { control: { type: "radio" }, options: ["success", "error"] },
     // backgroundColor: { control: 'color' },
   },
 };
@@ -80,10 +81,9 @@ export const Simple = {
     context: dummyCollection,
     branches: branches,
     editMode: false,
-    fetchBranches: dummyFunction
+    fetchBranches: dummyFunction,
   },
 };
-
 
 export const EditMode = {
   args: {
@@ -96,13 +96,13 @@ export const EditMode = {
     onContextUpdate: dummyFunction,
     handlePresentation: dummyFunction,
     collection: dummyCollection,
-    context: {...dummyCollection, branch: 'branch-1'},
+    context: { ...dummyCollection, branch: "branch-1" },
     branches: branches,
     editMode: true,
-    fetchBranches: dummyFunction
+    fetchBranches: dummyFunction,
+    handlePR: dummyFunction,
   },
 };
-
 
 export const DefaultBranch = {
   args: {
@@ -115,27 +115,40 @@ export const DefaultBranch = {
     onContextUpdate: dummyFunction,
     handlePresentation: dummyFunction,
     collection: dummyCollection,
-    context: {...dummyCollection},
+    context: { ...dummyCollection },
     branches: branches,
     editMode: true,
-    fetchBranches: dummyFunction
+    fetchBranches: dummyFunction,
   },
 };
 
-
-export const FullDemo = () => {
-
+const Template = (args) => {
   const [collection, setCollection] = useState(dummyCollection);
   const [editMode, setEditMode] = useState(false);
-  const [context, setContext] = useState({...dummyCollection, branch: 'main'});
-  
+  const [context, setContext] = useState({
+    ...dummyCollection,
+    branch: "main",
+  });
+
   function dummyFunction() {}
- 
-    
+
   function onContextUpdate(collection) {
     setContext(collection);
   }
-  
+
+  async function dummyDelay() {
+    console.log("dummyDelay:result");
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await delay(2000);
+    switch (args.result) {
+      case "success":
+        console.log("success");
+        return "success";
+      case "error":
+        throw new Error("An error occurred");
+    }
+  }
+
   return (
     <div>
       <ControlBar
@@ -147,14 +160,43 @@ export const FullDemo = () => {
         handleAdd={dummyFunction}
         handlePresentation={dummyFunction}
         onContextUpdate={onContextUpdate}
-        collection={collection}
-        context={context}
-        branches={branches}
-        editMode={editMode}
+        collection={args.collection}
+        context={args.context}
+        branches={args.branches}
+        editMode={args.editMode}
         fetchBranches={dummyFunction}
+        handlePR={dummyDelay}
       />
-      
-      <div style={{position: "absolute", top: "100px"}}>Collection: {JSON.stringify(collection)}</div>
+
+      <div style={{ position: "absolute", top: "100px" }}>
+        Collection: {JSON.stringify(collection)}
+      </div>
     </div>
   );
+};
+
+export const FullDemo = Template.bind({});
+FullDemo.args = {
+  collection: dummyCollection,
+  context: { ...dummyCollection, branch: "branch-1" },
+  branches: branches,
+  result: "success",
+};
+
+export const API_Success = Template.bind({});
+API_Success.args = {
+  collection: dummyCollection,
+  context: { ...dummyCollection, branch: "branch-1" },
+  branches: branches,
+  editMode: true,
+  result: "success",
+};
+
+export const APIError = Template.bind({});
+APIError.args = {
+  collection: dummyCollection,
+  context: { ...dummyCollection, branch: "branch-1" },
+  branches: branches,
+  editMode: true,
+  result: "error",
 };

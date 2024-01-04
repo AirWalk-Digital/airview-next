@@ -33,7 +33,7 @@ export function NewBranchDialog({ dialogOpen = false, handleDialog }) {
     setError(null);
     try {
       if (title) {
-        let prName = branchType + '/' + title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+        let prName = branchType + '/' + title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('-');
         await handleDialog({ name: prName });
         setTitle(""); // default the title back
       } else {

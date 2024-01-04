@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import { NewContentDialog } from "@/components/appbar";
+import { NewContentDialog } from "@/components/appbar/NewContentDialog";
 import { ControlBarComponent as ControlBar } from "@/components/appbar/ControlBarComponent";
 import { toSnakeCase } from '@/lib/utils/stringUtils';
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
