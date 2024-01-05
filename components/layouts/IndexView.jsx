@@ -20,7 +20,7 @@ export function IndexView({
   menuStructure,
   title,
   menuComponent,
-  initialContext,
+  initialContext = null,
   loading
 }) {
 
@@ -75,7 +75,7 @@ export function IndexView({
       ><Box sx={{ px: '5%' }}>
           <Typography variant="h1" component="h1">{title}</Typography>
           <Container maxWidth="lg" sx={{ maxHeight: '100vh', mt: '2%' }}>
-            <Grid container spacing={2} alignItems="stretch">
+            <Grid container spacing={2} alignItems="stretch" justifyContent="space-between">
               {tiles ? (
                 tiles.map((c, i) => (
                   <Tile
@@ -84,9 +84,11 @@ export function IndexView({
                     url={c?.file}
                     isHero={c?.frontmatter?.hero}
                     image={
-                      c?.frontmatter?.image
+                      c?.frontmatter?.hero && c?.frontmatter?.image != null
                         ? `/api/content/github/${siteConfig.content[initialContext.path].owner}/${siteConfig.content[initialContext.path].repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content[initialContext.path].branch}`
-                        : null
+                        : c?.frontmatter?.hero
+                        ? '/generic-solution.png'
+                        : c?.frontmatter?.image ? `/api/content/github/${siteConfig.content[initialContext.path].owner}/${siteConfig.content[initialContext.path].repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content[initialContext.path].branch}` : null
                     }
                   />
                 ))) : (

@@ -5,9 +5,20 @@ import { CardActionArea } from '@mui/material';
 
 export function Tile({ name, url, image, description='', isHero=false }) {
   return (
-    <Grid item xs={12} sm={6} md={4} lg={3} sx={{ mb: '20px', display: 'flex' }}>
-      <Link href={url} underline="none" sx={{ width: '100%' }}>
-      <Card variant="outlined" sx={{ minHeight: 120, maxWidth: 345, bgcolor: image ? 'background.paper' : 'background.primary' }} >
+    <Grid item xs={6} sm={6} md={4} lg={3}> 
+     {/* sx={{ mb: '20px', display: 'flex', flex: 1 }}> */}
+      <Link 
+        href={url} 
+        underline="none" 
+        sx={{ 
+          width: '100%', 
+          color: 'inherit',
+          '&:visited': {
+            color: 'inherit',
+          }
+        }}
+      >     
+       <Card variant="outlined" sx={{ minHeight: 120, bgcolor: image ? 'background.paper' : 'background.primary' }} >
       <CardActionArea>
         { image && <div style={{height:"194px"}}><CardMedia
           component="img"

@@ -84,12 +84,13 @@ export const MultiLineTitle: Story = {
   };
 
   const dummyTiles = Array.from({ length: 10 }, (_, i) => ({
-    frontmatter: {
-      title: `Tile ${i + 1}`,
-      hero: i === 0, // Set the first tile as hero
-      image: `image${i + 1}.jpg`,
-    },
-    file: `file${i + 1}.md`,
+      frontmatter: {
+        title: `Tile ${i + 1}`,
+        hero: i < 3, // Set the first 3 tiles as hero
+        image: i < 1 ? null : (i < 4 ? 'hero/hero1.png' : null),
+        description: [0, 2, 5].includes(i) ? `Lorum ipsum   Random description ${Math.random()}` : null,
+      },
+      file: `file${i + 1}.md`,
   }));
 
 
@@ -266,7 +267,8 @@ const dummyTiles3 = [
 const Template = (args, context) => {
 
   return (
-    
+    <Container maxWidth="lg" sx={{ maxHeight: '100vh', mt: '2%' }}>
+
     <Grid container spacing={2} alignItems="stretch">
     {args.tiles ? (
       args.tiles.map((c, i) => (
@@ -276,16 +278,20 @@ const Template = (args, context) => {
           url={c?.file}
           isHero={c?.frontmatter?.hero}
           image={
-            c?.frontmatter?.image
+            c?.frontmatter?.hero && c?.frontmatter?.image != null
               ? `/${c.frontmatter.image}`
+              : c?.frontmatter?.hero
+              ? '/generic-solution.png'
               : null
           }
+          description={c?.frontmatter?.description}
+          
         />
       ))) : (
       <div>...loading</div>
     )}
   </Grid>
-    
+    </Container>
   );
 };
 

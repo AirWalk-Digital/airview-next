@@ -101,7 +101,7 @@ export async function getServerSideProps(context) {
         const allTiles = await getFrontMatter(
           siteConfig.content[context.params.path[0]]
         );
-
+          console.log("allTiles: ", allTiles);
         tiles = allTiles.filter((tile) => {
           const parts = tile.file.split("/"); // Split the file path by '/'
           const fileName = parts[parts.length - 1]; // Get the last part (file name)
