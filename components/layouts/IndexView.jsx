@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Box, Typography, LinearProgress } from '@mui/material';
-import { baseTheme } from '../../constants/baseTheme';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+// import { baseTheme } from '../../constants/baseTheme';
+// import { ThemeProvider } from '@mui/material/styles';
+// import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { Tile } from '@/components/buttons'
@@ -37,8 +37,9 @@ export function IndexView({
 
   if (loading || !tiles) {
   return (
-    <ThemeProvider theme={baseTheme}>
-      <CssBaseline />
+    // <ThemeProvider theme={baseTheme}>
+      // <CssBaseline />
+      <>
       <TopBar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
         menu={true}
@@ -47,14 +48,16 @@ export function IndexView({
         <LinearIndeterminate style={{ marginTop: topBarHeight }} />
       </div>
       <FullScreenSpinner/>
-    </ThemeProvider>
+      </>
+    // </ThemeProvider>
 
   )
   }
 
   return (
-    <ThemeProvider theme={baseTheme}>
-      <CssBaseline />
+    // <ThemeProvider theme={baseTheme}>
+    <>
+      {/* <CssBaseline /> */}
       <TopBar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
         menu={true}
@@ -75,7 +78,9 @@ export function IndexView({
       ><Box sx={{ px: '5%' }}>
           <Typography variant="h1" component="h1">{title}</Typography>
           <Container maxWidth="lg" sx={{ maxHeight: '100vh', mt: '2%' }}>
-            <Grid container spacing={2} alignItems="stretch" justifyContent="space-between">
+          {/* <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', justifyContent: 'space-between' }}> */}
+          <Grid container spacing={2}>
+
               {tiles ? (
                 tiles.map((c, i) => (
                   <Tile
@@ -99,7 +104,8 @@ export function IndexView({
 
         </Box>
       </div>
-    </ThemeProvider>
+      </>
+    // </ThemeProvider>
   )
 }
 

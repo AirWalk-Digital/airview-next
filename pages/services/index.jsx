@@ -10,13 +10,13 @@ export default function Page({ tiles, menuStructure: initialMenuStructure, colle
 
   if (loading) {
     return (
-      <IndexView menuStructure={null} title="Providers and Services" tiles={null} menuComponent={HeaderMinimalMenu} initialContext={context} loading={true}/>
+      <IndexView menuStructure={null} tiles={null} menuComponent={HeaderMinimalMenu} initialContext={context} loading={true}/>
     )
   }
   const { menuStructure  } = usePageMenu(collection);
 
   return (
-    <IndexView menuStructure={menuStructure} title="Providers and Services" tiles={tiles} menuComponent={HeaderMinimalMenu} initialContext={context} />
+    <IndexView menuStructure={menuStructure} tiles={tiles} menuComponent={HeaderMinimalMenu} initialContext={context} />
   );
 }
 

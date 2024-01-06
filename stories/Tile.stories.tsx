@@ -268,8 +268,10 @@ const Template = (args, context) => {
 
   return (
     <Container maxWidth="lg" sx={{ maxHeight: '100vh', mt: '2%' }}>
+{/* <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', justifyContent: 'space-between' }}> */}
+<Grid container spacing={2}>
 
-    <Grid container spacing={2} alignItems="stretch">
+    {/* <Grid container spacing={2} alignItems="stretch"> */}
     {args.tiles ? (
       args.tiles.map((c, i) => (
         <Tile
@@ -290,7 +292,8 @@ const Template = (args, context) => {
       ))) : (
       <div>...loading</div>
     )}
-  </Grid>
+    </Grid>
+  {/* </div> */}
     </Container>
   );
 };
