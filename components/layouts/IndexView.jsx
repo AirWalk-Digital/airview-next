@@ -8,7 +8,7 @@ import Container from '@mui/material/Container';
 import { Tile } from '@/components/buttons'
 import { TopBar } from '@/components/appbar';
 import { FullScreenSpinner } from '@/components/loaders'
-
+import Head from 'next/head'
 import path from 'path';
 
 
@@ -18,14 +18,13 @@ import { siteConfig } from "../../site.config.js";
 export function IndexView({
   tiles,
   menuStructure,
-  title,
   menuComponent,
   initialContext = null,
   loading
 }) {
 
   // console.log('IndexView:menuStructure: ', menuStructure)
-
+  const title = `${siteConfig.title} | ${siteConfig.content[initialContext.path].path.charAt(0).toUpperCase()}${siteConfig.content[initialContext.path].path.slice(1)}`;
   const MenuComponent = menuComponent;
 
   const navDrawerWidth = 300;
@@ -40,6 +39,9 @@ export function IndexView({
     // <ThemeProvider theme={baseTheme}>
       // <CssBaseline />
       <>
+      <Head>
+        <title>{title}</title>
+      </Head>
       <TopBar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
         menu={true}
@@ -57,8 +59,10 @@ export function IndexView({
   return (
     // <ThemeProvider theme={baseTheme}>
     <>
-      {/* <CssBaseline /> */}
-      <TopBar onNavButtonClick={handleOnNavButtonClick}
+<Head>
+        <title>{title}</title>
+      </Head>
+            <TopBar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
         menu={true}
         topBarHeight={topBarHeight} />
@@ -75,9 +79,9 @@ export function IndexView({
           marginTop: topBarHeight,
           paddingLeft: menuOpen ? navDrawerWidth : 0,
         }}
-      ><Box sx={{ px: '5%' }}>
-          <Typography variant="h1" component="h1">{title}</Typography>
-          <Container maxWidth="lg" sx={{ maxHeight: '100vh', mt: '2%' }}>
+      ><Box sx={{ px: '2%' }}>
+          {/* <Typography variant="h1" component="h1">{title}</Typography> */}
+          <Container sx={{ maxHeight: '100vh', pt: '2%' }}>
           {/* <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', justifyContent: 'space-between' }}> */}
           <Grid container spacing={2}>
 
