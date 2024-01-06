@@ -18,13 +18,14 @@ import { siteConfig } from "../../site.config.js";
 export function IndexView({
   tiles,
   menuStructure,
+  title,
   menuComponent,
   initialContext = null,
   loading
 }) {
 
   // console.log('IndexView:menuStructure: ', menuStructure)
-  const title = `${siteConfig.title} | ${siteConfig.content[initialContext.path].path.charAt(0).toUpperCase()}${siteConfig.content[initialContext.path].path.slice(1)}`;
+  // const title = `${siteConfig.title} | ${siteConfig.content[initialContext.path].path.charAt(0).toUpperCase()}${siteConfig.content[initialContext.path].path.slice(1)}`;
   const MenuComponent = menuComponent;
 
   const navDrawerWidth = 300;

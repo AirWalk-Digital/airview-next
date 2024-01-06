@@ -1,7 +1,14 @@
+'use client'
 import React, { useState } from "react";
 import { ButtonMenu } from "@/components/menus";
 import { ControlDataDisplay } from "@/components/compliance/ControlData";
 import CloseIcon from "@mui/icons-material/Close";
+
+
+import CheckIcon from '@mui/icons-material/Check';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import InfoIcon from '@mui/icons-material/Info';
 
 import {
   Dialog,
@@ -22,14 +29,14 @@ export function ControlsMenu({ controls }) {
   const controlCoverage = createControlCoverage(controls);
 
   console.log("ControlsMenu:controls: ", controls);
-  let icon = { color: "success", icon: "check" };
+  let icon = { color: "success", icon: CheckIcon };
 
   if (controlCoverage && controlCoverage.controlCoverage < 50) {
-    icon = { color: "error", icon: "circle-exclamation" };
+    icon = { color: "error", icon: ErrorOutlineIcon };
   } else if (controlCoverage && controlCoverage.controlCoverage < 100) {
-    icon = { color: "warning", icon: "triangle-exclamation" };
+    icon = { color: "warning", icon: WarningAmberIcon };
   } else if (!controlCoverage.controlCoverage) {
-    icon = { color: "info", icon: "circle-exclamation" };
+    icon = { color: "info", icon: InfoIcon };
   }
 
   const handleControlClick = (url, label) => {
@@ -44,7 +51,8 @@ export function ControlsMenu({ controls }) {
       <ButtonMenu
         menuTitle="Controls"
         menuItems={createControlMenu(controls)}
-        initialCollapsed={controlCoverage && controlCoverage.length ? false : true}
+        // initialCollapsed={controlCoverage && controlCoverage.length ? false : true}
+        initialCollapsed={false}
         loading={false}
         fetching={false}
         handleButtonClick={handleControlClick}

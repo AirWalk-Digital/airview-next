@@ -34,7 +34,7 @@ export default function Page({
       return (
         <IndexView
           menuStructure={null}
-          title=""
+          title="`${siteConfig.title} | ${context.path.charAt(0).toUpperCase()}${context.path.slice(1)}`"
           tiles={null}
           menuComponent={HeaderMinimalMenu}
           loading={true}
@@ -46,7 +46,7 @@ export default function Page({
     return (
       <IndexView
         menuStructure={menuStructure}
-        title=""
+        title={`${siteConfig.title} | ${initialContext.path.charAt(0).toUpperCase()}${initialContext.path.slice(1)}`}
         tiles={tiles}
         menuComponent={LeftMenuFunction(initialContext)}
         initialContext={initialContext}
@@ -69,6 +69,7 @@ export default function Page({
     return (
       <ContentPage
         pageContent={pageContent}
+        title={`${siteConfig.title} | ${context.path.charAt(0).toUpperCase()}${context.path.slice(1)}`}
         content={content}
         menuStructure={menuStructure}
         handleContentChange={handleContentChange}

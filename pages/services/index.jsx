@@ -7,16 +7,17 @@ import { usePageMenu } from "@/lib/hooks";
 
 
 export default function Page({ tiles, menuStructure: initialMenuStructure, collection, context, loading }) {
+  const title = `${siteConfig.title} | ${context.path.charAt(0).toUpperCase()}${context.path.slice(1)}`;
 
   if (loading) {
     return (
-      <IndexView menuStructure={null} tiles={null} menuComponent={HeaderMinimalMenu} initialContext={context} loading={true}/>
+      <IndexView menuStructure={null} tiles={null} title={title} menuComponent={HeaderMinimalMenu} initialContext={context} loading={true} />
     )
   }
   const { menuStructure  } = usePageMenu(collection);
 
   return (
-    <IndexView menuStructure={menuStructure} tiles={tiles} menuComponent={HeaderMinimalMenu} initialContext={context} />
+    <IndexView menuStructure={menuStructure} tiles={tiles} title={title} menuComponent={HeaderMinimalMenu} initialContext={context} />
   );
 }
 
