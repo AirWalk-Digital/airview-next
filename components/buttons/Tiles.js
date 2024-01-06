@@ -11,7 +11,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 
 export function Tile({ name, url, image, description = "", isHero = false }) {
   return (
-    <Grid item xs={12} sm={4} md={3} minHeight={300}>
+    <Grid item xs={12} sm={4} md={3} minHeight={300} maxWidth={300}>
       {/* // <div style={{ flexBasis: "100%", maxWidth: "100%", padding: "8px" }}> */}
       {/* sx={{ mb: '20px', display: 'flex', flex: 1 }}> */}
       <Link
