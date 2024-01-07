@@ -355,17 +355,14 @@ export function ContentPage({
         <Head>
           <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title>
         </Head>
+        <MDXProvider components={mdComponents(context)}>
+
         <PresentationOutput
           handlePresentation={handlePresentation}
           refresh={false}
           content={content}
-        >
-          <MDXProvider components={mdComponents(context)}>
-            <>
-              <Content />
-            </>
+        />
           </MDXProvider>
-        </PresentationOutput>
       </ContentWrapperContext>
     );
   } else if (editMode) {
