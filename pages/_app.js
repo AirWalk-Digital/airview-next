@@ -1,66 +1,24 @@
-import Head from "next/head";
-import React from "react";
+import * as React from 'react';
 import Router from "next/router";
-
-import { siteConfig } from "../site.config.js";
-// import MDXProvider from "../components/MDXProvider";
-import { AnimatePresence } from "framer-motion";
-import { CurrentSlideProvider } from "../context/CurrentSlideContext";
-import { ModeProvider } from "../context/ModeContext";
-// import TransitionPage from "../layouts/TransitionPage";
+import Head from 'next/head';
 import Script from 'next/script';
-
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { CacheProvider } from '@emotion/react';
+import { baseTheme as theme } from '../constants/baseTheme.js';
+import createEmotionCache from '../lib/createEmotionCache';
 import { MDXProvider } from '@mdx-js/react'
 import { mdComponents } from "../constants/mdxProvider";
 
 import {Provider} from 'react-redux'
 import store from '@/lib/redux/store'
 
-
-function OutputWrapper({ children }) {
-  return (
-    <CurrentSlideProvider>
-      <ModeProvider>
-        <AnimatePresence exitBeforeEnter>
-          {/* <TransitionPage> */}
-          <Head>
-            <title>{siteConfig.title}</title>
-            <link rel="icon" href="/favicon.ico" />
-
-            <Script
-              src="https://kit.fontawesome.com/ff3b5aaa16.js"
-              crossOrigin="anonymous"
-            />
-          </Head>
-          {children}
-          {/* </TransitionPage> */}
-        </AnimatePresence>
-      </ModeProvider>
-    </CurrentSlideProvider>
-  )
-};
+// Client-side cache, shared for the whole session of the user in the browser.
+const clientSideEmotionCache = createEmotionCache();
 
 
-function DefaultWrapper({ children }) {
-  return (
-    <><Head>
-            <title>{siteConfig.title}</title>
-            <link rel="icon" href="/favicon.ico" />
-
-            <Script
-              src="https://kit.fontawesome.com/ff3b5aaa16.js"
-              crossOrigin="anonymous"
-            />
-          </Head>
-         
-          {children}
-          
-          {/* </TransitionPage> */}
-          </>
-  )
-};
-
-export default function App({ Component, pageProps, ...appProps }) {
+export default function MyApp(props) {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const [loading, setLoading] = React.useState(false);
       React.useEffect(() => {
         const start = () => {
@@ -80,25 +38,22 @@ export default function App({ Component, pageProps, ...appProps }) {
           Router.events.off("routeChangeError", end);
         };
       }, []);
-  const getContent = () => {
-    // array of all the paths that doesn't need layout
-    if (appProps.router.pathname.startsWith('/output')) {
-      return (<OutputWrapper><Component {...pageProps} loading={loading}/></OutputWrapper>);
-    } else {
-      return (<DefaultWrapper> <Provider store={store}><Component {...pageProps} loading={loading}/></Provider></DefaultWrapper>);
-    };
-  };
-
-
-  
   return (
-    // <ThemeProvider theme={theme}>
-    // <ErrorBoundary>
-    <MDXProvider components={mdComponents}>
-      {/* <MDXProvider> */}
-      {getContent()}
-    </MDXProvider>
-    // </ErrorBoundary>
-  )
+    <CacheProvider value={emotionCache}>
+      <Head>
+      <title>Airview</title>
 
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <Script
+              src="https://kit.fontawesome.com/ff3b5aaa16.js"
+              crossOrigin="anonymous"
+            />
+      </Head>
+      <ThemeProvider theme={theme}>
+        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+        <CssBaseline />
+        <Provider store={store}><Component {...pageProps} loading={loading}/></Provider>
+      </ThemeProvider>
+    </CacheProvider>
+  );
 }

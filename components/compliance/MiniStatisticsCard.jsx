@@ -1,11 +1,11 @@
 // @mui material components
-import Card from "@mui/material/Card";
+// import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
-import Icon from "@mui/material/Icon";
+// import Icon from "@mui/material/Icon";
 
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import Typography from "@mui/material/Typography";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function MiniStatisticsCard({
   bgColor,
@@ -20,6 +20,8 @@ export function MiniStatisticsCard({
   // const { darkMode } = controller;
   const darkMode = false;
   const iconcolor = icon.color + ".main";
+
+  const Icon = icon.icon
 
   return (
     <Box
@@ -46,10 +48,7 @@ export function MiniStatisticsCard({
               alignItems="center"
             >
               {/* <Icon fontSize="small" color="inherit"> */}
-              <FontAwesomeIcon
-                icon={["fas", "fa-" + icon.icon]}
-                style={{ width: "40px", height: "40px" }}
-              />
+              <Icon style={{ width: "40px", height: "40px" }}/>
               {/* </Icon> */}
             </Box>
           </Grid>
@@ -93,10 +92,7 @@ export function MiniStatisticsCard({
               alignItems="center"
             >
               {/* <Icon fontSize="small" color="inherit"> */}
-              <FontAwesomeIcon
-                icon={["fas", "fa-" + icon.icon]}
-                style={{ color: icon.color, width: "40px", height: "40px" }}
-              />
+              <Icon style={{ width: "40px", height: "40px" }}/>
               {/* </Icon> */}
             </Box>
           </Grid>

@@ -35,11 +35,15 @@ export default function Page({
     initialContext
   );
 
-  
+  let title = `${siteConfig.title}`;
+  if (context && context.path) {
+    title = `${siteConfig.title} | ${context.path.charAt(0).toUpperCase()}${context.path.slice(1)}`;
+  }
 
   return (
     <ContentPage
     pageContent={pageContent}
+    title={title}
     content={content}
     menuStructure={menuStructure}
     handleContentChange={handleContentChange}
@@ -50,10 +54,10 @@ export default function Page({
     isLoading={loading}
     menuOpen={LeftMenuOpen(context)}
     headerComponent={(props) => (
-      <ServicesHeader {...props} extraData={controls} />
+      <ServicesHeader {...props} />
     )}
-    sideComponent={(props) => <ControlsMenu {...props} controls={controls} />}
-  />
+    sideComponent={controls && Object.keys(controls).length > 0 ? () => <ControlsMenu controls={controls} /> : undefined}
+      />
     // <ContentPage
     //   pageContent={pageContent}
     //   content={content}

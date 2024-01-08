@@ -6,17 +6,18 @@ import { HeaderMinimalMenu } from '@/components/menus'
 import { usePageMenu } from "@/lib/hooks";
 
 
-export default function Page({ tiles, menuStructure: initialMenuStructure, collection, loading }) {
+export default function Page({ tiles, menuStructure: initialMenuStructure, collection, context, loading }) {
+  const title = `${siteConfig.title} | ${context.path.charAt(0).toUpperCase()}${context.path.slice(1)}`;
 
   if (loading) {
     return (
-      <IndexView menuStructure={null} title="Providers and Services" tiles={null} menuComponent={HeaderMinimalMenu} loading={true}/>
+      <IndexView menuStructure={null} tiles={null} title={title} menuComponent={HeaderMinimalMenu} initialContext={context} loading={true} />
     )
   }
   const { menuStructure  } = usePageMenu(collection);
 
   return (
-    <IndexView menuStructure={menuStructure} title="Providers and Services" tiles={tiles} menuComponent={HeaderMinimalMenu} />
+    <IndexView menuStructure={menuStructure} tiles={tiles} title={title} menuComponent={HeaderMinimalMenu} initialContext={context} />
   );
 }
 
@@ -35,6 +36,7 @@ export async function getServerSideProps(context) {
       menuStructure: menuStructure,
       tiles: tiles,
       collection: siteConfig.content.providers,
+      context: siteConfig.content.services
     },
   };
 }

@@ -44,7 +44,7 @@ import path from "path";
 
 export function ContentPage({
   pageContent,
-  title,
+  // title,
   // file,
   content,
   menuStructure,
@@ -62,7 +62,6 @@ export function ContentPage({
   console.debug("ContentPage:menuComponent: ", menuComponent);
   console.debug("ContentPage:context: ", context);
   console.debug("ContentPage:menuOpenInitial: ", menuOpenInitial);
-  console.debug("ContentPage:sideComponent: ", sideComponent);
   // console.debug("ContentPage:content: ", content);
   const [frontmatter, setFrontmatter] = useState(pageContent.frontmatter);
   const MenuComponent = menuComponent;
@@ -231,7 +230,7 @@ export function ContentPage({
     return (
       <ContentWrapperContext>
         <Head>
-          <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title>
+          {/* <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title> */}
         </Head>
         <ThemeProvider theme={baseTheme}>
           <CssBaseline />
@@ -335,7 +334,7 @@ export function ContentPage({
     return (
       <ContentWrapperContext>
         <Head>
-          <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title>
+          {/* <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title> */}
         </Head>
         <PagedOutput handlePrint={handlePrint}>
           <ThemeProvider theme={baseTheme}>
@@ -353,23 +352,26 @@ export function ContentPage({
     return (
       <ContentWrapperContext>
         <Head>
-          <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title>
+          {/* <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title> */}
         </Head>
-        <MDXProvider components={mdComponents(context)}>
-
         <PresentationOutput
           handlePresentation={handlePresentation}
           refresh={false}
           content={content}
-        />
+        >
+          <MDXProvider components={mdComponents(context)}>
+            <>
+              <Content />
+            </>
           </MDXProvider>
+        </PresentationOutput>
       </ContentWrapperContext>
     );
   } else if (editMode) {
     return (
       <ContentWrapperContext>
         <Head>
-          <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title>
+          {/* <title>{`${title} | ${frontmatter?.title ? frontmatter.title : ''}`}</title> */}
         </Head>
         <ThemeProvider theme={baseTheme}>
           <CssBaseline />

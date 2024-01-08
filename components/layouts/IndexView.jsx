@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { Box, Typography, LinearProgress } from '@mui/material';
-import { baseTheme } from '../../constants/baseTheme';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+// import { baseTheme } from '../../constants/baseTheme';
+// import { ThemeProvider } from '@mui/material/styles';
+// import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { Tile } from '@/components/buttons'
 import { TopBar } from '@/components/appbar';
 import { FullScreenSpinner } from '@/components/loaders'
-
+import Head from 'next/head'
 import path from 'path';
 
 
@@ -20,11 +20,12 @@ export function IndexView({
   menuStructure,
   title,
   menuComponent,
+  initialContext = null,
   loading
 }) {
 
   // console.log('IndexView:menuStructure: ', menuStructure)
-
+  // const title = `${siteConfig.title} | ${siteConfig.content[initialContext.path].path.charAt(0).toUpperCase()}${siteConfig.content[initialContext.path].path.slice(1)}`;
   const MenuComponent = menuComponent;
 
   const navDrawerWidth = 300;
@@ -36,8 +37,12 @@ export function IndexView({
 
   if (loading || !tiles) {
   return (
-    <ThemeProvider theme={baseTheme}>
-      <CssBaseline />
+    // <ThemeProvider theme={baseTheme}>
+      // <CssBaseline />
+      <>
+      <Head>
+        <title>{title}</title>
+      </Head>
       <TopBar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
         menu={true}
@@ -46,15 +51,19 @@ export function IndexView({
         <LinearIndeterminate style={{ marginTop: topBarHeight }} />
       </div>
       <FullScreenSpinner/>
-    </ThemeProvider>
+      </>
+    // </ThemeProvider>
 
   )
   }
 
   return (
-    <ThemeProvider theme={baseTheme}>
-      <CssBaseline />
-      <TopBar onNavButtonClick={handleOnNavButtonClick}
+    // <ThemeProvider theme={baseTheme}>
+    <>
+<Head>
+        <title>{title}</title>
+      </Head>
+            <TopBar onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
         menu={true}
         topBarHeight={topBarHeight} />
@@ -71,10 +80,12 @@ export function IndexView({
           marginTop: topBarHeight,
           paddingLeft: menuOpen ? navDrawerWidth : 0,
         }}
-      ><Box sx={{ px: '5%' }}>
-          <Typography variant="h1" component="h1">{title}</Typography>
-          <Container maxWidth="lg" sx={{ maxHeight: '100vh', mt: '2%' }}>
-            <Grid container spacing={2} alignItems="stretch">
+      ><Box sx={{ px: '2%' }}>
+          {/* <Typography variant="h1" component="h1">{title}</Typography> */}
+          <Container sx={{ maxHeight: '100vh', pt: '2%' }}>
+          {/* <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', justifyContent: 'space-between' }}> */}
+          <Grid container spacing={2}>
+
               {tiles ? (
                 tiles.map((c, i) => (
                   <Tile
@@ -83,9 +94,11 @@ export function IndexView({
                     url={c?.file}
                     isHero={c?.frontmatter?.hero}
                     image={
-                      c?.frontmatter?.image
-                        ? `/api/content/github/${siteConfig.content.providers.owner}/${siteConfig.content.providers.repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content.providers.branch}`
-                        : null
+                      c?.frontmatter?.hero && c?.frontmatter?.image != null
+                        ? `/api/content/github/${siteConfig.content[initialContext.path].owner}/${siteConfig.content[initialContext.path].repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content[initialContext.path].branch}`
+                        : c?.frontmatter?.hero
+                        ? '/generic-solution.png'
+                        : c?.frontmatter?.image ? `/api/content/github/${siteConfig.content[initialContext.path].owner}/${siteConfig.content[initialContext.path].repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${siteConfig.content[initialContext.path].branch}` : null
                     }
                   />
                 ))) : (
@@ -96,7 +109,8 @@ export function IndexView({
 
         </Box>
       </div>
-    </ThemeProvider>
+      </>
+    // </ThemeProvider>
   )
 }
 
