@@ -46,10 +46,10 @@ export async function POST(req) {
     redisClient: redisClient,
     indexName: process.env.INDEX_NAME,
   });
-  console.log("vectorStore: ", vectorStore);
+  //console.log("vectorStore: ", vectorStore); //for debugging
 
   const retriever = vectorStore.asRetriever();
-  console.log("Retriever: ", retriever);
+  //console.log("Retriever: ", retriever); //for debugging
 
   const serializeChatHistory = (chatHistory) => {
     if (Array.isArray(chatHistory)) {
