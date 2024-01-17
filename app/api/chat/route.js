@@ -1,18 +1,14 @@
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { BufferMemory } from "langchain/memory";
-import fs from "fs";
 import { RunnableBranch, RunnableSequence } from "langchain/schema/runnable";
 import { PromptTemplate } from "langchain/prompts";
 import { StringOutputParser } from "langchain/schema/output_parser";
 import { LLMChain } from "langchain/chains";
 import { formatDocumentsAsString } from "langchain/util/document";
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { StreamingTextResponse } from "ai";
-
-// export const runtime = "edge";
+import { RedisVectorStore } from "langchain/vectorstores/redis";
+import { createClient } from "redis";
 
 export async function POST(req) {
   const formatMessage = (message) => {
@@ -29,27 +25,6 @@ export async function POST(req) {
       User: {input}
       AI:`;
 
-const TEXT = `
-State of the Union Address Example
-
-My fellow Americans,
-
-As we gather here tonight, the state of our union is strong. Our economy is growing, our citizens are prospering, and our nation is safe and secure. We have faced challenges in the past year, but our resolve has never been stronger.
-
-In the past year, we have made significant progress in key areas. Our administration has worked tirelessly to improve the lives of every American. We have made great strides in healthcare, ensuring that more citizens have access to affordable care. Education has been at the forefront of our agenda, with increased funding for schools and support for teachers.
-
-We have also made significant advancements in technology and innovation. Our efforts in renewable energy are paying off, leading us towards a more sustainable and environmentally friendly future. The job market continues to grow, offering opportunities in new and emerging industries.
-
-However, there is still work to be done. We must continue to strive for equality and justice for all our citizens, regardless of their background. Infrastructure improvements are needed to keep up with the growing demands of our nation. And we must remain vigilant in protecting our country from external threats.
-
-Looking ahead, our goals are clear. We aim to strengthen our economy further, enhance our national security, and ensure that the American dream is attainable for all. With unity and determination, there is no limit to what we can achieve.
-
-Together, let us continue to build a brighter future for our great nation.
-
-Thank you, God bless you, and God bless America.
-
-`;
-
   const body = await req.json();
   const messages = body.messages ?? [];
   const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
@@ -57,14 +32,24 @@ Thank you, God bless you, and God bless America.
   const currentMessageContent = messages[messages.length - 1].content;
   const prompt = PromptTemplate.fromTemplate(TEMPLATE);
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+  const REDIS_HOST = process.env.REDIS_HOST;
 
   const model = new ChatOpenAI({temperature: 0.8, modelName: 'gpt-3.5-turbo', openAIApiKey: OPENAI_API_KEY});
-//   const text = fs.readFileSync("./state.txt", "utf8");
-  const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
-  const docs = await textSplitter.createDocuments(TEXT);
+
+  const redisClient = createClient({
+    url: process.env.REDIS_URL ?? `redis://${REDIS_HOST}:6379`,
+  });
+  await redisClient.connect();
+  console.log("Successfully connect to Redis");
   
-  const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings());
+  const vectorStore = new RedisVectorStore(new OpenAIEmbeddings(), {
+    redisClient: redisClient,
+    indexName: process.env.INDEX_NAME,
+  });
+  console.log("vectorStore: ", vectorStore);
+
   const retriever = vectorStore.asRetriever();
+  console.log("Retriever: ", retriever);
 
   const serializeChatHistory = (chatHistory) => {
     if (Array.isArray(chatHistory)) {
@@ -189,7 +174,7 @@ Standalone question:`);
     question: currentMessageContent,
     chatHistory: formattedPreviousMessages
   });
-
+  
   return new StreamingTextResponse(stream);
   // } catch (e) {
   //   return NextResponse.json({ error: e.message }, { status: 500 });
