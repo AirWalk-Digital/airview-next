@@ -15,22 +15,11 @@ export async function POST(req) {
     return `${message.role}: ${message.content}`;
   };
 
-  const TEMPLATE = `You are an IT expert. All responses must be extremely verbose and technical in nature.
-      Answer the question based only on the following context:
-      {context}
-      
-      Current conversation:
-      {chat_history}
-      
-      User: {input}
-      AI:`;
-
   const body = await req.json();
   const messages = body.messages ?? [];
   const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
   console.log('formattedPreviousMessages: ', formattedPreviousMessages)
   const currentMessageContent = messages[messages.length - 1].content;
-  const prompt = PromptTemplate.fromTemplate(TEMPLATE);
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
   const REDIS_HOST = process.env.REDIS_HOST;
 
