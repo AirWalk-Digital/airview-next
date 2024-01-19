@@ -531,9 +531,9 @@ function ContentMenu({
   };
 
   let directory = file ? path.dirname(file) : null;
-
+  console.log('ContentMenu:context: ', context)
   let chaptersMenu = [];
-  if (content && content[directory]) {
+  if (content && content[directory] && context.collections) {
     for (let collectionItem of context.collections) {
       if (content[directory][collectionItem]) {
         // console.log('ContentMenu:collectionItem: ', collectionItem)

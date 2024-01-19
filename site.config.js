@@ -30,7 +30,7 @@ export const siteConfig = {
       source: "github", // The source of the content
       repo: "airwalk_patterns", // The name of the repo
       owner: "airwalk-digital", // The owner of the repo
-      branch: "1-rob",
+      branch: "main",
       path: "solutions", // the base path for the content
       reference: "solution", // how the collection is referred to in frontmatter links
       collections: ["knowledge", "designs"],
