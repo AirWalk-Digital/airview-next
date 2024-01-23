@@ -1,13 +1,13 @@
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { ChatOpenAI } from "@langchain/openai";
+import { OpenAIEmbeddings } from "@langchain/openai";
 import { BufferMemory } from "langchain/memory";
-import { RunnableBranch, RunnableSequence } from "langchain/schema/runnable";
-import { PromptTemplate } from "langchain/prompts";
-import { StringOutputParser } from "langchain/schema/output_parser";
+import { RunnableBranch, RunnableSequence } from "@langchain/core/runnables";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 import { LLMChain } from "langchain/chains";
 import { formatDocumentsAsString } from "langchain/util/document";
 import { StreamingTextResponse } from "ai";
-import { RedisVectorStore } from "langchain/vectorstores/redis";
+import { RedisVectorStore } from "@langchain/community/vectorstores/redis";
 import { createClient } from "redis";
 
 export async function POST(req) {
