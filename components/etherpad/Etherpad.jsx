@@ -84,7 +84,7 @@ export function Etherpad({ file, frontMatterCallback, editMode }) {
   useEffect(() => {
 
     const fetchData = async () => {
-      const cacheKey = 'etherpad:' + file;
+      const cacheKey = 'etherpad:/' + file;
       console.log('Etherpad:useEffect:fetchData:cacheKey: ', cacheKey)
       try {
         const pad = await fetchPadDetails(cacheKey);
