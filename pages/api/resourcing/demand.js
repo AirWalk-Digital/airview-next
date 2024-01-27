@@ -51,8 +51,20 @@ export default async function handler(req, res) {
       // Process the file content through parseExcelXml
       try {
         const jsonData = await parseExcelXml(content);
+        let users = {}
         // console.debug('/api/upload: ', jsonData);
-        const users = getUsers();
+        try {
+            users = JSON.parse(await cacheRead("aad-users"));
+            if (!users) {
+                throw new Error("No users in cache")
+            }
+            console.log("users from cache")
+        } catch (error) {
+            users = await getUsers();
+            cacheWrite("aad-users", JSON.stringify(users), 60 * 60 * 24 * 7);
+            console.log("users from aad")
+        }
+        
         const resourceData = expandResourceData(jsonData, users);
 
         const holidays = await timesheetPortalHolidays(
