@@ -4,6 +4,7 @@ import React, {
   useRef,
   useCallback,
   useMemo,
+  useEffect,
   createContext,
 } from "react";
 import {
@@ -50,6 +51,8 @@ import Snackbar from "@mui/material/Snackbar";
 // const { MDXEditor, codeBlockPlugin, diffSourcePlugin, headingsPlugin, frontmatterPlugin, listsPlugin, linkPlugin, linkDialogPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, UndoRedo, InsertTable, InsertCodeBlock, InsertFrontmatter, CreateLink, InsertThematicBreak, DiffSourceToggleWrapper } = await import('@mdxeditor/editor')
 // import { useState, useRef, createContext } from "react";
 import Button from "@mui/material/Button";
+import io from 'socket.io-client';
+
 
 const EditorStateContext = createContext();
 import store from "@/lib/redux/store";
@@ -248,6 +251,41 @@ export function Editor({
       height: auto;
     }
   `;
+
+  let socket;
+
+  useEffect(() => {
+
+    // const host = 'https://pad.airview.airwalkconsulting.io'
+    host = 'http://localhost:9001'
+    const path = '/socket.io?padId=yScunhN-pCEjcjwkYTZE&EIO=3&transport=polling&t=OrDBbgc.0&sid=DEK8EQMfUoX5HRGtAAMY'
+    //?padId=a0ea3e63-a3a8-4c4c-b2b6-d8d6969d63e8&EIO=3&transport=websocket&sid=D3PBTHq3Vw1QplbRAALS
+    // Only run this client-side
+    if (typeof window !== 'undefined') {
+      socket = io(host, {
+        path: path,
+        // path: '/socket.io', // Adjust as per your server's configuration
+      });
+
+      socket.on('connect', () => {
+        console.log('Connected to Etherpad');
+        // Send initial events or messages if required
+        // For example, socket.emit('someEvent', { padId });
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Disconnected from Etherpad');
+      });
+
+      // Add additional event listeners here
+      // e.g., socket.on('padUpdate', (data) => { ... });
+
+      // Cleanup on unmount
+      return () => {
+        socket.disconnect();
+      };
+    }
+  }, []);
 
   const editorCallback = useCallback(
     (callback) => {
