@@ -74,29 +74,50 @@ export function Chatbot() {
           setIsLoading(false);
           return;
         }
-  
-        const textChunk = decoder.decode(value, { stream: true });
-        setMessages((prevMessages) => {
-          // Find if bot's response is already being displayed
-          const botResponseIndex = prevMessages.findIndex(m => m.id === 'bot-response');
-          if (botResponseIndex !== -1) {
-            // Update existing bot response
-            const updatedMessages = [...prevMessages];
-            updatedMessages[botResponseIndex] = {
-              ...updatedMessages[botResponseIndex],
-              content: updatedMessages[botResponseIndex].content + textChunk
-            };
-            return updatedMessages;
-          } else {
-            // Add new bot response
-            return [...prevMessages, { id: `bot-${Date.now()}`, content: textChunk, role: 'bot' }];
-          }
-        });
-  
+
+        const jsonString = decoder.decode(value, { stream: true });
+
+        // Split the jsonString into separate JSON objects
+        const jsonObjects = jsonString.match(/({.*?})/g);
+        
+        if (jsonObjects) {
+          jsonObjects.forEach(jsonObject => {
+            const parsedObject = JSON.parse(jsonObject);
+            if (parsedObject.type === 'MessageStream') {
+              // Handling MessageStream type
+              const { content, id, role } = parsedObject;
+              setMessages((prevMessages) => {
+                const existingMessageIndex = prevMessages.findIndex((msg) => msg.id === id);
+
+                if (existingMessageIndex !== -1) {
+                  // If message with the same id exists, update its content
+                  const updatedMessages = [...prevMessages];
+                  updatedMessages[existingMessageIndex] = {
+                    ...updatedMessages[existingMessageIndex],
+                    content: updatedMessages[existingMessageIndex].content + content,
+                  };
+                  return updatedMessages;
+                } else {
+                  // If message with the same id doesn't exist, create a new message
+                  return [...prevMessages, { content, id, role }];
+                }
+              });
+
+            } else if (parsedObject.type === 'RelevantDocs') {
+              // Handling RelevantDocsSources type
+              // To be implemented for citation and display of relevant documents
+              console.log('Received RelevantDocsSources:', parsedObject);
+            }
+          });
+        }
+
         // Process next chunk
         processChunk();
       };
-  
+
+    
+      
+
       // Start processing the stream
       processChunk();
   
