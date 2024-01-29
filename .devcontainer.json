@@ -4,9 +4,9 @@
   "name": "Airview Next",
   "dockerFile": "Dockerfile.vscode",
   "remoteUser": "vscode",
-  "mounts": [
-    "source=/Users/robe/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
-  ],
+  //"mounts": [
+  //  "source=/Users/robe/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+  //],
   "forwardPorts": [3000, 6006],
 
   "customizations": {
