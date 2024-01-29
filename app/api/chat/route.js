@@ -197,7 +197,6 @@ export async function POST(req) {
     //{ callbacks: [tracer]}
     //);
 
-    const stream = await fullChain.stream({ question: currentMessageContent });
     const messageID = `bot-${Date.now()}`;
     // Add an id property to each document
     const updatedDocs = relevantDocs.map((Document) => ({
@@ -207,6 +206,8 @@ export async function POST(req) {
       type: 'RelevantDocs'
     }));
     //console.log('updatedDocs: ', updatedDocs);
+
+    const stream = await fullChain.stream({ question: currentMessageContent });   
     
     // Send the streaming response manually
     const response = new Response(
@@ -239,12 +240,15 @@ export async function POST(req) {
                   role: 'bot'
                 }
               );*/
-              console.log('Updated doc: ',doc);
-              //controller.enqueue(jsonRelevantDocs);
+              controller.enqueue(doc);
+              console.log('doc: ',doc);
             }
-
+            // Log before closing the controller
+            //console.log('Closing the controller');
             // Signal the end of the stream
             controller.close();
+            // Log after closing the controller
+            //console.log('Controller closed');
 
           } catch (error) {
             // Handle any errors that occurred during streaming
