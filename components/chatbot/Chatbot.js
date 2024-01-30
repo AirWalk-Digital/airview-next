@@ -12,6 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
+
 export function Chatbot() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
@@ -21,6 +22,11 @@ export function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const topBarHeight = 65; // Adjust this to match the actual height of your TopBar
   const endpoint = "/api/chat"; // Replace with your API endpoint
+  const [relevantDocs, setRelevantDocs] = useState([]);
+  const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
+  const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
+
+
   // useEffect(() => {
   //   // Simulate streaming messages
   //   const interval = setInterval(() => {
@@ -37,6 +43,12 @@ export function Chatbot() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    // Check if the last message is from a bot and automatically click it
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.role === 'bot') {
+      handleBotMessageClick(lastMessage.id);
+    }
   }, [messages]);
 
   const handleInputChange = (event) => {
@@ -74,48 +86,56 @@ export function Chatbot() {
           setIsLoading(false);
           return;
         }
-
-        const jsonString = decoder.decode(value, { stream: true });
-
-        // Split the jsonString into separate JSON objects
-        const jsonObjects = jsonString.match(/({.*?})/g);
-        
-        if (jsonObjects) {
+      
+        let jsonString = decoder.decode(value, { stream: true }).trim();
+      
+        // Check if jsonString is not empty before attempting to parse
+        if (jsonString) {
+          // Check if jsonString ends with the delimiter
+          if (jsonString.endsWith(jsonDelimiter)) {
+            // Remove the delimiter from the end
+            jsonString = jsonString.slice(0, -jsonDelimiter.length);
+          }
+      
+          const jsonObjects = jsonString.split(jsonDelimiter);
+      
           jsonObjects.forEach(jsonObject => {
-            const parsedObject = JSON.parse(jsonObject);
-            if (parsedObject.type === 'MessageStream') {
+            try {
+              const parsedObject = JSON.parse(jsonObject);
               // Handling MessageStream type
-              const { content, id, role } = parsedObject;
-              setMessages((prevMessages) => {
-                const existingMessageIndex = prevMessages.findIndex((msg) => msg.id === id);
-
-                if (existingMessageIndex !== -1) {
-                  // If message with the same id exists, update its content
-                  const updatedMessages = [...prevMessages];
-                  updatedMessages[existingMessageIndex] = {
-                    ...updatedMessages[existingMessageIndex],
-                    content: updatedMessages[existingMessageIndex].content + content,
-                  };
-                  return updatedMessages;
-                } else {
-                  // If message with the same id doesn't exist, create a new message
-                  return [...prevMessages, { content, id, role }];
-                }
-              });
-
-            } else if (parsedObject.type === 'RelevantDocs') {
-              // Handling RelevantDocsSources type
-              // To be implemented for citation and display of relevant documents
-              console.log('Received RelevantDocsSources:', parsedObject);
+              if (parsedObject.type === 'MessageStream') {
+                const { content, id, role } = parsedObject;
+                setMessages((prevMessages) => {
+                  const existingMessageIndex = prevMessages.findIndex((msg) => msg.id === id);
+      
+                  if (existingMessageIndex !== -1) {
+                    // If message with the same id exists, update its content
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[existingMessageIndex] = {
+                      ...updatedMessages[existingMessageIndex],
+                      content: updatedMessages[existingMessageIndex].content + content,
+                    };
+                    return updatedMessages;
+                  } else {
+                    // If message with the same id doesn't exist, create a new message
+                    return [...prevMessages, { content, id, role }];
+                  }
+                });
+              } else if (parsedObject.type === 'RelevantDocs') {
+                // Handling RelevantDocsSources type
+                // Set the relevant documents data in the state
+                setRelevantDocs((prevDocs) => [...prevDocs, parsedObject]);
+                console.log('Received RelevantDocsSources:', parsedObject);
+              }
+            } catch (error) {
+              console.error('Error parsing JSON object:', error);
             }
           });
         }
-
+      
         // Process next chunk
         processChunk();
       };
-
-    
       
 
       // Start processing the stream
@@ -138,6 +158,11 @@ export function Chatbot() {
     setOpenSnackbar(false);
   };
 
+  // Update the prop for onBotMessageClick
+  const handleBotMessageClick = (botMessageId) => {
+    setSelectedBotMessageId(botMessageId);
+  };
+
   return (
     <Grid
       container
@@ -153,13 +178,14 @@ export function Chatbot() {
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
         <Box sx={{ overflowY: "auto", flexGrow: 1, padding: 2 }}>
-          {messages.map((msg, index) => (
-            <Message
-              key={index}
-              message={msg}
-              isLast={index === messages.length - 1}
-            />
-          ))}
+        {messages.map((msg, index) => (
+          <Message
+            key={index}
+            message={msg}
+            isLast={index === messages.length - 1}
+            onBotMessageClick={handleBotMessageClick}  // Pass the onBotMessageClick prop
+          />
+        ))}
           <div ref={messagesEndRef} />
         </Box>
         <Box
@@ -192,7 +218,7 @@ export function Chatbot() {
         </Box>
       </Grid>
       <Grid item xs={8} sx={{ overflowY: "auto", height: "100%", padding: 2 }}>
-        <RelatedContent />
+        <RelatedContent relevantDocs={relevantDocs} selectedBotMessageId={selectedBotMessageId} />
       </Grid>
       <Snackbar
         open={openSnackbar}

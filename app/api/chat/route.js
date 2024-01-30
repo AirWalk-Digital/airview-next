@@ -25,7 +25,8 @@ export async function POST(req) {
     const currentMessageContent = messages[messages.length - 1].content;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     const REDIS_HOST = process.env.REDIS_HOST;
-
+    //const jsonDelimiter = process.env.REACT_APP_CHAT_MESSAGE_DELIMITER;
+    const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
     /* 
     // WARNING: PLEASE DO NOT USE Langsmith when using production data
     // as this has not been checked and approved.
@@ -60,10 +61,8 @@ export async function POST(req) {
       redisClient: redisClient,
       indexName: process.env.INDEX_NAME,
     });
-    //console.log("vectorStore: ", vectorStore); //for debugging
 
     const retriever = vectorStore.asRetriever();
-    //console.log("Retriever: ", retriever); //for debugging
 
     const serializeChatHistory = (chatHistory) => {
       if (Array.isArray(chatHistory)) {
@@ -94,39 +93,10 @@ export async function POST(req) {
   Standalone question:`
     );
 
-    //const retrieverResult = await retriever.getRelevantDocuments(
-    //  currentMessageContent
-    //);
-    //console.log("Retriever Result: ", retrieverResult); // for debugging
-
-    /*
-    const deduplicateMetadata = metadataArray => {
-      // Create a Map to store unique metadata based on source and title
-      const uniqueMetadataMap = new Map();
-    
-      // Iterate through metadataArray to deduplicate
-      metadataArray.forEach(metadata => {
-        const key = `${metadata.source}-${metadata.title}`;
-    
-        // Check if the key is not present in the Map, add it
-        if (!uniqueMetadataMap.has(key)) {
-          uniqueMetadataMap.set(key, metadata);
-        }
-      });
-    
-      // Convert the Map values back to an array
-      const deduplicatedMetadataArray = Array.from(uniqueMetadataMap.values());
-    
-      return deduplicatedMetadataArray;
-    };
-    */
-    
-    //Function extract metadata and return retriever result as string to be implemented
     let relevantDocs = [];
     const extractDocSource = async (currentQuestion) => {
       // code to extract sources from retrieverResult
       relevantDocs = await retriever.getRelevantDocuments(currentQuestion);
-      console.log('relevantDocs ', relevantDocs);
       return relevantDocs;
     };
 
@@ -138,10 +108,8 @@ export async function POST(req) {
         question: (previousStepResult) => previousStepResult.question,
         chatHistory: (previousStepResult) =>
           serializeChatHistory(previousStepResult.chatHistory ?? ""),
-        //context: retrieverResult, // Pass the retriever result to the context
         context: RunnableSequence.from([
           (previousStepResult) => previousStepResult.question,
-          //retriever,
           extractDocSource,
           formatDocumentsAsString
         ])
@@ -173,7 +141,6 @@ export async function POST(req) {
 
           return isChatHistoryPresent;
         },
-
         // Take the result of the above model call, and pass it through to the
         // next RunnableSequence chain which will answer the question
         generateQuestionChain.pipe({
@@ -197,6 +164,8 @@ export async function POST(req) {
     //{ callbacks: [tracer]}
     //);
 
+    const stream = await fullChain.stream({ question: currentMessageContent });   
+    
     const messageID = `bot-${Date.now()}`;
     // Add an id property to each document
     const updatedDocs = relevantDocs.map((Document) => ({
@@ -205,11 +174,8 @@ export async function POST(req) {
       role: 'bot',
       type: 'RelevantDocs'
     }));
-    //console.log('updatedDocs: ', updatedDocs);
 
-    const stream = await fullChain.stream({ question: currentMessageContent });   
-    
-    // Send the streaming response manually
+    // Send the streaming response
     const response = new Response(
       new ReadableStream({
         async start(controller) {
@@ -217,38 +183,22 @@ export async function POST(req) {
             // Loop through the stream and push chunks to the client
             for await (const chunk of stream) {
               // Wrap each chunk in a JSON object before sending it
-              const jsonChunk = JSON.stringify(
-                {
-                  type: 'MessageStream',
-                  content: chunk,
-                  id: messageID,
-                  role: 'bot'
-                }
-              );
-              controller.enqueue(jsonChunk);
+              const jsonChunk = JSON.stringify({
+                type: 'MessageStream',
+                content: chunk,
+                id: messageID,
+                role: 'bot'
+              });              
+              controller.enqueue(jsonChunk + jsonDelimiter);
             }
-
-            //console.log('deduplicatedMetadata.length = ',deduplicatedMetadata.length);
-            // After streaming all messages, send deduplicatedMetadata to the client
-            for await (const doc of updatedDocs) {
-              /*const jsonRelevantDocs = JSON.stringify(
-                {
-                  type: 'RelevantDocs',
-                  title: Document.metadata.title,
-                  source: Document.metadata.source,
-                  id: messageID,
-                  role: 'bot'
-                }
-              );*/
-              controller.enqueue(doc);
-              console.log('doc: ',doc);
+            // Send related content
+            for (const doc of updatedDocs) {
+              const jsonDoc = JSON.stringify(doc);
+              controller.enqueue(jsonDoc + jsonDelimiter);
             }
-            // Log before closing the controller
-            //console.log('Closing the controller');
+            
             // Signal the end of the stream
             controller.close();
-            // Log after closing the controller
-            //console.log('Controller closed');
 
           } catch (error) {
             // Handle any errors that occurred during streaming
@@ -265,6 +215,7 @@ export async function POST(req) {
     );
 
     return response;
+
 
   } catch (e) {
     // Handle exceptions
