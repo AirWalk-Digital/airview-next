@@ -84,8 +84,9 @@ const baseTheme = deepmerge(
         fontFamily: "Heebo",
         fontWeight: 200,
         lineHeight: 1.2,
-        breakAfter: "avoid-column",
-        my: "1%",
+        breakAfter: "avoid",
+        marginTop: "1%",
+        marginBottom: "1%",
         fontSize: "2rem",
       },
       h3: {

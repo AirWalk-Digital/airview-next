@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       console.log('API:/api/menu:initialMenuStructure: ', initialMenuStructure)
 
       const padsMenu = await fetchPadMenu();
-
+      console.log('API:/api/menu:padsMenu: ', padsMenu)
       const newPrimary = (
         Array.isArray(initialMenuStructure?.primary)
           ? initialMenuStructure.primary
@@ -86,7 +86,7 @@ async function fetchPadMenu() {
       // const parents = getListOfKeys(siteConfig.content);
       // console.log('API:/api/structure:parents', parents)
       // console.log('API:/api/structure:parents', parents)
-      let topLevel = false;
+      let topLevel = true;
 
       for (let key in siteConfig.content) {
         const y = siteConfig.content[key];
