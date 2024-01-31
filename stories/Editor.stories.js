@@ -47,7 +47,7 @@ const Template = (args) => {
     styleLink.href =
       "https://unpkg.com/@mdxeditor/editor@1.14.3/dist/style.css";
     document.head.appendChild(styleLink);
-    fetch("/ExampleMDX.mdx")
+    fetch(args.file)
       .then((response) => response.text())
       .then((text) => setMdxContent(text));
   }, []);
@@ -57,6 +57,7 @@ const Template = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
+  file: "/ExampleMDX.mdx",
   context: dummyContext,
   enabled: true,
   top: 0,
@@ -65,6 +66,7 @@ Default.args = {
 
 export const APIError = Template.bind({});
 APIError.args = {
+  file: "/ExampleMDX.mdx",
   context: dummyContext,
   enabled: true,
   top: 0,
