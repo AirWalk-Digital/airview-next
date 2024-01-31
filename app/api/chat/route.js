@@ -6,11 +6,14 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { formatDocumentsAsString } from "langchain/util/document";
 import { RedisVectorStore } from "@langchain/community/vectorstores/redis";
 import { createClient } from "redis";
+import { ContextualCompressionRetriever } from "langchain/retrievers/contextual_compression";
+import { EmbeddingsFilter } from "langchain/retrievers/document_compressors/embeddings_filter";
 
-//WARNING: PLEASE DO NOT USE Langsmith when using production data
+// WARNING: PLEASE DO NOT USE Langsmith when using production data
 // as this has not been checked and approved.
-//import { Client } from "langsmith";
-//import { LangChainTracer } from "langchain/callbacks";
+// Code for using Langsmith
+/*import { Client } from "langsmith";
+import { ConsoleCallbackHandler, LangChainTracer } from "langchain/callbacks";*/
 
 export async function POST(req) {
   try {
@@ -21,17 +24,19 @@ export async function POST(req) {
     const body = await req.json();
     const messages = body.messages ?? [];
     const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
-    console.log('formattedPreviousMessages: ', formattedPreviousMessages)
+    //console.log('formattedPreviousMessages: ', formattedPreviousMessages)
     const currentMessageContent = messages[messages.length - 1].content;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+    const MODEL_TEMPERATURE = parseInt(process.env.MODEL_TEMPERATURE);
     const REDIS_HOST = process.env.REDIS_HOST;
     //const jsonDelimiter = process.env.REACT_APP_CHAT_MESSAGE_DELIMITER;
     const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
-    /* 
+    const SIMILARITY_THRESHOLD = process.env.SIMILARITY_THRESHOLD;
+    
     // WARNING: PLEASE DO NOT USE Langsmith when using production data
     // as this has not been checked and approved.
-    // For Langsmith
-    const LANGCHAIN_API_KEY = process.env.LANGCHAIN_API_KEY;
+    // Code for using Langsmith
+    /*const LANGCHAIN_API_KEY = process.env.LANGCHAIN_API_KEY;
     const LANGCHAIN_PROJECT = process.env.LANGCHAIN_PROJECT;
 
     const client = new Client({
@@ -42,11 +47,10 @@ export async function POST(req) {
     const tracer = new LangChainTracer({
       projectName: LANGCHAIN_PROJECT,
       client
-    });
-    */
-
+    });*/
+    
     const model = new ChatOpenAI({
-      temperature: 0.8,
+      temperature: MODEL_TEMPERATURE,
       modelName: 'gpt-3.5-turbo',
       openAIApiKey: OPENAI_API_KEY
     });
@@ -57,12 +61,20 @@ export async function POST(req) {
     await redisClient.connect();
     console.log("Successfully connect to Redis");
 
+    const baseCompressor = new EmbeddingsFilter({
+      embeddings: new OpenAIEmbeddings(),
+      similarityThreshold: SIMILARITY_THRESHOLD,
+    });
+
     const vectorStore = new RedisVectorStore(new OpenAIEmbeddings(), {
       redisClient: redisClient,
       indexName: process.env.INDEX_NAME,
     });
 
-    const retriever = vectorStore.asRetriever();
+    const retriever = new ContextualCompressionRetriever({
+      baseCompressor,
+      baseRetriever: vectorStore.asRetriever(),
+    });
 
     const serializeChatHistory = (chatHistory) => {
       if (Array.isArray(chatHistory)) {
@@ -72,7 +84,8 @@ export async function POST(req) {
     };
 
     const questionPrompt = PromptTemplate.fromTemplate(
-      `Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+      `Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know,\
+  don't try to make up an answer. Check if CONTEXT: is empty. If so, just say that "I'm sorry, no related information found", don't try to provide an answer.
   ----------------
   CHAT HISTORY: {chatHistory}
   ----------------
@@ -125,8 +138,10 @@ export async function POST(req) {
       },
       {
         question: (previousStepResult) => previousStepResult.question,
-        chatHistory: (previousStepResult) =>
-          serializeChatHistory(previousStepResult.chatHistory ?? ""),
+        chatHistory: async () => {
+          const memoryResult = formattedPreviousMessages.join('\n');
+          return memoryResult;
+        },
       },
       questionGeneratorTemplate,
       model,
@@ -138,7 +153,7 @@ export async function POST(req) {
         async () => {
           const isChatHistoryPresent =
             !!formattedPreviousMessages && formattedPreviousMessages.length;
-
+            
           return isChatHistoryPresent;
         },
         // Take the result of the above model call, and pass it through to the
@@ -159,10 +174,11 @@ export async function POST(req) {
 
     // WARNING: PLEASE DO NOT USE Langsmith when using production data
     // as this has not been checked and approved.
-    //const stream = await fullChain.stream(
-    //  {question: currentMessageContent},
-    //{ callbacks: [tracer]}
-    //);
+    // Code for using Langsmith
+    /*const stream = await fullChain.stream(
+      {question: currentMessageContent},
+      { callbacks: [tracer]}
+    );*/
 
     const stream = await fullChain.stream({ question: currentMessageContent });   
     
