@@ -26,21 +26,6 @@ export function Chatbot() {
   const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
   const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
 
-
-  // useEffect(() => {
-  //   // Simulate streaming messages
-  //   const interval = setInterval(() => {
-  //     const newMessage = {
-  //       author: Math.random() > 0.5 ? 'bot' : 'human',
-  //       content: 'Sample message. Lorem ipsum, ',
-  //       actions: ['thumb up', 'thumb down', 'log a ticket'],
-  //     };
-  //     setMessages(msgs => [...msgs, newMessage]);
-  //   }, 3000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 
@@ -125,7 +110,6 @@ export function Chatbot() {
                 // Handling RelevantDocsSources type
                 // Set the relevant documents data in the state
                 setRelevantDocs((prevDocs) => [...prevDocs, parsedObject]);
-                console.log('Received RelevantDocsSources:', parsedObject);
               }
             } catch (error) {
               console.error('Error parsing JSON object:', error);
@@ -184,6 +168,7 @@ export function Chatbot() {
             message={msg}
             isLast={index === messages.length - 1}
             onBotMessageClick={handleBotMessageClick}  // Pass the onBotMessageClick prop
+            selectedBotMessageId={selectedBotMessageId}  // Pass the selectedBotMessageId prop
           />
         ))}
           <div ref={messagesEndRef} />

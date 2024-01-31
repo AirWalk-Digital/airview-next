@@ -5,7 +5,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
-const RelatedContent = ({ relevantDocs, selectedBotMessageId }) => {
+export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
   // Filter relevantDocs based on selectedBotMessageId
   const filteredDocs = relevantDocs.filter((doc) => doc.id === selectedBotMessageId);
 
@@ -28,11 +28,9 @@ const RelatedContent = ({ relevantDocs, selectedBotMessageId }) => {
         ))
       ) : (
         <Typography variant="body2" color="text.secondary">
-          No related documents for the selected bot message.
+          No related documents for the selected message.
         </Typography>
       )}
     </div>
   );
-};
-
-export default RelatedContent;
+}

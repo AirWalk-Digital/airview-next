@@ -9,15 +9,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import Actions from './Actions';
 import Box from '@mui/material/Box';
 
-export default function Message({ message, isLast, onBotMessageClick }) {
+export default function Message({ message, isLast, onBotMessageClick, selectedBotMessageId }) {
   const { id, role, content } = message;
   const isBot = role === 'bot';
 
-  const [isContentExpanded, setIsContentExpanded] = useState(false);
-
   const handleBotMessageClick = () => {
     if (isBot) {
-      setIsContentExpanded(!isContentExpanded);
       onBotMessageClick(id);
     }
   };
@@ -36,7 +33,11 @@ export default function Message({ message, isLast, onBotMessageClick }) {
         sx={{
           maxWidth: 345,
           borderRadius: '20px',
-          bgcolor: isBot ? blue[50] : grey[50],
+          bgcolor: isBot
+            ? id === selectedBotMessageId
+              ? blue[100] // Color for the last clicked bot message
+              : blue[50] // Color for other bot messages
+            : grey[50], // Color for non-bot messages
           marginLeft: isBot ? 0 : 1,
           marginRight: isBot ? 1 : 0,
           elevation: 0, // Removes the drop shadow
