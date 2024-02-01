@@ -1,7 +1,4 @@
 import React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
@@ -11,7 +8,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
 
   return (
     <div>
-      <h2>Related Documents</h2>
+      <h2>Related Documents of the Selected Message</h2>
       {filteredDocs.length > 0 ? (
         filteredDocs.map((doc, index) => (
           <div key={index}>
@@ -28,7 +25,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
         ))
       ) : (
         <Typography variant="body2" color="text.secondary">
-          No related documents for the selected message.
+          No related documents for this message.
         </Typography>
       )}
     </div>
