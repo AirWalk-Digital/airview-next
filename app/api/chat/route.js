@@ -184,9 +184,10 @@ export async function POST(req) {
     
     const messageID = `bot-${Date.now()}`;
     // Add an id property to each document
-    const updatedDocs = relevantDocs.map((Document) => ({
+    const updatedDocs = relevantDocs.map((Document, index) => ({
       ...Document,
       id: messageID,
+      docId: `${messageID}-${index}`,
       role: 'bot',
       type: 'RelevantDocs'
     }));
