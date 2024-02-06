@@ -1,6 +1,7 @@
 import React from 'react';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import Actions from './Actions';
 
 export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
   // Filter relevantDocs based on selectedBotMessageId
@@ -20,6 +21,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
                 {doc.metadata.source}
               </a>
             </p>
+            {<Actions alignment='flex-begin' />}
             {index < filteredDocs.length - 1 && <Divider />}
           </div>
         ))

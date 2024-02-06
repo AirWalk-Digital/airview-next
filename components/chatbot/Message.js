@@ -50,7 +50,7 @@ export default function Message({ message, isLast, onBotMessageClick, selectedBo
             {content}
           </Typography>
         </CardContent>
-        {isLast && <Actions />}
+        {isBot && <Actions alignment='center' />}
       </Card>
       {isBot && avatar}
     </Box>
