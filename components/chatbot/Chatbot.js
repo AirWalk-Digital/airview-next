@@ -11,6 +11,7 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import ClearIcon from '@mui/icons-material/Clear';
 
 
 export function Chatbot() {
@@ -25,6 +26,7 @@ export function Chatbot() {
   const [relevantDocs, setRelevantDocs] = useState([]);
   const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // should be same as that in route.js and to be updated to extract from env
   const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
+  
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -147,6 +149,16 @@ export function Chatbot() {
     setSelectedBotMessageId(botMessageId);
   };
 
+  const clearChat = () => {
+    setMessages([]);
+    setInput("");
+    setIsLoading(false);
+    setRelevantDocs([]);
+    setSelectedBotMessageId(null);
+    setOpenSnackbar(false);
+    setErrorMessage("");
+  };
+
   return (
     <Grid
       container
@@ -161,6 +173,14 @@ export function Chatbot() {
         xs={4}
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
+        <Box sx={{ textAlign: "left", padding: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <span>Clear chat</span>
+            <IconButton onClick={clearChat}>
+              <ClearIcon />
+            </IconButton>
+          </Box>
+        </Box>
         <Box sx={{ overflowY: "auto", flexGrow: 1, padding: 2 }}>
         {messages.map((msg, index) => (
           <Message
