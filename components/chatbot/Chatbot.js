@@ -12,6 +12,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import ClearIcon from '@mui/icons-material/Clear';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
 
 
 export function Chatbot() {
@@ -26,7 +32,7 @@ export function Chatbot() {
   const [relevantDocs, setRelevantDocs] = useState([]);
   const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // should be same as that in route.js and to be updated to extract from env
   const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
-  
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -150,6 +156,10 @@ export function Chatbot() {
   };
 
   const clearChat = () => {
+    setOpenConfirmationDialog(true);
+  };
+
+  const handleClearConfirmation = () => {
     setMessages([]);
     setInput("");
     setIsLoading(false);
@@ -157,6 +167,11 @@ export function Chatbot() {
     setSelectedBotMessageId(null);
     setOpenSnackbar(false);
     setErrorMessage("");
+    setOpenConfirmationDialog(false);
+  };
+
+  const handleCancelClear = () => {
+    setOpenConfirmationDialog(false);
   };
 
   return (
@@ -239,6 +254,20 @@ export function Chatbot() {
           {errorMessage}
         </Alert>
       </Snackbar>
+      <Dialog open={openConfirmationDialog} onClose={handleCancelClear}>
+        <DialogTitle>Confirm Clear Chat</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to clear the chat?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelClear}>Cancel</Button>
+          <Button onClick={handleClearConfirmation} autoFocus>
+            Clear
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }
