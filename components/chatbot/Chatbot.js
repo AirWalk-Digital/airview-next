@@ -23,7 +23,7 @@ export function Chatbot() {
   const topBarHeight = 65; // Adjust this to match the actual height of your TopBar
   const endpoint = "/api/chat"; // Replace with your API endpoint
   const [relevantDocs, setRelevantDocs] = useState([]);
-  const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
+  const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // should be same as that in route.js and to be updated to extract from env
   const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
 
   useEffect(() => {

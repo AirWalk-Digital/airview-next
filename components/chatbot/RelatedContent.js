@@ -12,7 +12,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
       <h2>Related Documents of the Selected Message</h2>
       {filteredDocs.length > 0 ? (
         filteredDocs.map((doc, index) => (
-          <div key={index}>
+          <div key={doc.docId}>
             <h3>{doc.metadata.title}</h3>
             <p>{doc.pageContent}</p>
             <p>
