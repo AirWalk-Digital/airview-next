@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-//import TicketIcon from '@mui/icons-material/ConfirmationNumber';
 import { blue , grey } from '@mui/material/colors';
 
-export default function Actions({ alignment, thumbUpClicked, thumbDownClicked, handleThumbUpClick, handleThumbDownClick }) {
+export default function LikeActions({ alignment, thumbUpClicked, thumbDownClicked, handleThumbUpClick, handleThumbDownClick }) {
 
   return (
     <div style={{ display: 'flex', justifyContent: alignment, padding: '10px' }}>

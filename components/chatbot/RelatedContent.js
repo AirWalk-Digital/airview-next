@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import Actions from './Actions';
+import LikeActions from './LikeActions';
 
 export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
   // Define state to hold thumb up and thumb down status for each document
@@ -55,7 +55,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
                 {doc.metadata.source}
               </a>
             </p>
-            <Actions
+            <LikeActions
               thumbUpClicked={docActions[doc.docId]?.thumbUp || false}
               thumbDownClicked={docActions[doc.docId]?.thumbDown || false}
               handleThumbUpClick={() => handleDocAction(doc.docId, 'thumbUp')}

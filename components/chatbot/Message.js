@@ -6,7 +6,7 @@ import Avatar from '@mui/material/Avatar';
 import { blue, grey } from '@mui/material/colors';
 import BotIcon from '@mui/icons-material/Android';
 import PersonIcon from '@mui/icons-material/Person';
-import Actions from './Actions';
+import LikeActions from './LikeActions';
 import Box from '@mui/material/Box';
 
 export default function Message({ message, isLast, onBotMessageClick, selectedBotMessageId }) {
@@ -84,7 +84,7 @@ export default function Message({ message, isLast, onBotMessageClick, selectedBo
           </Typography>
         </CardContent>
         {isBot && (
-          <Actions alignment='center'
+          <LikeActions alignment='center'
             thumbUpClicked={thumbState[messageId]?.thumbUp || false}
             thumbDownClicked={thumbState[messageId]?.thumbDown || false}
             handleThumbUpClick={() => handleThumbClick('thumbUp')}
