@@ -14,11 +14,11 @@ export default function Message({ message, isLast, onBotMessageClick, selectedBo
   const isBot = role === 'bot';
 
   // State for thumb up and thumb down actions
-  const [thumbState, setMessageThumbState] = useState({});
+  const [thumbState, setThumbState] = useState({});
 
-  const handleThumbClick = (actionType) => {
-    setMessageThumbState(prevState => {
-      const currentMessageThumbState = prevState[messageId] || { thumbUp: false, thumbDown: false };
+  const handleLikeActions = (actionType) => {
+    setThumbState(prevState => {
+      const currentThumbState = prevState[messageId] || { thumbUp: false, thumbDown: false };
       let updatedState;
   
       // Toggle logic
@@ -26,18 +26,18 @@ export default function Message({ message, isLast, onBotMessageClick, selectedBo
         updatedState = {
           ...prevState,
           [messageId]: {
-            ...currentMessageThumbState,
-            thumbUp: !currentMessageThumbState.thumbUp,
-            thumbDown: currentMessageThumbState.thumbUp ? currentMessageThumbState.thumbDown : false,
+            ...currentThumbState,
+            thumbUp: !currentThumbState.thumbUp,
+            thumbDown: currentThumbState.thumbUp ? currentThumbState.thumbDown : false,
           },
         };
       } else if (actionType === 'thumbDown') {
         updatedState = {
           ...prevState,
           [messageId]: {
-            ...currentMessageThumbState,
-            thumbUp: currentMessageThumbState.thumbDown ? currentMessageThumbState.thumbUp : false,
-            thumbDown: !currentMessageThumbState.thumbDown,
+            ...currentThumbState,
+            thumbUp: currentThumbState.thumbDown ? currentThumbState.thumbUp : false,
+            thumbDown: !currentThumbState.thumbDown,
           },
         };
       }
@@ -87,8 +87,8 @@ export default function Message({ message, isLast, onBotMessageClick, selectedBo
           <LikeActions alignment='center'
             thumbUpClicked={thumbState[messageId]?.thumbUp || false}
             thumbDownClicked={thumbState[messageId]?.thumbDown || false}
-            handleThumbUpClick={() => handleThumbClick('thumbUp')}
-            handleThumbDownClick={() => handleThumbClick('thumbDown')}
+            handleThumbUpClick={() => handleLikeActions('thumbUp')}
+            handleThumbDownClick={() => handleLikeActions('thumbDown')}
           />
         )}
 

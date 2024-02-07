@@ -5,12 +5,12 @@ import LikeActions from './LikeActions';
 
 export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
   // Define state to hold thumb up and thumb down status for each document
-  const [docActions, setDocActions] = React.useState({});
+  const [thumbState, setThumbState] = React.useState({});
 
   // Function to update thumb up and thumb down status for a specific document
-  const handleDocAction = (docId, actionType) => {
-    setDocActions(prevState => {
-      const currentDocThumbState = prevState[docId] || { thumbUp: false, thumbDown: false };
+  const handleLikeActions = (docId, actionType) => {
+    setThumbState(prevState => {
+      const currentThumbState = prevState[docId] || { thumbUp: false, thumbDown: false };
       let updatedState;
   
       // Toggle logic
@@ -18,18 +18,18 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
         updatedState = {
           ...prevState,
           [docId]: {
-            ...currentDocThumbState,
-            thumbUp: !currentDocThumbState.thumbUp,
-            thumbDown: currentDocThumbState.thumbUp ? currentDocThumbState.thumbDown : false,
+            ...currentThumbState,
+            thumbUp: !currentThumbState.thumbUp,
+            thumbDown: currentThumbState.thumbUp ? currentThumbState.thumbDown : false,
           },
         };
       } else if (actionType === 'thumbDown') {
         updatedState = {
           ...prevState,
           [docId]: {
-            ...currentDocThumbState,
-            thumbUp: currentDocThumbState.thumbDown ? currentDocThumbState.thumbUp : false,
-            thumbDown: !currentDocThumbState.thumbDown,
+            ...currentThumbState,
+            thumbUp: currentThumbState.thumbDown ? currentThumbState.thumbUp : false,
+            thumbDown: !currentThumbState.thumbDown,
           },
         };
       }
@@ -56,10 +56,10 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
               </a>
             </p>
             <LikeActions
-              thumbUpClicked={docActions[doc.docId]?.thumbUp || false}
-              thumbDownClicked={docActions[doc.docId]?.thumbDown || false}
-              handleThumbUpClick={() => handleDocAction(doc.docId, 'thumbUp')}
-              handleThumbDownClick={() => handleDocAction(doc.docId, 'thumbDown')}
+              thumbUpClicked={thumbState[doc.docId]?.thumbUp || false}
+              thumbDownClicked={thumbState[doc.docId]?.thumbDown || false}
+              handleThumbUpClick={() => handleLikeActions(doc.docId, 'thumbUp')}
+              handleThumbDownClick={() => handleLikeActions(doc.docId, 'thumbDown')}
             />
             {index < filteredDocs.length - 1 && <Divider />}
           </div>
