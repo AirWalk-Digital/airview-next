@@ -18,6 +18,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 
 
 export function Chatbot() {
@@ -33,6 +34,9 @@ export function Chatbot() {
   const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // should be same as that in route.js and to be updated to extract from env
   const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [showClearChatRect, setShowClearChatRect] = useState(false);
+  const [showSaveChatRect, setShowSaveChatRect] = useState(false);
+
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -159,6 +163,18 @@ export function Chatbot() {
     setOpenConfirmationDialog(true);
   };
 
+  const handleSaveAndClearConfirmation = () => {
+    handleSaveChat();
+    //clearChat();//to be enabled after updated
+    setOpenConfirmationDialog(false); //to be removed after updated    
+  };
+  const saveChat = () => {
+    handleSaveChat();
+  }
+  const handleSaveChat = () => {
+
+  };
+
   const handleClearConfirmation = () => {
     setMessages([]);
     setInput("");
@@ -188,13 +204,64 @@ export function Chatbot() {
         xs={4}
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
-        <Box sx={{ textAlign: "left", padding: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ textAlign: "left", padding: 1, position: 'relative' }}>
+          <Box
+            onMouseEnter={() => setShowClearChatRect(true)}
+            onMouseLeave={() => setShowClearChatRect(false)}
+            onClick={clearChat} // Added onClick handler
+            sx={{
+              backgroundColor: showClearChatRect ? "lightgrey" : "transparent",
+              position: 'absolute',
+              zIndex: 1,
+              top: 0,
+              left: 0,
+              width: '48%',
+              padding: 1,
+              borderRadius: "4px 0 0 4px", // Adjusted border radius
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between", // Aligns items to the start and end of the container
+              cursor: "pointer", // Change cursor on hover
+            }}
+          >
             <span>Clear chat</span>
             <IconButton onClick={clearChat}>
               <ClearIcon />
             </IconButton>
           </Box>
+          <Divider orientation="vertical" flexItem sx={{ margin: '0 8px', backgroundColor: 'black' }} />
+          <Box
+            onMouseEnter={() => setShowSaveChatRect(true)}
+            onMouseLeave={() => setShowSaveChatRect(false)}
+            onClick={saveChat}
+            sx={{
+              backgroundColor: showSaveChatRect ? "lightgrey" : "transparent",
+              position: 'absolute',
+              zIndex: 1,
+              top: 0,
+              right: 0, // Align to the right side
+              width: '48%',
+              padding: 1,
+              borderRadius: "0 4px 4px 0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              cursor: "pointer",
+            }}
+          >
+            <span>Save chat</span>
+            <IconButton onClick={saveChat}>
+              <SaveAltIcon />
+            </IconButton>
+          </Box>
+          <Box
+            sx={{
+              backgroundColor: "transparent",
+              width: '50%', // Half of the container width
+              padding: 1,
+              borderRadius: "0 4px 4px 0", // Adjusted border radius
+            }}
+          />
         </Box>
         <Box sx={{ overflowY: "auto", flexGrow: 1, padding: 2 }}>
         {messages.map((msg, index) => (
@@ -221,7 +288,6 @@ export function Chatbot() {
           <TextField
             fullWidth
             label="Ask me a question"
-            // variant="outlined"
             value={input} // Bind the input state to the TextField
             onChange={handleInputChange} // Update state on input change
             onKeyPress={(e) => e.key === "Enter" && sendMessage(e)} // Send message on Enter key press
@@ -263,9 +329,8 @@ export function Chatbot() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancelClear}>Cancel</Button>
-          <Button onClick={handleClearConfirmation} autoFocus>
-            Clear
-          </Button>
+          <Button onClick={handleSaveAndClearConfirmation}>Save and clear</Button>
+          <Button onClick={handleClearConfirmation} autoFocus>Clear</Button>
         </DialogActions>
       </Dialog>
     </Grid>
