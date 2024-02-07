@@ -10,12 +10,45 @@ import Actions from './Actions';
 import Box from '@mui/material/Box';
 
 export default function Message({ message, isLast, onBotMessageClick, selectedBotMessageId }) {
-  const { id, role, content } = message;
+  const { messageId, role, content } = message;
   const isBot = role === 'bot';
+
+  // State for thumb up and thumb down actions
+  const [thumbState, setMessageThumbState] = useState({});
+
+  const handleThumbClick = (actionType) => {
+    setMessageThumbState(prevState => {
+      const currentMessageThumbState = prevState[messageId] || { thumbUp: false, thumbDown: false };
+      let updatedState;
+  
+      // Toggle logic
+      if (actionType === 'thumbUp') {
+        updatedState = {
+          ...prevState,
+          [messageId]: {
+            ...currentMessageThumbState,
+            thumbUp: !currentMessageThumbState.thumbUp,
+            thumbDown: currentMessageThumbState.thumbUp ? currentMessageThumbState.thumbDown : false,
+          },
+        };
+      } else if (actionType === 'thumbDown') {
+        updatedState = {
+          ...prevState,
+          [messageId]: {
+            ...currentMessageThumbState,
+            thumbUp: currentMessageThumbState.thumbDown ? currentMessageThumbState.thumbUp : false,
+            thumbDown: !currentMessageThumbState.thumbDown,
+          },
+        };
+      }
+  
+      return updatedState;
+    });
+  };
 
   const handleBotMessageClick = () => {
     if (isBot) {
-      onBotMessageClick(id);
+      onBotMessageClick(messageId);
     }
   };
 
@@ -34,7 +67,7 @@ export default function Message({ message, isLast, onBotMessageClick, selectedBo
           maxWidth: 345,
           borderRadius: '20px',
           bgcolor: isBot
-            ? id === selectedBotMessageId
+            ? messageId === selectedBotMessageId
               ? blue[100] // Color for the last clicked bot message
               : blue[50] // Color for other bot messages
             : grey[50], // Color for non-bot messages
@@ -50,7 +83,15 @@ export default function Message({ message, isLast, onBotMessageClick, selectedBo
             {content}
           </Typography>
         </CardContent>
-        {isBot && <Actions alignment='center' />}
+        {isBot && (
+          <Actions alignment='center'
+            thumbUpClicked={thumbState[messageId]?.thumbUp || false}
+            thumbDownClicked={thumbState[messageId]?.thumbDown || false}
+            handleThumbUpClick={() => handleThumbClick('thumbUp')}
+            handleThumbDownClick={() => handleThumbClick('thumbDown')}
+          />
+        )}
+
       </Card>
       {isBot && avatar}
     </Box>

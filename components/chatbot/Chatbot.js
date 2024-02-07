@@ -44,7 +44,7 @@ export function Chatbot() {
     // Check if the last message is from a bot and automatically click it
     const lastMessage = messages[messages.length - 1];
     if (lastMessage && lastMessage.role === 'bot') {
-      handleBotMessageClick(lastMessage.id);
+      handleBotMessageClick(lastMessage.messageId);
     }
   }, [messages]);
 
@@ -58,7 +58,7 @@ export function Chatbot() {
     setIsLoading(true);
   
     const userMessage = {
-      id: `user-${Date.now()}`,
+      messageId: `user-${Date.now()}`,
       content: input,
       role: "user",
     };
@@ -101,9 +101,9 @@ export function Chatbot() {
               const parsedObject = JSON.parse(jsonObject);
               // Handling MessageStream type
               if (parsedObject.type === 'MessageStream') {
-                const { content, id, role } = parsedObject;
+                const { content, messageId, role } = parsedObject;
                 setMessages((prevMessages) => {
-                  const existingMessageIndex = prevMessages.findIndex((msg) => msg.id === id);
+                  const existingMessageIndex = prevMessages.findIndex((msg) => msg.messageId === messageId);
       
                   if (existingMessageIndex !== -1) {
                     // If message with the same id exists, update its content
@@ -115,7 +115,7 @@ export function Chatbot() {
                     return updatedMessages;
                   } else {
                     // If message with the same id doesn't exist, create a new message
-                    return [...prevMessages, { content, id, role }];
+                    return [...prevMessages, { content, messageId, role }];
                   }
                 });
               } else if (parsedObject.type === 'RelevantDocs') {

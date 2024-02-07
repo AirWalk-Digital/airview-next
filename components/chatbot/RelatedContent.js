@@ -10,7 +10,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
   // Function to update thumb up and thumb down status for a specific document
   const handleDocAction = (docId, actionType) => {
     setDocActions(prevState => {
-      const currentDocState = prevState[docId] || { thumbUp: false, thumbDown: false };
+      const currentDocThumbState = prevState[docId] || { thumbUp: false, thumbDown: false };
       let updatedState;
   
       // Toggle logic
@@ -18,18 +18,18 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
         updatedState = {
           ...prevState,
           [docId]: {
-            ...currentDocState,
-            thumbUp: !currentDocState.thumbUp,
-            thumbDown: currentDocState.thumbUp ? currentDocState.thumbDown : false,
+            ...currentDocThumbState,
+            thumbUp: !currentDocThumbState.thumbUp,
+            thumbDown: currentDocThumbState.thumbUp ? currentDocThumbState.thumbDown : false,
           },
         };
       } else if (actionType === 'thumbDown') {
         updatedState = {
           ...prevState,
           [docId]: {
-            ...currentDocState,
-            thumbUp: currentDocState.thumbDown ? currentDocState.thumbUp : false,
-            thumbDown: !currentDocState.thumbDown,
+            ...currentDocThumbState,
+            thumbUp: currentDocThumbState.thumbDown ? currentDocThumbState.thumbUp : false,
+            thumbDown: !currentDocThumbState.thumbDown,
           },
         };
       }
@@ -39,7 +39,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
   };
   
   // Filter relevantDocs based on selectedBotMessageId
-  const filteredDocs = relevantDocs.filter((doc) => doc.id === selectedBotMessageId);
+  const filteredDocs = relevantDocs.filter((doc) => doc.messageId === selectedBotMessageId);
 
   return (
     <div>

@@ -182,12 +182,12 @@ export async function POST(req) {
 
     const stream = await fullChain.stream({ question: currentMessageContent });   
     
-    const messageID = `bot-${Date.now()}`;
-    // Add an id property to each document
+    const messageId = `bot-${Date.now()}`;
+    // Add properties to each document
     const updatedDocs = relevantDocs.map((Document, index) => ({
       ...Document,
-      id: messageID,
-      docId: `${messageID}-${index}`,
+      messageId: messageId,
+      docId: `${messageId}-${index}`,
       role: 'bot',
       type: 'RelevantDocs'
     }));
@@ -203,7 +203,7 @@ export async function POST(req) {
               const jsonChunk = JSON.stringify({
                 type: 'MessageStream',
                 content: chunk,
-                id: messageID,
+                messageId: messageId,
                 role: 'bot'
               });              
               controller.enqueue(jsonChunk + jsonDelimiter);
