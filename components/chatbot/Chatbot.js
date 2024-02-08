@@ -11,6 +11,15 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import ClearIcon from '@mui/icons-material/Clear';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+
 
 export function Chatbot() {
   const [messages, setMessages] = useState([]);
@@ -21,22 +30,22 @@ export function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const topBarHeight = 65; // Adjust this to match the actual height of your TopBar
   const endpoint = "/api/chat"; // Replace with your API endpoint
-  // useEffect(() => {
-  //   // Simulate streaming messages
-  //   const interval = setInterval(() => {
-  //     const newMessage = {
-  //       author: Math.random() > 0.5 ? 'bot' : 'human',
-  //       content: 'Sample message. Lorem ipsum, ',
-  //       actions: ['thumb up', 'thumb down', 'log a ticket'],
-  //     };
-  //     setMessages(msgs => [...msgs, newMessage]);
-  //   }, 3000);
+  const [relevantDocs, setRelevantDocs] = useState([]);
+  const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // should be same as that in route.js and to be updated to extract from env
+  const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [showClearChatRect, setShowClearChatRect] = useState(false);
+  const [showSaveChatRect, setShowSaveChatRect] = useState(false);
 
-  //   return () => clearInterval(interval);
-  // }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    // Check if the last message is from a bot and automatically click it
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.role === 'bot') {
+      handleBotMessageClick(lastMessage.messageId);
+    }
   }, [messages]);
 
   const handleInputChange = (event) => {
@@ -49,7 +58,7 @@ export function Chatbot() {
     setIsLoading(true);
   
     const userMessage = {
-      id: `user-${Date.now()}`,
+      messageId: `user-${Date.now()}`,
       content: input,
       role: "user",
     };
@@ -74,29 +83,57 @@ export function Chatbot() {
           setIsLoading(false);
           return;
         }
-  
-        const textChunk = decoder.decode(value, { stream: true });
-        setMessages((prevMessages) => {
-          // Find if bot's response is already being displayed
-          const botResponseIndex = prevMessages.findIndex(m => m.id === 'bot-response');
-          if (botResponseIndex !== -1) {
-            // Update existing bot response
-            const updatedMessages = [...prevMessages];
-            updatedMessages[botResponseIndex] = {
-              ...updatedMessages[botResponseIndex],
-              content: updatedMessages[botResponseIndex].content + textChunk
-            };
-            return updatedMessages;
-          } else {
-            // Add new bot response
-            return [...prevMessages, { id: `bot-${Date.now()}`, content: textChunk, role: 'bot' }];
+      
+        let jsonString = decoder.decode(value, { stream: true }).trim();
+      
+        // Check if jsonString is not empty before attempting to parse
+        if (jsonString) {
+          // Check if jsonString ends with the delimiter
+          if (jsonString.endsWith(jsonDelimiter)) {
+            // Remove the delimiter from the end
+            jsonString = jsonString.slice(0, -jsonDelimiter.length);
           }
-        });
-  
+      
+          const jsonObjects = jsonString.split(jsonDelimiter);
+      
+          jsonObjects.forEach(jsonObject => {
+            try {
+              const parsedObject = JSON.parse(jsonObject);
+              // Handling MessageStream type
+              if (parsedObject.type === 'MessageStream') {
+                const { content, messageId, role } = parsedObject;
+                setMessages((prevMessages) => {
+                  const existingMessageIndex = prevMessages.findIndex((msg) => msg.messageId === messageId);
+      
+                  if (existingMessageIndex !== -1) {
+                    // If message with the same id exists, update its content
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[existingMessageIndex] = {
+                      ...updatedMessages[existingMessageIndex],
+                      content: updatedMessages[existingMessageIndex].content + content,
+                    };
+                    return updatedMessages;
+                  } else {
+                    // If message with the same id doesn't exist, create a new message
+                    return [...prevMessages, { content, messageId, role }];
+                  }
+                });
+              } else if (parsedObject.type === 'RelevantDocs') {
+                // Handling RelevantDocsSources type
+                // Set the relevant documents data in the state
+                setRelevantDocs((prevDocs) => [...prevDocs, parsedObject]);
+              }
+            } catch (error) {
+              console.error('Error parsing JSON object:', error);
+            }
+          });
+        }
+      
         // Process next chunk
         processChunk();
       };
-  
+      
+
       // Start processing the stream
       processChunk();
   
@@ -117,6 +154,42 @@ export function Chatbot() {
     setOpenSnackbar(false);
   };
 
+  // Update the prop for onBotMessageClick
+  const handleBotMessageClick = (botMessageId) => {
+    setSelectedBotMessageId(botMessageId);
+  };
+
+  const clearChat = () => {
+    setOpenConfirmationDialog(true);
+  };
+
+  const handleSaveAndClearConfirmation = () => {
+    handleSaveChat();
+    //clearChat();//to be enabled after updated
+    setOpenConfirmationDialog(false); //to be removed after updated    
+  };
+  const saveChat = () => {
+    handleSaveChat();
+  }
+  const handleSaveChat = () => {
+
+  };
+
+  const handleClearConfirmation = () => {
+    setMessages([]);
+    setInput("");
+    setIsLoading(false);
+    setRelevantDocs([]);
+    setSelectedBotMessageId(null);
+    setOpenSnackbar(false);
+    setErrorMessage("");
+    setOpenConfirmationDialog(false);
+  };
+
+  const handleCancelClear = () => {
+    setOpenConfirmationDialog(false);
+  };
+
   return (
     <Grid
       container
@@ -131,14 +204,75 @@ export function Chatbot() {
         xs={4}
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
+        <Box sx={{ textAlign: "left", padding: 1, position: 'relative' }}>
+          <Box
+            onMouseEnter={() => setShowClearChatRect(true)}
+            onMouseLeave={() => setShowClearChatRect(false)}
+            onClick={clearChat} // Added onClick handler
+            sx={{
+              backgroundColor: showClearChatRect ? "lightgrey" : "transparent",
+              position: 'absolute',
+              zIndex: 1,
+              top: 0,
+              left: 0,
+              width: '48%',
+              padding: 1,
+              borderRadius: "4px 0 0 4px", // Adjusted border radius
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between", // Aligns items to the start and end of the container
+              cursor: "pointer", // Change cursor on hover
+            }}
+          >
+            <span>Clear chat</span>
+            <IconButton onClick={clearChat}>
+              <ClearIcon />
+            </IconButton>
+          </Box>
+          <Divider orientation="vertical" flexItem sx={{ margin: '0 8px', backgroundColor: 'black' }} />
+          <Box
+            onMouseEnter={() => setShowSaveChatRect(true)}
+            onMouseLeave={() => setShowSaveChatRect(false)}
+            onClick={saveChat}
+            sx={{
+              backgroundColor: showSaveChatRect ? "lightgrey" : "transparent",
+              position: 'absolute',
+              zIndex: 1,
+              top: 0,
+              right: 0, // Align to the right side
+              width: '48%',
+              padding: 1,
+              borderRadius: "0 4px 4px 0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              cursor: "pointer",
+            }}
+          >
+            <span>Save chat</span>
+            <IconButton onClick={saveChat}>
+              <SaveAltIcon />
+            </IconButton>
+          </Box>
+          <Box
+            sx={{
+              backgroundColor: "transparent",
+              width: '50%', // Half of the container width
+              padding: 1,
+              borderRadius: "0 4px 4px 0", // Adjusted border radius
+            }}
+          />
+        </Box>
         <Box sx={{ overflowY: "auto", flexGrow: 1, padding: 2 }}>
-          {messages.map((msg, index) => (
-            <Message
-              key={index}
-              message={msg}
-              isLast={index === messages.length - 1}
-            />
-          ))}
+        {messages.map((msg, index) => (
+          <Message
+            key={index}
+            message={msg}
+            isLast={index === messages.length - 1}
+            onBotMessageClick={handleBotMessageClick}  // Pass the onBotMessageClick prop
+            selectedBotMessageId={selectedBotMessageId}  // Pass the selectedBotMessageId prop
+          />
+        ))}
           <div ref={messagesEndRef} />
         </Box>
         <Box
@@ -154,7 +288,6 @@ export function Chatbot() {
           <TextField
             fullWidth
             label="Ask me a question"
-            // variant="outlined"
             value={input} // Bind the input state to the TextField
             onChange={handleInputChange} // Update state on input change
             onKeyPress={(e) => e.key === "Enter" && sendMessage(e)} // Send message on Enter key press
@@ -171,7 +304,7 @@ export function Chatbot() {
         </Box>
       </Grid>
       <Grid item xs={8} sx={{ overflowY: "auto", height: "100%", padding: 2 }}>
-        <RelatedContent />
+        <RelatedContent relevantDocs={relevantDocs} selectedBotMessageId={selectedBotMessageId} />
       </Grid>
       <Snackbar
         open={openSnackbar}
@@ -187,6 +320,19 @@ export function Chatbot() {
           {errorMessage}
         </Alert>
       </Snackbar>
+      <Dialog open={openConfirmationDialog} onClose={handleCancelClear}>
+        <DialogTitle>Confirm Clear Chat</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to clear the chat?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelClear}>Cancel</Button>
+          <Button onClick={handleSaveAndClearConfirmation}>Save and clear</Button>
+          <Button onClick={handleClearConfirmation} autoFocus>Clear</Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }
