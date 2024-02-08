@@ -119,8 +119,10 @@ export async function POST(req) {
       },
       {
         question: (previousStepResult) => previousStepResult.question,
-        chatHistory: (previousStepResult) =>
-          serializeChatHistory(previousStepResult.chatHistory ?? ""),
+        chatHistory: async () => {
+          const memoryResult = formattedPreviousMessages.join('\n');
+          return memoryResult;
+        },
         context: RunnableSequence.from([
           (previousStepResult) => previousStepResult.question,
           extractDocSource,
@@ -180,7 +182,7 @@ export async function POST(req) {
       { callbacks: [tracer]}
     );*/
 
-    const stream = await fullChain.stream({ question: currentMessageContent });   
+    const stream = await fullChain.stream({ question: currentMessageContent });
     
     const messageId = `bot-${Date.now()}`;
     // Add properties to each document
