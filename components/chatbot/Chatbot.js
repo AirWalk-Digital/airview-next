@@ -36,6 +36,7 @@ export function Chatbot() {
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
   const [showClearChatRect, setShowClearChatRect] = useState(false);
   const [showSaveChatRect, setShowSaveChatRect] = useState(false);
+  const [conversationId, setConversationId] = useState(null); // Added state for conversation ID
 
 
   useEffect(() => {
@@ -48,6 +49,13 @@ export function Chatbot() {
     }
   }, [messages]);
 
+  useEffect(() => {
+    // When messages are cleared, reset conversation ID
+    if (messages.length === 0) {
+      setConversationId(null);
+    }
+  }, [messages]);
+
   const handleInputChange = (event) => {
     setInput(event.target.value);
   };
@@ -57,7 +65,20 @@ export function Chatbot() {
     if (!input.trim()) return; // Prevent sending empty messages
     setIsLoading(true);
   
+    // Set conversation ID if it is null
+    if (!conversationId) {
+      const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let conversationId = '';
+      for (let i = 0; i < 5; i++) {
+          conversationId += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      conversationId += `-${Date.now()}`;
+      setConversationId(conversationId);
+      console.log('conversationId: ', conversationId);
+    }
+
     const userMessage = {
+      conversationId: conversationId,
       messageId: `user-${Date.now()}`,
       content: input,
       role: "user",

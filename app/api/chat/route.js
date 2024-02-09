@@ -194,16 +194,6 @@ export async function POST(req) {
       type: 'RelevantDocs'
     }));
 
-    const generateConversationId = (messageId) => {
-      const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let result = '';
-      for (let i = 0; i < 5; i++) {
-          result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      const conversationId = result+'-'+messageId;
-      return conversationId;
-    }
-
     // Send the streaming response
     const response = new Response(
       new ReadableStream({
