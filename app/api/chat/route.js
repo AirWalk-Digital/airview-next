@@ -85,7 +85,7 @@ export async function POST(req) {
 
     const questionPrompt = PromptTemplate.fromTemplate(
       `Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know,\
-  don't try to make up an answer. Check if CONTEXT: is empty. If so, just say that "I'm sorry, no related information found", don't try to provide an answer.
+  don't try to make up an answer.
   ----------------
   CHAT HISTORY: {chatHistory}
   ----------------
@@ -199,12 +199,23 @@ export async function POST(req) {
       new ReadableStream({
         async start(controller) {
           try {
-            // Loop through the stream and push chunks to the client
-            for await (const chunk of stream) {
-              // Wrap each chunk in a JSON object before sending it
+            if (updatedDocs.length > 0) {
+              // Loop through the stream and push chunks to the client
+              for await (const chunk of stream) {
+                // Wrap each chunk in a JSON object before sending it
+                const jsonChunk = JSON.stringify({
+                  type: 'MessageStream',
+                  content: chunk,
+                  messageId: messageId,
+                  role: 'bot'
+                });              
+                controller.enqueue(jsonChunk + jsonDelimiter);
+              }
+            } else {
+              // Wrap each response in a JSON object before sending it
               const jsonChunk = JSON.stringify({
                 type: 'MessageStream',
-                content: chunk,
+                content: 'Sorry, no relevant information found',
                 messageId: messageId,
                 role: 'bot'
               });              
