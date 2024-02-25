@@ -229,11 +229,13 @@ export async function POST(req) {
             
             // Signal the end of the stream
             controller.close();
+            await redisClient.disconnect();
 
           } catch (error) {
             // Handle any errors that occurred during streaming
             console.error("Error during streaming:", error);
             controller.error(error);
+            await redisClient.disconnect();
           }
         },
       }),
@@ -250,6 +252,7 @@ export async function POST(req) {
   } catch (e) {
     // Handle exceptions
     console.error("Error:", e);
+    await redisClient.disconnect();
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
       headers: {
