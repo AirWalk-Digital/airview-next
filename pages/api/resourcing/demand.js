@@ -327,7 +327,12 @@ async function fetchWithAuthorization(url, token) {
 function cleanFields(userData) {
   Object.keys(userData).forEach((key) => {
     if (typeof userData[key] === "string") {
+      try {
       userData[key] = userData[key].trim();
+      } catch (error) {
+        console.error(`Error cleaning field ${key}: ${error}`);
+        console.error(`Error cleaning field ${userData[key]}`);
+      }
     }
   });
   return userData;
