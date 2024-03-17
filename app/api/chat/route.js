@@ -30,7 +30,8 @@ export async function POST(req) {
     const MODEL_TEMPERATURE = parseInt(process.env.MODEL_TEMPERATURE);
     const REDIS_HOST = process.env.REDIS_HOST;
     //const jsonDelimiter = process.env.REACT_APP_CHAT_MESSAGE_DELIMITER;
-    const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
+    // const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
+    const jsonDelimiter = ',';
     const SIMILARITY_THRESHOLD = process.env.SIMILARITY_THRESHOLD;
     
     // WARNING: PLEASE DO NOT USE Langsmith when using production data
@@ -85,7 +86,7 @@ export async function POST(req) {
 
     const questionPrompt = PromptTemplate.fromTemplate(
       `Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know,\
-  don't try to make up an answer. Check if CONTEXT: is empty. If so, just say that "I'm sorry, no related information found", don't try to provide an answer.
+  don't try to make up an answer. Check if CONTEXT: is empty. If so, just say that "I'm sorry, I can't find any related information", don't try to provide an answer.
   ----------------
   CHAT HISTORY: {chatHistory}
   ----------------
@@ -199,6 +200,8 @@ export async function POST(req) {
       new ReadableStream({
         async start(controller) {
           try {
+            let jsonList = []; // Initialize an empty list to collect JSON objects
+
             // Loop through the stream and push chunks to the client
             for await (const chunk of stream) {
               // Wrap each chunk in a JSON object before sending it
@@ -208,14 +211,21 @@ export async function POST(req) {
                 messageId: messageId,
                 role: 'bot'
               });              
-              controller.enqueue(jsonChunk + jsonDelimiter);
+              // jsonList.push(jsonChunk); // Add the JSON object to the list
+              controller.enqueue(jsonChunk + ','); // Enqueue each JSON object as soon as it's ready
             }
+
             // Send related content
             for (const doc of updatedDocs) {
               const jsonDoc = JSON.stringify(doc);
-              controller.enqueue(jsonDoc + jsonDelimiter);
+              // jsonList.push(jsonDoc); // Add the JSON object to the list
+              controller.enqueue(jsonDoc + ','); // Enqueue each JSON object as soon as it's ready
+
             }
-            
+
+            // Convert the list to a JSON string and send it
+            // controller.enqueue(JSON.stringify(jsonList));
+
             // Signal the end of the stream
             controller.close();
 
