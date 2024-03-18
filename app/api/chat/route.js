@@ -220,6 +220,7 @@ export async function POST(req) {
 
             // Loop through the stream and push chunks to the client
             for await (const chunk of stream) {
+              if (updatedDocs.length > 0) {
               // Wrap each chunk in a JSON object before sending it
               const jsonChunk = JSON.stringify({
                 type: 'MessageStream',
@@ -229,8 +230,18 @@ export async function POST(req) {
               });              
               // jsonList.push(jsonChunk); // Add the JSON object to the list
               controller.enqueue(jsonChunk + ','); // Enqueue each JSON object as soon as it's ready
-            }
-
+            
+          } else {
+            // Wrap each response in a JSON object before sending it
+            const jsonChunk = JSON.stringify({
+              type: 'MessageStream',
+              content: chunk,
+              content: 'Sorry, no relevant information found',
+              messageId: messageId,
+              role: 'bot'
+          });
+        }
+      }
             // Send related content
             for (const doc of updatedDocs) {
               const jsonDoc = JSON.stringify(doc);
@@ -239,16 +250,16 @@ export async function POST(req) {
 
             }
 
-            // Convert the list to a JSON string and send it
-            // controller.enqueue(JSON.stringify(jsonList));
-
             // Signal the end of the stream
             controller.close();
+            await redisClient.disconnect();
 
           } catch (error) {
             // Handle any errors that occurred during streaming
             console.error("Error during streaming:", error);
             controller.error(error);
+            await redisClient.disconnect();
+
           }
         },
       }),
@@ -265,6 +276,7 @@ export async function POST(req) {
   } catch (e) {
     // Handle exceptions
     console.error("Error:", e);
+    await redisClient.disconnect();
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
       headers: {

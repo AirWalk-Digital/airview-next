@@ -51,8 +51,8 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
             <p>{doc.pageContent}</p>
             <p>
               Source:{' '}
-              <a href={doc.metadata.source} target="_blank" rel="noopener noreferrer">
-                {doc.metadata.source}
+              <a href={doc.metadata.url} target="_blank" rel="noopener noreferrer">
+                {doc.metadata.url}
               </a>
             </p>
             <LikeActions

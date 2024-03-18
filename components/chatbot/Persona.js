@@ -6,32 +6,34 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
-export default function Persona() {
-  const [selectedPersona, setSelectedPersona] = useState('jim');
+export default function Persona({clearChat, persona, setPersona}) {
 
   const handleClearChat = () => {
+    clearChat();
     // Implement the logic to clear the chat here
     console.log('Chat cleared');
   };
 
   return (
+    <>
     <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
       <Stack direction="row" spacing={2} alignItems="center">
         <Button
-          variant={selectedPersona === 'jim' ? 'contained' : 'outlined'}
+          variant={persona === 'jim' ? 'contained' : 'outlined'}
           color="primary"
-          onClick={() => setSelectedPersona('jim')}
-          startIcon={<Avatar alt="Jim" src="/path-to-jim-avatar.jpg" />}
+          onClick={() => setPersona('jim')}
+          startIcon={<Avatar alt="Jim" src="/avatars/jim-avatar.png" />}
           sx={{ textTransform: 'none'}}
         >
           Ask Jim
         </Button>
         <Button
-          variant={selectedPersona === 'abi' ? 'contained' : 'outlined'}
+          variant={persona === 'abi' ? 'contained' : 'outlined'}
           color="primary"
-          onClick={() => setSelectedPersona('abi')}
-          startIcon={<Avatar alt="Abi" src="/path-to-abi-avatar.jpg" />}
+          onClick={() => setPersona('abi')}
+          startIcon={<Avatar alt="Abi" src="/avatars/abi-avatar.png" />}
           sx={{ textTransform: 'none'}}
         >
           Ask Abi
@@ -53,5 +55,17 @@ export default function Persona() {
         </IconButton>
       </Tooltip>
     </Box>
+    <Box display="flex" alignItems="center" justifyContent="space-between" width="100%" sx={{pt:'5px'}}>
+        { persona === 'jim' ? (
+          <Typography variant="caption" color="text.secondary">
+            Jim can help you with all your technical questions about what we do and how we do it at Airwalk.
+          </Typography>
+        ) : (
+          <Typography variant="caption" color="text.secondary">
+            Abi helps you with everything Airwalk, from HR to company culture, our work and more.
+          </Typography>
+        )}
+    </Box>
+    </>    
   );
 }

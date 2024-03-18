@@ -43,9 +43,9 @@ export function Chatbot() {
   const jsonDelimiter = ',';
   const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
-  const [showClearChatRect, setShowClearChatRect] = useState(false);
-  const [showSaveChatRect, setShowSaveChatRect] = useState(false);
-
+  // const [showClearChatRect, setShowClearChatRect] = useState(false);
+  // const [showSaveChatRect, setShowSaveChatRect] = useState(false);
+  const [conversationId, setConversationId] = useState(null); // Added state for conversation ID
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -65,8 +65,20 @@ export function Chatbot() {
     event.preventDefault();
     if (!input.trim()) return; // Prevent sending empty messages
     setIsLoading(true);
-  
+    // Set conversation ID if it is null
+    if (!conversationId) {
+      const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let conversationId = '';
+      for (let i = 0; i < 5; i++) {
+          conversationId += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      conversationId += `-${Date.now()}`;
+      setConversationId(conversationId);
+      console.log('conversationId: ', conversationId);
+    }
+
     const userMessage = {
+      conversationId: conversationId,
       messageId: `user-${Date.now()}`,
       content: input,
       role: "user",
@@ -201,13 +213,14 @@ export function Chatbot() {
     setOpenSnackbar(false);
     setErrorMessage("");
     setOpenConfirmationDialog(false);
+    setConversationId(null); // Clear the conversation ID
   };
 
   const handleCancelClear = () => {
     setOpenConfirmationDialog(false);
   };
   
-  const [persona, setPersona] = React.useState('Jim');
+  const [persona, setPersona] = React.useState('jim');
 
   const handleChange = (event, newPersona) => {
     if (newPersona !== null) {
@@ -289,7 +302,7 @@ export function Chatbot() {
           />
         </Box> */}
         <Box sx={{ flexGrow: 1, padding: 2 }}>
-        <Persona/>
+        <Persona clearChat={clearChat} persona={persona} setPersona={setPersona}/>
 
 </Box>
 
