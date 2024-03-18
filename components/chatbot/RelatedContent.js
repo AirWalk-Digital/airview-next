@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import LikeActions from "./LikeActions";
@@ -107,6 +107,13 @@ function MDXContent({ children }) {
 
   const Content = pageContent.content;
 
-
-  return <div><Content/></div>;
+  if (pageContent.content) {
+    return (
+      <div>
+        <Content />
+      </div>
+    );
+  } else {
+    return <div>....content loading</div>;
+  }
 }

@@ -24,7 +24,7 @@ export default function Persona({clearChat, persona, setPersona}) {
           variant={persona === 'jim' ? 'contained' : 'outlined'}
           color="primary"
           onClick={() => setPersona('jim')}
-          startIcon={<Avatar alt="Jim" src="/avatars/jim-avatar.png" />}
+          startIcon={<Avatar alt="Jim" src="/avatars/jimmoji-large-background.png" sx={{ background: 'white', height:'55px', width:'55px'}}/>}
           sx={{ textTransform: 'none'}}
         >
           Ask Jim
@@ -33,7 +33,7 @@ export default function Persona({clearChat, persona, setPersona}) {
           variant={persona === 'abi' ? 'contained' : 'outlined'}
           color="primary"
           onClick={() => setPersona('abi')}
-          startIcon={<Avatar alt="Abi" src="/avatars/abi-avatar.png" />}
+          startIcon={<Avatar alt="Abi" src="/avatars/abioji-large.png" sx={{ height:'55px', width:'55px'}}/>}
           sx={{ textTransform: 'none'}}
         >
           Ask Abi
