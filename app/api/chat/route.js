@@ -4,11 +4,21 @@ import { RunnableBranch, RunnableSequence } from "@langchain/core/runnables";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { formatDocumentsAsString } from "langchain/util/document";
-import { RedisVectorStore } from "@langchain/community/vectorstores/redis";
+import { RedisVectorStore } from "@langchain/redis";
 import { createClient } from "redis";
 import { ContextualCompressionRetriever } from "langchain/retrievers/contextual_compression";
 import { EmbeddingsFilter } from "langchain/retrievers/document_compressors/embeddings_filter";
+// import { Schema } from "@langchain/core";
+import { RedisByteStore } from "@langchain/community/storage/ioredis";
 
+const customSchema = {
+  id: "CustomSchema",
+  properties: {
+    title: { type: "string" },
+    url: { type: "string" },
+    file: { type: "string" },
+  },
+};
 // WARNING: PLEASE DO NOT USE Langsmith when using production data
 // as this has not been checked and approved.
 // Code for using Langsmith
@@ -60,11 +70,16 @@ export async function POST(req) {
       url: process.env.REDIS_URL ?? `redis://${REDIS_HOST}:6379`,
     });
     await redisClient.connect();
-    console.log("Successfully connect to Redis");
+    console.log("Successfully connected to Redis");
 
     const baseCompressor = new EmbeddingsFilter({
       embeddings: new OpenAIEmbeddings(),
       similarityThreshold: SIMILARITY_THRESHOLD,
+    });
+
+    const redisByteStore = new RedisByteStore({
+      client: redisClient,
+      schema: customSchema,
     });
 
     const vectorStore = new RedisVectorStore(new OpenAIEmbeddings(), {
@@ -111,6 +126,7 @@ export async function POST(req) {
     const extractDocSource = async (currentQuestion) => {
       // code to extract sources from retrieverResult
       relevantDocs = await retriever.getRelevantDocuments(currentQuestion);
+      console.log("Relevant Docs: ", relevantDocs);
       return relevantDocs;
     };
 
