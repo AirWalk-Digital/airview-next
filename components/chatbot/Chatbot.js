@@ -46,6 +46,7 @@ export function Chatbot() {
   // const [showClearChatRect, setShowClearChatRect] = useState(false);
   // const [showSaveChatRect, setShowSaveChatRect] = useState(false);
   const [conversationId, setConversationId] = useState(null); // Added state for conversation ID
+  const [persona, setPersona] = React.useState('jim');
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -90,7 +91,7 @@ export function Chatbot() {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ messages: [...messages, userMessage], persona: persona }),
       });
   
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
@@ -220,7 +221,6 @@ export function Chatbot() {
     setOpenConfirmationDialog(false);
   };
   
-  const [persona, setPersona] = React.useState('jim');
 
   const handleChange = (event, newPersona) => {
     if (newPersona !== null) {
