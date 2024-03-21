@@ -21,6 +21,14 @@ import Button from "@mui/material/Button";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 
 
+import Persona from "./Persona";
+// import Avatar from '@mui/material/Avatar';
+// import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Avatar from '@mui/material/Avatar';
+
 export function Chatbot() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
@@ -31,12 +39,14 @@ export function Chatbot() {
   const topBarHeight = 65; // Adjust this to match the actual height of your TopBar
   const endpoint = "/api/chat"; // Replace with your API endpoint
   const [relevantDocs, setRelevantDocs] = useState([]);
-  const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // should be same as that in route.js and to be updated to extract from env
+  // const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // should be same as that in route.js and to be updated to extract from env
+  const jsonDelimiter = ',';
   const [selectedBotMessageId, setSelectedBotMessageId] = useState(null);
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
-  const [showClearChatRect, setShowClearChatRect] = useState(false);
-  const [showSaveChatRect, setShowSaveChatRect] = useState(false);
-
+  // const [showClearChatRect, setShowClearChatRect] = useState(false);
+  // const [showSaveChatRect, setShowSaveChatRect] = useState(false);
+  const [conversationId, setConversationId] = useState(null); // Added state for conversation ID
+  const [persona, setPersona] = React.useState('jim');
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -56,8 +66,20 @@ export function Chatbot() {
     event.preventDefault();
     if (!input.trim()) return; // Prevent sending empty messages
     setIsLoading(true);
-  
+    // Set conversation ID if it is null
+    if (!conversationId) {
+      const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let conversationId = '';
+      for (let i = 0; i < 5; i++) {
+          conversationId += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      conversationId += `-${Date.now()}`;
+      setConversationId(conversationId);
+      console.log('conversationId: ', conversationId);
+    }
+
     const userMessage = {
+      conversationId: conversationId,
       messageId: `user-${Date.now()}`,
       content: input,
       role: "user",
@@ -69,7 +91,7 @@ export function Chatbot() {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ messages: [...messages, userMessage], persona: persona }),
       });
   
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
@@ -93,12 +115,20 @@ export function Chatbot() {
             // Remove the delimiter from the end
             jsonString = jsonString.slice(0, -jsonDelimiter.length);
           }
-      
-          const jsonObjects = jsonString.split(jsonDelimiter);
-      
+          // console.log('jsonString:', jsonString);
+          // const jsonObjects = jsonString.split(jsonDelimiter);
+          // const jsonObjects = jsonString.split('}' + jsonDelimiter + '{');
+          const jsonObjects = JSON.parse('[' + jsonString + ']');
+          // console.log('jsonObjects:', jsonObjects);
+
+          // Check if jsonObjects is an array. If not, wrap it in an array.
+          // const jsonArray = Array.isArray(jsonObjects) ? jsonObjects : [jsonObjects];
+
           jsonObjects.forEach(jsonObject => {
+
             try {
-              const parsedObject = JSON.parse(jsonObject);
+              // const parsedObject = JSON.parse(jsonObject);
+              const parsedObject = jsonObject;
               // Handling MessageStream type
               if (parsedObject.type === 'MessageStream') {
                 const { content, messageId, role } = parsedObject;
@@ -184,10 +214,18 @@ export function Chatbot() {
     setOpenSnackbar(false);
     setErrorMessage("");
     setOpenConfirmationDialog(false);
+    setConversationId(null); // Clear the conversation ID
   };
 
   const handleCancelClear = () => {
     setOpenConfirmationDialog(false);
+  };
+  
+
+  const handleChange = (event, newPersona) => {
+    if (newPersona !== null) {
+      setPersona(newPersona);
+    }
   };
 
   return (
@@ -204,7 +242,7 @@ export function Chatbot() {
         xs={4}
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
-        <Box sx={{ textAlign: "left", padding: 1, position: 'relative' }}>
+        {/* <Box sx={{ textAlign: "left", padding: 1, position: 'relative' }}>
           <Box
             onMouseEnter={() => setShowClearChatRect(true)}
             onMouseLeave={() => setShowClearChatRect(false)}
@@ -262,7 +300,12 @@ export function Chatbot() {
               borderRadius: "0 4px 4px 0", // Adjusted border radius
             }}
           />
-        </Box>
+        </Box> */}
+        <Box sx={{ flexGrow: 1, padding: 2 }}>
+        <Persona clearChat={clearChat} persona={persona} setPersona={setPersona}/>
+
+</Box>
+
         <Box sx={{ overflowY: "auto", flexGrow: 1, padding: 2 }}>
         {messages.map((msg, index) => (
           <Message
