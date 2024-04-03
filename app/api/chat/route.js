@@ -4,11 +4,25 @@ import { RunnableBranch, RunnableSequence } from "@langchain/core/runnables";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { formatDocumentsAsString } from "langchain/util/document";
-import { RedisVectorStore } from "@langchain/community/vectorstores/redis";
+import { RedisVectorStore } from "@langchain/redis";
 import { createClient } from "redis";
 import { ContextualCompressionRetriever } from "langchain/retrievers/contextual_compression";
 import { EmbeddingsFilter } from "langchain/retrievers/document_compressors/embeddings_filter";
+// import { Schema } from "@langchain/core";
+// import { RedisByteStore } from "@langchain/community/storage/ioredis";
+import { OpenSearchVectorStore } from "@langchain/community/vectorstores/opensearch";
+import { Client } from "@opensearch-project/opensearch";
 
+
+
+const customSchema = {
+  id: "CustomSchema",
+  properties: {
+    title: { type: "string" },
+    url: { type: "string" },
+    file: { type: "string" },
+  },
+};
 // WARNING: PLEASE DO NOT USE Langsmith when using production data
 // as this has not been checked and approved.
 // Code for using Langsmith
@@ -23,16 +37,28 @@ export async function POST(req) {
 
     const body = await req.json();
     const messages = body.messages ?? [];
+    const persona = body.persona ?? "jim";
     const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
     //console.log('formattedPreviousMessages: ', formattedPreviousMessages)
     const currentMessageContent = messages[messages.length - 1].content;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     const MODEL_TEMPERATURE = parseInt(process.env.MODEL_TEMPERATURE);
     const REDIS_HOST = process.env.REDIS_HOST;
+    const ES_URL = process.env.ES_URL;
+    const ES_PASSWORD = process.env.ES_PASSWORD;
     //const jsonDelimiter = process.env.REACT_APP_CHAT_MESSAGE_DELIMITER;
-    const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
+    // const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
+    const jsonDelimiter = ',';
     const SIMILARITY_THRESHOLD = process.env.SIMILARITY_THRESHOLD;
     
+    const getIndexName = (persona) => {
+      if (persona === "jim") {
+        return "airview";
+      } else {
+        return "sharepoint";
+      }
+    }
+
     // WARNING: PLEASE DO NOT USE Langsmith when using production data
     // as this has not been checked and approved.
     // Code for using Langsmith
@@ -55,20 +81,48 @@ export async function POST(req) {
       openAIApiKey: OPENAI_API_KEY
     });
 
-    const redisClient = createClient({
-      url: process.env.REDIS_URL ?? `redis://${REDIS_HOST}:6379`,
-    });
-    await redisClient.connect();
-    console.log("Successfully connect to Redis");
+    // const redisClient = createClient({
+    //   url: process.env.REDIS_URL ?? `redis://${REDIS_HOST}:6379`,
+    // });
+    // await redisClient.connect();
+    // console.log("Successfully connected to Redis");
 
     const baseCompressor = new EmbeddingsFilter({
       embeddings: new OpenAIEmbeddings(),
       similarityThreshold: SIMILARITY_THRESHOLD,
     });
 
-    const vectorStore = new RedisVectorStore(new OpenAIEmbeddings(), {
-      redisClient: redisClient,
-      indexName: process.env.INDEX_NAME,
+    // const redisByteStore = new RedisByteStore({
+    //   client: redisClient,
+    //   schema: customSchema,
+    // });
+
+
+    const connectionString = () => {
+      const url = process.env.ES_URL;
+      // Split the URL by '://'
+      const parts = url.split('://');
+      const user = 'admin'
+      const pw = process.env.ES_PASSWORD;
+      // Assemble the connection string
+      const connection_string = `${parts[0]}://${user}:${pw}@${parts[1]}`;
+      return connection_string;
+    }
+
+    const client = new Client({
+      nodes: [connectionString()],
+      ssl: {
+        // ca: fs.readFileSync(ca_certs_path),
+        // You can turn off certificate verification (rejectUnauthorized: false) if you're using self-signed certificates with a hostname mismatch.
+        // cert: fs.readFileSync(client_cert_path),
+        // key: fs.readFileSync(client_key_path)
+        rejectUnauthorized: false
+      },
+    });
+
+    const vectorStore = new OpenSearchVectorStore(new OpenAIEmbeddings(), {
+      client,
+      indexName: process.env.INDEX_NAME, // Will default to `documents`
     });
 
     const retriever = new ContextualCompressionRetriever({
@@ -85,7 +139,7 @@ export async function POST(req) {
 
     const questionPrompt = PromptTemplate.fromTemplate(
       `Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know,\
-  don't try to make up an answer. Check if CONTEXT: is empty. If so, just say that "I'm sorry, no related information found", don't try to provide an answer.
+  don't try to make up an answer. Check if CONTEXT: is empty. If so, just say that "I'm sorry, I can't find any related information", don't try to provide an answer.
   ----------------
   CHAT HISTORY: {chatHistory}
   ----------------
@@ -110,6 +164,7 @@ export async function POST(req) {
     const extractDocSource = async (currentQuestion) => {
       // code to extract sources from retrieverResult
       relevantDocs = await retriever.getRelevantDocuments(currentQuestion);
+      console.log("Relevant Docs: ", relevantDocs);
       return relevantDocs;
     };
 
@@ -199,8 +254,11 @@ export async function POST(req) {
       new ReadableStream({
         async start(controller) {
           try {
+            let jsonList = []; // Initialize an empty list to collect JSON objects
+
             // Loop through the stream and push chunks to the client
             for await (const chunk of stream) {
+              if (updatedDocs.length > 0) {
               // Wrap each chunk in a JSON object before sending it
               const jsonChunk = JSON.stringify({
                 type: 'MessageStream',
@@ -208,21 +266,38 @@ export async function POST(req) {
                 messageId: messageId,
                 role: 'bot'
               });              
-              controller.enqueue(jsonChunk + jsonDelimiter);
-            }
+              // jsonList.push(jsonChunk); // Add the JSON object to the list
+              controller.enqueue(jsonChunk + ','); // Enqueue each JSON object as soon as it's ready
+            
+          } else {
+            // Wrap each response in a JSON object before sending it
+            const jsonChunk = JSON.stringify({
+              type: 'MessageStream',
+              content: chunk,
+              content: 'Sorry, no relevant information found',
+              messageId: messageId,
+              role: 'bot'
+          });
+        }
+      }
             // Send related content
             for (const doc of updatedDocs) {
               const jsonDoc = JSON.stringify(doc);
-              controller.enqueue(jsonDoc + jsonDelimiter);
+              // jsonList.push(jsonDoc); // Add the JSON object to the list
+              controller.enqueue(jsonDoc + ','); // Enqueue each JSON object as soon as it's ready
+
             }
-            
+
             // Signal the end of the stream
             controller.close();
+            // await redisClient.disconnect();
 
           } catch (error) {
             // Handle any errors that occurred during streaming
             console.error("Error during streaming:", error);
             controller.error(error);
+            // await redisClient.disconnect();
+
           }
         },
       }),
@@ -239,6 +314,7 @@ export async function POST(req) {
   } catch (e) {
     // Handle exceptions
     console.error("Error:", e);
+    // await redisClient.disconnect();
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
       headers: {
