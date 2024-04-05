@@ -255,7 +255,7 @@ export async function POST(req) {
         async start(controller) {
           try {
             let jsonList = []; // Initialize an empty list to collect JSON objects
-            if (updatedDocs.length >= 0) {
+            if (updatedDocs.length > 0) {
             // Loop through the stream and push chunks to the client
               for await (const chunk of stream) {
               
