@@ -255,31 +255,32 @@ export async function POST(req) {
         async start(controller) {
           try {
             let jsonList = []; // Initialize an empty list to collect JSON objects
-
+            if (updatedDocs.length >= 0) {
             // Loop through the stream and push chunks to the client
-            for await (const chunk of stream) {
-              if (updatedDocs.length > 0) {
-              // Wrap each chunk in a JSON object before sending it
+              for await (const chunk of stream) {
+              
+                // Wrap each chunk in a JSON object before sending it
+                const jsonChunk = JSON.stringify({
+                  type: 'MessageStream',
+                  content: chunk,
+                  messageId: messageId,
+                  role: 'bot'
+                });              
+                // jsonList.push(jsonChunk); // Add the JSON object to the list
+                controller.enqueue(jsonChunk + ','); // Enqueue each JSON object as soon as it's ready
+              }
+            } else {
+              // Wrap each response in a JSON object before sending it
               const jsonChunk = JSON.stringify({
                 type: 'MessageStream',
-                content: chunk,
+                content: 'Sorry, no relevant information found',
                 messageId: messageId,
                 role: 'bot'
-              });              
-              // jsonList.push(jsonChunk); // Add the JSON object to the list
-              controller.enqueue(jsonChunk + ','); // Enqueue each JSON object as soon as it's ready
-            
-          } else {
-            // Wrap each response in a JSON object before sending it
-            const jsonChunk = JSON.stringify({
-              type: 'MessageStream',
-              content: chunk,
-              content: 'Sorry, no relevant information found',
-              messageId: messageId,
-              role: 'bot'
-          });
-        }
-      }
+              });
+              controller.enqueue(jsonChunk + ','); // Enqueue each JSON object
+
+            }
+    
             // Send related content
             for (const doc of updatedDocs) {
               const jsonDoc = JSON.stringify(doc);
