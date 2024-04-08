@@ -1,1 +1,0 @@
-export {ServiceTile, Tile} from './Tiles'

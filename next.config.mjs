@@ -3,6 +3,16 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkUnwrapImages from "remark-unwrap-images";
 import createMDX from "@next/mdx";
+import './src/libs/Env.mjs';
+import withBundleAnalyzer from '@next/bundle-analyzer';
+import withNextIntl from 'next-intl/plugin';
+
+// const withNextIntlConfig = withNextIntl('./src/libs/i18n.ts');
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 // import { withSentryConfig } from "@sentry/nextjs";
 
 const remarkPlugins = [
@@ -27,6 +37,7 @@ const nextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "tsx"],
   transpilePackages: ['@mdxeditor/editor', 'react-diff-view'],
   swcMinify: false,
+  poweredByHeader: false,
   reactStrictMode: true,
   images: {
     // limit of 25 deviceSizes values
@@ -60,9 +71,12 @@ const nextConfig = {
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false, dns: false };
-    config.externals = config.externals || [];
+    // config.externals is needed to resolve the following errors:
+    // Module not found: Can't resolve 'bufferutil'
+    // Module not found: Can't resolve 'utf-8-validate'
     config.externals.push({
-      chromadb: "chromadb",
+      bufferutil: 'bufferutil',
+      'utf-8-validate': 'utf-8-validate',
     });
     // Add the alias configuration to the webpack config
     config.resolve.alias = {
@@ -79,39 +93,4 @@ const nextConfig = {
   // },
 };
 
-export default withMDX(nextConfig)
-
-
-
-// export default withSentryConfig(
-//   withMDX(nextConfig),
-//   {
-//     // For all available options, see:
-//     // https://github.com/getsentry/sentry-webpack-plugin#options
-
-//     // Suppresses source map uploading logs during build
-//     silent: true,
-
-//     org: "airwalk-digital",
-//     project: "airview-next",
-//   },
-//   {
-//     // For all available options, see:
-//     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-//     // Upload a larger set of source maps for prettier stack traces (increases build time)
-//     widenClientFileUpload: true,
-
-//     // Transpiles SDK to be compatible with IE11 (increases bundle size)
-//     transpileClientSDK: true,
-
-//     // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-//     tunnelRoute: "/monitoring",
-
-//     // Hides source maps from generated client bundles
-//     hideSourceMaps: true,
-
-//     // Automatically tree-shake Sentry logger statements to reduce bundle size
-//     disableLogger: true,
-//   }
-// );
+export default withMDX(bundleAnalyzer(nextConfig))
