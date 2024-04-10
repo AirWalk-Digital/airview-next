@@ -29,6 +29,8 @@
     "export": "next build && next export"
   },
   "dependencies": {
+    "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.4",
     "@fontsource/heebo": "^5.0.21",
     "@fontsource/roboto-mono": "^5.0.17",
     "@hookform/resolvers": "^3.3.4",

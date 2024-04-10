@@ -1,11 +1,13 @@
-import remarkGfm from "remark-gfm";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import remarkUnwrapImages from "remark-unwrap-images";
-import createMDX from "@next/mdx";
-import './src/libs/Env.mjs';
+/* eslint-disable no-param-reassign */
+import remarkGfm from 'remark-gfm';
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
+import remarkUnwrapImages from 'remark-unwrap-images';
+import createMDX from '@next/mdx';
+import './src/lib/Env.mjs';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import withBundleAnalyzer from '@next/bundle-analyzer';
-import withNextIntl from 'next-intl/plugin';
+// import withNextIntl from 'next-intl/plugin';
 
 // const withNextIntlConfig = withNextIntl('./src/libs/i18n.ts');
 
@@ -28,13 +30,13 @@ const withMDX = createMDX({
   // const withMDX = require("@next/mdx")({
   extension: /\.(md|mdx)$/,
   options: {
-    providerImportSource: "@mdx-js/react",
-    remarkPlugins: remarkPlugins,
+    providerImportSource: '@mdx-js/react',
+    remarkPlugins,
   },
 });
 
 const nextConfig = {
-  pageExtensions: ["js", "jsx", "mdx", "tsx"],
+  pageExtensions: ['js', 'jsx', 'mdx', 'tsx'],
   transpilePackages: ['@mdxeditor/editor', 'react-diff-view'],
   swcMinify: false,
   poweredByHeader: false,
@@ -45,10 +47,10 @@ const nextConfig = {
     // limit of 25 imageSizes values
     // imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // limit of 50 domains values
-    domains: ["localhost"], // path prefix for Image Optimization API, useful with `loader`
+    domains: ['localhost'], // path prefix for Image Optimization API, useful with `loader`
     // path: '/_next/image',
     // loader can be 'default', 'imgix', 'cloudinary', 'akamai', or 'custom'
-    loader: "default",
+    loader: 'default',
     // loaderFile: './components/utils/nextImageLoader.js',
     // file with `export default function loader({src, width, quality})`
     // loaderFile: '',
@@ -93,4 +95,4 @@ const nextConfig = {
   // },
 };
 
-export default withMDX(bundleAnalyzer(nextConfig))
+export default withMDX(bundleAnalyzer(nextConfig));
