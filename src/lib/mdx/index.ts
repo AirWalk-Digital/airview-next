@@ -1,0 +1,1 @@
+export { useMDX } from './useMDX';

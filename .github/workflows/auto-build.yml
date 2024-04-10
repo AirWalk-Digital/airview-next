@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 18.x
+          node-version: 20.x
       
       - name: Install semantic-release extra plugins
         run: mv package.json package.json.bak && npm install --no-save @semantic-release/changelog @semantic-release-plus/docker && mv package.json.bak package.json
