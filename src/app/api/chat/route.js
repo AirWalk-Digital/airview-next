@@ -1,10 +1,13 @@
+/* eslint-disable no-restricted-syntax */
+// @ts-nocheck
+/* eslint-disable import/prefer-default-export */
 import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
 import { RunnableBranch, RunnableSequence } from '@langchain/core/runnables';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { formatDocumentsAsString } from 'langchain/util/document';
-// import { RedisVectorStore } from "@langchain/redis";
-// import { createClient } from "redis";
+// import { RedisVectorStore } from '@langchain/redis';
+// import { createClient } from 'redis';
 import { ContextualCompressionRetriever } from 'langchain/retrievers/contextual_compression';
 import { EmbeddingsFilter } from 'langchain/retrievers/document_compressors/embeddings_filter';
 // import { Schema } from "@langchain/core";
@@ -12,21 +15,13 @@ import { EmbeddingsFilter } from 'langchain/retrievers/document_compressors/embe
 import { OpenSearchVectorStore } from '@langchain/community/vectorstores/opensearch';
 import { Client } from '@opensearch-project/opensearch';
 
-// const customSchema = {
-//   id: "CustomSchema",
-//   properties: {
-//     title: { type: "string" },
-//     url: { type: "string" },
-//     file: { type: "string" },
-//   },
-// };
 // WARNING: PLEASE DO NOT USE Langsmith when using production data
 // as this has not been checked and approved.
 // Code for using Langsmith
 /* import { Client } from "langsmith";
 import { ConsoleCallbackHandler, LangChainTracer } from "langchain/callbacks"; */
 
-export default async function POST(req) {
+export async function POST(req) {
   try {
     const formatMessage = (message) => {
       return `${message.role}: ${message.content}`;
@@ -100,8 +95,8 @@ export default async function POST(req) {
       const user = 'admin';
       const pw = process.env.ES_PASSWORD;
       // Assemble the connection string
-      const string = `${parts[0]}://${user}:${pw}@${parts[1]}`;
-      return string;
+      const esConnectionString = `${parts[0]}://${user}:${pw}@${parts[1]}`;
+      return esConnectionString;
     };
 
     const client = new Client({
@@ -117,7 +112,7 @@ export default async function POST(req) {
 
     const vectorStore = new OpenSearchVectorStore(new OpenAIEmbeddings(), {
       client,
-      indexName: getIndexName(persona), // Will default to `documents`
+      indexName: getIndexName(), // Will default to `documents`
     });
 
     const retriever = new ContextualCompressionRetriever({
@@ -251,36 +246,37 @@ export default async function POST(req) {
       new ReadableStream({
         async start(controller) {
           try {
-            let jsonChunk = []; // Initialize an empty list to collect JSON objects
-
-            // Loop through the stream and push chunks to the client
-            stream.forEach(async (chunk) => {
-              if (updatedDocs.length > 0) {
+            // const jsonList = []; // Initialize an empty list to collect JSON objects
+            if (updatedDocs.length > 0) {
+              // Loop through the stream and push chunks to the client
+              for await (const chunk of stream) {
                 // Wrap each chunk in a JSON object before sending it
-                jsonChunk = JSON.stringify({
+                const jsonChunk = JSON.stringify({
                   type: 'MessageStream',
                   content: chunk,
                   messageId,
                   role: 'bot',
                 });
-                controller.enqueue(`${jsonChunk},`); // Enqueue each JSON object as soon as it's ready
-              } else {
-                // Wrap each response in a JSON object before sending it
-                jsonChunk = JSON.stringify({
-                  type: 'MessageStream',
-                  content: 'Sorry, no relevant information found',
-                  messageId,
-                  role: 'bot',
-                });
+                // jsonList.push(jsonChunk); // Add the JSON object to the list
                 controller.enqueue(`${jsonChunk},`); // Enqueue each JSON object as soon as it's ready
               }
-            });
+            } else {
+              // Wrap each response in a JSON object before sending it
+              const jsonChunk = JSON.stringify({
+                type: 'MessageStream',
+                content: 'Sorry, no relevant information found',
+                messageId,
+                role: 'bot',
+              });
+              controller.enqueue(`${jsonChunk},`); // Enqueue each JSON object
+            }
 
             // Send related content
-            updatedDocs.forEach((doc) => {
+            for (const doc of updatedDocs) {
               const jsonDoc = JSON.stringify(doc);
+              // jsonList.push(jsonDoc); // Add the JSON object to the list
               controller.enqueue(`${jsonDoc},`); // Enqueue each JSON object as soon as it's ready
-            });
+            }
 
             // Signal the end of the stream
             controller.close();
