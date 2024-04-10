@@ -12,7 +12,24 @@
         "singleQuote": true,
         "endOfLine": "auto"
       }
-    ] // Avoid conflict rule between Prettier and Airbnb Eslint
+    ], // Avoid conflict rule between Prettier and Airbnb Eslint
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   },
   "overrides": [
     // Configuration for TypeScript files
@@ -63,7 +80,9 @@
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": [
           "error",
-          { "argsIgnorePattern": "^_" }
+          {
+            "argsIgnorePattern": "^_"
+          }
         ]
       }
     },

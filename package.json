@@ -29,6 +29,8 @@
     "export": "next build && next export"
   },
   "dependencies": {
+    "@fontsource/heebo": "^5.0.21",
+    "@fontsource/roboto-mono": "^5.0.17",
     "@hookform/resolvers": "^3.3.4",
     "@langchain/community": "^0.0.44",
     "@langchain/core": "^0.1.54",
@@ -39,6 +41,8 @@
     "@mdx-js/react": "^3.0.1",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
+    "@mui/material-nextjs": "^5.15.11",
+    "@mui/utils": "^5.15.14",
     "@next/mdx": "^14.1.4",
     "@opensearch-project/opensearch": "^2.6.0",
     "@spotlightjs/spotlight": "^1.2.16",
@@ -78,6 +82,7 @@
     "@storybook/addon-links": "^7.6.17",
     "@storybook/blocks": "^7.6.17",
     "@storybook/nextjs": "^7.6.17",
+    "@storybook/preview-api": "^8.0.6",
     "@storybook/react": "^7.6.17",
     "@storybook/test": "^7.6.17",
     "@storybook/test-runner": "^0.16.0",
