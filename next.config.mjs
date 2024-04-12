@@ -1,8 +1,20 @@
-import remarkGfm from "remark-gfm";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import remarkUnwrapImages from "remark-unwrap-images";
-import createMDX from "@next/mdx";
+/* eslint-disable no-param-reassign */
+import remarkGfm from 'remark-gfm';
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
+import remarkUnwrapImages from 'remark-unwrap-images';
+import createMDX from '@next/mdx';
+import './src/lib/Env.mjs';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import withBundleAnalyzer from '@next/bundle-analyzer';
+// import withNextIntl from 'next-intl/plugin';
+
+// const withNextIntlConfig = withNextIntl('./src/libs/i18n.ts');
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 // import { withSentryConfig } from "@sentry/nextjs";
 
 const remarkPlugins = [
@@ -18,15 +30,16 @@ const withMDX = createMDX({
   // const withMDX = require("@next/mdx")({
   extension: /\.(md|mdx)$/,
   options: {
-    providerImportSource: "@mdx-js/react",
-    remarkPlugins: remarkPlugins,
+    providerImportSource: '@mdx-js/react',
+    remarkPlugins,
   },
 });
 
 const nextConfig = {
-  pageExtensions: ["js", "jsx", "mdx", "tsx"],
+  pageExtensions: ['js', 'jsx', 'mdx', 'tsx'],
   transpilePackages: ['@mdxeditor/editor', 'react-diff-view'],
   swcMinify: false,
+  poweredByHeader: false,
   reactStrictMode: true,
   images: {
     // limit of 25 deviceSizes values
@@ -34,10 +47,10 @@ const nextConfig = {
     // limit of 25 imageSizes values
     // imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // limit of 50 domains values
-    domains: ["localhost"], // path prefix for Image Optimization API, useful with `loader`
+    domains: ['localhost'], // path prefix for Image Optimization API, useful with `loader`
     // path: '/_next/image',
     // loader can be 'default', 'imgix', 'cloudinary', 'akamai', or 'custom'
-    loader: "default",
+    loader: 'default',
     // loaderFile: './components/utils/nextImageLoader.js',
     // file with `export default function loader({src, width, quality})`
     // loaderFile: '',
@@ -60,6 +73,13 @@ const nextConfig = {
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false, dns: false };
+    // config.externals is needed to resolve the following errors:
+    // Module not found: Can't resolve 'bufferutil'
+    // Module not found: Can't resolve 'utf-8-validate'
+    config.externals.push({
+      bufferutil: 'bufferutil',
+      'utf-8-validate': 'utf-8-validate',
+    });
     // Add the alias configuration to the webpack config
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -75,39 +95,4 @@ const nextConfig = {
   // },
 };
 
-export default withMDX(nextConfig)
-
-
-
-// export default withSentryConfig(
-//   withMDX(nextConfig),
-//   {
-//     // For all available options, see:
-//     // https://github.com/getsentry/sentry-webpack-plugin#options
-
-//     // Suppresses source map uploading logs during build
-//     silent: true,
-
-//     org: "airwalk-digital",
-//     project: "airview-next",
-//   },
-//   {
-//     // For all available options, see:
-//     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-//     // Upload a larger set of source maps for prettier stack traces (increases build time)
-//     widenClientFileUpload: true,
-
-//     // Transpiles SDK to be compatible with IE11 (increases bundle size)
-//     transpileClientSDK: true,
-
-//     // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-//     tunnelRoute: "/monitoring",
-
-//     // Hides source maps from generated client bundles
-//     hideSourceMaps: true,
-
-//     // Automatically tree-shake Sentry logger statements to reduce bundle size
-//     disableLogger: true,
-//   }
-// );
+export default withMDX(bundleAnalyzer(nextConfig));

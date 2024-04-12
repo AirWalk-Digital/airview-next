@@ -1,0 +1,43 @@
+FROM node:lts-alpine
+ARG DEBIAN_FRONTEND=noninteractive
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# Create the user
+
+RUN     apk add doas git github-cli; \
+        adduser $USERNAME -G wheel; \
+        echo 'permit nopass :wheel as root' >> /etc/doas.d/doas.conf
+
+# ********************************************************
+# * Anything else you want to do like clean up goes here *
+# ********************************************************
+
+
+RUN git config --global url."git@github.com:".insteadOf "https://github.com/"
+RUN git config --global url."git@ssh.dev.azure.com:".insteadOf "https://ssh.dev.azure.com/"
+
+# ## fix npm file issues
+# RUN mkdir /tmp/npm \
+# && mkdir /tmp/npm-cache \
+# && npm config set prefix /tmp/npm \
+# && npm config set cache /tmp/npm-cache \
+# && chown -R $USERNAME /tmp/npm \
+# && mkdir /workspaces && chown -R $USERNAME /workspaces
+## fix M1 pupetteer issues
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+
+# [Optional] Set the default user. Omit if you want to keep the default as root.
+USER $USERNAME
+
+# COPY . /tmp/npm
+
+# RUN doas chown -R $USERNAME /tmp/npm
+# RUN npm config set prefix /tmp/npm
+# RUN yarn config set prefix /tmp/npm
+# RUN npm i
+# RUN git clone https://github.com/AirWalk-Digital/airview-mdx.git /tmp/airview-mdx && cd /tmp/airview-mdx && npm i && npm link
+
+

@@ -43,4 +43,6 @@ yarn-error.log*
 # Temp stuff
 components/dashboard-demo/
 /.env
-components.old/
+.archive/
+
+app/api/chat/chroma

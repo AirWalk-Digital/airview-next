@@ -14,6 +14,8 @@ export const siteConfig = {
       path: "services", // the base path for the content
       reference: "service", // how the collection is referred to in frontmatter links
       collections: ["knowledge", "designs"],
+      menu: {component: "FullHeaderMenu", collection: "providers" } // the menu to use on the left and the baseline for the menu
+
     },
     providers: {
       source: "github", // The source of the content
@@ -32,6 +34,8 @@ export const siteConfig = {
       path: "solutions", // the base path for the content
       reference: "solution", // how the collection is referred to in frontmatter links
       collections: ["knowledge", "designs"],
+      menu: {component: "ListMenu", collection: "solutions" } // the menu to use on the left and the baseline for the menu
+
     },
     knowledge: {
       source: "github", // The source of the content
@@ -40,6 +44,7 @@ export const siteConfig = {
       branch: "main",
       path: "knowledge", // the base path for the content
       reference: "knowledge", // how the collection is referred to in frontmatter links
+      menu: {component: "DummyMenu", collection: null } // the menu to use on the left
     },
     designs: {
       source: "github", // The source of the content
@@ -67,6 +72,8 @@ export const siteConfig = {
       path: "projects", // the base path for the content
       reference: "project", // how the collection is referred to in frontmatter links
       collections: ["knowledge"],
+      menu: {component: "FullHeaderMenu", collection: "customers" } // the menu to use on the left and the baseline for the menu
+
     },
     products: {
       source: 'github', // The source of the content
@@ -77,8 +84,8 @@ export const siteConfig = {
       reference: 'product', // how the collection is referred to in frontmatter links
       collections: ['knowledge', 'designs']
     },
-    applications: { source: 'static'},
-    frameworks: { source: 'static'}
+    // applications: { source: 'static'},
+    // frameworks: { source: 'static'}
   }
 }
 

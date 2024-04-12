@@ -1,0 +1,44 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details or
+// https://aka.ms/vscode-dev-containers/definitions for sample configurations.
+{
+  "name": "Airview Next",
+  "dockerFile": "Dockerfile.vscode",
+  "remoteUser": "vscode",
+  //"mounts": [
+  //  "source=/Users/robe/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+  //],
+  "forwardPorts": [3000, 6006],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next JS",
+      "onAutoForward": "silent"
+    },
+    "6006": {
+      "label": "Storybook",
+      "onAutoForward": "silent"
+    }
+  },
+  // "postCreateCommand": "",
+  "postCreateCommand": {
+    // "fix npm" : "rm -Rf /workspaces/airview-next/node_modules && ln -s /tmp/npm/node_modules /workspaces/airview-next/node_modules"
+    "install modules": "cd ${containerWorkspaceFolder} && npm i"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "mikestead.dotenv",
+        "csstools.postcss",
+        "bradlc.vscode-tailwindcss",
+        "Orta.vscode-jest",
+        "humao.rest-client",
+        "yoavbls.pretty-ts-errors",
+        "ms-playwright.playwright",
+        "github.vscode-github-actions",
+        "lokalise.i18n-ally",
+        "GitHub.copilot",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}
