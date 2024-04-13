@@ -5,13 +5,13 @@ import {
   Menu as MenuIcon,
 } from '@mui/icons-material';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CloseIcon from '@mui/icons-material/Close';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
-import { Typography } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
+// import IconButton from '@mui/material/IconButton';
 // import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
@@ -23,7 +23,6 @@ import Toolbar from '@mui/material/Toolbar';
 import React, { useState } from 'react';
 
 import { siteConfig } from '../../../site.config';
-
 // import logo from '../../public/logos/airwalk-logo.png';
 const Logo = styled('img')({
   display: 'block',
@@ -38,6 +37,7 @@ export interface ComponentProps {
   back?: boolean;
   // topBarHeight?: number;
   logo?: boolean;
+  edit?: boolean;
   // handlePrint?: () => void;
   // handlePresentation?: () => void;
   handleMore?: () => void;
@@ -49,6 +49,7 @@ export default function TopBar({
   menu,
   back,
   logo,
+  edit,
   // handlePrint,
   // handlePresentation,
   handleMore,
@@ -213,13 +214,16 @@ export default function TopBar({
           </Link>
         </Menu>
 
-        <IconButton
-          size="large"
-          onClick={() => handleMoreClick()}
-          color="inherit"
-        >
-          <MoreIcon />
-        </IconButton>
+        {edit && (
+          <Button
+            size="large"
+            onClick={() => handleMoreClick()}
+            color="inherit"
+            startIcon={<AutoAwesomeIcon />}
+          >
+            Edit
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );

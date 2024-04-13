@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import React from 'react';
+import { LandingPage } from '@/components/Layouts';
 
 export const metadata: Metadata = {
   title: 'Airview',
@@ -11,7 +12,7 @@ export default function Home() {
 
   return (
     <main>
-      <h2>test</h2>
+      <LandingPage/>
     </main>
   );
 }

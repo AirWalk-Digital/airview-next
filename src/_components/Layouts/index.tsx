@@ -1,3 +1,4 @@
+import LandingPage from './LandingPage';
 import TopBar from './TopBar';
 
-export { TopBar };
+export { LandingPage, TopBar };

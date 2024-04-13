@@ -13,6 +13,7 @@ export default {
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
     color: { control: 'color' },
+    edit: { control: 'boolean' },
   },
 };
 
@@ -24,5 +25,6 @@ export const Primary = {
     back: false,
     topBarHeight: 64,
     logo: true,
+    edit: true,
   },
 };
