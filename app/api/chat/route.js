@@ -12,8 +12,8 @@ import { EmbeddingsFilter } from "langchain/retrievers/document_compressors/embe
 // import { RedisByteStore } from "@langchain/community/storage/ioredis";
 import { OpenSearchVectorStore } from "@langchain/community/vectorstores/opensearch";
 import { Client } from "@opensearch-project/opensearch";
-
-
+import { AwsSigv4Signer } from '@opensearch-project/opensearch/aws';
+import { defaultProvider } from '@aws-sdk/credential-provider-node';
 
 const customSchema = {
   id: "CustomSchema",
@@ -45,7 +45,9 @@ export async function POST(req) {
     const MODEL_TEMPERATURE = parseInt(process.env.MODEL_TEMPERATURE);
     const REDIS_HOST = process.env.REDIS_HOST;
     const ES_URL = process.env.ES_URL;
-    const ES_PASSWORD = process.env.ES_PASSWORD;
+    const ES_PASSWORD = process.env.ES_PASSWORD || '';
+    const REGION = process.env.REGION || 'eu-west-2';
+    const env = process.env.NODE_ENV
     //const jsonDelimiter = process.env.REACT_APP_CHAT_MESSAGE_DELIMITER;
     // const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
     const jsonDelimiter = ',';
@@ -97,28 +99,50 @@ export async function POST(req) {
     //   schema: customSchema,
     // });
 
-
-    const connectionString = () => {
-      const url = process.env.ES_URL;
-      // Split the URL by '://'
-      const parts = url.split('://');
-      const user = 'admin'
-      const pw = process.env.ES_PASSWORD;
-      // Assemble the connection string
-      const connection_string = `${parts[0]}://${user}:${pw}@${parts[1]}`;
-      return connection_string;
+    let client;
+    if(env == "development"){
+        const connectionString = () => {
+          const url = process.env.ES_URL;
+          // Split the URL by '://'
+          const parts = url.split('://');
+          const user = 'admin'
+          const pw = process.env.ES_PASSWORD;
+          // Assemble the connection string
+          const connection_string = `${parts[0]}://${user}:${pw}@${parts[1]}`;
+          return connection_string;
+        }
+    
+        client = new Client({
+          nodes: [connectionString()],
+          ssl: {
+            // ca: fs.readFileSync(ca_certs_path),
+            // You can turn off certificate verification (rejectUnauthorized: false) if you're using self-signed certificates with a hostname mismatch.
+            // cert: fs.readFileSync(client_cert_path),
+            // key: fs.readFileSync(client_key_path)
+            rejectUnauthorized: false
+          },
+        });
+    } else if (env == "production"){
+        client = new Client({
+            ...AwsSigv4Signer({
+                region: REGION,
+                service: 'es',  // 'aoss' for OpenSearch Serverless
+                // Must return a Promise that resolve to an AWS.Credentials object.
+                // This function is used to acquire the credentials when the client start and
+                // when the credentials are expired.
+                // The Client will refresh the Credentials only when they are expired.
+                // With AWS SDK V2, Credentials.refreshPromise is used when available to refresh the credentials.
+    
+                // Example with AWS SDK V3:
+                getCredentials: () => {
+                // Any other method to acquire a new Credentials object can be used.
+                const credentialsProvider = defaultProvider();
+                return credentialsProvider();
+                },
+            }),
+            node: ES_URL, // OpenSearch domain URL
+        });
     }
-
-    const client = new Client({
-      nodes: [connectionString()],
-      ssl: {
-        // ca: fs.readFileSync(ca_certs_path),
-        // You can turn off certificate verification (rejectUnauthorized: false) if you're using self-signed certificates with a hostname mismatch.
-        // cert: fs.readFileSync(client_cert_path),
-        // key: fs.readFileSync(client_key_path)
-        rejectUnauthorized: false
-      },
-    });
 
     const vectorStore = new OpenSearchVectorStore(new OpenAIEmbeddings(), {
       client,
