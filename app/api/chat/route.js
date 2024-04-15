@@ -12,7 +12,8 @@ import { EmbeddingsFilter } from "langchain/retrievers/document_compressors/embe
 // import { RedisByteStore } from "@langchain/community/storage/ioredis";
 import { OpenSearchVectorStore } from "@langchain/community/vectorstores/opensearch";
 import { Client } from "@opensearch-project/opensearch";
-
+import { AwsSigv4Signer } from '@opensearch-project/opensearch/aws';
+import { defaultProvider } from '@aws-sdk/credential-provider-node';
 
 
 const customSchema = {
@@ -98,26 +99,45 @@ export async function POST(req) {
     // });
 
 
-    const connectionString = () => {
-      const url = process.env.ES_URL;
-      // Split the URL by '://'
-      const parts = url.split('://');
-      const user = 'admin'
-      const pw = process.env.ES_PASSWORD;
-      // Assemble the connection string
-      const connection_string = `${parts[0]}://${user}:${pw}@${parts[1]}`;
-      return connection_string;
-    }
+    // Keep as reference to connect to cluster via username/pw, need to implement a conditional for dev environments
+    // const connectionString = () => {
+    //   const url = process.env.ES_URL;
+    //   // Split the URL by '://'
+    //   const parts = url.split('://');
+    //   const user = 'admin'
+    //   const pw = process.env.ES_PASSWORD;
+    //   // Assemble the connection string
+    //   const connection_string = `${parts[0]}://${user}:${pw}@${parts[1]}`;
+    //   return connection_string;
+    // }
 
+    // const client = new Client({
+    //   nodes: [connectionString()],
+    //   ssl: {
+    //     // ca: fs.readFileSync(ca_certs_path),
+    //     // You can turn off certificate verification (rejectUnauthorized: false) if you're using self-signed certificates with a hostname mismatch.
+    //     // cert: fs.readFileSync(client_cert_path),
+    //     // key: fs.readFileSync(client_key_path)
+    //     rejectUnauthorized: false
+    //   },
+    // });
+
+    // AWS-SDK V3
     const client = new Client({
-      nodes: [connectionString()],
-      ssl: {
-        // ca: fs.readFileSync(ca_certs_path),
-        // You can turn off certificate verification (rejectUnauthorized: false) if you're using self-signed certificates with a hostname mismatch.
-        // cert: fs.readFileSync(client_cert_path),
-        // key: fs.readFileSync(client_key_path)
-        rejectUnauthorized: false
-      },
+        ...AwsSigv4Signer({
+            region: 'eu-west-2',
+            service: 'es',  // 'aoss' for OpenSearch Serverless
+            // Must return a Promise that resolve to an AWS.Credentials object.
+            // This function is used to acquire the credentials when the client start and
+            // when the credentials are expired.
+            // The Client will refresh the Credentials only when they are expired.
+
+            getCredentials: () => {
+            const credentialsProvider = defaultProvider();
+            return credentialsProvider();
+            },
+        }),
+        node: ES_URL, // OpenSearch domain URL
     });
 
     const vectorStore = new OpenSearchVectorStore(new OpenAIEmbeddings(), {
