@@ -12,11 +12,8 @@ import { EmbeddingsFilter } from "langchain/retrievers/document_compressors/embe
 // import { RedisByteStore } from "@langchain/community/storage/ioredis";
 import { OpenSearchVectorStore } from "@langchain/community/vectorstores/opensearch";
 import { Client } from "@opensearch-project/opensearch";
-
 import { AwsSigv4Signer } from '@opensearch-project/opensearch/aws';
 import { defaultProvider } from '@aws-sdk/credential-provider-node';
-
-// import { AWS } from 'aws-sdk'
 
 const customSchema = {
   id: "CustomSchema",
@@ -48,9 +45,9 @@ export async function POST(req) {
     const MODEL_TEMPERATURE = parseInt(process.env.MODEL_TEMPERATURE);
     const REDIS_HOST = process.env.REDIS_HOST;
     const ES_URL = process.env.ES_URL;
-    const ES_PASSWORD = process.env.ES_PASSWORD;
-    const ENVIRONMENT = process.env.ENVIRONMENT || 'local';
+    const ES_PASSWORD = process.env.ES_PASSWORD || '';
     const REGION = process.env.REGION || 'eu-west-2';
+    const env = process.env.NODE_ENV
     //const jsonDelimiter = process.env.REACT_APP_CHAT_MESSAGE_DELIMITER;
     // const jsonDelimiter = '###%%^JSON-DELIMITER^%%###'; // to be updated to extract from env
     const jsonDelimiter = ',';
@@ -102,9 +99,8 @@ export async function POST(req) {
     //   schema: customSchema,
     // });
 
-
     let client;
-    if (ENVIRONMENT == "local") {
+    if(env == "development"){
         const connectionString = () => {
           const url = process.env.ES_URL;
           // Split the URL by '://'
@@ -126,7 +122,7 @@ export async function POST(req) {
             rejectUnauthorized: false
           },
         });
-    } else {
+    } else if (env == "production"){
         client = new Client({
             ...AwsSigv4Signer({
                 region: REGION,
