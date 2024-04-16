@@ -2,7 +2,7 @@ interface Menu {
   component: string;
   collection: string | null;
 }
-interface ContentItem {
+export interface ContentItem {
   source: string;
   repo: string;
   owner: string;
