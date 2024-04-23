@@ -2,13 +2,15 @@
 import React, { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import { blue, grey } from '@mui/material/colors';
 import BotIcon from '@mui/icons-material/Android';
 import PersonIcon from '@mui/icons-material/Person';
 import Box from '@mui/material/Box';
+import JsxParser from 'react-jsx-parser';
 import LikeActions from './LikeActions';
+import { BarChart } from '../../_components/Widgets/BarChart';
 
 export default function Message({
   message,
@@ -72,6 +74,7 @@ export default function Message({
     </Avatar>
   );
 
+  console.log(content);
   return (
     <Box
       sx={{
@@ -100,9 +103,20 @@ export default function Message({
         onClick={handleBotMessageClick} // Attach click event handler
       >
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
+          {/* <Typography variant="body2" color="text.secondary">
             {content}
-          </Typography>
+          </Typography> */}
+          {/* <BarChart data={data} options={options} /> */}
+          <JsxParser
+            jsx={content}
+            components={{ BarChart }}
+            bindings={
+              {
+                /* any variables to bind in the JSX */
+              }
+            }
+            onError={(error) => console.error(error)}
+          />
         </CardContent>
         {isBot && (
           <LikeActions
