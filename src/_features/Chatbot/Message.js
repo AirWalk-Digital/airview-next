@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-// import Typography from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import { blue, grey } from '@mui/material/colors';
 import BotIcon from '@mui/icons-material/Android';
@@ -11,6 +11,9 @@ import Box from '@mui/material/Box';
 import JsxParser from 'react-jsx-parser';
 import LikeActions from './LikeActions';
 import { BarChart } from '../../_components/Widgets/BarChart';
+import { LineChart } from '../../_components/Widgets/LineChart';
+import { PieChart } from '../../_components/Widgets/PieChart';
+import { DoughnutChart } from '../../_components/Widgets/DoughnutChart';
 
 export default function Message({
   message,
@@ -103,18 +106,12 @@ export default function Message({
         onClick={handleBotMessageClick} // Attach click event handler
       >
         <CardContent>
-          {/* <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary">
             {content}
-          </Typography> */}
-          {/* <BarChart data={data} options={options} /> */}
+          </Typography>
           <JsxParser
             jsx={content}
-            components={{ BarChart }}
-            bindings={
-              {
-                /* any variables to bind in the JSX */
-              }
-            }
+            components={{ BarChart, LineChart, DoughnutChart, PieChart }}
             onError={(error) => console.error(error)}
           />
         </CardContent>

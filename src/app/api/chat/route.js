@@ -128,32 +128,77 @@ export async function POST(req) {
     // };
 
     const questionPrompt = PromptTemplate.fromTemplate(
-      `Given the question, provide an answer and or use a widget available.
-      Available widgets:
-      <BarChart( data, options )/>
-      example data:
-      labels: ['January', 'February', 'March', 'April', 'May'],
-      datasets: [
-        <curlybracket>
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)'
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)'
-          ],
-          borderWidth: 1
-        ...
-        {question}
+      `
+        Given the question, use a widget available to provide your response by returning raw jsx.
+        Do not use code blocks.
+        Available widgets:
+        <BarChart(data, options)/>
+        <LineChart(data, options)/>
+        <PieChart(data, options)/>
+        <DoughnutChart(data, options)/>
+
+        // Common interfaces
+        interface DataPoint {{
+          label: string;
+          data: number[];
+          backgroundColor: string[];
+          hoverOffset?: number;  // Optional, used only for pie and doughnut charts
+          fill?: boolean;        // Optional, used only for line chart
+          borderColor?: string | string[]; // Optional, used for line and bar charts
+          borderWidth?: number;  // Optional, used only for bar charts
+          tension?: number;      // Optional, used only for line chart
+        }}
+
+        interface ChartData {{
+          labels: string[];
+          datasets: DataPoint[];
+        }}
+
+        interface ChartOptions {{
+          scales?: {{
+            y: {{
+              beginAtZero: boolean;
+            }};
+          }};
+          plugins?: {{
+            legend: {{
+              position: string;
+            }};
+            title: {{
+              display: boolean;
+              text: string;
+            }};
+          }};
+          radius?: string; // Optional, used only for pie and doughnut charts
+        }}
+
+        // Specific props for each chart component
+        interface DoughnutChartProps {{
+          data: ChartData;
+          options: ChartOptions;
+        }}
+
+        interface LineChartProps {{
+          data: ChartData;
+          options: ChartOptions;
+        }}
+
+        interface BarChartProps {{
+          data: ChartData;
+          options: ChartOptions;
+        }}
+
+        interface PieChartProps {{
+          data: ChartData;
+          options: ChartOptions;
+        }}
+
+        ----------------
+        CHAT HISTORY: {chatHistory}
+        ----------------
+        QUESTION: {question}
+        ----------------
+        Helpful Answer:
       `,
     );
 
