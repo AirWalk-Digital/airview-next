@@ -19,6 +19,8 @@ export default function Message({
   message,
   onBotMessageClick,
   selectedBotMessageId,
+  isLast,
+  done,
 }) {
   const { messageId, role, content } = message;
   const isBot = role === 'bot';
@@ -77,7 +79,14 @@ export default function Message({
     </Avatar>
   );
 
-  console.log(content);
+  const jsx = (
+    <JsxParser
+      jsx={content}
+      components={{ BarChart, LineChart, DoughnutChart, PieChart }}
+      onError={(error) => console.error(error)}
+    />
+  );
+
   return (
     <Box
       sx={{
@@ -106,15 +115,15 @@ export default function Message({
         onClick={handleBotMessageClick} // Attach click event handler
       >
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            {content}
-          </Typography>
-          <JsxParser
-            jsx={content}
-            components={{ BarChart, LineChart, DoughnutChart, PieChart }}
-            onError={(error) => console.error(error)}
-          />
+          {!isBot && (
+            <Typography variant="body2" color="text.secondary">
+              {content}
+            </Typography>
+          )}
+          {isBot && !done && isLast && <Typography>{content}</Typography>}
+          {isBot && jsx}
         </CardContent>
+
         {isBot && (
           <LikeActions
             alignment="center"
