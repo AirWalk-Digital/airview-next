@@ -128,16 +128,78 @@ export async function POST(req) {
     // };
 
     const questionPrompt = PromptTemplate.fromTemplate(
-      `Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know,\
-  don't try to make up an answer. Check if CONTEXT: is empty. If so, just say that "I'm sorry, I can't find any related information", don't try to provide an answer.
-  ----------------
-  CHAT HISTORY: {chatHistory}
-  ----------------
-  CONTEXT: {context}
-  ----------------
-  QUESTION: {question}
-  ----------------
-  Helpful Answer:`,
+      `
+        Given the question, use a widget available to provide your response by returning raw jsx.
+        Do not use code blocks.
+        Available widgets:
+        <BarChart(data, options)/>
+        <LineChart(data, options)/>
+        <PieChart(data, options)/>
+        <DoughnutChart(data, options)/>
+
+        // Common interfaces
+        interface DataPoint {{
+          label: string;
+          data: number[];
+          backgroundColor: string[];
+          hoverOffset?: number;  // Optional, used only for pie and doughnut charts
+          fill?: boolean;        // Optional, used only for line chart
+          borderColor?: string | string[]; // Optional, used for line and bar charts
+          borderWidth?: number;  // Optional, used only for bar charts
+          tension?: number;      // Optional, used only for line chart
+        }}
+
+        interface ChartData {{
+          labels: string[];
+          datasets: DataPoint[];
+        }}
+
+        interface ChartOptions {{
+          scales?: {{
+            y: {{
+              beginAtZero: boolean;
+            }};
+          }};
+          plugins?: {{
+            legend: {{
+              position: string;
+            }};
+            title: {{
+              display: boolean;
+              text: string;
+            }};
+          }};
+          radius?: string; // Optional, used only for pie and doughnut charts
+        }}
+
+        // Specific props for each chart component
+        interface DoughnutChartProps {{
+          data: ChartData;
+          options: ChartOptions;
+        }}
+
+        interface LineChartProps {{
+          data: ChartData;
+          options: ChartOptions;
+        }}
+
+        interface BarChartProps {{
+          data: ChartData;
+          options: ChartOptions;
+        }}
+
+        interface PieChartProps {{
+          data: ChartData;
+          options: ChartOptions;
+        }}
+
+        ----------------
+        CHAT HISTORY: {chatHistory}
+        ----------------
+        QUESTION: {question}
+        ----------------
+        Helpful Answer:
+      `,
     );
 
     const questionGeneratorTemplate = PromptTemplate.fromTemplate(
@@ -247,29 +309,29 @@ export async function POST(req) {
         async start(controller) {
           try {
             // const jsonList = []; // Initialize an empty list to collect JSON objects
-            if (updatedDocs.length > 0) {
-              // Loop through the stream and push chunks to the client
-              for await (const chunk of stream) {
-                // Wrap each chunk in a JSON object before sending it
-                const jsonChunk = JSON.stringify({
-                  type: 'MessageStream',
-                  content: chunk,
-                  messageId,
-                  role: 'bot',
-                });
-                // jsonList.push(jsonChunk); // Add the JSON object to the list
-                controller.enqueue(`${jsonChunk},`); // Enqueue each JSON object as soon as it's ready
-              }
-            } else {
-              // Wrap each response in a JSON object before sending it
+            // if (updatedDocs.length > 0) {
+            // Loop through the stream and push chunks to the client
+            for await (const chunk of stream) {
+              // Wrap each chunk in a JSON object before sending it
               const jsonChunk = JSON.stringify({
                 type: 'MessageStream',
-                content: 'Sorry, no relevant information found',
+                content: chunk,
                 messageId,
                 role: 'bot',
               });
-              controller.enqueue(`${jsonChunk},`); // Enqueue each JSON object
+              // jsonList.push(jsonChunk); // Add the JSON object to the list
+              controller.enqueue(`${jsonChunk},`); // Enqueue each JSON object as soon as it's ready
             }
+            // } else {
+            //   // Wrap each response in a JSON object before sending it
+            //   const jsonChunk = JSON.stringify({
+            //     type: 'MessageStream',
+            //     content: 'Sorry, no relevant information found',
+            //     messageId,
+            //     role: 'bot',
+            //   });
+            //   controller.enqueue(`${jsonChunk},`); // Enqueue each JSON object
+            // }
 
             // Send related content
             for (const doc of updatedDocs) {

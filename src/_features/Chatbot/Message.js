@@ -8,12 +8,19 @@ import { blue, grey } from '@mui/material/colors';
 import BotIcon from '@mui/icons-material/Android';
 import PersonIcon from '@mui/icons-material/Person';
 import Box from '@mui/material/Box';
+import JsxParser from 'react-jsx-parser';
 import LikeActions from './LikeActions';
+import { BarChart } from '../../_components/Widgets/BarChart';
+import { LineChart } from '../../_components/Widgets/LineChart';
+import { PieChart } from '../../_components/Widgets/PieChart';
+import { DoughnutChart } from '../../_components/Widgets/DoughnutChart';
 
 export default function Message({
   message,
   onBotMessageClick,
   selectedBotMessageId,
+  isLast,
+  done,
 }) {
   const { messageId, role, content } = message;
   const isBot = role === 'bot';
@@ -72,6 +79,14 @@ export default function Message({
     </Avatar>
   );
 
+  const jsx = (
+    <JsxParser
+      jsx={content}
+      components={{ BarChart, LineChart, DoughnutChart, PieChart }}
+      onError={(error) => console.error(error)}
+    />
+  );
+
   return (
     <Box
       sx={{
@@ -100,10 +115,15 @@ export default function Message({
         onClick={handleBotMessageClick} // Attach click event handler
       >
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            {content}
-          </Typography>
+          {!isBot && (
+            <Typography variant="body2" color="text.secondary">
+              {content}
+            </Typography>
+          )}
+          {isBot && !done && isLast && <Typography>{content}</Typography>}
+          {isBot && jsx}
         </CardContent>
+
         {isBot && (
           <LikeActions
             alignment="center"

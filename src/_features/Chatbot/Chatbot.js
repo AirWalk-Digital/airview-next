@@ -313,6 +313,7 @@ export default function Chatbot() {
               isLast={index === messages.length - 1}
               onBotMessageClick={handleBotMessageClick} // Pass the onBotMessageClick prop
               selectedBotMessageId={selectedBotMessageId} // Pass the selectedBotMessageId prop
+              done={!isLoading}
             />
           ))}
           <div ref={messagesEndRef} />
