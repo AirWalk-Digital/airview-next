@@ -1,7 +1,9 @@
 /* eslint-disable react/jsx-no-useless-fragment */
+// import { Menu } from '@mui/material';
 import Link from '@mui/material/Link';
 import React from 'react';
 
+import { Menu } from '@/components/Menus/Menu';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { NavigationDrawer } from '@/components/Menus/NavigationDrawer';
 import { getLogger } from '@/lib/Logger';
@@ -14,38 +16,46 @@ export interface HeaderMinimalMenuProps {
   open: boolean;
   top: number;
   drawerWidth: number;
+  collapsible?: boolean;
+  initialCollapsed?: boolean;
+  currentRoute?: string;
+  loading?: boolean;
 }
 
 interface L2MenuProps {
   menu: MenuItem[];
+  collapsible?: boolean;
+  initialCollapsed?: boolean;
+  currentRoute?: string;
+  loading?: boolean;
 }
 
 // const capitalizeFirstLetter = (string: string): string => {
 //   return string.charAt(0).toUpperCase() + string.slice(1);
 // };
 
-const L2Menu: React.FC<L2MenuProps> = ({ menu }) => {
-  logger.info('L2Menu', menu);
+const L2Menu: React.FC<L2MenuProps> = ({
+  menu,
+  initialCollapsed,
+  collapsible,
+  currentRoute,
+  loading,
+}) => {
+  logger.info('Menu', menu);
 
-  return <></>;
-  // return (
-  //   <>
-  //     {menu &&
-  //       Object.entries(menu).map(([key, children]) => (
-  //         <div key={key}>
-  //           <Menu
-  //             key={key}
-  //             menuTitle={capitalizeFirstLetter(key)}
-  //             menuItems={children ? [children] : []}
-  //             initialCollapsed
-  //             loading={false}
-  //             fetching={false}
-  //             linkComponent={Link}
-  //           />
-  //         </div>
-  //       ))}
-  //   </>
-  // );
+  return (
+    <Menu
+      // menuTitle={capitalizeFirstLetter(key)}
+      menuTitle={menu[0]?.groupTitle || ''}
+      menuItems={menu[0] ? [menu[0]] : []}
+      initialCollapsed={menu[0]?.groupTitle ? initialCollapsed : false}
+      collapsible={menu[0]?.groupTitle ? collapsible : false}
+      loading={loading}
+      fetching={false}
+      linkComponent={Link}
+      currentRoute={currentRoute}
+    />
+  );
 };
 
 export const HeaderMinimalMenu: React.FC<HeaderMinimalMenuProps> = ({
@@ -53,6 +63,10 @@ export const HeaderMinimalMenu: React.FC<HeaderMinimalMenuProps> = ({
   open,
   top,
   drawerWidth,
+  collapsible = true,
+  initialCollapsed = true,
+  currentRoute,
+  loading,
 }) => {
   return (
     <NavigationDrawer open={open} top={top} drawerWidth={drawerWidth}>
@@ -68,7 +82,15 @@ export const HeaderMinimalMenu: React.FC<HeaderMinimalMenuProps> = ({
                 {c.label}
               </h3>
             </Link>
-            {c.children && <L2Menu menu={c.children} />}
+            {c.menuItems && (
+              <L2Menu
+                menu={c.menuItems}
+                collapsible={collapsible}
+                initialCollapsed={initialCollapsed}
+                currentRoute={currentRoute}
+                loading={loading}
+              />
+            )}
           </React.Fragment>
         ))}
     </NavigationDrawer>

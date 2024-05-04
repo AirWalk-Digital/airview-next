@@ -20,7 +20,7 @@ Default.args = {
     {
       label: 'Home',
       url: '/',
-      children: [
+      menuItems: [
         {
           groupTitle: 'Submenu',
           links: [
@@ -39,7 +39,7 @@ Default.args = {
     {
       label: 'About',
       url: '/about',
-      children: [
+      menuItems: [
         {
           links: [
             {
@@ -58,4 +58,6 @@ Default.args = {
   open: true,
   top: 0,
   drawerWidth: 240,
+  collapsible: true,
+  initialCollapsed: false,
 };

@@ -13,7 +13,7 @@ interface MenuItem {
 interface MenuStructure {
   label: string;
   url: string;
-  children?: MenuItem[];
+  menuItems?: MenuItem[];
 }
 
 export { ContentItem, siteConfig };

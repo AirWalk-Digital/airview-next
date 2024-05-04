@@ -14,12 +14,15 @@ import NextLink from 'next/link';
 import type { FC } from 'react';
 import React, { useState } from 'react';
 
+import { getLogger } from '@/lib/Logger';
 import type { MenuItem } from '@/lib/Types';
 
 import { isLinkInternal } from './lib/isLinkInternal';
 
+const logger = getLogger().child({ namespace: 'Menu' });
+
 export interface MenuProps {
-  menuTitle: string;
+  menuTitle?: string;
   menuTitleElement?: string;
   loading?: boolean;
   fetching?: boolean;
@@ -48,6 +51,8 @@ export const Menu: FC<MenuProps> = ({
     collapsible ? initialCollapsed : false,
   );
 
+  logger.info('menuItems', menuItems);
+
   return (
     <Box
       component="nav"
@@ -74,7 +79,7 @@ export const Menu: FC<MenuProps> = ({
           variant="subtitle2"
           sx={{ display: 'block', flex: '1 1 auto', fontSize: 16 }}
         >
-          {loading ? <Skeleton width="90%" /> : menuTitle}
+          {loading ? <Skeleton width="90%" /> : menuTitle && menuTitle}
         </Typography>
 
         {collapsible && (
