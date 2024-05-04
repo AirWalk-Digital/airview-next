@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import React from "react";
-import { LandingPage } from "@/components/Layouts";
+import { IndexTiles, LandingPage, MenuWrapper } from "@/components/Layouts";
 import { siteConfig } from "../../../../site.config";
 import { notFound } from "next/navigation";
 import { getFileContent } from "@/lib/Github";
+
 
 export const metadata: Metadata = {
   title: "Airview",
   description: "Airview AI",
 };
+
+
 
 export default async function Page({
   params,
@@ -23,10 +26,37 @@ export default async function Page({
     const file = params.path.join("/") as string;
     let pageContent;
     let pageContentText;
+    const contentKey = params.path[0] as keyof typeof siteConfig.content;
+    const contentConfig = siteConfig?.content?.[contentKey];
     switch (params.path.length) {
       case 0:
         notFound();
       case 1:
+
+        return (
+          <main>
+            <MenuWrapper
+              // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
+              menuComponent='HeaderMinimalMenu'
+              menuStructure={undefined}
+              loading={true}>
+              { contentConfig ? <IndexTiles initialContext={contentConfig} /> : <></> }
+              </MenuWrapper>
+              </main>
+        )
+
+        // return (
+        //   <main>
+        // <IndexPage
+        //   // menuStructure={undefined}
+        //   title="`${siteConfig.title} | ${contentConfig.path.charAt(0).toUpperCase()}${contentConfig.path.slice(1)}`"
+        //   // tiles={[]}
+        //   menuComponent='HeaderMinimalMenu'
+        //   initialContext={contentConfig}
+        //   // loading={true}
+        // />
+        //   </main>
+        // );
         // index page
         // const allTiles = await getFrontMatter(
         //   siteConfig.content[params.path[0]]
@@ -40,12 +70,12 @@ export default async function Page({
         //     (fileName === "_index.md" || fileName === "_index.mdx")
         //   );
         // });
-        break;
+        // break;
       default:
         // content page
         if (file.endsWith(".md") || file.endsWith(".mdx")) {
-          const contentKey = params.path[0] as keyof typeof siteConfig.content;
-          const contentConfig = siteConfig?.content?.[contentKey];
+          // const contentKey = params.path[0] as keyof typeof siteConfig.content;
+          // const contentConfig = siteConfig?.content?.[contentKey];
 
           if (contentConfig?.owner && contentConfig?.repo && contentConfig?.branch && file) {
             const { owner, repo, branch } = contentConfig;
@@ -66,16 +96,12 @@ export default async function Page({
         <h1>{pageContentText}</h1>
       </main>
     );
-  } else if (params.path && params.path[0] === "home") {
-    // home page
-
+  } else {
     return (
       <main>
         <LandingPage />
       </main>
     );
-  } else {
-    notFound();
   }
 }
 

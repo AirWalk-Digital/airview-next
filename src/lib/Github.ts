@@ -6,10 +6,11 @@ import { Octokit } from '@octokit/rest';
 import fs from 'fs';
 import * as util from 'util';
 
-import { logger } from '@/lib/Logger';
+import { getLogger } from '@/lib/Logger';
 import { cacheRead, cacheWrite } from '@/lib/Redis';
 
 let gitHubInstance: Octokit | undefined;
+const logger = getLogger();
 
 interface GitHubConfig {
   privateKey: string;

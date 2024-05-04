@@ -1,6 +1,8 @@
-import { logger } from '@/lib/Logger';
+import { getLogger } from '@/lib/Logger';
 
 const Redis = require('ioredis');
+
+const logger = getLogger();
 
 let redisInstance: typeof Redis;
 
