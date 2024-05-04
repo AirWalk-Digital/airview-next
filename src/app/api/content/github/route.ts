@@ -5,7 +5,9 @@ import path from 'path';
 import * as util from 'util';
 
 import { commitFileToBranch, getAllFiles, getFileContent } from '@/lib/Github';
-import { logger } from '@/lib/Logger';
+import { getLogger } from '@/lib/Logger';
+
+const logger = getLogger().child({ namespace: 'API:/api/content/github' });
 
 export const config = {
   api: {
