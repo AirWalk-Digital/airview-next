@@ -1,17 +1,42 @@
-import type { Metadata } from "next";
+
+import type { Metadata } from 'next'
+
 import React from "react";
-import { IndexTiles, LandingPage, MenuWrapper } from "@/components/Layouts";
+import { IndexTiles, LandingPage, MenuWrapper, ContentViewer } from "@/components/Layouts";
 import { siteConfig } from "../../../../site.config";
 import { notFound } from "next/navigation";
 import { getFileContent } from "@/lib/Github";
+// import { getLogger } from '@/lib/Logger';
 
+// const logger = getLogger().child({ namespace: 'docs/page' });
 
 export const metadata: Metadata = {
   title: "Airview",
   description: "Airview AI",
 };
 
-
+// export async function generateMetadata(
+//   { params }: {
+//     params: { path?: string[] };
+//   },
+//   parent: ResolvingMetadata
+// ): Promise<Metadata> {
+//   // read route params
+//   const path = params.path
+ 
+//   // fetch data
+//   const product = await fetch(`https://.../${id}`).then((res) => res.json())
+ 
+//   // optionally access and extend (rather than replace) parent metadata
+//   const previousImages = (await parent).openGraph?.images || []
+ 
+//   return {
+//     title: product.title,
+//     openGraph: {
+//       images: ['/some-specific-page-image.jpg', ...previousImages],
+//     },
+//   }
+// }
 
 export default async function Page({
   params,
@@ -32,7 +57,7 @@ export default async function Page({
       case 0:
         notFound();
       case 1:
-
+        // index page
         return (
           <main>
             <MenuWrapper
@@ -45,32 +70,6 @@ export default async function Page({
               </main>
         )
 
-        // return (
-        //   <main>
-        // <IndexPage
-        //   // menuStructure={undefined}
-        //   title="`${siteConfig.title} | ${contentConfig.path.charAt(0).toUpperCase()}${contentConfig.path.slice(1)}`"
-        //   // tiles={[]}
-        //   menuComponent='HeaderMinimalMenu'
-        //   initialContext={contentConfig}
-        //   // loading={true}
-        // />
-        //   </main>
-        // );
-        // index page
-        // const allTiles = await getFrontMatter(
-        //   siteConfig.content[params.path[0]]
-        // );
-        // const tiles = allTiles.filter((tile) => {
-        //   const parts = tile.file.split("/"); // Split the file path by '/'
-        //   const fileName = parts[parts.length - 1]; // Get the last part (file name)
-        //   // Check if the path has exactly 3 parts and the file name is 'index.md' or 'index.mdx'
-        //   return (
-        //     parts.length === 3 &&
-        //     (fileName === "_index.md" || fileName === "_index.mdx")
-        //   );
-        // });
-        // break;
       default:
         // content page
         if (file.endsWith(".md") || file.endsWith(".mdx")) {
@@ -84,18 +83,27 @@ export default async function Page({
             notFound();
           }
         }
-        console.log("pageContent: ", pageContent);
-        pageContentText = pageContent?.content
-          ? Buffer.from(pageContent.content).toString()
-          : "";
+        
         break;
     }
-
+    if (pageContent && pageContent.content ) {
+      pageContentText = pageContent?.content
+          ? Buffer.from(pageContent.content).toString()
+          : "";
+        // logger.debug({msg: "pageContent", pageContent});
+      // if (pageContent.content) {
+    
+      //     const Page = pageContent.content;
+      //     return <Page />;
+      //   }
     return (
       <main>
-        <h1>{pageContentText}</h1>
+        <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={false} />
       </main>
     );
+  } else {
+    notFound();
+  }
   } else {
     return (
       <main>

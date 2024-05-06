@@ -52,6 +52,8 @@ export async function getTiles(config: ContentItem): Promise<{
     // Handle the error when JSON parsing fails (invalid data).
     // console.error('Error parsing cached content:', error);
     error = err;
+    logger.error({ msg: 'Parsing cachedContent', error });
+
     cachedContent = null; // Or use a default value if required.
     return { loading: false, error, tiles: [] };
   }

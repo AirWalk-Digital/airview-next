@@ -1,3 +1,5 @@
+'use server';
+
 import type { Metadata } from 'next';
 import React from 'react';
 
@@ -6,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Airview AI',
 };
 
-export default function Home() {
+export default async function Home() {
   // const posts = getAllPosts(["title", "date", "excerpt", "coverImage", "slug"]);
 
   return (

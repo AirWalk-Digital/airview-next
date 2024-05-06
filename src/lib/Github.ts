@@ -418,15 +418,10 @@ export async function getFileContent(
   }
   const file = await getGitHubFileContent(owner, repo, branch, path);
 
-  const unencodedContent = Buffer.from(
-    file?.content?.toString() || '',
-    'binary',
-  );
-
-  logger.info(`[GitHub][getGitHubFileContent][content]: ${util.inspect(file)}`);
-  logger.info(
-    `[GitHub][getGitHubFileContent][unencodedContent]: ${unencodedContent}`,
-  );
+  // const unencodedContent = Buffer.from(
+  //   file?.content?.toString() || '',
+  //   'binary',
+  // );
 
   return file;
 }
