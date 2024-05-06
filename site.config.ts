@@ -11,6 +11,7 @@ export interface ContentItem {
   reference: string;
   collections?: string[];
   menu?: Menu;
+  file?: string;
 }
 
 interface Etherpad {

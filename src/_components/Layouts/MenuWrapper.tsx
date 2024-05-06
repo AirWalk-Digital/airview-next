@@ -30,7 +30,7 @@ export default function MenuWrapper({
   loading,
   children,
 }: MenuWrapperProps): React.ReactElement {
-  const navDrawerWidth = 300;
+  const navDrawerWidth = menuStructure ? 300 : 0;
   const topBarHeight = 65;
   const [menuOpen, setMenuOpen] = useState(true);
 
@@ -47,6 +47,8 @@ export default function MenuWrapper({
         onNavButtonClick={handleOnNavButtonClick}
         navOpen={menuOpen}
         menu
+        logo
+        edit
         // topBarHeight={topBarHeight}
       />
       {menuStructure && (

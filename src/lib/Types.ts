@@ -16,5 +16,5 @@ interface MenuStructure {
   menuItems?: MenuItem[];
 }
 
-export { ContentItem, siteConfig };
+export type { ContentItem, siteConfig };
 export type { LinkItem, MenuItem, MenuStructure };

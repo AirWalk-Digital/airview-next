@@ -7,6 +7,7 @@ import { siteConfig } from "../../../../site.config";
 import { notFound } from "next/navigation";
 import { getFileContent } from "@/lib/Github";
 // import { getLogger } from '@/lib/Logger';
+import type { ContentItem } from '@/lib/Types';
 
 // const logger = getLogger().child({ namespace: 'docs/page' });
 
@@ -14,29 +15,6 @@ export const metadata: Metadata = {
   title: "Airview",
   description: "Airview AI",
 };
-
-// export async function generateMetadata(
-//   { params }: {
-//     params: { path?: string[] };
-//   },
-//   parent: ResolvingMetadata
-// ): Promise<Metadata> {
-//   // read route params
-//   const path = params.path
- 
-//   // fetch data
-//   const product = await fetch(`https://.../${id}`).then((res) => res.json())
- 
-//   // optionally access and extend (rather than replace) parent metadata
-//   const previousImages = (await parent).openGraph?.images || []
- 
-//   return {
-//     title: product.title,
-//     openGraph: {
-//       images: ['/some-specific-page-image.jpg', ...previousImages],
-//     },
-//   }
-// }
 
 export default async function Page({
   params,
@@ -52,7 +30,11 @@ export default async function Page({
     let pageContent;
     let pageContentText;
     const contentKey = params.path[0] as keyof typeof siteConfig.content;
-    const contentConfig = siteConfig?.content?.[contentKey];
+    const contentConfig = {
+      ...siteConfig?.content?.[contentKey],
+      file: file,
+    } as ContentItem;
+
     switch (params.path.length) {
       case 0:
         notFound();
@@ -65,7 +47,7 @@ export default async function Page({
               menuComponent='HeaderMinimalMenu'
               menuStructure={undefined}
               loading={true}>
-              { contentConfig ? <IndexTiles initialContext={contentConfig} /> : <></> }
+              { contentConfig ? <IndexTiles initialContext={{ ...contentConfig, source: '' }} /> : <></> }
               </MenuWrapper>
               </main>
         )
@@ -98,7 +80,13 @@ export default async function Page({
       //   }
     return (
       <main>
+        <MenuWrapper
+              // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
+              menuComponent='HeaderMinimalMenu'
+              menuStructure={undefined}
+              loading={true}>
         <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={false} />
+        </MenuWrapper>
       </main>
     );
   } else {
