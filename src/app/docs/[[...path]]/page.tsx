@@ -2,7 +2,7 @@
 import type { Metadata } from 'next'
 
 import React from "react";
-import { IndexTiles, LandingPage, MenuWrapper, ContentViewer } from "@/components/Layouts";
+import { IndexTiles, LandingPage, MenuWrapper, ContentViewer, ContentLoader, ContentPrint } from "@/components/Layouts";
 import { siteConfig } from "../../../../site.config";
 import { notFound } from "next/navigation";
 import { getFileContent } from "@/lib/Github";
@@ -26,9 +26,17 @@ export default async function Page({
     params.path[0] &&
     siteConfig.content[params.path[0] as keyof typeof siteConfig.content]
   ) {
-    const file = params.path.join("/") as string;
+    let isPrint = false;
+    let path = params.path;
+
+    if (path[path.length - 1] === 'print') {
+      path = path.slice(0, -1);
+      isPrint = true;
+    }
+    const file = path.join("/") as string;
     let pageContent;
     let pageContentText;
+    let loading = false;
     const contentKey = params.path[0] as keyof typeof siteConfig.content;
     const contentConfig = {
       ...siteConfig?.content?.[contentKey],
@@ -46,7 +54,7 @@ export default async function Page({
               // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
               menuComponent='HeaderMinimalMenu'
               menuStructure={undefined}
-              loading={true}>
+              loading={loading}>
               { contentConfig ? <IndexTiles initialContext={{ ...contentConfig, source: '' }} /> : <></> }
               </MenuWrapper>
               </main>
@@ -61,6 +69,11 @@ export default async function Page({
           if (contentConfig?.owner && contentConfig?.repo && contentConfig?.branch && file) {
             const { owner, repo, branch } = contentConfig;
             pageContent = await getFileContent(owner, repo, branch, file);
+            if (pageContent && pageContent.content ) {
+              pageContentText = pageContent?.content
+                  ? Buffer.from(pageContent.content).toString()
+                  : "";
+            }
           } else {
             notFound();
           }
@@ -68,16 +81,19 @@ export default async function Page({
         
         break;
     }
-    if (pageContent && pageContent.content ) {
-      pageContentText = pageContent?.content
-          ? Buffer.from(pageContent.content).toString()
-          : "";
-        // logger.debug({msg: "pageContent", pageContent});
-      // if (pageContent.content) {
-    
-      //     const Page = pageContent.content;
-      //     return <Page />;
-      //   }
+
+    if (pageContent && pageContent.content && pageContentText ) {
+
+      if (isPrint) {
+        return (
+          <main>
+            <ContentPrint>
+            <ContentLoader pageContent={pageContentText} context={ contentConfig } loading={loading} />
+            </ContentPrint>
+          </main>
+        );
+      }
+      
     return (
       <main>
         <MenuWrapper
@@ -85,7 +101,7 @@ export default async function Page({
               menuComponent='HeaderMinimalMenu'
               menuStructure={undefined}
               loading={true}>
-        <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={false} />
+        <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={loading} />
         </MenuWrapper>
       </main>
     );

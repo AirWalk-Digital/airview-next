@@ -45,6 +45,7 @@ function ContentSkeleton({ topBarHeight }: { topBarHeight: number }) {
       }}
     >
       <LinearProgress />
+      <h3>.....loading</h3>
     </div>
   );
 }
