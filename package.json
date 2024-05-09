@@ -16,7 +16,9 @@
   "dependencies": {
     "@aws-sdk/credential-provider-node": "^3.554.0",
     "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.4",
     "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.11.5",
     "@fontsource/heebo": "^4.5.15",
     "@fontsource/roboto-mono": "^4.5.10",
     "@fortawesome/fontawesome-svg-core": "^6.3.0",

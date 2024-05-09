@@ -109,17 +109,14 @@ const [error, setError] = useState(null);
       };
     }
     setIsLoading(true);
-  setError(null);
-  try {
-    if (title) {
-      let prName = branchType + '/' + title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
-      await handleDialog({frontmatter: frontmatter});
+    setError(null);
+    try {
+        await handleDialog({ frontmatter: frontmatter });
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setIsLoading(false);
     }
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setIsLoading(false);
-  }
     
   };
 
