@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 import * as util from 'util';
 
-import { commitFileToBranch, getAllFiles, getFileContent } from '@/lib/Github';
+import { commitFileToBranch, getFileContent } from '@/lib/Github';
 import { getLogger } from '@/lib/Logger';
 
 const logger = getLogger().child({ namespace: 'API:/api/content/github' });
@@ -36,13 +36,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    if (filepath.endsWith('/')) {
-      // Remove trailing slash
-      const trimmedPath = filepath.slice(0, -1);
-      const files = await getAllFiles(owner, repo, branch, trimmedPath);
+    // if (filepath.endsWith('/')) {
+    //   // Remove trailing slash
+    //   const trimmedPath = filepath.slice(0, -1);
+    //   const files = await getAllFiles(owner, repo, branch, trimmedPath);
 
-      return NextResponse.json({ files });
-    }
+    //   return NextResponse.json({ files });
+    // }
     const data = await getFileContent(owner, repo, branch, filepath);
     const extension = path.extname(filepath);
     const contentType = mime.lookup(extension) || 'application/octet-stream';

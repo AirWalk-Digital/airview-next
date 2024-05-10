@@ -3,29 +3,18 @@
 import type { Logger } from 'pino';
 import pinoLogger from 'pino';
 
-import { Env } from './Env.mjs';
-
 let options = {};
 
 if (typeof window === 'undefined') {
-  if (Env.LOGTAIL_SOURCE_TOKEN) {
-    options = {
-      transport: {
-        target: '@logtail/pino',
-        options: { sourceToken: Env.LOGTAIL_SOURCE_TOKEN },
+  options = {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        messageKey: 'msg',
       },
-    };
-  } else {
-    options = {
-      transport: {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          messageKey: 'msg',
-        },
-      },
-    };
-  }
+    },
+  };
 } else {
   options = {
     transport: {

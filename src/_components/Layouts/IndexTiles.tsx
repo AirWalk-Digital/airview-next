@@ -71,8 +71,8 @@ export default async function IndexTiles({
 
   logger.debug({ ...initialContext, msg: 'initialContext' });
 
-  const { loading, tiles, error } = await getTiles(initialContext);
-  logger.debug({ loading, tiles, error, msg: 'loaded tiles..' });
+  const { loading, tiles } = await getTiles(initialContext);
+  // logger.debug({ loading, tiles, error, msg: 'loaded tiles..' });
   // const loading = true;
   // const tiles = [];
 

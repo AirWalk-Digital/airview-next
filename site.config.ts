@@ -18,7 +18,7 @@ interface Etherpad {
   url: string;
 }
 
-interface SiteConfig {
+export interface SiteConfig {
   title: string;
   company: string;
   tagline: string;

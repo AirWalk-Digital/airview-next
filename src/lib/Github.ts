@@ -4,10 +4,10 @@ import { createAppAuth } from '@octokit/auth-app';
 import { Octokit } from '@octokit/rest';
 // import axios from 'axios';
 import fs from 'fs';
-import * as util from 'util';
 
 import { getLogger } from '@/lib/Logger';
 import { cacheRead, cacheWrite } from '@/lib/Redis';
+import type { GitHubFile } from '@/lib/Types';
 
 let gitHubInstance: Octokit | undefined;
 const logger = getLogger();
@@ -184,7 +184,7 @@ async function getCachedFileContent(
     cacheKey = `github:content:${owner}:${repo}:${sha}:${path}`;
     const cachedContent: CachedContent = await cacheRead(cacheKey);
     if (cachedContent) {
-      logger.info(`[Github][getCachedFileContent][HIT]: ${cacheKey}`);
+      // logger.info(`[Github][getCachedFileContent][HIT]: ${cacheKey}`);
       if (cachedContent && cachedContent.encoding) {
         if (cachedContent.encoding !== 'none') {
           return {
@@ -213,19 +213,19 @@ async function getCachedFileContent(
   if (cachedContent) {
     try {
       const ref = JSON.parse(cachedContent.toString());
-      logger.info(`[Github][getCachedFileContent][CacheKey]: ${cacheKey}`);
+      // logger.info(`[Github][getCachedFileContent][CacheKey]: ${cacheKey}`);
       if (ref && ref.ref) {
-        logger.info(
-          `[Github][getCachedFileContent][Ref]: github:getContent:${owner}:${repo}:${ref.ref}:${path}`,
-        );
+        // logger.info(
+        //   `[Github][getCachedFileContent][Ref]: github:getContent:${owner}:${repo}:${ref.ref}:${path}`,
+        // );
         const cachedRefContent = await cacheRead(
           `github:content:${owner}:${repo}:${ref.ref}:${path}`,
         );
         if (cachedRefContent && cachedRefContent.encoding) {
-          logger.info(
-            `[Github][getCachedFileContent][HIT/cachedRefContent]: ${util.inspect(cachedRefContent)}`,
-          );
-          logger.info(`[Github][Read][HIT/Sha]: ${cacheKey} ref: ${ref.ref}`);
+          // logger.info(
+          //   `[Github][getCachedFileContent][HIT/cachedRefContent]: ${util.inspect(cachedRefContent)}`,
+          // );
+          // logger.info(`[Github][Read][HIT/Sha]: ${cacheKey} ref: ${ref.ref}`);
           // if (cachedRefContent.content.type === 'Buffer') {
           //   return Buffer.from(cachedRefContent.content.data, 'utf-8');
           // }
@@ -236,21 +236,21 @@ async function getCachedFileContent(
           }
           // return cachedRefContent.content;
         }
-        logger.info('[Github][Read][MISS/Sha]:', cacheKey, ' ref:', ref.ref);
+        // logger.info('[Github][Read][MISS/Sha]:', cacheKey, ' ref:', ref.ref);
       } else {
         // logger.info('[Github][Read][HIT/Branch]:', cacheKey)
         // return cachedContent.content.data;
       }
     } catch (error) {
-      logger.info(`[Github][Read/Ref][Error]: ${cacheKey} error: ${error}`);
+      // logger.info(`[Github][Read/Ref][Error]: ${cacheKey} error: ${error}`);
       return null;
     }
   } else {
-    logger.info(`[Github][Read][MISS/All]: ${cacheKey}`);
+    // logger.info(`[Github][Read][MISS/All]: ${cacheKey}`);
     return null;
   }
 
-  logger.info(`[Github][Read][MISS]: ${cacheKey}`);
+  // logger.info(`[Github][Read][MISS]: ${cacheKey}`);
   return null;
 }
 
@@ -259,6 +259,7 @@ async function getGitHubFileContent(
   repo: string,
   branch: string,
   path: string,
+  branchShaParam: string | undefined = undefined,
 ): Promise<{
   content: Buffer | undefined;
   encoding: string;
@@ -267,10 +268,24 @@ async function getGitHubFileContent(
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();
   }
-  const branchSha = await getBranchSha(owner, repo, branch);
-
+  logger.debug({
+    function: 'getGitHubFileContent',
+    msg: 'Parameters',
+    owner,
+    repo,
+    branch,
+    path,
+    branchShaParam,
+  });
+  let branchSha = null;
+  if (!branchShaParam) {
+    branchSha = await getBranchSha(owner, repo, branch);
+  } else {
+    branchSha = branchShaParam;
+  }
+  let response;
   try {
-    const response = (await gitHubInstance.repos.getContent({
+    response = (await gitHubInstance.repos.getContent({
       owner,
       repo,
       path,
@@ -279,60 +294,85 @@ async function getGitHubFileContent(
       data: {
         encoding: string;
         sha: string;
-        content: string;
-        download_url: string;
+        content?: string;
+        download_url?: string;
       };
     };
-
-    const { data: commits } = await gitHubInstance.repos.listCommits({
+  } catch (error: any) {
+    logger.error({
+      function: 'getGitHubFileContent',
+      api: 'repos.getContent',
+      msg: 'Error retrieving file',
+      path,
+      full_error: error,
+      error: (error?.response?.data?.message ||
+        error?.name ||
+        error ||
+        '') as string,
+    });
+  }
+  let commits: any[] = [];
+  try {
+    const { data } = await gitHubInstance.repos.listCommits({
       owner,
       repo,
       path,
     });
+    commits = data;
+  } catch (error: any) {
+    logger.error({
+      function: 'getGitHubFileContent',
+      api: 'repos.listCommits',
+      msg: 'Error retrieving commits',
+      path,
+      error: (error?.response?.data?.message ||
+        error?.name ||
+        error ||
+        '') as string,
+    });
+  }
 
-    const contributors = commits.reduce(
-      (acc: { authorName: string; authorDate: string }[], commit) => {
-        const authorName = commit.commit.author?.name ?? '';
-        const authorDate = new Date(
-          commit.commit.author?.date ?? '',
-        ).toDateString();
+  const contributors = commits.reduce(
+    (acc: { authorName: string; authorDate: string }[], commit) => {
+      const authorName = commit.commit.author?.name ?? '';
+      const authorDate = new Date(
+        commit.commit.author?.date ?? '',
+      ).toDateString();
 
-        const pair: { authorName: string; authorDate: string } = {
-          authorName,
-          authorDate,
-        };
+      const pair: { authorName: string; authorDate: string } = {
+        authorName,
+        authorDate,
+      };
 
-        const index = acc.findIndex(
-          (item: { authorName: string; authorDate: string }) =>
-            item.authorName === pair.authorName &&
-            item.authorDate === pair.authorDate,
-        );
+      const index = acc.findIndex(
+        (item: { authorName: string; authorDate: string }) =>
+          item.authorName === pair.authorName &&
+          item.authorDate === pair.authorDate,
+      );
 
-        if (index === -1) {
-          acc.push(pair);
-        }
+      if (index === -1) {
+        acc.push(pair);
+      }
 
-        return acc;
-      },
-      [],
-    );
-
-    const { encoding, sha } = response.data;
-    logger.info(`github:getContent:response ${util.inspect(response)}`);
+      return acc;
+    },
+    [],
+  );
+  try {
+    const { encoding, sha } = response?.data ?? {};
+    // logger.info(`github:getContent:response ${util.inspect(response)}`);
 
     let content;
     if (encoding === 'base64') {
       // Decode base64 content for image files
-      content = Buffer.from(response.data.content, 'base64');
+      content = Buffer.from(response?.data?.content || '', 'base64');
     } else if (encoding === 'utf-8') {
       // For text files, assume UTF-8 encoding
-      content = Buffer.from(response.data.content, 'utf-8');
+      content = Buffer.from(response?.data?.content || '', 'utf-8');
     } else if (encoding === 'none') {
       // large URL. get direct
-      logger.info(
-        `github:getContent:download_url ${response.data.download_url}`,
-      );
-      const downloadResponse = await fetch(response.data.download_url);
+
+      const downloadResponse = await fetch(response?.data?.download_url || '');
       const downloadBuffer = await downloadResponse.arrayBuffer();
 
       content = Buffer.from(downloadBuffer);
@@ -362,9 +402,9 @@ async function getGitHubFileContent(
         // logger.debug(
         //   `[GitHub][Write][CachedFileAndRef] : ${path} : encoding: ${response.data.encoding}`,
         // );
-        logger.info(
-          `[GitHub][getGitHubFileContent][CachedFileAndRef][Ref] : github:getContent:${owner}:${repo}:${branchSha}:${path}`,
-        );
+        // logger.info(
+        //   `[GitHub][getGitHubFileContent][CachedFileAndRef][Ref] : github:getContent:${owner}:${repo}:${branchSha}:${path}`,
+        // );
         // logger.debug(
         //   `[GitHub][Write][CachedFileAndRef][Content] : github:getContent:${owner}:${repo}:${response.data.sha}:${path}`,
         // );
@@ -374,13 +414,24 @@ async function getGitHubFileContent(
         // logger.debug(`[GitHub][Write][Cache] : ${path}`);
       }
     } catch (error) {
-      logger.error(`[GitHub][Write] Error writing cache: ${error}`);
+      logger.error({
+        function: 'getGitHubFileContent',
+        msg: 'Error writing cache',
+        error,
+      });
     }
-    return { content, encoding, contributors };
-  } catch (error) {
-    logger.error(
-      `[GitHub][getFileContent] Error retrieving file (${path}) content: ${error}`,
-    );
+    return { content, encoding: encoding || 'none', contributors };
+  } catch (error: any) {
+    logger.error({
+      function: 'getGitHubFileContent',
+      msg: 'Error retrieving file',
+      path,
+      error: (error?.response?.data?.message ||
+        error?.name ||
+        error ||
+        '') as string,
+    });
+    // );
     // throw new Error(`[GitHub][getFileContent] Could not get file`);
     // logger.error('Error retrieving file content:', error, 'path:', path);
     return null;
@@ -392,7 +443,8 @@ export async function getFileContent(
   repo: string,
   branch: string,
   path: string,
-  sha: string | undefined = undefined,
+  fileSha: string | undefined = undefined,
+  branchSha: string | undefined = undefined,
 ): Promise<{
   content: Buffer | undefined;
   encoding: string;
@@ -409,14 +461,14 @@ export async function getFileContent(
     repo,
     branch,
     path,
-    sha,
+    fileSha,
   );
-  logger.info(`github:getFileContent:getCachedFileContent ${cachedContent}`);
+  // logger.info(`github:getFileContent:getCachedFileContent ${cachedContent}`);
   if (cachedContent) {
     logger.info(`[GitHub][getGitHubFileContent][Cache/Hit]: ${path}`);
     return cachedContent;
   }
-  const file = await getGitHubFileContent(owner, repo, branch, path);
+  const file = await getGitHubFileContent(owner, repo, branch, path, branchSha);
 
   // const unencodedContent = Buffer.from(
   //   file?.content?.toString() || '',
@@ -431,29 +483,51 @@ function createFilterRegex(filter: string) {
   return new RegExp(`^.*${escapedFilter}$`, 'i');
 }
 
-async function getAllFilesRecursive(
+export async function getDirStructure(
   owner: string,
   repo: string,
-  sha: string,
+  branchSha: string,
   path: string,
-  recursive: boolean = true,
   filter: string | undefined = undefined,
 ) {
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();
   }
-  const response = await gitHubInstance.repos.getContent({
-    owner,
-    repo,
-    path,
-    ref: sha,
-  });
-  const fileObjects = (
-    response.data as { type: 'file' | 'dir'; path: string; sha: string }[]
-  ).filter((obj) => obj.type === 'file');
-  let files = fileObjects.map((obj) => ({ path: obj.path, sha: obj.sha }));
+
+  const response = await gitHubInstance.repos
+    .getContent({
+      owner,
+      repo,
+      path,
+      ref: branchSha,
+    })
+    .catch((error) => {
+      logger.error({
+        function: 'getDirStructure',
+        msg: 'Error retrieving list',
+        path,
+        error,
+      });
+      return null;
+    });
+  let files: GitHubFile[] = [];
+  if (response && response.data) {
+    const fileObjects = (
+      response.data as {
+        type: 'file' | 'dir';
+        path: string;
+        sha: string;
+        download_url: string;
+      }[]
+    ).filter((obj) => obj.type === 'file');
+    files = fileObjects.map((obj) => ({
+      path: obj.path,
+      sha: obj.sha,
+      download_url: obj.download_url,
+    }));
+  }
   // logger.info('files: ', files)
-  if (recursive) {
+  if (response && response.data) {
     const dirObjects = (
       response.data as {
         type: 'dir' | 'file' | 'submodule' | 'symlink';
@@ -468,12 +542,17 @@ async function getAllFilesRecursive(
         download_url: string | null;
       }[]
     ).filter((obj) => obj.type === 'dir');
-    const subPromises = dirObjects.map(async (dirObject) => {
-      const subPath = path ? `${path}/${dirObject.name}` : dirObject.name;
-      return getAllFilesRecursive(owner, repo, sha, subPath, recursive, filter);
-    });
+
+    const subPromises: Promise<GitHubFile[]>[] = dirObjects.map(
+      async (dirObject) => {
+        const subPath = path ? `${path}/${dirObject.name}` : dirObject.name;
+        return getDirStructure(owner, repo, branchSha, subPath, filter);
+      },
+    );
     const subFiles = await Promise.all(subPromises);
-    files = files.concat(...subFiles);
+    if (files && subFiles) {
+      files = files.concat(...(subFiles || []));
+    }
   }
   if (filter) {
     const regex = createFilterRegex(filter);
@@ -483,29 +562,101 @@ async function getAllFilesRecursive(
   return files;
 }
 
-// Function to get all files for a given path
-export async function getAllFiles(
-  owner: string,
-  repo: string,
-  branch: string,
-  path: string,
-  recursive: boolean = true,
-  filter: string | undefined = undefined,
-) {
-  if (!gitHubInstance) {
-    gitHubInstance = await createGitHubInstance();
-  }
-  const branchSha = await getBranchSha(owner, repo, branch);
-  const files = await getAllFilesRecursive(
-    owner,
-    repo,
-    branchSha,
-    path,
-    recursive,
-    filter,
-  );
-  return files;
-}
+// async function getAllFilesRecursive(
+//   owner: string,
+//   repo: string,
+//   branchSha: string,
+//   path: string,
+//   recursive: boolean = true,
+//   filter: string | undefined = undefined,
+// ) {
+//   if (!gitHubInstance) {
+//     gitHubInstance = await createGitHubInstance();
+//   }
+
+//   const response = await gitHubInstance.repos
+//     .getContent({
+//       owner,
+//       repo,
+//       path,
+//       ref: branchSha,
+//     })
+//     .catch((error) => {
+//       logger.error({
+//         msg: '[getAllFilesRecursive] Error retrieving files',
+//         path,
+//         error,
+//       });
+//       return null;
+//     });
+//   let files = [];
+//   if (response && response.data) {
+//     const fileObjects = (
+//       response.data as { type: 'file' | 'dir'; path: string; sha: string }[]
+//     ).filter((obj) => obj.type === 'file');
+//     files = fileObjects.map((obj) => ({ path: obj.path, sha: obj.sha }));
+//   }
+//   // logger.info('files: ', files)
+//   if (recursive && response && response.data) {
+//     const dirObjects = (
+//       response.data as {
+//         type: 'dir' | 'file' | 'submodule' | 'symlink';
+//         size: number;
+//         name: string;
+//         path: string;
+//         content?: string | undefined;
+//         sha: string;
+//         url: string;
+//         git_url: string | null;
+//         html_url: string | null;
+//         download_url: string | null;
+//       }[]
+//     ).filter((obj) => obj.type === 'dir');
+//     const subPromises = dirObjects.map(async (dirObject) => {
+//       const subPath = path ? `${path}/${dirObject.name}` : dirObject.name;
+//       return getAllFilesRecursive(
+//         owner,
+//         repo,
+//         branchSha,
+//         subPath,
+//         recursive,
+//         filter,
+//       );
+//     });
+//     const subFiles = await Promise.all(subPromises);
+//     files = files.concat(...subFiles);
+//   }
+//   if (filter) {
+//     const regex = createFilterRegex(filter);
+//     files = files.filter((file) => regex.test(file.path));
+//   }
+
+//   return files;
+// }
+
+// // Function to get all files for a given path
+// export async function getAllFiles(
+//   owner: string,
+//   repo: string,
+//   branch: string,
+//   path: string,
+//   recursive: boolean = true,
+//   filter: string | undefined = undefined,
+// ) {
+//   if (!gitHubInstance) {
+//     gitHubInstance = await createGitHubInstance();
+//   }
+//   const branchSha = await getBranchSha(owner, repo, branch);
+//   const files = await getAllFilesRecursive(
+//     owner,
+//     repo,
+//     branchSha,
+//     path,
+//     recursive,
+//     filter,
+//   );
+//   return files;
+// }
 
 // const linkParser = (linkHeader: string): string | null => {
 //   const re = /<.*(?=>; rel=\"next\")/g;

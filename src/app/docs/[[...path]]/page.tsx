@@ -6,10 +6,10 @@ import { IndexTiles, LandingPage, MenuWrapper, ContentViewer, ContentLoader, Con
 import { siteConfig } from "../../../../site.config";
 import { notFound } from "next/navigation";
 import { getFileContent } from "@/lib/Github";
-// import { getLogger } from '@/lib/Logger';
+import { getLogger } from '@/lib/Logger';
 import type { ContentItem } from '@/lib/Types';
-
-// const logger = getLogger().child({ namespace: 'docs/page' });
+import { loadMenu } from '@/lib/Content/loadMenu';
+const logger = getLogger().child({ namespace: 'docs/page' });
 
 export const metadata: Metadata = {
   title: "Airview",
@@ -48,12 +48,14 @@ export default async function Page({
         notFound();
       case 1:
         // index page
+        const menuStructure = await loadMenu(siteConfig, contentConfig);
+        logger.debug({ msg: 'menuStructure: ', menuStructure});
         return (
           <main>
             <MenuWrapper
               // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
               menuComponent='HeaderMinimalMenu'
-              menuStructure={undefined}
+              menuStructure={menuStructure.primary}
               loading={loading}>
               { contentConfig ? <IndexTiles initialContext={{ ...contentConfig, source: '' }} /> : <></> }
               </MenuWrapper>

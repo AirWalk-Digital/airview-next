@@ -52,7 +52,7 @@
       }
     ]
   },
-  "exclude": ["./out/**/*", "./node_modules/**/*"],
+  "exclude": ["./out/**/*", "./node_modules/**/*", "./jest.config.ts"],
   "include": [
     "next-env.d.ts",
     "**/*.ts",

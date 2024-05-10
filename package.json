@@ -48,7 +48,7 @@
     "@mui/utils": "^5.15.14",
     "@next/mdx": "^14.1.4",
     "@octokit/auth-app": "^6.1.1",
-    "@octokit/rest": "^20.1.0",
+    "@octokit/rest": "^20.1.1",
     "@opensearch-project/opensearch": "^2.6.0",
     "@spotlightjs/spotlight": "^1.2.16",
     "@stefanprobst/rehype-extract-toc": "^2.2.0",
