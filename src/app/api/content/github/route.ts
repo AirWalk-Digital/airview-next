@@ -2,12 +2,11 @@ import mime from 'mime-types';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import path from 'path';
-import * as util from 'util';
 
 import { commitFileToBranch, getFileContent } from '@/lib/Github';
-import { getLogger } from '@/lib/Logger';
+// import { getLogger } from '@/lib/Logger';
 
-const logger = getLogger().child({ namespace: 'API:/api/content/github' });
+// const logger = getLogger().child({ namespace: 'API:/api/content/github' });
 
 export const config = {
   api: {
@@ -16,9 +15,9 @@ export const config = {
 };
 
 export async function GET(req: NextRequest) {
-  logger.info(
-    `[GET /api/content/github][query]: ${util.inspect(Object.fromEntries(req.nextUrl.searchParams))}`,
-  );
+  // logger.info(
+  //   `[GET /api/content/github][query]: ${util.inspect(Object.fromEntries(req.nextUrl.searchParams))}`,
+  // );
   try {
     const {
       owner,
@@ -26,9 +25,9 @@ export async function GET(req: NextRequest) {
       branch = 'main',
       path: filepath,
     } = Object.fromEntries(req.nextUrl.searchParams);
-    logger.info(
-      `[GET /api/content/github][query]: branch:${branch}, path:${filepath}, owner:${owner}, repo:${repo}`,
-    );
+    // logger.info(
+    //   `[GET /api/content/github][query]: branch:${branch}, path:${filepath}, owner:${owner}, repo:${repo}`,
+    // );
     if (!owner || !repo || typeof filepath !== 'string') {
       return NextResponse.json(
         { error: 'Missing required parameters: owner, repo, or path' },
@@ -46,7 +45,7 @@ export async function GET(req: NextRequest) {
     const data = await getFileContent(owner, repo, branch, filepath);
     const extension = path.extname(filepath);
     const contentType = mime.lookup(extension) || 'application/octet-stream';
-    logger.info(`[GET /api/content/github][data]: ${util.inspect(data)}`);
+    // logger.info(`[GET /api/content/github][data]: ${util.inspect(data)}`);
 
     const headers = new Headers();
     headers.set('Content-Type', contentType);
