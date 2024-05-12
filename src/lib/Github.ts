@@ -545,11 +545,11 @@ export async function getDirStructure(
     let subFiles: GitHubFile[][] = [];
 
     if (dirObjects.length > 0) {
-      logger.debug({
-        function: 'getDirStructure',
-        msg: 'dirObjects',
-        dirObjects,
-      });
+      // logger.debug({
+      //   function: 'getDirStructure',
+      //   msg: 'dirObjects',
+      //   dirObjects,
+      // });
       const subPromises: Promise<GitHubFile[]>[] = dirObjects.map(
         async (dirObject) => {
           const subPath = path ? `${path}/${dirObject.name}` : dirObject.name;

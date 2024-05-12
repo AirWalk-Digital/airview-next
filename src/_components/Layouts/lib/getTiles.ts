@@ -79,10 +79,21 @@ export async function getTiles(config: ContentItem): Promise<{
     config.path,
     '.md*',
   );
+
+  const filteredFiles = files.filter(
+    (file) =>
+      file.path.match(/(_index\.md$|_index\.mdx$|index\.md$|index\.mdx$)/) &&
+      file.path.split('/').length - 1 <= 2,
+  );
   // logger.debug({ function: 'getPrimaryMenu', msg: 'getDirStructure', files });
 
-  const contentPromises = files.map(async (file) => {
+  const contentPromises = filteredFiles.map(async (file) => {
     let matterData: MatterData | null = null;
+    const cachedFrontmatterKey = `github:frontmatter:${file.path}:${file.sha}`;
+    const cachedFrontmatter = await cacheRead(cachedFrontmatterKey);
+    if (cachedFrontmatter) {
+      return JSON.parse(cachedFrontmatter);
+    }
     try {
       if (file.download_url) {
         const downloadResponse = await fetch(file.download_url);
@@ -107,6 +118,10 @@ export async function getTiles(config: ContentItem): Promise<{
           }
         });
       }
+      await cacheWrite(
+        cachedFrontmatterKey,
+        JSON.stringify({ file, frontmatter: matterData }),
+      ); // cache perpetually a reference to the file
       return { file, frontmatter: matterData as FrontMatter };
     } catch (err) {
       logger.error({
