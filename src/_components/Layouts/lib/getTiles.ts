@@ -5,7 +5,12 @@ import matter from 'gray-matter';
 import { getBranchSha, getDirStructure } from '@/lib/Github';
 import { getLogger } from '@/lib/Logger';
 import { cacheRead, cacheWrite } from '@/lib/Redis';
-import type { ContentItem, FileContent, FrontMatter } from '@/lib/Types';
+import type {
+  ContentItem,
+  FileContent,
+  FrontMatter,
+  GitHubFile,
+} from '@/lib/Types';
 
 const logger = getLogger().child({ module: 'getTiles' });
 
@@ -16,7 +21,7 @@ interface Tile {
     image?: string;
     [key: string]: any;
   };
-  file: string;
+  file: GitHubFile;
   [key: string]: any;
 }
 

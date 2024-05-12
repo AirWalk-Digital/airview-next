@@ -97,15 +97,15 @@ export default async function IndexTiles({
           <TileCard
             key={c?.frontmatter?.title}
             name={c?.frontmatter?.title}
-            url={c?.file}
+            url={c?.file?.path}
             isHero={c?.frontmatter?.hero}
             image={
               c?.frontmatter?.hero && c?.frontmatter?.image != null
-                ? `/api/content/github/${initialContext.owner}/${initialContext.repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${initialContext.branch}`
+                ? `/api/content/github/${initialContext.owner}/${initialContext.repo}?path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
                 : c?.frontmatter?.hero
                   ? '/generic-solution.png'
                   : c?.frontmatter?.image
-                    ? `/api/content/github/${initialContext.owner}/${initialContext.repo}?path=${path.dirname(c.file)}/${c.frontmatter.image}&branch=${initialContext.branch}`
+                    ? `/api/content/github/${initialContext.owner}/${initialContext.repo}?path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
                     : undefined
             }
           />
