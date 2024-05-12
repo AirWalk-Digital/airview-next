@@ -4,6 +4,7 @@ import { MDXProvider } from '@mdx-js/react';
 import { LinearProgress } from '@mui/material';
 import React from 'react';
 
+import components from '@/components/Layouts/lib/mdxComponents';
 import type { ContentItem } from '@/lib/Types';
 
 import { loadMDX } from './lib/loadMDX';
@@ -40,7 +41,7 @@ export default function ContentLoader({
   if (pageContent && context) {
     const { mdxContent: Page, frontmatter } = loadMDX(pageContent);
     return (
-      <MDXProvider>
+      <MDXProvider components={components}>
         {(frontmatter?.title && <h1>{frontmatter.title}</h1>) || (
           <h1>No title</h1>
         )}

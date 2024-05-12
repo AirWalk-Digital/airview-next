@@ -34,6 +34,61 @@ interface RelatedContent {
   [key: string]: Directory;
 }
 
+type MenuItem = {
+  label: string;
+  url: string;
+  menuItems?: NestedMenu[];
+};
+
+type NestedMenu = {
+  groupTitle: string;
+  links: { label: string; url: string }[];
+};
+
+type InputMenu = {
+  primary: MenuItem[];
+  relatedContent: {
+    [key: string]: {
+      [key: string]: Content[];
+    };
+  };
+};
+
+function capitalizeFirstLetter(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export function nestMenu(
+  menuInput: InputMenu,
+  prefix: string,
+): { menu: MenuItem[] } {
+  const nestedMenu: MenuItem[] = menuInput.primary.map((item) => {
+    const urlKey = item.url.slice(0, item.url.lastIndexOf('/'));
+    const content = menuInput.relatedContent[urlKey];
+
+    // Creating a new object instead of modifying the original item
+    const newItem = { ...item };
+    newItem.url = `/${prefix}/${item.url}`;
+    if (content) {
+      const menuItems: NestedMenu[] = Object.keys(content).map(
+        (groupTitle) => ({
+          groupTitle: capitalizeFirstLetter(groupTitle),
+          links:
+            content[groupTitle]?.map((link) => ({
+              label: link.label,
+              url: `/${prefix}/${link.url}`,
+            })) ?? [],
+        }),
+      );
+      newItem.menuItems = menuItems;
+    }
+
+    return newItem;
+  });
+
+  return { menu: nestedMenu };
+}
+
 export function convertToMenu(primary: FileContent[], siteConfig: SiteConfig) {
   const primaryMenu = [];
   const siteContent = siteConfig.content;
@@ -166,11 +221,11 @@ export async function getMenu(
 ) {
   // logger.debug({ function: 'getPrimaryMenu', contentConfig });
   // have we cached the directory structure?
-  const cacheKey = `menu:${contentConfig.path}:${branchSha}`;
+  const cachedMenuKey = `menu:${contentConfig.path}:${branchSha}`;
   // Check if the content is in the cache
-  let cachedContent;
+  let cachedMenu;
   try {
-    cachedContent = JSON.parse(await cacheRead(cacheKey));
+    cachedMenu = JSON.parse(await cacheRead(cachedMenuKey));
   } catch (error) {
     // Handle the error when JSON parsing fails (invalid data).
     logger.error({
@@ -178,14 +233,14 @@ export async function getMenu(
       msg: 'Error parsing cached content',
       error,
     });
-    cachedContent = null; // Or use a default value if required.
+    cachedMenu = null; // Or use a default value if required.
   }
-  if (cachedContent && cachedContent.length > 0) {
-    logger.info({ function: 'getMenu', msg: '[Cache][HIT]', cacheKey });
+  if (cachedMenu && cachedMenu.length > 0) {
+    logger.info({ function: 'getMenu', msg: '[Cache][HIT]', cachedMenuKey });
     // If the content was found in the cache, return it
     // return cachedContent;
   }
-  logger.info({ function: 'getMenu', msg: '[Cache][MISS]', cacheKey });
+  logger.info({ function: 'getMenu', msg: '[Cache][MISS]', cachedMenuKey });
   // load the file structure
   const files = await getDirStructure(
     contentConfig.owner,
@@ -198,6 +253,11 @@ export async function getMenu(
 
   const contentPromises = files.map(async (file) => {
     let matterData: MatterData | null = null;
+    const cacheKey = `github:frontmatter:${path}:${file.sha}`;
+    const cachedContent = await cacheRead(cacheKey);
+    if (cachedContent) {
+      return JSON.parse(cachedContent);
+    }
     try {
       if (file.download_url) {
         const downloadResponse = await fetch(file.download_url);
@@ -222,6 +282,10 @@ export async function getMenu(
           }
         });
       }
+      await cacheWrite(
+        cacheKey,
+        JSON.stringify({ file, frontmatter: matterData }),
+      ); // cache perpetually a reference to the file
       return { file, frontmatter: matterData as FrontMatter };
     } catch (error) {
       logger.error({
@@ -239,12 +303,12 @@ export async function getMenu(
   // logger.debug({ function: 'getMenu', msg: 'menu', menu });
   // write the cache
   try {
-    await cacheWrite(cacheKey, JSON.stringify(menu)); // cache for 24 hours
+    await cacheWrite(cachedMenuKey, JSON.stringify(menu)); // cache for 24 hours
   } catch (error) {
     logger.error({
       function: 'getMenu',
       msg: 'Error writing cache:',
-      cacheKey,
+      cachedMenuKey,
       error,
     });
   }

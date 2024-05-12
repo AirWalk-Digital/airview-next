@@ -63,7 +63,7 @@ export default function MenuWrapper({
       <div
         style={{
           marginTop: topBarHeight,
-          paddingLeft: menuOpen || !loading ? navDrawerWidth : 0,
+          paddingLeft: !menuOpen || loading ? 0 : navDrawerWidth,
         }}
       >
         <Box sx={{ px: '2%' }}>

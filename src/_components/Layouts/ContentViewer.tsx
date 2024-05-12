@@ -16,6 +16,7 @@ import {
   AsideAndMainContainer,
   Main,
 } from '@/components/Layouts/AsideAndMain';
+import components from '@/components/Layouts/lib/mdxComponents';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem } from '@/lib/Types';
 
@@ -96,7 +97,7 @@ export function ContentViewer({
     return (
       <AsideAndMainContainer>
         <Main>
-          <MDXProvider>
+          <MDXProvider components={components}>
             {(frontmatter?.title && <h1>{frontmatter.title}</h1>) || (
               <h1>No title</h1>
             )}

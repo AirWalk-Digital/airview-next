@@ -11,7 +11,7 @@ import '@fontsource/heebo/200.css'; // Defaults to weight 400.
 
 import '@fontsource/roboto-mono';
 
-const palette = createTheme({
+export const palette = createTheme({
   palette: {
     primary: {
       main: '#002b3d',

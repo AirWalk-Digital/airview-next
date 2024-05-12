@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 import { getFileContent } from "@/lib/Github";
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem } from '@/lib/Types';
-import { loadMenu } from '@/lib/Content/loadMenu';
+import { loadMenu, nestMenu } from '@/lib/Content/loadMenu';
 const logger = getLogger().child({ namespace: 'docs/page' });
 
 export const metadata: Metadata = {
@@ -48,14 +48,15 @@ export default async function Page({
         notFound();
       case 1:
         // index page
-        const menuStructure = await loadMenu(siteConfig, contentConfig);
+        const content = await loadMenu(siteConfig, contentConfig);
+        const { menu: menuStructure } = nestMenu(content, 'docs');
         logger.debug({ msg: 'menuStructure: ', menuStructure});
         return (
           <main>
             <MenuWrapper
               // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
               menuComponent='HeaderMinimalMenu'
-              menuStructure={menuStructure.primary}
+              menuStructure={menuStructure}
               loading={loading}>
               { contentConfig ? <IndexTiles initialContext={{ ...contentConfig, source: '' }} /> : <></> }
               </MenuWrapper>
@@ -76,6 +77,46 @@ export default async function Page({
                   ? Buffer.from(pageContent.content).toString()
                   : "";
             }
+
+            const menuConfig = (contentConfig : ContentItem) => {
+              if (contentConfig.menu && contentConfig.menu.collection ) {
+                return siteConfig?.content?.[contentConfig?.menu?.collection as keyof typeof siteConfig.content] || contentConfig as ContentItem;
+              } else {
+                return contentConfig;
+              }
+            }
+
+            const content = await loadMenu(siteConfig, menuConfig(contentConfig));
+            const { menu: menuStructure } = nestMenu(content, 'docs');
+
+            if (pageContent && pageContent.content && pageContentText ) {
+
+              if (isPrint) {
+                return (
+                  <main>
+                    <ContentPrint>
+                    <ContentLoader pageContent={pageContentText} context={ contentConfig } loading={loading} />
+                    </ContentPrint>
+                  </main>
+                );
+              }
+              
+            return (
+              <main>
+                <MenuWrapper
+                      // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
+                      menuComponent='HeaderMinimalMenu'
+                      menuStructure={menuStructure}
+                      loading={loading}>
+                <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={loading} />
+                </MenuWrapper>
+              </main>
+            );
+          } else {
+            notFound();
+          }
+
+
           } else {
             notFound();
           }
@@ -83,33 +124,8 @@ export default async function Page({
         
         break;
     }
-
-    if (pageContent && pageContent.content && pageContentText ) {
-
-      if (isPrint) {
-        return (
-          <main>
-            <ContentPrint>
-            <ContentLoader pageContent={pageContentText} context={ contentConfig } loading={loading} />
-            </ContentPrint>
-          </main>
-        );
-      }
-      
-    return (
-      <main>
-        <MenuWrapper
-              // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
-              menuComponent='HeaderMinimalMenu'
-              menuStructure={undefined}
-              loading={true}>
-        <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={loading} />
-        </MenuWrapper>
-      </main>
-    );
-  } else {
     notFound();
-  }
+
   } else {
     return (
       <main>

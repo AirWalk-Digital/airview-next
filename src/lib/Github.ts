@@ -542,14 +542,22 @@ export async function getDirStructure(
         download_url: string | null;
       }[]
     ).filter((obj) => obj.type === 'dir');
+    let subFiles: GitHubFile[][] = [];
 
-    const subPromises: Promise<GitHubFile[]>[] = dirObjects.map(
-      async (dirObject) => {
-        const subPath = path ? `${path}/${dirObject.name}` : dirObject.name;
-        return getDirStructure(owner, repo, branchSha, subPath, filter);
-      },
-    );
-    const subFiles = await Promise.all(subPromises);
+    if (dirObjects.length > 0) {
+      logger.debug({
+        function: 'getDirStructure',
+        msg: 'dirObjects',
+        dirObjects,
+      });
+      const subPromises: Promise<GitHubFile[]>[] = dirObjects.map(
+        async (dirObject) => {
+          const subPath = path ? `${path}/${dirObject.name}` : dirObject.name;
+          return getDirStructure(owner, repo, branchSha, subPath, filter);
+        },
+      );
+      subFiles = await Promise.all(subPromises);
+    }
     if (files && subFiles) {
       files = files.concat(...(subFiles || []));
     }

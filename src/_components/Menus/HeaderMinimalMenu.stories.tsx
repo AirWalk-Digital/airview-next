@@ -61,3 +61,30 @@ Default.args = {
   collapsible: true,
   initialCollapsed: false,
 };
+
+export const Providers = Template.bind({});
+Providers.args = {
+  menu: [
+    { label: 'Test Service 1', url: 'services/test_1_service/_index.md' },
+    {
+      label: 'Test 2 Service',
+      url: 'services/test_2_service/_index.mdx',
+      menuItems: [
+        {
+          groupTitle: 'Chapters',
+          links: [
+            {
+              label: 'Test 2 content',
+              url: 'services/test_2_service/blah.mdx',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  open: true,
+  top: 0,
+  drawerWidth: 240,
+  collapsible: true,
+  initialCollapsed: true,
+};
