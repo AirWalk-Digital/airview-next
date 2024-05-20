@@ -52,7 +52,12 @@
       }
     ]
   },
-  "exclude": ["./out/**/*", "./node_modules/**/*", "./jest.config.ts"],
+  "exclude": [
+    "./out/**/*",
+    "./node_modules/**/*",
+    "./jest.config.ts",
+    "./.next/**/*"
+  ],
   "include": [
     "next-env.d.ts",
     "**/*.ts",

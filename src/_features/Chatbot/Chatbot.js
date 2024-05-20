@@ -162,7 +162,7 @@ export default function Chatbot() {
                 setRelevantDocs((prevDocs) => [...prevDocs, parsedObject]);
               }
             } catch (error) {
-              console.error('Error parsing JSON object:', error);
+              /* empty */
             }
           });
         }

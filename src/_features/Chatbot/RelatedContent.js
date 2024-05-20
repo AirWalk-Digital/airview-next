@@ -52,7 +52,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
   const filteredDocs = relevantDocs.filter(
     (doc) => doc.messageId === selectedBotMessageId,
   );
-  console.log('filteredDocs:', filteredDocs);
+
   return (
     <div>
       <h2>Related Documents</h2>

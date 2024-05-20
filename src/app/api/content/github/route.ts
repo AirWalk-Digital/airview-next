@@ -8,11 +8,11 @@ import { commitFileToBranch, getFileContent } from '@/lib/Github';
 
 // const logger = getLogger().child({ namespace: 'API:/api/content/github' });
 
-export const config = {
-  api: {
-    responseLimit: '8mb',
-  },
-};
+// export const config = {
+//   api: {
+//     responseLimit: '8mb',
+//   },
+// };
 
 export async function GET(req: NextRequest) {
   // logger.info(
