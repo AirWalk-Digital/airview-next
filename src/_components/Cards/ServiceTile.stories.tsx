@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import ServiceTile from './ServiceCard';
+import ServiceTile from './ServiceTile';
 
 const meta: Meta<typeof ServiceTile> = {
   title: 'Cards/ServiceTile',

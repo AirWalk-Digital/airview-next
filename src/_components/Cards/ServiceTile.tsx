@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
 
 interface ServiceTileProps {
   frontmatter: {
@@ -13,18 +14,29 @@ interface ServiceTileProps {
 
 const ServiceTile: React.FC<ServiceTileProps> = ({ frontmatter, file }) => {
   return (
-    <Grid item xs={3} md={3} sx={{ mb: '20px' }}>
+    <Grid item xs={3} md={3} maxWidth={300} sx={{ mb: '20px' }}>
       <Link href={file.replace('/index.mdx', '')} underline="none">
-        <Box
+        {/* <Box
           sx={{
             bgcolor: 'background.paper',
             boxShadow: 0,
-            borderColor: 'primary', // icon.color,
+            // borderColor: 'primary', // icon.color,
             border: 1,
             borderRadius: 2,
             p: 2,
             height: '100%',
             // minWidth: 300,
+          }}
+        >
+         */}
+        <Paper
+          variant="outlined"
+          sx={{
+            height: '100%',
+            borderRadius: '16px',
+            p: 3,
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <Box sx={{ color: 'text.primary', fontSize: 18, fontWeight: '400' }}>
@@ -35,7 +47,7 @@ const ServiceTile: React.FC<ServiceTileProps> = ({ frontmatter, file }) => {
           >
             {frontmatter.description}
           </Box>
-        </Box>
+        </Paper>
       </Link>
     </Grid>
   );

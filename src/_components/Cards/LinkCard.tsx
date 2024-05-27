@@ -14,7 +14,7 @@ interface LinkCardProps {
 
 const LinkCard: React.FC<LinkCardProps> = ({ title, description, link }) => {
   return (
-    <Grid item xs={4} md={4}>
+    <Grid item xs={4} md={4} maxWidth={300}>
       <Paper
         variant="outlined"
         sx={{

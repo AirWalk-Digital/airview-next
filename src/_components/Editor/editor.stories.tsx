@@ -19,6 +19,7 @@ const dummyContext: ContentItem = {
 const meta: Meta<typeof Editor> = {
   title: 'Components/Editor',
   component: Editor,
+  tags: ['autodocs'],
   args: {
     context: dummyContext,
     enabled: true,
