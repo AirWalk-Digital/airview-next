@@ -270,7 +270,16 @@ export function Editor({
   );
 
   return (
-    <Paper sx={{ px: '1%' }} elevation={0}>
+    <Paper
+      sx={{
+        px: '1%',
+        maxHeight: 'calc(100vh - 65px)',
+        pt: '2%',
+        pb: '2%',
+        overflow: 'auto',
+      }}
+      elevation={0}
+    >
       <StyledMDXEditor
         ref={editorRef}
         onChange={editorCallback}
