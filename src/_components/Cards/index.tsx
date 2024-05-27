@@ -1,6 +1,6 @@
 import Contributors from './Contributors';
 import LinkCard from './LinkCard';
-import ServiceCard from './ServiceCard';
+import ServiceTile from './ServiceTile';
 import TileCard from './TileCard';
 
-export { Contributors, LinkCard, ServiceCard, TileCard };
+export { Contributors, LinkCard, ServiceTile, TileCard };
