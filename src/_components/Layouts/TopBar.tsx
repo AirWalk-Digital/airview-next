@@ -40,7 +40,7 @@ export interface ComponentProps {
   edit?: boolean;
   // handlePrint?: () => void;
   // handlePresentation?: () => void;
-  handleMore?: () => void;
+  handleEdit?: () => void;
 }
 
 export default function TopBar({
@@ -52,7 +52,7 @@ export default function TopBar({
   edit,
   // handlePrint,
   // handlePresentation,
-  handleMore,
+  handleEdit,
 }: ComponentProps): React.ReactElement {
   // Function body
 
@@ -72,11 +72,11 @@ export default function TopBar({
     setActiveMenu('');
   };
 
-  const handleMoreClick = () => {
-    if (typeof handleMore === 'function') {
-      handleMore();
+  const handleEditClick = () => {
+    if (typeof handleEdit === 'function') {
+      handleEdit();
     } else {
-      // console.error('TopBar: Error: handleMore is not a function');
+      // console.error('TopBar: Error: handleEdit is not a function');
     }
   };
 
@@ -217,7 +217,7 @@ export default function TopBar({
         {edit && (
           <Button
             size="large"
-            onClick={() => handleMoreClick()}
+            onClick={() => handleEditClick()}
             color="inherit"
             startIcon={<AutoAwesomeIcon />}
           >

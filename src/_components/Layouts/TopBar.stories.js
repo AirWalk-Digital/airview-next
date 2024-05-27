@@ -1,4 +1,5 @@
 import TopBar from '@/components/Layouts/TopBar';
+import { fn } from '@storybook/test';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 export default {
@@ -14,6 +15,9 @@ export default {
   argTypes: {
     color: { control: 'color' },
     edit: { control: 'boolean' },
+  },
+  args: {
+    handleEdit: fn(),
   },
 };
 

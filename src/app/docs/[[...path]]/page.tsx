@@ -57,7 +57,8 @@ export default async function Page({
               // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
               menuComponent='HeaderMinimalMenu'
               menuStructure={menuStructure}
-              loading={loading}>
+              loading={loading}
+              context={contentConfig}>
               { contentConfig ? <IndexTiles initialContext={{ ...contentConfig, source: '' }} /> : <></> }
               </MenuWrapper>
               </main>
@@ -107,7 +108,8 @@ export default async function Page({
                       // title={`${siteConfig.title} | ${contentConfig?.path?.charAt(0).toUpperCase()}${contentConfig?.path?.slice(1)}`}
                       menuComponent='HeaderMinimalMenu'
                       menuStructure={menuStructure}
-                      loading={loading}>
+                      loading={loading}
+                        context={contentConfig}>
                 <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={loading} />
                 </MenuWrapper>
               </main>
