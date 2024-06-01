@@ -28,50 +28,53 @@ function capitalizeFirstLetter(string: string): string {
 }
 
 // Helper function for deep merge
+// type AnyObject = { [key: string]: any };
+
+// function deepMerge(initialTarget: AnyObject, source: AnyObject): AnyObject {
+//   let target = initialTarget;
+//   Object.keys(source).forEach((key) => {
+//     if (Object.prototype.hasOwnProperty.call(source, key)) {
+//       const sourceValue = source[key];
+//       const targetValue = target[key];
+
+//       if (
+//         typeof sourceValue === 'object' &&
+//         !Array.isArray(sourceValue) &&
+//         sourceValue !== null
+//       ) {
+//         const mergedObject = deepMerge(targetValue || {}, sourceValue);
+//         target = { ...target, [key]: mergedObject };
+//       } else if (Array.isArray(sourceValue)) {
+//         if (Array.isArray(targetValue)) {
+//           // Merge arrays while avoiding duplicates based on unique properties
+//           const uniqueItems: any[] = [];
+//           const map = new Map();
+
+//           [...targetValue, ...sourceValue].forEach((item) => {
+//             const uniqueKey = item.url || item.label; // Use 'url' or 'label' as a unique key, whichever is available
+//             if (!map.has(uniqueKey)) {
+//               map.set(uniqueKey, true);
+//               uniqueItems.push(item);
+//             }
+//           });
+
+//           target = { ...target, [key]: uniqueItems };
+//         } else {
+//           target = { ...target, [key]: sourceValue };
+//         }
+//       } else {
+//         target = { ...target, [key]: sourceValue };
+//       }
+//     }
+//   });
+//   return target;
+// }
+
 type AnyObject = { [key: string]: any };
 
-function deepMerge(initialTarget: AnyObject, source: AnyObject): AnyObject {
-  let target = initialTarget;
-  Object.keys(source).forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      const sourceValue = source[key];
-      const targetValue = target[key];
-
-      if (
-        typeof sourceValue === 'object' &&
-        !Array.isArray(sourceValue) &&
-        sourceValue !== null
-      ) {
-        const mergedObject = deepMerge(targetValue || {}, sourceValue);
-        target = { ...target, [key]: mergedObject };
-      } else if (Array.isArray(sourceValue)) {
-        if (Array.isArray(targetValue)) {
-          // Merge arrays while avoiding duplicates based on unique properties
-          const uniqueItems: any[] = [];
-          const map = new Map();
-
-          [...targetValue, ...sourceValue].forEach((item) => {
-            const uniqueKey = item.url || item.label; // Use 'url' or 'label' as a unique key, whichever is available
-            if (!map.has(uniqueKey)) {
-              map.set(uniqueKey, true);
-              uniqueItems.push(item);
-            }
-          });
-
-          target = { ...target, [key]: uniqueItems };
-        } else {
-          target = { ...target, [key]: sourceValue };
-        }
-      } else {
-        target = { ...target, [key]: sourceValue };
-      }
-    }
-  });
-  return target;
-}
-
 function deepMergeObj(initialTarget: AnyObject, source: AnyObject): AnyObject {
-  let target = initialTarget;
+  const target = { ...initialTarget };
+
   Object.keys(source).forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(source, key)) {
       const sourceValue = source[key];
@@ -82,13 +85,15 @@ function deepMergeObj(initialTarget: AnyObject, source: AnyObject): AnyObject {
         !Array.isArray(sourceValue) &&
         targetValue instanceof Object
       ) {
-        const mergedObject = deepMerge(targetValue, sourceValue);
-        target = { ...target, [key]: mergedObject };
+        target[key] = deepMergeObj(targetValue, sourceValue);
+      } else if (Array.isArray(sourceValue) && Array.isArray(targetValue)) {
+        target[key] = [...targetValue, ...sourceValue];
       } else {
-        target = { ...target, [key]: sourceValue };
+        target[key] = sourceValue;
       }
     }
   });
+
   return target;
 }
 
@@ -104,28 +109,14 @@ export function nestMenu(
     const newItem = { ...item };
     newItem.url = `/${prefix}/${item.url}`;
     if (content) {
-      const menuItems: MenuItem[] = Object.keys(content).map((groupTitle) => {
-        const links =
-          content[groupTitle]
-            ?.filter((link) => {
-              const parts = link.url.split('/');
-              const lastPart = parts[parts.length - 1];
-              return (
-                parts.length === 3 &&
-                ['_index.md', '_index.mdx', 'index.md', 'index.mdx'].includes(
-                  lastPart || '', // Provide a default value of an empty string if lastPart is undefined
-                )
-              );
-            })
-            .map((link) => ({
-              label: link.label,
-              url: `/${prefix}/${link.url}`,
-            })) ?? [];
-        return {
-          groupTitle: capitalizeFirstLetter(groupTitle),
-          links,
-        };
-      });
+      const menuItems: MenuItem[] = Object.keys(content).map((groupTitle) => ({
+        groupTitle: capitalizeFirstLetter(groupTitle),
+        links:
+          content[groupTitle]?.map((link) => ({
+            label: link.label,
+            url: `/${prefix}/${link.url}`,
+          })) ?? [],
+      }));
       newItem.menuItems = menuItems;
     }
 
@@ -372,15 +363,20 @@ export async function loadMenu(
   );
 
   const primary = await getMenu(branchSha, collection, siteConfig);
-  const { relatedContent } = primary;
+  // const { relatedContent } = primary;
+  let relatedContent: RelatedContent = {};
+  // const mergedRelatedContent = relatedContent;
+
+  if (primary.relatedContent) {
+    relatedContent = deepMergeObj(relatedContent, primary.relatedContent);
+  }
   // get all related config.
-  const mergedRelatedContent = relatedContent;
 
   const getMenuPromises = (collection.collections ?? []).map(
     async (collectionItem: string) => {
-      if (!relatedContent[collectionItem]) {
-        relatedContent[collectionItem] = {};
-      }
+      // if (!relatedContent[collectionItem]) {
+      //   relatedContent[collectionItem] = {};
+      // }
       const contentFolder = await getMenu(
         branchSha,
         siteConfig.content[
@@ -389,7 +385,10 @@ export async function loadMenu(
         siteConfig,
       );
 
-      deepMergeObj(mergedRelatedContent, contentFolder.relatedContent);
+      relatedContent = deepMergeObj(
+        relatedContent,
+        contentFolder.relatedContent,
+      );
       // relatedContent[collectionItem] = contentFolder.relatedContent;
       // mergedRelatedContent = {
       //   ...mergedRelatedContent,
@@ -415,7 +414,7 @@ export async function loadMenu(
   //   mergedRelatedContent,
   // });
 
-  return { primary: primary.primary, relatedContent: mergedRelatedContent };
+  return { primary: primary.primary, relatedContent };
 }
 
 // export async function loadMenuOld(

@@ -14,6 +14,7 @@ interface MenuStructure {
   label: string;
   url: string;
   menuItems?: MenuItem[];
+  links?: LinkItem[] | undefined;
 }
 
 interface Directory {
