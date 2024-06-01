@@ -5,6 +5,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import PrintIcon from '@mui/icons-material/Print';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { LinearProgress } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import { usePathname, useRouter } from 'next/navigation';
@@ -17,13 +18,14 @@ import {
   Main,
 } from '@/components/Layouts/AsideAndMain';
 import components from '@/components/Layouts/lib/mdxComponents';
+import { ContentMenu, TableOfContents } from '@/components/Menus';
 import { getLogger } from '@/lib/Logger';
-import type { ContentItem } from '@/lib/Types';
+import type { ContentItem, RelatedContent } from '@/lib/Types';
 
-import { TableOfContents } from '../Menus/TableOfContents';
 import { loadMDX } from './lib/loadMDX';
 // import { mdComponents } from '../../constants/mdxProvider.js';
 const logger = getLogger().child({ namespace: 'ContentViewer' });
+logger.level = 'error';
 
 type Contributor = {
   authorName: string;
@@ -33,8 +35,9 @@ type Contributor = {
 interface ContentViewerProps {
   pageContent: string;
   contributors: Contributor[];
-  context: ContentItem | undefined;
+  context: ContentItem;
   loading: boolean;
+  relatedContent: RelatedContent;
 }
 
 function ContentSkeleton({ topBarHeight }: { topBarHeight: number }) {
@@ -56,6 +59,7 @@ export function ContentViewer({
   contributors,
   context,
   loading,
+  relatedContent,
 }: ContentViewerProps) {
   const topBarHeight = 64;
 
@@ -92,17 +96,22 @@ export function ContentViewer({
     return <ContentSkeleton topBarHeight={topBarHeight} />;
   }
   if (pageContent) {
-    const { mdxContent: Page, frontmatter } = loadMDX(pageContent);
+    const { mdxContent: Page, frontmatter } = loadMDX(
+      pageContent,
+      context?.file?.endsWith('.md') ? 'md' : 'mdx',
+    );
     logger.info({ msg: 'ContentViewer', frontmatter });
     return (
       <AsideAndMainContainer>
         <Main>
           <MDXProvider components={components}>
-            {(frontmatter?.title && <h1>{frontmatter.title}</h1>) || (
-              <h1>No title</h1>
-            )}
+            {frontmatter?.title && <h1>{frontmatter.title}</h1>}
             {contributors && <Contributors contributors={contributors} />}
-            {(Page && <Page />) || <h1>No content</h1>}
+            {(Page && <Page />) || (
+              <Alert variant="outlined" severity="error">
+                No content.
+              </Alert>
+            )}
           </MDXProvider>
         </Main>
         <Aside>
@@ -121,24 +130,27 @@ export function ContentViewer({
               label="Code"
               onClick={() => openGithub()}
             />
-            <Chip
-              size="small"
-              color="primary"
-              icon={<SlideshowIcon />}
-              label="Presentation"
-            />
+            {frontmatter?.presentation && (
+              <Chip
+                size="small"
+                color="primary"
+                icon={<SlideshowIcon />}
+                label="Presentation"
+              />
+            )}
           </Stack>
 
-          {/* <ContentMenu
-                  content={relatedContent}
-                  context={context}
-                  // knowledge={knowledge}
-                  // designs={designs}
-                  handleContentChange={handleContentChange}
-                  handlePageReset={handlePageReset}
-                  file={context.file}
-                />
-                {sideComponent && <SideComponent />} */}
+          <ContentMenu
+            content={relatedContent}
+            context={context}
+            handleContentChange={() => {}}
+            handlePageReset={() => {}}
+            loading={false}
+            // handleContentChange={handleContentChange}
+            // handlePageReset={handlePageReset}
+            // file={context.file}
+          />
+          {/*        {sideComponent && <SideComponent />} */}
           {frontmatter?.tableOfContents && (
             <TableOfContents tableOfContents={frontmatter.tableOfContents} />
           )}
@@ -155,5 +167,9 @@ export function ContentViewer({
       </AsideAndMainContainer>
     );
   }
-  return <h1>No content</h1>;
+  return (
+    <Alert variant="outlined" severity="error">
+      No content.
+    </Alert>
+  );
 }

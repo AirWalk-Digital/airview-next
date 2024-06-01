@@ -189,7 +189,6 @@ const Template: StoryFn<StorybookControlBar> = (args) => {
     <ControlBar
       open
       top={0}
-      height={64}
       handleEdit={handleEdit}
       handleAdd={() => fn()}
       handlePresentation={() => fn()}

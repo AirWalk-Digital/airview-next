@@ -67,7 +67,7 @@ export function loadMDX(
     }
     return { mdxContent: mdx, frontmatter };
   } catch (error) {
-    return { mdxContent: null, frontmatter: { title: 'error processing mdx' } };
+    return { mdxContent: null, frontmatter: { title: '' } };
   }
 }
 

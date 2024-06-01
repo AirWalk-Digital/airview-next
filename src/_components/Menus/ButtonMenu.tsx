@@ -1,58 +1,57 @@
-'use client';
-
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable @typescript-eslint/no-shadow */
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
   Box,
+  ButtonBase,
   Collapse,
   IconButton,
-  Link,
   Skeleton,
+  type SxProps,
+  type Theme,
   Typography,
 } from '@mui/material';
-import NextLink from 'next/link';
-import type { FC } from 'react';
-import React, { useState } from 'react';
+import React, { type ReactNode, useState } from 'react';
 
-import { getLogger } from '@/lib/Logger';
-import type { MenuItem } from '@/lib/Types';
+interface Link {
+  label: string;
+  url: string;
+}
 
-import { isLinkInternal } from './lib/isLinkInternal';
+interface MenuItem {
+  groupTitle?: string;
+  links: Link[];
+}
 
-const logger = getLogger().child({ namespace: 'Menu' });
-logger.level = 'error';
-
-export interface MenuProps {
-  menuTitle?: string;
-  menuTitleElement?: string;
+export interface ButtonMenuProps {
+  menuTitle: string;
   loading?: boolean;
   fetching?: boolean;
   menuItems: MenuItem[];
   collapsible?: boolean;
   initialCollapsed?: boolean;
-  linkComponent?: any;
+  handleButtonClick: (url: string, label: string) => void;
   currentRoute?: string;
-  sx?: object;
+  sx?: SxProps<Theme>;
+  children?: ReactNode;
 }
 
-export const Menu: FC<MenuProps> = ({
+export function ButtonMenu({
   menuTitle,
-  menuTitleElement = 'h3',
   loading = false,
   fetching = false,
   menuItems,
   collapsible = true,
   initialCollapsed = true,
-  // linkComponent,
+  handleButtonClick,
   currentRoute,
   sx,
-  ...rest
-}) => {
+  children,
+}: ButtonMenuProps) {
   const [collapsed, setCollapsed] = useState(
     collapsible ? initialCollapsed : false,
   );
-
-  logger.info('menuItems', menuItems);
 
   return (
     <Box
@@ -64,7 +63,6 @@ export const Menu: FC<MenuProps> = ({
         }),
         ...sx,
       }}
-      {...rest}
     >
       <Box
         component="header"
@@ -76,11 +74,10 @@ export const Menu: FC<MenuProps> = ({
         }}
       >
         <Typography
-          component={menuTitleElement as React.ElementType}
           variant="subtitle2"
           sx={{ display: 'block', flex: '1 1 auto', fontSize: 16 }}
         >
-          {loading ? <Skeleton width="90%" /> : menuTitle && menuTitle}
+          {loading ? <Skeleton width="90%" /> : menuTitle}
         </Typography>
 
         {collapsible && (
@@ -92,7 +89,7 @@ export const Menu: FC<MenuProps> = ({
             sx={{
               marginLeft: 1,
               padding: 0,
-              color: 'primary.main',
+              color: 'primary',
             }}
           >
             {collapsed ? (
@@ -115,7 +112,7 @@ export const Menu: FC<MenuProps> = ({
                   display: 'block',
                   marginTop: 2,
                   marginBottom: -1,
-                  color: 'text.secondary',
+                  color: 'secondary',
                   textTransform: 'uppercase',
                   fontSize: 12,
                 }}
@@ -123,6 +120,7 @@ export const Menu: FC<MenuProps> = ({
                 {loading ? <Skeleton width="90%" /> : groupTitle}
               </Typography>
             )}
+            {children && children}
             <Box
               component="ul"
               sx={{
@@ -138,27 +136,27 @@ export const Menu: FC<MenuProps> = ({
               }}
             >
               {loading
-                ? [...Array(6)].map((item) => (
-                    <Skeleton key={item} component="li" />
+                ? [...Array(6)].map((index) => (
+                    <Skeleton key={`skeleton-${index}`} component="li" />
                   ))
-                : links?.map(({ label, url }) => {
+                : links?.map(({ label, url }, index) => {
                     return (
-                      <Box component="li" key={`${label}+${url}`}>
-                        <Link
-                          underline="hover"
-                          style={{
-                            textDecoration: 'hover',
-                            color: 'text.secondary',
-                          }}
-                          component={NextLink}
-                          href={url}
-                          target={isLinkInternal(url) ? '_self' : '_blank'}
+                      <Box component="li" key={index}>
+                        <ButtonBase
+                          // component="button"
+                          // variant="contained" // Add the variant prop with a valid value (e.g., "contained")
+                          onClick={() => handleButtonClick(url, label)}
                           sx={{
+                            textDecoration: 'none',
+                            textTransform: 'none',
+                            textAlign: 'left',
+                            fontWeight: 'light',
+                            color: 'secondary',
                             ...(url === currentRoute && { fontWeight: 'bold' }),
                           }}
                         >
                           {label}
-                        </Link>
+                        </ButtonBase>
                       </Box>
                     );
                   })}
@@ -168,4 +166,4 @@ export const Menu: FC<MenuProps> = ({
       </Collapse>
     </Box>
   );
-};
+}

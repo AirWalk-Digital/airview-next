@@ -20,7 +20,7 @@ import React, { useEffect, useState } from 'react';
 
 export interface ControlBarProps {
   open: boolean;
-  height: number;
+  // height: number;
   handleEdit?: (editMode: boolean) => void;
   handlePrint?: () => void;
   handleAdd?: () => void;
@@ -79,7 +79,7 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
 
 export const ControlBar: React.FC<ControlBarProps> = ({
   open,
-  height,
+  // height,
   handleEdit,
   handlePrint,
   handleAdd,
@@ -192,7 +192,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
       color="transparent"
       elevation={0}
       sx={{
-        height,
+        // height,
         display: open ? '' : 'none',
         displayPrint: 'none',
         borderBottom: 1,

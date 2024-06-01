@@ -2,6 +2,7 @@
 
 import { MDXProvider } from '@mdx-js/react';
 import { LinearProgress } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import React from 'react';
 
 import components from '@/components/Layouts/lib/mdxComponents';
@@ -39,15 +40,24 @@ export default function ContentLoader({
     return <ContentSkeleton />;
   }
   if (pageContent && context) {
-    const { mdxContent: Page, frontmatter } = loadMDX(pageContent);
+    const { mdxContent: Page, frontmatter } = loadMDX(
+      pageContent,
+      context?.file?.endsWith('.md') ? 'md' : 'mdx',
+    );
     return (
       <MDXProvider components={components}>
-        {(frontmatter?.title && <h1>{frontmatter.title}</h1>) || (
-          <h1>No title</h1>
+        {frontmatter?.title && <h1>{frontmatter.title}</h1>}
+        {(Page && <Page />) || (
+          <Alert variant="outlined" severity="error">
+            No content.
+          </Alert>
         )}
-        {(Page && <Page />) || <h1>No content</h1>}
       </MDXProvider>
     );
   }
-  return <h1>No content</h1>;
+  return (
+    <Alert variant="outlined" severity="error">
+      No content.
+    </Alert>
+  );
 }

@@ -24,6 +24,7 @@ import { getTiles } from './lib/getTiles';
 //   file: string;
 // }
 const logger = getLogger().child({ namespace: 'IndexTiles' });
+logger.level = 'error';
 // interface MenuStructure {
 //   label: string;
 //   url: string;
@@ -101,11 +102,11 @@ export default async function IndexTiles({
             isHero={c?.frontmatter?.hero}
             image={
               c?.frontmatter?.hero && c?.frontmatter?.image != null
-                ? `/api/content/github/${initialContext.owner}/${initialContext.repo}?path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
+                ? `/api/content/github?owner=${initialContext.owner}&repo=${initialContext.repo}&path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
                 : c?.frontmatter?.hero
                   ? '/generic-solution.png'
                   : c?.frontmatter?.image
-                    ? `/api/content/github/${initialContext.owner}/${initialContext.repo}?path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
+                    ? `/api/content/github?owner=${initialContext.owner}&repo=${initialContext.repo}&path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
                     : undefined
             }
           />

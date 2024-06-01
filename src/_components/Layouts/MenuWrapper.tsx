@@ -1,6 +1,5 @@
 'use client';
 
-import { Box } from '@mui/material';
 import Container from '@mui/material/Container';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
@@ -12,7 +11,7 @@ import { getLogger } from '@/lib/Logger';
 import type { ContentItem, MenuStructure } from '@/lib/Types';
 
 const logger = getLogger();
-
+logger.level = 'error';
 // type MenuComponentType = typeof HeaderMinimalMenu; // | typeof HeaderMenu;
 
 interface MenuWrapperProps {
@@ -118,11 +117,11 @@ export default function MenuWrapper({
               paddingLeft: !menuOpen || loading ? 0 : navDrawerWidth,
             }}
           >
-            <Box sx={{ px: '2%' }}>
-              <Container sx={{ maxHeight: '100vh', pt: '2%' }}>
-                {children && children}
-              </Container>
-            </Box>
+            {/* <Box sx={{ px: '2%' }} > */}
+            <Container sx={{ maxHeight: '100vh', pt: '2%', px: '2%' }}>
+              {children && children}
+            </Container>
+            {/* </Box> */}
           </div>
         )}
       </Suspense>

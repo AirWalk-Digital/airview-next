@@ -4,10 +4,10 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 
 import { commitFileToBranch, getFileContent } from '@/lib/Github';
-// import { getLogger } from '@/lib/Logger';
+import { getLogger } from '@/lib/Logger';
 
-// const logger = getLogger().child({ namespace: 'API:/api/content/github' });
-
+const logger = getLogger().child({ namespace: 'API:/api/content/github' });
+logger.level = 'error';
 // export const config = {
 //   api: {
 //     responseLimit: '8mb',

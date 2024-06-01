@@ -1,5 +1,7 @@
 import { styled } from '@mui/material/styles';
 import React from 'react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { okaidia, prism } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 import { palette } from '@/styles/baseTheme';
 import { getContrastYIQ } from '@/styles/lib/colors';
@@ -10,6 +12,7 @@ import { getContrastYIQ } from '@/styles/lib/colors';
 // })(({ theme }) => ({
 const Table = styled('table')(({ theme }) => ({
   display: 'inline-table',
+  tableLayout: 'fixed',
   width: '100%',
   border: '1px solid',
   borderRadius: '5px',
@@ -51,6 +54,28 @@ const Table = styled('table')(({ theme }) => ({
 
 const components = {
   table: (props: any) => <Table>{props.children}</Table>,
+  pre: (props: any) => props.children,
+  code: (props: any) => {
+    const { className } = props;
+    const language = className?.replace('language-', '');
+    return (
+      <SyntaxHighlighter
+        className={className}
+        language={language}
+        style={language ? okaidia : prism}
+        wrapLongLines={!!language}
+        showLineNumbers={!!language}
+        // customStyle={{ overflow: 'clip', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}
+        customStyle={{
+          display: language ? 'block' : 'inline',
+          ...(language
+            ? { fontSize: '0.75rem' }
+            : { background: 'unset', padding: 'unset', fontSize: '0.85rem' }),
+        }}
+        {...props}
+      />
+    );
+  },
   // <Typography variant="table">{props.children}</Typography>
   // ),
 };

@@ -102,6 +102,7 @@
     "@types/mime-types": "^2.1.4",
     "@types/node": "^20.12.3",
     "@types/react": "^18.2.74",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
     "autoprefixer": "^10.4.19",

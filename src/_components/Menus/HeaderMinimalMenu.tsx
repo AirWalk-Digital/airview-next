@@ -12,6 +12,7 @@ import { getLogger } from '@/lib/Logger';
 import type { MenuItem, MenuStructure } from '@/lib/Types';
 
 const logger = getLogger().child({ namespace: 'HeaderMinimalMenu' });
+logger.level = 'error';
 
 export interface HeaderMinimalMenuProps {
   menu: MenuStructure[];

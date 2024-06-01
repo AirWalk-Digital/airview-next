@@ -13,7 +13,7 @@ import type {
 } from '@/lib/Types';
 
 const logger = getLogger().child({ module: 'getTiles' });
-
+logger.level = 'error';
 interface Tile {
   frontmatter: {
     tile: string;
@@ -83,7 +83,7 @@ export async function getTiles(config: ContentItem): Promise<{
   const filteredFiles = files.filter(
     (file) =>
       file.path.match(/(_index\.md$|_index\.mdx$|index\.md$|index\.mdx$)/) &&
-      file.path.split('/').length - 1 <= 2,
+      file.path.split('/').length - 1 === 2,
   );
   // logger.debug({ function: 'getPrimaryMenu', msg: 'getDirStructure', files });
 

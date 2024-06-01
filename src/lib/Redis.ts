@@ -3,6 +3,7 @@ import { getLogger } from '@/lib/Logger';
 const Redis = require('ioredis');
 
 const logger = getLogger();
+logger.level = 'error';
 
 let redisInstance: typeof Redis;
 

@@ -11,58 +11,92 @@ import type {
   ContentItem,
   FileContent,
   FrontMatter,
+  InputMenu,
+  LinkItem,
+  MatterData,
+  MenuItem,
+  MenuStructure,
+  RelatedContent,
   SiteConfig,
 } from '@/lib/Types';
 
 const logger = getLogger().child({ namespace: 'lib/Content/loadMenu' });
-
-interface MatterData {
-  title: string;
-  [key: string]: Date | string;
-}
-
-interface Content {
-  label: string;
-  url: string;
-}
-
-interface Directory {
-  [key: string]: Content[];
-}
-
-interface RelatedContent {
-  [key: string]: Directory;
-}
-
-type MenuItem = {
-  label: string;
-  url: string;
-  menuItems?: NestedMenu[];
-};
-
-type NestedMenu = {
-  groupTitle: string;
-  links: { label: string; url: string }[];
-};
-
-type InputMenu = {
-  primary: MenuItem[];
-  relatedContent: {
-    [key: string]: {
-      [key: string]: Content[];
-    };
-  };
-};
+logger.level = 'error';
 
 function capitalizeFirstLetter(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// Helper function for deep merge
+type AnyObject = { [key: string]: any };
+
+function deepMerge(initialTarget: AnyObject, source: AnyObject): AnyObject {
+  let target = initialTarget;
+  Object.keys(source).forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      const sourceValue = source[key];
+      const targetValue = target[key];
+
+      if (
+        typeof sourceValue === 'object' &&
+        !Array.isArray(sourceValue) &&
+        sourceValue !== null
+      ) {
+        const mergedObject = deepMerge(targetValue || {}, sourceValue);
+        target = { ...target, [key]: mergedObject };
+      } else if (Array.isArray(sourceValue)) {
+        if (Array.isArray(targetValue)) {
+          // Merge arrays while avoiding duplicates based on unique properties
+          const uniqueItems: any[] = [];
+          const map = new Map();
+
+          [...targetValue, ...sourceValue].forEach((item) => {
+            const uniqueKey = item.url || item.label; // Use 'url' or 'label' as a unique key, whichever is available
+            if (!map.has(uniqueKey)) {
+              map.set(uniqueKey, true);
+              uniqueItems.push(item);
+            }
+          });
+
+          target = { ...target, [key]: uniqueItems };
+        } else {
+          target = { ...target, [key]: sourceValue };
+        }
+      } else {
+        target = { ...target, [key]: sourceValue };
+      }
+    }
+  });
+  return target;
+}
+
+function deepMergeObj(initialTarget: AnyObject, source: AnyObject): AnyObject {
+  let target = initialTarget;
+  Object.keys(source).forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      const sourceValue = source[key];
+      const targetValue = target[key];
+
+      if (
+        sourceValue instanceof Object &&
+        !Array.isArray(sourceValue) &&
+        targetValue instanceof Object
+      ) {
+        const mergedObject = deepMerge(targetValue, sourceValue);
+        target = { ...target, [key]: mergedObject };
+      } else {
+        target = { ...target, [key]: sourceValue };
+      }
+    }
+  });
+  return target;
+}
+
 export function nestMenu(
   menuInput: InputMenu,
   prefix: string,
-): { menu: MenuItem[] } {
-  const nestedMenu: MenuItem[] = menuInput.primary.map((item) => {
+): { menu: MenuStructure[] } {
+  const nestedMenu: MenuStructure[] = menuInput.primary.map((item) => {
     const urlKey = item.url.slice(0, item.url.lastIndexOf('/'));
     const content = menuInput.relatedContent[urlKey];
 
@@ -70,16 +104,28 @@ export function nestMenu(
     const newItem = { ...item };
     newItem.url = `/${prefix}/${item.url}`;
     if (content) {
-      const menuItems: NestedMenu[] = Object.keys(content).map(
-        (groupTitle) => ({
-          groupTitle: capitalizeFirstLetter(groupTitle),
-          links:
-            content[groupTitle]?.map((link) => ({
+      const menuItems: MenuItem[] = Object.keys(content).map((groupTitle) => {
+        const links =
+          content[groupTitle]
+            ?.filter((link) => {
+              const parts = link.url.split('/');
+              const lastPart = parts[parts.length - 1];
+              return (
+                parts.length === 3 &&
+                ['_index.md', '_index.mdx', 'index.md', 'index.mdx'].includes(
+                  lastPart || '', // Provide a default value of an empty string if lastPart is undefined
+                )
+              );
+            })
+            .map((link) => ({
               label: link.label,
               url: `/${prefix}/${link.url}`,
-            })) ?? [],
-        }),
-      );
+            })) ?? [];
+        return {
+          groupTitle: capitalizeFirstLetter(groupTitle),
+          links,
+        };
+      });
       newItem.menuItems = menuItems;
     }
 
@@ -142,7 +188,7 @@ export function convertToMenu(primary: FileContent[], siteConfig: SiteConfig) {
 
       // Check if the key exists in the relatedContent object
       if (relatedContent && !relatedContent[directory]) {
-        relatedContent[directory] = { chapters: [] as Content[] };
+        relatedContent[directory] = { chapters: [] as LinkItem[] };
       }
       relatedContent[directory]?.chapters!.push({
         label: x.frontmatter.title,
@@ -238,7 +284,7 @@ export async function getMenu(
   if (cachedMenu && cachedMenu.length > 0) {
     logger.info({ function: 'getMenu', msg: '[Cache][HIT]', cachedMenuKey });
     // If the content was found in the cache, return it
-    // return cachedContent;
+    // return cachedMenu;
   }
   logger.info({ function: 'getMenu', msg: '[Cache][MISS]', cachedMenuKey });
   // load the file structure
@@ -328,7 +374,7 @@ export async function loadMenu(
   const primary = await getMenu(branchSha, collection, siteConfig);
   const { relatedContent } = primary;
   // get all related config.
-  let mergedRelatedContent = relatedContent;
+  const mergedRelatedContent = relatedContent;
 
   const getMenuPromises = (collection.collections ?? []).map(
     async (collectionItem: string) => {
@@ -342,11 +388,13 @@ export async function loadMenu(
         ] as ContentItem,
         siteConfig,
       );
+
+      deepMergeObj(mergedRelatedContent, contentFolder.relatedContent);
       // relatedContent[collectionItem] = contentFolder.relatedContent;
-      mergedRelatedContent = {
-        ...mergedRelatedContent,
-        ...contentFolder.relatedContent,
-      };
+      // mergedRelatedContent = {
+      //   ...mergedRelatedContent,
+      //   ...contentFolder.relatedContent,
+      // };
     },
   );
 
@@ -673,49 +721,4 @@ export async function loadMenu(
 //   return {
 //     menuStructure,
 //   };
-// }
-
-// // Helper function for deep merge
-// function deepMerge(target, source) {
-//   for (const key in source) {
-//     if (source.hasOwnProperty(key)) {
-//       if (typeof source[key] === 'object' && !Array.isArray(source[key])) {
-//         target[key] = deepMerge(target[key] || {}, source[key]);
-//       } else if (Array.isArray(source[key])) {
-//         if (Array.isArray(target[key])) {
-//           // Merge arrays while avoiding duplicates based on unique properties
-//           const uniqueItems = [];
-//           const map = new Map();
-
-//           [...target[key], ...source[key]].forEach(item => {
-//             const uniqueKey = item.url || item.label; // Use 'url' or 'label' as a unique key, whichever is available
-//             if (!map.has(uniqueKey)) {
-//               map.set(uniqueKey, true);
-//               uniqueItems.push(item);
-//             }
-//           });
-
-//           target[key] = uniqueItems;
-//         } else {
-//           target[key] = source[key];
-//         }
-//       } else {
-//         target[key] = source[key];
-//       }
-//     }
-//   }
-//   return target;
-// }
-
-// function deepMergeObj(target, source) {
-//   for (const key in source) {
-//     if (source.hasOwnProperty(key)) {
-//       if (source[key] instanceof Object && target[key] instanceof Object) {
-//         deepMerge(target[key], source[key]);
-//       } else {
-//         target[key] = source[key];
-//       }
-//     }
-//   }
-//   return target;
 // }

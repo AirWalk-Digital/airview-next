@@ -179,7 +179,7 @@ export default function TopBar({
           onClick={handleMenuClose}
         >
           {(siteConfig.content.providers || siteConfig.content.services) && (
-            <Link href="/docs/services" sx={{ textDecoration: 'none' }}>
+            <Link href="/docs/providers" sx={{ textDecoration: 'none' }}>
               <MenuItem>Providers & Services</MenuItem>
             </Link>
           )}

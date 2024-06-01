@@ -56,42 +56,42 @@ const LandingPage = () => {
               <LinkCard
                 title="Frameworks & Standards"
                 description="View the compliance frameworks that guide our IT policy as well as standards to help adoption."
-                link="/frameworks"
+                link="/docs/frameworks"
               />
             )}
             {siteConfig.content.services && (
               <LinkCard
                 title="Providers & Services"
                 description="View the catalogue of Services available, complete with patterns, implementation guides and quality controls."
-                link="/services"
+                link="/docs/services"
               />
             )}
             {siteConfig.content.applications && (
               <LinkCard
                 title="Applications"
                 description="Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance."
-                link="/applications"
+                link="/docs/applications"
               />
             )}
             {siteConfig.content.customers && (
               <LinkCard
                 title="Customers & Projects"
                 description="Customers and the projects we've done for them."
-                link="/customers"
+                link="/docs/customers"
               />
             )}
             {siteConfig.content.solutions && (
               <LinkCard
                 title="Solutions"
                 description="Solutions and Propositions."
-                link="/solutions"
+                link="/docs/solutions"
               />
             )}
             {siteConfig.content.products && (
               <LinkCard
                 title="Products"
                 description="Products."
-                link="/products"
+                link="/docs/products"
               />
             )}
           </Grid>

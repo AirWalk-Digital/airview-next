@@ -10,7 +10,7 @@ import { getLogger } from '@/lib/Logger';
 import type { ContentItem } from '@/lib/Types';
 import { loadMenu, nestMenu } from '@/lib/Content/loadMenu';
 const logger = getLogger().child({ namespace: 'docs/page' });
-
+logger.level = 'error';
 export const metadata: Metadata = {
   title: "Airview",
   description: "Airview AI",
@@ -43,12 +43,21 @@ export default async function Page({
       file: file,
     } as ContentItem;
 
+    const menuConfig = (contentConfig : ContentItem) => {
+      if (contentConfig.menu && contentConfig.menu.collection ) {
+        return siteConfig?.content?.[contentConfig?.menu?.collection as keyof typeof siteConfig.content] || contentConfig as ContentItem;
+      } else {
+        return contentConfig;
+      }
+    }
+
     switch (params.path.length) {
       case 0:
         notFound();
       case 1:
         // index page
-        const content = await loadMenu(siteConfig, contentConfig);
+        // const content = await loadMenu(siteConfig, contentConfig);
+        const content = await loadMenu(siteConfig, menuConfig(contentConfig));
         const { menu: menuStructure } = nestMenu(content, 'docs');
         logger.debug({ msg: 'menuStructure: ', menuStructure});
         return (
@@ -79,13 +88,7 @@ export default async function Page({
                   : "";
             }
 
-            const menuConfig = (contentConfig : ContentItem) => {
-              if (contentConfig.menu && contentConfig.menu.collection ) {
-                return siteConfig?.content?.[contentConfig?.menu?.collection as keyof typeof siteConfig.content] || contentConfig as ContentItem;
-              } else {
-                return contentConfig;
-              }
-            }
+            
 
             const content = await loadMenu(siteConfig, menuConfig(contentConfig));
             const { menu: menuStructure } = nestMenu(content, 'docs');
@@ -110,7 +113,7 @@ export default async function Page({
                       menuStructure={menuStructure}
                       loading={loading}
                         context={contentConfig}>
-                <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={loading} />
+                <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={loading} relatedContent={content.relatedContent}/>
                 </MenuWrapper>
               </main>
             );

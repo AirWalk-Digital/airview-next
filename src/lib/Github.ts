@@ -11,6 +11,7 @@ import type { GitHubFile } from '@/lib/Types';
 
 let gitHubInstance: Octokit | undefined;
 const logger = getLogger();
+logger.level = 'fatal';
 
 interface GitHubConfig {
   privateKey: string;
