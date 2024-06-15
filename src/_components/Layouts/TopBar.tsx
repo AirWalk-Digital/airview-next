@@ -144,7 +144,7 @@ export default function TopBar({
         {siteConfig.content?.customers && (
           <Link
             color="inherit"
-            href="/docs/customers"
+            href="/docs/view/default/customers"
             sx={{ textDecoration: 'none' }}
           >
             <Button
@@ -179,22 +179,34 @@ export default function TopBar({
           onClick={handleMenuClose}
         >
           {(siteConfig.content.providers || siteConfig.content.services) && (
-            <Link href="/docs/providers" sx={{ textDecoration: 'none' }}>
+            <Link
+              href="/docs/view/default/providers"
+              sx={{ textDecoration: 'none' }}
+            >
               <MenuItem>Providers & Services</MenuItem>
             </Link>
           )}
           {siteConfig.content?.frameworks && (
-            <Link href="/docs/frameworks" sx={{ textDecoration: 'none' }}>
+            <Link
+              href="/docs/view/default/frameworks"
+              sx={{ textDecoration: 'none' }}
+            >
               <MenuItem>Frameworks & Standards</MenuItem>
             </Link>
           )}
           {siteConfig.content.solutions && (
-            <Link href="/docs/solutions" sx={{ textDecoration: 'none' }}>
+            <Link
+              href="/docs/view/default/solutions"
+              sx={{ textDecoration: 'none' }}
+            >
               <MenuItem>Solutions</MenuItem>
             </Link>
           )}
           {siteConfig.content.products && (
-            <Link href="/docs/products" sx={{ textDecoration: 'none' }}>
+            <Link
+              href="/docs/view/default/products"
+              sx={{ textDecoration: 'none' }}
+            >
               <MenuItem>Products</MenuItem>
             </Link>
           )}

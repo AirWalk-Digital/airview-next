@@ -12,6 +12,7 @@ export interface ContentItem {
   collections?: string[];
   menu?: Menu;
   file?: string;
+  linked?: { repo: string; owner: string; branch: string; path: string };
 }
 
 interface Etherpad {

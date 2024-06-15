@@ -45,7 +45,7 @@ export default function ContentLoader({
       context?.file?.endsWith('.md') ? 'md' : 'mdx',
     );
     return (
-      <MDXProvider components={components}>
+      <MDXProvider components={components(context)}>
         {frontmatter?.title && <h1>{frontmatter.title}</h1>}
         {(Page && <Page />) || (
           <Alert variant="outlined" severity="error">

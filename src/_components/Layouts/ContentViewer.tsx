@@ -25,7 +25,7 @@ import type { ContentItem, RelatedContent } from '@/lib/Types';
 import { loadMDX } from './lib/loadMDX';
 // import { mdComponents } from '../../constants/mdxProvider.js';
 const logger = getLogger().child({ namespace: 'ContentViewer' });
-logger.level = 'debug';
+logger.level = 'error';
 
 type Contributor = {
   authorName: string;
@@ -117,7 +117,7 @@ export function ContentViewer({
     return (
       <AsideAndMainContainer>
         <Main>
-          <MDXProvider components={components}>
+          <MDXProvider components={components(context)}>
             {frontmatter?.title && <h1>{frontmatter.title}</h1>}
             {contributors && <Contributors contributors={contributors} />}
             {(Page && <Page />) || (

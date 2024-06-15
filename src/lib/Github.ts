@@ -11,7 +11,7 @@ import type { GitHubFile } from '@/lib/Types';
 
 let gitHubInstance: Octokit | undefined;
 const logger = getLogger();
-logger.level = 'fatal';
+logger.level = 'info';
 
 interface GitHubConfig {
   privateKey: string;
@@ -143,17 +143,18 @@ export const getBranchSha = async (
     gitHubInstance = createGitHubInstance();
   }
 
-  const cacheKey = `github:getBranch:${owner}:${repo}:${branch}`;
+  const cacheKey = `github:branch:${owner}:${repo}:${branch}`;
   const cachedContent = await cacheRead(cacheKey);
   if (cachedContent) return cachedContent;
-
+  logger.info({ function: 'getBranchSha', cacheKey });
   const { data } = await gitHubInstance.rest.repos.getBranch({
     owner,
     repo,
     branch,
   });
 
-  await cacheWrite(cacheKey, data.commit.sha, 600);
+  const cached = await cacheWrite(cacheKey, data.commit.sha, 6000);
+  logger.debug({ function: 'getBranchSha', cached });
   return data.commit.sha;
 };
 
@@ -179,7 +180,6 @@ async function getCachedFileContent(
   contributors: { authorName: string; authorDate: string }[];
 } | null> {
   // Generate a unique cache key for this file
-  const branchSha = await getBranchSha(owner, repo, branch);
   let cacheKey = '';
   if (sha) {
     cacheKey = `github:content:${owner}:${repo}:${sha}:${path}`;
@@ -200,6 +200,12 @@ async function getCachedFileContent(
           //   cachedContent.encoding as BufferEncoding,
           // );
         }
+        logger.info({
+          function: 'getCachedFileContent',
+          msg: 'no cache by file sha',
+          cacheKey,
+          encoding: cachedContent.encoding,
+        });
         // if (cachedContent.content.type === 'Buffer') {
         //   return Buffer.from(cachedContent.content.data.toString(), 'binary');
         // }
@@ -208,6 +214,7 @@ async function getCachedFileContent(
     }
     return null;
   }
+  const branchSha = await getBranchSha(owner, repo, branch);
   cacheKey = `github:ref:${owner}:${repo}:${branchSha}:${path}`;
   const cachedContent: CachedContent = await cacheRead(cacheKey);
 
@@ -244,10 +251,16 @@ async function getCachedFileContent(
       }
     } catch (error) {
       // logger.info(`[Github][Read/Ref][Error]: ${cacheKey} error: ${error}`);
+      logger.error({ function: 'getCachedFileContent', error, cacheKey });
+
       return null;
     }
   } else {
-    // logger.info(`[Github][Read][MISS/All]: ${cacheKey}`);
+    logger.info({
+      function: 'getCachedFileContent',
+      msg: 'no cached ref',
+      cacheKey,
+    });
     return null;
   }
 
@@ -530,7 +543,7 @@ export async function getDirStructure(
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();
   }
-
+  logger.level = 'fatal';
   const response = await gitHubInstance.repos
     .getContent({
       owner,
@@ -541,7 +554,7 @@ export async function getDirStructure(
     .catch((error) => {
       logger.error({
         function: 'getDirStructure',
-        msg: 'Error retrieving list',
+        msg: 'Error retrieving file or directory',
         path,
         error,
       });

@@ -3,9 +3,10 @@ import React from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { okaidia, prism } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
+import MdxImage from '@/components/Cards/Image';
+import type { ContentItem } from '@/lib/Types';
 import { palette } from '@/styles/baseTheme';
 import { getContrastYIQ } from '@/styles/lib/colors';
-
 // const StatRoot = styled('table', {
 //   name: 'MuiStat', // The component name
 //   slot: 'root', // The slot name
@@ -52,35 +53,38 @@ const Table = styled('table')(({ theme }) => ({
   },
 }));
 
-const components = {
+const components = (baseContext: ContentItem) => ({
   table: (props: any) => <Table>{props.children}</Table>,
   pre: (props: any) => props.children,
+  img: (props: any) => <MdxImage props={props} baseContext={baseContext} />,
   code: (props: any) => {
     const { className } = props;
     const language = className?.replace('language-', '');
     return (
-      <SyntaxHighlighter
-        className={className}
-        language={language}
-        style={language ? okaidia : prism}
-        wrapLongLines={!!language}
-        showLineNumbers={!!language}
-        // customStyle={{ overflow: 'clip', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}
-        customStyle={{
-          // display: language ? 'block' : 'inline',
-          display: 'block',
-          overflow: 'clip',
-          whiteSpace: 'pre-wrap',
-          ...(language
-            ? { fontSize: '0.75rem' }
-            : { background: 'unset', padding: 'unset', fontSize: '0.85rem' }),
-        }}
-        {...props}
-      />
+      <div>
+        <SyntaxHighlighter
+          className={className}
+          language={language}
+          style={language ? okaidia : prism}
+          wrapLongLines={!!language}
+          showLineNumbers={!!language}
+          // customStyle={{ overflow: 'clip', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}
+          customStyle={{
+            // display: language ? 'block' : 'inline',
+            display: 'block',
+            overflow: 'clip',
+            whiteSpace: 'pre-wrap',
+            ...(language
+              ? { fontSize: '0.75rem' }
+              : { background: 'unset', padding: 'unset', fontSize: '0.85rem' }),
+          }}
+          {...props}
+        />
+      </div>
     );
   },
   // <Typography variant="table">{props.children}</Typography>
   // ),
-};
+});
 
 export default components;

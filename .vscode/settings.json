@@ -5,7 +5,7 @@
     "package-lock.json": true
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": [
     "source.addMissingImports",
     "source.fixAll.eslint"
@@ -30,6 +30,10 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "prettier.ignorePath": ".gitignore", // Don't run prettier for files listed in .gitignore
+  "eslint.codeActionsOnSave.mode": "problems",
+  // "prettier.jsxSingleQuote": true,
+  "prettier.singleQuote": true,
+  "jest.runMode": null,
   "i18n-ally.localesPaths": ["src/locales"],
   "i18n-ally.keystyle": "nested",
   "[jsonc]": {

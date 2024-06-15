@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
 
 import TopBar from '@/components/Layouts/TopBar';
-import { HeaderMinimalMenu } from '@/components/Menus';
+import { DummyMenu, HeaderMinimalMenu } from '@/components/Menus';
 import EditorWrapper from '@/features/Mdx/EditorWrapper';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem, MenuStructure } from '@/lib/Types';
@@ -16,7 +16,6 @@ logger.level = 'error';
 
 interface MenuWrapperProps {
   menuStructure?: MenuStructure[];
-  menuComponent: string;
   context: ContentItem;
   loading: boolean;
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -24,9 +23,27 @@ interface MenuWrapperProps {
 
 logger.info('Loading MenuWrapper');
 
+const menuComponent = (context: ContentItem) => {
+  if (context && context.menu && context.menu.component) {
+    switch (context.menu.component) {
+      case 'DummyMenu':
+        return DummyMenu;
+      // case "FullHeaderMenu":
+      //   return FullHeaderMenu;
+      case 'HeaderMinimalMenu':
+        return HeaderMinimalMenu;
+      // case "ListMenu":
+      //   return ListMenu;
+      default:
+        return HeaderMinimalMenu;
+    }
+  } else {
+    return DummyMenu;
+  }
+};
+
 export default function MenuWrapper({
   menuStructure,
-  menuComponent,
   context,
   loading,
   children,
@@ -37,17 +54,16 @@ export default function MenuWrapper({
   // const isEditing = Boolean(searchParams.get('edit'));
   // logger.debug({ isEditing });
 
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(
+    menuComponent(context) !== DummyMenu,
+  );
   const [isEditing, setIsEditing] = useState(false);
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   const router = useRouter();
   const pathname = usePathname();
 
-  const MenuComponent =
-    menuComponent === 'HeaderMinimalMenu'
-      ? HeaderMinimalMenu
-      : HeaderMinimalMenu;
+  const MenuComponent = menuComponent(context);
 
   const handleEdit = () => {
     // const isEditing = Boolean(searchParams.get('edit'));
