@@ -10,6 +10,7 @@ import type {
   FileContent,
   FrontMatter,
   GitHubFile,
+  MatterData,
 } from '@/lib/Types';
 
 const logger = getLogger().child({ module: 'getTiles' });
@@ -23,11 +24,6 @@ interface Tile {
   };
   file: GitHubFile;
   [key: string]: any;
-}
-
-interface MatterData {
-  title: string;
-  [key: string]: Date | string;
 }
 
 export async function getTiles(config: ContentItem): Promise<{

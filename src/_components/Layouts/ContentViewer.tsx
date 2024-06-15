@@ -25,7 +25,7 @@ import type { ContentItem, RelatedContent } from '@/lib/Types';
 import { loadMDX } from './lib/loadMDX';
 // import { mdComponents } from '../../constants/mdxProvider.js';
 const logger = getLogger().child({ namespace: 'ContentViewer' });
-logger.level = 'error';
+logger.level = 'debug';
 
 type Contributor = {
   authorName: string;
@@ -92,6 +92,19 @@ export function ContentViewer({
     router.push(`${currentPath}/print`);
   }
 
+  function handleContentChange(callback: any) {
+    // add '/related_content/' and the callback file to the path
+    router.push(`${currentPath}/related_content/${callback}`);
+  }
+
+  function handlePageReset() {
+    // reset the path to the current path before /related_content
+    const rootPath = currentPath.split('/related_content')[0];
+    if (rootPath) {
+      router.push(rootPath);
+    }
+  }
+
   if (loading) {
     return <ContentSkeleton topBarHeight={topBarHeight} />;
   }
@@ -143,12 +156,9 @@ export function ContentViewer({
           <ContentMenu
             content={relatedContent}
             context={context}
-            handleContentChange={() => {}}
-            handlePageReset={() => {}}
+            handleContentChange={(callback) => handleContentChange(callback)}
+            handlePageReset={() => handlePageReset()}
             loading={false}
-            // handleContentChange={handleContentChange}
-            // handlePageReset={handlePageReset}
-            // file={context.file}
           />
           {/*        {sideComponent && <SideComponent />} */}
           {frontmatter?.tableOfContents && (

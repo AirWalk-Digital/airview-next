@@ -255,13 +255,21 @@ async function getCachedFileContent(
   return null;
 }
 
-async function getGitHubFileContent(
-  owner: string,
-  repo: string,
-  branch: string,
-  path: string,
-  branchShaParam: string | undefined = undefined,
-): Promise<{
+interface GitHubFileContentOptions {
+  owner: string;
+  repo: string;
+  path: string;
+  branchShaParam?: string;
+  branch?: string;
+}
+
+async function getGitHubFileContent({
+  owner,
+  repo,
+  path,
+  branchShaParam,
+  branch,
+}: GitHubFileContentOptions): Promise<{
   content: Buffer | undefined;
   encoding: string;
   contributors: { authorName: string; authorDate: string }[];
@@ -279,26 +287,41 @@ async function getGitHubFileContent(
     branchShaParam,
   });
   let branchSha = null;
-  if (!branchShaParam) {
+  if (!branchShaParam && branch) {
     branchSha = await getBranchSha(owner, repo, branch);
-  } else {
+  } else if (branchShaParam) {
     branchSha = branchShaParam;
   }
   let response;
   try {
-    response = (await gitHubInstance.repos.getContent({
-      owner,
-      repo,
-      path,
-      ref: branchSha,
-    })) as {
-      data: {
-        encoding: string;
-        sha: string;
-        content?: string;
-        download_url?: string;
+    if (branchSha) {
+      response = (await gitHubInstance.repos.getContent({
+        owner,
+        repo,
+        path,
+        ref: branchSha,
+      })) as {
+        data: {
+          encoding: string;
+          sha: string;
+          content?: string;
+          download_url?: string;
+        };
       };
-    };
+    } else {
+      response = (await gitHubInstance.repos.getContent({
+        owner,
+        repo,
+        path,
+      })) as {
+        data: {
+          encoding: string;
+          sha: string;
+          content?: string;
+          download_url?: string;
+        };
+      };
+    }
   } catch (error: any) {
     logger.error({
       function: 'getGitHubFileContent',
@@ -438,15 +461,24 @@ async function getGitHubFileContent(
     return null;
   }
 }
+
+interface FileContentOptions {
+  owner: string;
+  repo: string;
+  path: string;
+  fileSha?: string;
+  branchSha?: string;
+  branch?: string;
+}
 // Function to get a file content
-export async function getFileContent(
-  owner: string,
-  repo: string,
-  branch: string,
-  path: string,
-  fileSha: string | undefined = undefined,
-  branchSha: string | undefined = undefined,
-): Promise<{
+export async function getFileContent({
+  owner,
+  repo,
+  path,
+  fileSha,
+  branchSha,
+  branch,
+}: FileContentOptions): Promise<{
   content: Buffer | undefined;
   encoding: string;
   contributors: {
@@ -457,25 +489,29 @@ export async function getFileContent(
   // if the SHA is passed, this is a specific revision of a file.
   // if not, pull back the generic revision of the file, stored with the branch sha instead.
 
-  const cachedContent = await getCachedFileContent(
-    owner,
-    repo,
-    branch,
-    path,
-    fileSha,
-  );
-  // logger.info(`github:getFileContent:getCachedFileContent ${cachedContent}`);
-  if (cachedContent) {
-    logger.info(`[GitHub][getGitHubFileContent][Cache/Hit]: ${path}`);
-    return cachedContent;
+  if (branch) {
+    const cachedContent = await getCachedFileContent(
+      owner,
+      repo,
+      branch,
+      path,
+      fileSha,
+    );
+    // logger.info(`github:getFileContent:getCachedFileContent ${cachedContent}`);
+    if (cachedContent) {
+      logger.info(`[GitHub][getGitHubFileContent][Cache/Hit]: ${path}`);
+      return cachedContent;
+    }
+    const file = await getGitHubFileContent({
+      owner,
+      repo,
+      path,
+      branchShaParam: branchSha,
+      branch,
+    });
+    return file;
   }
-  const file = await getGitHubFileContent(owner, repo, branch, path, branchSha);
-
-  // const unencodedContent = Buffer.from(
-  //   file?.content?.toString() || '',
-  //   'binary',
-  // );
-
+  const file = await getGitHubFileContent({ owner, repo, path });
   return file;
 }
 

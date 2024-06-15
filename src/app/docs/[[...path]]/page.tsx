@@ -1,5 +1,6 @@
 
 import type { Metadata } from 'next'
+import matter from 'gray-matter';
 
 import React from "react";
 import { IndexTiles, LandingPage, MenuWrapper, ContentViewer, ContentLoader, ContentPrint } from "@/components/Layouts";
@@ -7,7 +8,7 @@ import { siteConfig } from "../../../../site.config";
 import { notFound } from "next/navigation";
 import { getFileContent } from "@/lib/Github";
 import { getLogger } from '@/lib/Logger';
-import type { ContentItem } from '@/lib/Types';
+import type { ContentItem, MatterData } from '@/lib/Types';
 import { loadMenu, nestMenu } from '@/lib/Content/loadMenu';
 const logger = getLogger().child({ namespace: 'docs/page' });
 logger.level = 'error';
@@ -15,6 +16,47 @@ export const metadata: Metadata = {
   title: "Airview",
   description: "Airview AI",
 };
+
+
+async function checkFrontmatter(content: string, context: ContentItem) {
+  const matterData = matter(content, {
+              excerpt: false,
+            }).data as MatterData;
+  if (matterData) {
+    Object.keys(matterData).forEach((key) => {
+      if (
+        matterData &&
+        matterData[key] &&
+        matterData[key] instanceof Date
+      ) {
+        matterData[key] = (matterData[key] as Date).toISOString();
+      }
+    });
+  }
+  if (matterData && matterData.external_repo && matterData.external_owner && matterData.external_path && matterData.git_provider) {
+    const { external_repo, external_owner, external_path } = matterData;
+    const owner = external_owner as string;
+    const repo = external_repo as string;
+    const branch = context.branch
+    const file = external_path as string;
+    let pageContent;
+    try {
+      pageContent = await getFileContent({owner, repo, path: file});
+    } catch (error) {
+      logger.error({ msg: 'checkFrontmatter: ', error});
+    }
+    let linkedContent = "";
+    if (pageContent && pageContent.content ) {
+      linkedContent = pageContent?.content
+        ? Buffer.from(pageContent.content).toString()
+        : "";
+    }
+    return { content: linkedContent, context: { ...context, owner, repo, branch, file } };
+    
+  } else {
+    return { content, context}
+  }
+}
 
 export default async function Page({
   params,
@@ -33,7 +75,18 @@ export default async function Page({
       path = path.slice(0, -1);
       isPrint = true;
     }
-    const file = path.join("/") as string;
+
+    let file = '';
+
+    // if 'related_config' is somewhere in the path, then the file is the last element in the path
+    if (path.includes('related_content')) {
+      // join all the parts after related_config
+      file = path.slice(path.indexOf('related_content') + 1).join("/") as string;
+    } else {
+      file = path.join("/") as string;
+    }
+
+    // const file = path.join("/") as string;
     let pageContent;
     let pageContentText;
     let loading = false;
@@ -81,13 +134,17 @@ export default async function Page({
 
           if (contentConfig?.owner && contentConfig?.repo && contentConfig?.branch && file) {
             const { owner, repo, branch } = contentConfig;
-            pageContent = await getFileContent(owner, repo, branch, file);
+            pageContent = await getFileContent({owner, repo, path: file, branch});
             if (pageContent && pageContent.content ) {
               pageContentText = pageContent?.content
                   ? Buffer.from(pageContent.content).toString()
                   : "";
             }
 
+            const { content: linkedPageContentText, context } = await checkFrontmatter(pageContentText || '', contentConfig); // check for frontmatter context
+            pageContentText = linkedPageContentText;
+            
+            logger.debug({ msg: 'context: ', context});
             
 
             const content = await loadMenu(siteConfig, menuConfig(contentConfig));
@@ -113,7 +170,7 @@ export default async function Page({
                       menuStructure={menuStructure}
                       loading={loading}
                         context={contentConfig}>
-                <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={loading} relatedContent={content.relatedContent}/>
+                <ContentViewer pageContent={pageContentText} contributors={pageContent.contributors} context={ contentConfig } loading={loading} relatedContent={content.relatedContent} />
                 </MenuWrapper>
               </main>
             );

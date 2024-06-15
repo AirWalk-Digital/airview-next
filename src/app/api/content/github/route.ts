@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
 
     //   return NextResponse.json({ files });
     // }
-    const data = await getFileContent(owner, repo, branch, filepath);
+    const data = await getFileContent({ owner, repo, branch, path: filepath });
     const extension = path.extname(filepath);
     const contentType = mime.lookup(extension) || 'application/octet-stream';
     // logger.info(`[GET /api/content/github][data]: ${util.inspect(data)}`);
