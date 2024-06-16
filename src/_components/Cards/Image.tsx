@@ -49,14 +49,25 @@ function getAPIUrl(src: string, baseContext: ContentItem) {
     }
     // get directory from the file path
 
-    if (baseContext.file) {
-      const dir = path.dirname(baseContext.file);
+    if (baseContext.linked) {
+      if (baseContext.linked.path) {
+        const dir = path.dirname(baseContext.linked.path);
 
-      if (!dir.startsWith('.')) {
-        newSrc = `${dir}/${newSrc}`;
-      } // ignore base paths
+        if (!dir.startsWith('.')) {
+          newSrc = `${dir}/${newSrc}`;
+        } // ignore base paths
+      }
+      url = `/api/content/github?owner=${baseContext.linked.owner}&repo=${baseContext.linked.repo}&path=${newSrc}&branch=${baseContext.linked.branch}`;
+    } else {
+      if (baseContext.file) {
+        const dir = path.dirname(baseContext.file);
+
+        if (!dir.startsWith('.')) {
+          newSrc = `${dir}/${newSrc}`;
+        } // ignore base paths
+      }
+      url = `/api/content/github?owner=${baseContext.owner}&repo=${baseContext.repo}&path=${newSrc}&branch=${baseContext.branch}`;
     }
-    url = `/api/content/github?owner=${baseContext.owner}&repo=${baseContext.repo}&path=${newSrc}&branch=${baseContext.branch}`;
     // console.debug('mdxProvider:MdxImage:src: ', src)
   } else if (src.slice(0, 1) === '/') {
     // it's an absolute URL and not from Github or SharePoint
@@ -124,7 +135,7 @@ function ImageComponent({ src, alt }: { src: string; alt: string }) {
           height={imageSize.height}
           width={imageSize.width}
           src={src}
-          alt={alt || 'n/a'}
+          alt={alt || ''}
           onLoad={handleImageLoaded}
           unoptimized
           style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%' }}
@@ -156,7 +167,7 @@ function ImageComponent({ src, alt }: { src: string; alt: string }) {
             height={imageSize.height}
             width={imageSize.width}
             src={src}
-            alt={alt || 'n/a'}
+            alt={alt || ''}
             unoptimized
           />
         </DialogContent>
