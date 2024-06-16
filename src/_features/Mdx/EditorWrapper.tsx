@@ -11,13 +11,19 @@ import { getLogger } from '@/lib/Logger';
 import type { ContentItem } from '@/lib/Types';
 
 const logger = getLogger().child({ namespace: 'EditorWrapper' });
-logger.level = 'warn';
+logger.level = 'info';
 
 interface EditorWrapperProps {
+  defaultContext: ContentItem | undefined;
   context: ContentItem;
+  branches: { name: string; commit: { sha: string }; protected: boolean }[];
 }
 
-export default function EditorWrapper({ context }: EditorWrapperProps) {
+export default function EditorWrapper({
+  defaultContext,
+  context,
+  branches,
+}: EditorWrapperProps) {
   const editorRef = useRef<MDXEditorMethods | null>(null);
   const searchParams = `owner=${context.owner}&repo=${context.repo}&path=${context.file}&branch=${context.branch}`;
   const [mdx, setMdx] = useState('');
@@ -31,63 +37,23 @@ export default function EditorWrapper({ context }: EditorWrapperProps) {
 
     fetchData();
   }, [context, searchParams]);
+
+  // const router = useRouter();
+  // const pathname = usePathname();
+  // const handleContextUpdate = (newContext: any) => {
+  //   logger.info('handleContextUpdate', newContext);
+  //   const pathnameArray = pathname.split('/');
+  //   pathnameArray[2] = newContext.branch;
+  //   const newPathname = pathnameArray.join('/');
+  //   router.push(newPathname);
+  // };
+
   return (
     <>
       <ControlBar
-        branches={[
-          {
-            commit: {
-              sha: '53bfd8457509778140caa47b01c6476d661f1b34',
-              url: 'https://api.github.com/repos/AirWalk-Digital/airwalk_patterns/commits/53bfd8457509778140caa47b01c6476d661f1b34',
-            },
-            name: 'main',
-            protected: true,
-          },
-          {
-            commit: {
-              sha: '53bfd8457509778140caa47b01c6476d661f1b34',
-              url: 'https://api.github.com/repos/AirWalk-Digital/airwalk_patterns/commits/53bfd8457509778140caa47b01c6476d661f1b34',
-            },
-            name: 'branch-1',
-            protected: false,
-          },
-          {
-            commit: {
-              sha: '09a01dc4e148c35412d3a6a00a384930a41b813b',
-              url: 'https://api.github.com/repos/AirWalk-Digital/airwalk_patterns/commits/09a01dc4e148c35412d3a6a00a384930a41b813b',
-            },
-            name: 'branch-2',
-            protected: false,
-          },
-          {
-            commit: {
-              sha: '7080423b89568b0427cb781f8b753f52fbc394e0',
-              url: 'https://api.github.com/repos/AirWalk-Digital/airwalk_patterns/commits/7080423b89568b0427cb781f8b753f52fbc394e0',
-            },
-            name: 'branch-3',
-            protected: false,
-          },
-        ]}
-        collection={{
-          base_branch: 'main',
-          branch: 'main',
-          collections: ['services'],
-          owner: 'airwalk-digital',
-          path: 'providers',
-          reference: 'provider',
-          repo: 'airwalk_patterns',
-          source: 'github',
-        }}
-        context={{
-          base_branch: 'main',
-          branch: 'main',
-          collections: ['services'],
-          owner: 'airwalk-digital',
-          path: 'providers',
-          reference: 'provider',
-          repo: 'airwalk_patterns',
-          source: 'github',
-        }}
+        branches={branches}
+        collection={defaultContext}
+        context={context}
         fetchBranches={() => {}}
         handleAdd={() => {}}
         handleEdit={() => {}}
@@ -96,7 +62,7 @@ export default function EditorWrapper({ context }: EditorWrapperProps) {
         handlePresentation={() => {}}
         handlePrint={() => {}}
         // handleRefresh={() => {}}
-        onContextUpdate={() => {}}
+        // onContextUpdate={handleContextUpdate}
         open
         editMode
         top={65}

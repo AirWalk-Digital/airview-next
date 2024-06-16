@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem } from '@/lib/Types';
 import EditorWrapper from '@/features/Mdx/EditorWrapper';
+import { getBranches } from '@/lib/Github';
 
 const logger = getLogger().child({ namespace: 'docs/page/@edit' });
 logger.level = 'info';
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 export default async function Page({
   params,
 }: {
-  params: { path?: string[] };
+  params: { mode: 'view' | 'edit' | 'print'; branch: string; path: string[] };
 }) {
   const topBarHeight = 65;
   if (
@@ -39,11 +40,16 @@ export default async function Page({
     }
 
     const contentKey = params.path[0] as keyof typeof siteConfig.content;
+    const branch = () =>
+      params.branch === 'default'
+        ? siteConfig?.content?.[contentKey]?.branch
+        : params.branch;
     const contentConfig = {
       ...siteConfig?.content?.[contentKey],
       file: file,
+      branch: branch(),
     } as ContentItem;
-
+    const branches = await getBranches(contentConfig.owner, contentConfig.repo);
     return (
       <main>
         <TopBar
@@ -61,7 +67,11 @@ export default async function Page({
               paddingLeft: 0,
             }}
           >
-            <EditorWrapper context={contentConfig} />
+            <EditorWrapper
+              defaultContext={siteConfig.content[contentKey]}
+              context={contentConfig}
+              branches={branches}
+            />
           </div>
         </Suspense>
       </main>

@@ -16,8 +16,13 @@ import {
 } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
+import { getLogger } from '@/lib/Logger';
+
+const logger = getLogger().child({ namespace: 'ControlBar' });
+logger.level = 'info';
 export interface ControlBarProps {
   open: boolean;
   // height: number;
@@ -29,7 +34,7 @@ export interface ControlBarProps {
   context: any;
   branches: any[];
   top?: number;
-  onContextUpdate: (context: any) => void;
+  // onContextUpdate: (context: any) => void;
   editMode: boolean;
   fetchBranches?: (collection: any) => void;
   handleNewBranch?: () => void;
@@ -37,14 +42,14 @@ export interface ControlBarProps {
 }
 
 interface BranchSelectorProps {
-  onBranchChange: (event: any, value: any) => void;
+  // onBranchChange: (event: any, value: any) => void;
   branches: any[];
   branch: any;
   collection: any;
 }
 
 const BranchSelector: React.FC<BranchSelectorProps> = ({
-  onBranchChange,
+  // onBranchChange,
   branches,
   branch,
   collection,
@@ -55,6 +60,16 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
   } else {
     error = true;
   }
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const onBranchChange = (value: any) => {
+    logger.info('handleContextUpdate', value);
+    const pathnameArray = pathname.split('/');
+    pathnameArray[3] = value;
+    const newPathname = pathnameArray.join('/');
+    router.push(newPathname);
+  };
 
   return (
     <Stack spacing={2} sx={{ width: 300 }}>
@@ -88,7 +103,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   context,
   branches,
   top = '64px',
-  onContextUpdate,
+  // onContextUpdate,
   editMode,
   fetchBranches = () => {},
   handleNewBranch = () => {},
@@ -109,9 +124,9 @@ export const ControlBar: React.FC<ControlBarProps> = ({
 
   const onBranchToggle = async (state = 'ignore') => {
     if (changeBranch) {
-      const newCollection = { ...collection };
+      // const newCollection = { ...collection };
       setBranch(collection.branch);
-      onContextUpdate(newCollection);
+      // onContextUpdate(newCollection);
       if (typeof window !== 'undefined') {
         const url = new URL(window.location.href);
         if (url.searchParams.has('branch')) {
@@ -130,13 +145,13 @@ export const ControlBar: React.FC<ControlBarProps> = ({
     }
   };
 
-  const onBranchChange = async (value: any) => {
-    if (value) {
-      const newContext = { ...collection, branch: value };
-      setBranch(value);
-      onContextUpdate(newContext);
-    }
-  };
+  // const onBranchChange = async (value: any) => {
+  //   if (value) {
+  //     const newContext = { ...collection, branch: value };
+  //     setBranch(value);
+  //     onContextUpdate(newContext);
+  //   }
+  // };
 
   const handlePresentationClick = () => {
     if (typeof handlePresentation === 'function') {
@@ -220,7 +235,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
               <FormControlLabel
                 control={
                   <BranchSelector
-                    onBranchChange={onBranchChange}
+                    // onBranchChange={onBranchChange}
                     branches={branches}
                     branch={branch}
                     collection={collection}

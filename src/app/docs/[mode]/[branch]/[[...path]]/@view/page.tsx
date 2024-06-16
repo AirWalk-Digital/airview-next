@@ -63,7 +63,7 @@ async function checkFrontmatter(content: string, context: ContentItem) {
 export default async function Page({
   params,
 }: {
-  params: { path?: string[] };
+  params: { mode: 'view' | 'edit' | 'print'; branch: string; path: string[] };
 }) {
   if (
     params.path &&
@@ -89,9 +89,14 @@ export default async function Page({
     let pageContentText;
     let loading = false;
     const contentKey = params.path[0] as keyof typeof siteConfig.content;
+    const branch = () =>
+      params.branch === 'default'
+        ? siteConfig?.content?.[contentKey]?.branch
+        : params.branch;
     const contentConfig = {
       ...siteConfig?.content?.[contentKey],
       file: file,
+      branch: branch(),
     } as ContentItem;
 
     const menuConfig = (contentConfig: ContentItem) => {

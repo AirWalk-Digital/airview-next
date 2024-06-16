@@ -14,12 +14,18 @@ export default {
   title: 'App Bar/ControlBar',
   component: ControlBar,
   tags: ['autodocs'],
-  parameters: { actions: { argTypesRegex: '^on.*|^handle*' } },
+  parameters: {
+    actions: { argTypesRegex: '^on.*|^handle*' },
+    nextjs: {
+      appDirectory: true,
+    },
+  },
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
     result: { control: { type: 'radio' }, options: ['success', 'error'] },
     // backgroundColor: { control: 'color' },
   },
+
   args: {
     handleRefresh: fn(),
     handlePrint: fn(),
@@ -155,10 +161,10 @@ export const DefaultBranch = {
 const Template: StoryFn<StorybookControlBar> = (args) => {
   // const [collection, setCollection] = useState(dummyCollection);
   const [editMode, setEditMode] = useState(args.editMode || false);
-  const [context, setContext] = useState({
+  const context = {
     ...args.context,
     branch: 'main',
-  });
+  };
 
   // function fn()() {}
 
@@ -167,9 +173,9 @@ const Template: StoryFn<StorybookControlBar> = (args) => {
     fn();
   };
 
-  function onContextUpdate(newCollection: ExtendedContentItem) {
-    setContext(newCollection);
-  }
+  // function onContextUpdate(newCollection: ExtendedContentItem) {
+  //   setContext(newCollection);
+  // }
 
   function dummyDelay() {
     fn();
@@ -194,7 +200,7 @@ const Template: StoryFn<StorybookControlBar> = (args) => {
       handlePresentation={() => fn()}
       handlePrint={() => fn()}
       handleNewBranch={() => fn()}
-      onContextUpdate={() => onContextUpdate}
+      // onContextUpdate={() => onContextUpdate}
       collection={args.collection}
       context={context}
       branches={args.branches}

@@ -6,7 +6,6 @@ import React, { Suspense, useState } from 'react';
 
 import TopBar from '@/components/Layouts/TopBar';
 import { DummyMenu, HeaderMinimalMenu } from '@/components/Menus';
-import EditorWrapper from '@/features/Mdx/EditorWrapper';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem, MenuStructure } from '@/lib/Types';
 
@@ -134,30 +133,18 @@ export default function MenuWrapper({
         />
       )}
       <Suspense fallback={<p>Loading...</p>}>
-        {isEditing && (
-          <div
-            style={{
-              marginTop: topBarHeight,
-              paddingLeft: !menuOpen || loading ? 0 : navDrawerWidth,
-            }}
-          >
-            <EditorWrapper context={context} />
-          </div>
-        )}
-        {!isEditing && (
-          <div
-            style={{
-              marginTop: topBarHeight,
-              paddingLeft: !menuOpen || loading ? 0 : navDrawerWidth,
-            }}
-          >
-            {/* <Box sx={{ px: '2%' }} > */}
-            <Container sx={{ maxHeight: '100vh', pt: '2%', px: '2%' }}>
-              {children && children}
-            </Container>
-            {/* </Box> */}
-          </div>
-        )}
+        <div
+          style={{
+            marginTop: topBarHeight,
+            paddingLeft: !menuOpen || loading ? 0 : navDrawerWidth,
+          }}
+        >
+          {/* <Box sx={{ px: '2%' }} > */}
+          <Container sx={{ maxHeight: '100vh', pt: '2%', px: '2%' }}>
+            {children && children}
+          </Container>
+          {/* </Box> */}
+        </div>
       </Suspense>
     </>
   );
