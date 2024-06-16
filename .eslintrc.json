@@ -58,6 +58,7 @@
           "error",
           {
             "singleQuote": true,
+            "jsxSingleQuote": true,
             "endOfLine": "auto"
           }
         ], // Avoid conflict rule between Prettier and Airbnb Eslint

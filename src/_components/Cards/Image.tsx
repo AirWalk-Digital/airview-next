@@ -131,7 +131,7 @@ function ImageComponent({ src, alt }: { src: string; alt: string }) {
         onClick={handleClickOpen}
       >
         <NextImage
-          sizes="100vw"
+          sizes='100vw'
           height={imageSize.height}
           width={imageSize.width}
           src={src}
@@ -143,7 +143,7 @@ function ImageComponent({ src, alt }: { src: string; alt: string }) {
       </Box>
       <Dialog open={open} onClose={handleClose} fullScreen>
         <DialogActions>
-          <IconButton color="primary" onClick={handleClose}>
+          <IconButton color='primary' onClick={handleClose}>
             <CloseIcon />
           </IconButton>
         </DialogActions>
