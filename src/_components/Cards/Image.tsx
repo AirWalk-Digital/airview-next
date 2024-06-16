@@ -141,12 +141,7 @@ function ImageComponent({ src, alt }: { src: string; alt: string }) {
           style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%' }}
         />
       </Box>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        fullWidth
-        sx={{ maxWidth: '90%' }}
-      >
+      <Dialog open={open} onClose={handleClose} fullScreen>
         <DialogActions>
           <IconButton color="primary" onClick={handleClose}>
             <CloseIcon />
