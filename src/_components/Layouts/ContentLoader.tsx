@@ -42,13 +42,13 @@ export default function ContentLoader({
   if (pageContent && context) {
     const { mdxContent: Page, frontmatter } = loadMDX(
       pageContent,
-      context?.file?.endsWith('.md') ? 'md' : 'mdx',
+      context?.file?.endsWith('.md') ? 'md' : 'mdx'
     );
     return (
       <MDXProvider components={components(context)}>
         {frontmatter?.title && <h1>{frontmatter.title}</h1>}
         {(Page && <Page />) || (
-          <Alert variant="outlined" severity="error">
+          <Alert variant='outlined' severity='error'>
             No content.
           </Alert>
         )}
@@ -56,7 +56,7 @@ export default function ContentLoader({
     );
   }
   return (
-    <Alert variant="outlined" severity="error">
+    <Alert variant='outlined' severity='error'>
       No content.
     </Alert>
   );

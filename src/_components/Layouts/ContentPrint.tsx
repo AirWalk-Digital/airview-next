@@ -79,24 +79,24 @@ export default function ContentPrint({ children }: PagedOutputProps) {
       )}
       <Box
         onClick={() => handleClose()}
-        role="presentation"
+        role='presentation'
         sx={{ position: 'fixed', top: 16, right: 16, displayPrint: 'none' }}
       >
-        <Fab size="small" aria-label="scroll back to top">
+        <Fab size='small' aria-label='scroll back to top'>
           <CloseIcon />
         </Fab>
       </Box>
       <Box
         onClick={() => handlePrint()}
-        role="presentation"
+        role='presentation'
         sx={{ position: 'fixed', top: 16, right: 70, displayPrint: 'none' }}
       >
-        <Fab size="small" aria-label="scroll back to top">
+        <Fab size='small' aria-label='scroll back to top'>
           <PrintIcon />
         </Fab>
       </Box>
 
-      <div className="pagedjs_page" ref={previewContainer}>
+      <div className='pagedjs_page' ref={previewContainer}>
         {' '}
       </div>
       <div ref={mdxContainer} style={{ display: 'none' }}>

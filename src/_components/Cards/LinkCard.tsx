@@ -16,7 +16,7 @@ const LinkCard: React.FC<LinkCardProps> = ({ title, description, link }) => {
   return (
     <Grid item xs={4} md={4} maxWidth={300}>
       <Paper
-        variant="outlined"
+        variant='outlined'
         sx={{
           height: '100%',
           borderRadius: '16px',
@@ -25,18 +25,18 @@ const LinkCard: React.FC<LinkCardProps> = ({ title, description, link }) => {
           flexDirection: 'column',
         }}
       >
-        <Typography variant="h5" component="h5" gutterBottom>
+        <Typography variant='h5' component='h5' gutterBottom>
           {title}
         </Typography>
-        <Typography variant="body2" gutterBottom>
+        <Typography variant='body2' gutterBottom>
           {description}
         </Typography>
         <Box sx={{ flex: 1 }} />
         <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
           <Link href={link} sx={{ textDecoration: 'none' }}>
             <Button
-              variant="outlined"
-              color="primary"
+              variant='outlined'
+              color='primary'
               sx={{ display: 'block', mt: '3%' }}
             >
               View

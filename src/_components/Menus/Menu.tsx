@@ -49,14 +49,14 @@ export const Menu: FC<MenuProps> = ({
   ...rest
 }) => {
   const [collapsed, setCollapsed] = useState(
-    collapsible ? initialCollapsed : false,
+    collapsible ? initialCollapsed : false
   );
 
   logger.info('menuItems', menuItems);
 
   return (
     <Box
-      component="nav"
+      component='nav'
       sx={{
         ...(fetching && {
           opacity: 0.5,
@@ -67,7 +67,7 @@ export const Menu: FC<MenuProps> = ({
       {...rest}
     >
       <Box
-        component="header"
+        component='header'
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -77,16 +77,16 @@ export const Menu: FC<MenuProps> = ({
       >
         <Typography
           component={menuTitleElement as React.ElementType}
-          variant="subtitle2"
+          variant='subtitle2'
           sx={{ display: 'block', flex: '1 1 auto', fontSize: 16 }}
         >
-          {loading ? <Skeleton width="90%" /> : menuTitle && menuTitle}
+          {loading ? <Skeleton width='90%' /> : menuTitle && menuTitle}
         </Typography>
 
         {collapsible && (
           <IconButton
             onClick={() => setCollapsed((prevState) => !prevState)}
-            size="medium"
+            size='medium'
             aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
             disabled={loading}
             sx={{
@@ -96,9 +96,9 @@ export const Menu: FC<MenuProps> = ({
             }}
           >
             {collapsed ? (
-              <KeyboardArrowRightIcon fontSize="inherit" />
+              <KeyboardArrowRightIcon fontSize='inherit' />
             ) : (
-              <KeyboardArrowDownIcon fontSize="inherit" />
+              <KeyboardArrowDownIcon fontSize='inherit' />
             )}
           </IconButton>
         )}
@@ -109,8 +109,8 @@ export const Menu: FC<MenuProps> = ({
           <Box aria-hidden={collapsed} key={groupTitle}>
             {groupTitle && (
               <Typography
-                component="span"
-                variant="subtitle2"
+                component='span'
+                variant='subtitle2'
                 sx={{
                   display: 'block',
                   marginTop: 2,
@@ -120,11 +120,11 @@ export const Menu: FC<MenuProps> = ({
                   fontSize: 12,
                 }}
               >
-                {loading ? <Skeleton width="90%" /> : groupTitle}
+                {loading ? <Skeleton width='90%' /> : groupTitle}
               </Typography>
             )}
             <Box
-              component="ul"
+              component='ul'
               sx={{
                 margin: 0,
                 marginTop: 2,
@@ -139,13 +139,13 @@ export const Menu: FC<MenuProps> = ({
             >
               {loading
                 ? [...Array(6)].map((item) => (
-                    <Skeleton key={item} component="li" />
+                    <Skeleton key={item} component='li' />
                   ))
                 : links?.map(({ label, url }) => {
                     return (
-                      <Box component="li" key={`${label}+${url}`}>
+                      <Box component='li' key={`${label}+${url}`}>
                         <Link
-                          underline="hover"
+                          underline='hover'
                           style={{
                             textDecoration: 'hover',
                             color: 'text.secondary',

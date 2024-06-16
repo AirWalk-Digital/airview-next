@@ -44,5 +44,6 @@
   },
   "prettier.jsxSingleQuote": true,
   "eslint.codeActionsOnSave.rules": null,
-  "prettier.singleQuote": true
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5"
 }

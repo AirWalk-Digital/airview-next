@@ -15,7 +15,7 @@ interface ServiceTileProps {
 const ServiceTile: React.FC<ServiceTileProps> = ({ frontmatter, file }) => {
   return (
     <Grid item xs={3} md={3} maxWidth={300} sx={{ mb: '20px' }}>
-      <Link href={file.replace('/index.mdx', '')} underline="none">
+      <Link href={file.replace('/index.mdx', '')} underline='none'>
         {/* <Box
           sx={{
             bgcolor: 'background.paper',
@@ -30,7 +30,7 @@ const ServiceTile: React.FC<ServiceTileProps> = ({ frontmatter, file }) => {
         >
          */}
         <Paper
-          variant="outlined"
+          variant='outlined'
           sx={{
             height: '100%',
             borderRadius: '16px',

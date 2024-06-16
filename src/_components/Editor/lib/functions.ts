@@ -9,7 +9,7 @@ export async function createFile(
   file: string,
   fileName: string,
   content: string,
-  message: string,
+  message: string
 ) {
   // use in pages
 
@@ -38,7 +38,7 @@ export async function createFile(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ content, message }),
-      },
+      }
     );
 
     if (!response.ok) {
@@ -59,7 +59,7 @@ export async function editorSaveHandler(): Promise<string> {
 
 export async function imagePreviewHandler(
   imageSource: string,
-  context: ContentItem,
+  context: ContentItem
 ): Promise<string> {
   // console.log('Editor:imagePreviewHandler: ', context, imageSource);
   if (imageSource.startsWith('http')) return imageSource;
@@ -69,12 +69,12 @@ export async function imagePreviewHandler(
   // console.log('Editor:imagePreviewHandler:filePath: ', filePath);
 
   const response = await fetch(
-    `/api/content/github/${context.owner}/${context.repo}?branch=${context.branch}&path=${filePath}`,
+    `/api/content/github/${context.owner}/${context.repo}?branch=${context.branch}&path=${filePath}`
   );
   // console.log('Editor:imagePreviewHandler:response: ', response);
   if (!response.ok) {
     throw new Error(
-      `Editor:imagePreviewHandler:HTTP error! status: ${response.status}`,
+      `Editor:imagePreviewHandler:HTTP error! status: ${response.status}`
     );
   }
   // Fetch the image as Blob directly
@@ -88,7 +88,7 @@ export async function imagePreviewHandler(
 
 export async function imageUploadHandler(
   image: File,
-  context: ContentItem,
+  context: ContentItem
 ): Promise<string> {
   const formData = new FormData();
   formData.append('image', image);
@@ -113,7 +113,7 @@ export async function imageUploadHandler(
           file,
           fileName,
           imageData ?? '',
-          'Image uploaded from Airview',
+          'Image uploaded from Airview'
         );
         if (url) {
           resolve(url);

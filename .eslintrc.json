@@ -12,6 +12,7 @@
       {
         "singleQuote": true,
         "jsxSingleQuote": true,
+        "trailingComma": "es5",
         "endOfLine": "auto"
       }
     ], // Avoid conflict rule between Prettier and Airbnb Eslint
@@ -59,6 +60,7 @@
           {
             "singleQuote": true,
             "jsxSingleQuote": true,
+            "trailingComma": "es5",
             "endOfLine": "auto"
           }
         ], // Avoid conflict rule between Prettier and Airbnb Eslint

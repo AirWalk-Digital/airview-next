@@ -17,7 +17,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
 }) => {
   return (
     <Box
-      component="aside"
+      component='aside'
       sx={{
         display: open ? 'block' : 'none',
         position: 'fixed',

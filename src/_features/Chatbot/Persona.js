@@ -19,20 +19,20 @@ export default function Persona({ clearChat, persona, setPersona }) {
   return (
     <>
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
+        display='flex'
+        alignItems='center'
+        justifyContent='space-between'
+        width='100%'
       >
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction='row' spacing={2} alignItems='center'>
           <Button
             variant={persona === 'jim' ? 'contained' : 'outlined'}
-            color="primary"
+            color='primary'
             onClick={() => setPersona('jim')}
             startIcon={
               <Avatar
-                alt="Jim"
-                src="/avatars/jimmoji-large-background.png"
+                alt='Jim'
+                src='/avatars/jimmoji-large-background.png'
                 sx={{ background: 'white', height: '55px', width: '55px' }}
               />
             }
@@ -42,12 +42,12 @@ export default function Persona({ clearChat, persona, setPersona }) {
           </Button>
           <Button
             variant={persona === 'abi' ? 'contained' : 'outlined'}
-            color="primary"
+            color='primary'
             onClick={() => setPersona('abi')}
             startIcon={
               <Avatar
-                alt="Abi"
-                src="/avatars/abioji-large.png"
+                alt='Abi'
+                src='/avatars/abioji-large.png'
                 sx={{ height: '55px', width: '55px' }}
               />
             }
@@ -66,26 +66,26 @@ export default function Persona({ clearChat, persona, setPersona }) {
           Ask ChatGPT
         </Button> */}
         </Stack>
-        <Tooltip title="Clear Chat">
+        <Tooltip title='Clear Chat'>
           <IconButton onClick={handleClearChat}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
       </Box>
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
+        display='flex'
+        alignItems='center'
+        justifyContent='space-between'
+        width='100%'
         sx={{ pt: '5px' }}
       >
         {persona === 'jim' ? (
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant='caption' color='text.secondary'>
             Jim can help you with all your technical questions about what we do
             and how we do it at Airwalk.
           </Typography>
         ) : (
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant='caption' color='text.secondary'>
             Abi helps you with everything Airwalk, from HR to company culture,
             our work and more.
           </Typography>

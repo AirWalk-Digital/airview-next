@@ -99,7 +99,7 @@ function deepMergeObj(initialTarget: AnyObject, source: AnyObject): AnyObject {
 
 export function nestMenu(
   menuInput: InputMenu,
-  prefix: string,
+  prefix: string
 ): { menu: MenuStructure[] } {
   const nestedMenu: MenuStructure[] = menuInput.primary.map((item) => {
     const urlKey = item.url.slice(0, item.url.lastIndexOf('/'));
@@ -254,7 +254,7 @@ export function convertToMenu(primary: FileContent[], siteConfig: SiteConfig) {
 export async function getMenu(
   branchSha: string,
   contentConfig: ContentItem,
-  siteConfig: SiteConfig,
+  siteConfig: SiteConfig
 ) {
   // logger.debug({ function: 'getPrimaryMenu', contentConfig });
   // have we cached the directory structure?
@@ -284,7 +284,7 @@ export async function getMenu(
     contentConfig.repo,
     contentConfig.branch,
     contentConfig.path,
-    '.md*',
+    '.md*'
   );
   // logger.debug({ function: 'getPrimaryMenu', msg: 'getDirStructure', files });
 
@@ -321,7 +321,7 @@ export async function getMenu(
       }
       await cacheWrite(
         cacheKey,
-        JSON.stringify({ file, frontmatter: matterData }),
+        JSON.stringify({ file, frontmatter: matterData })
       ); // cache perpetually a reference to the file
       return { file, frontmatter: matterData as FrontMatter };
     } catch (error) {
@@ -354,12 +354,12 @@ export async function getMenu(
 
 export async function loadMenu(
   siteConfig: SiteConfig,
-  collection: ContentItem,
+  collection: ContentItem
 ): Promise<{ primary: any[]; relatedContent: any }> {
   const branchSha = await getBranchSha(
     collection.owner,
     collection.repo,
-    collection.branch,
+    collection.branch
   );
 
   const primary = await getMenu(branchSha, collection, siteConfig);
@@ -382,19 +382,19 @@ export async function loadMenu(
         siteConfig.content[
           collectionItem as keyof typeof siteConfig.content
         ] as ContentItem,
-        siteConfig,
+        siteConfig
       );
 
       relatedContent = deepMergeObj(
         relatedContent,
-        contentFolder.relatedContent,
+        contentFolder.relatedContent
       );
       // relatedContent[collectionItem] = contentFolder.relatedContent;
       // mergedRelatedContent = {
       //   ...mergedRelatedContent,
       //   ...contentFolder.relatedContent,
       // };
-    },
+    }
   );
 
   await Promise.all(getMenuPromises);

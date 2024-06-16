@@ -17,22 +17,22 @@ export default function LikeActions({
       style={{ display: 'flex', justifyContent: alignment, padding: '10px' }}
     >
       <IconButton
-        size="small"
+        size='small'
         style={{
           color: thumbUpClicked ? blue[700] : grey[500],
         }}
         onClick={handleThumbUpClick}
       >
-        <ThumbUpIcon fontSize="small" />
+        <ThumbUpIcon fontSize='small' />
       </IconButton>
       <IconButton
-        size="small"
+        size='small'
         style={{
           color: thumbDownClicked ? blue[700] : grey[500],
         }}
         onClick={handleThumbDownClick}
       >
-        <ThumbDownIcon fontSize="small" />
+        <ThumbDownIcon fontSize='small' />
       </IconButton>
     </div>
   );

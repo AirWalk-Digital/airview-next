@@ -19,7 +19,7 @@ interface MDXResult {
 export function loadMDX(
   source: string,
   format: string = 'mdx',
-  wrapper: string | null = null,
+  wrapper: string | null = null
 ): MDXResult {
   const remarkPlugins: any[] = []; // Replace 'any' with the actual type of your plugins
   remarkPlugins.push(remarkGfm);

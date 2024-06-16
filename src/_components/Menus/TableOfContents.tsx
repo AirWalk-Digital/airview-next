@@ -32,14 +32,14 @@ interface TableOfContentsItem {
 
 const generateTableOfContents = (
   tableOfContents: TableOfContentsItem[],
-  numbering: number[] = [],
+  numbering: number[] = []
 ): React.ReactNode => {
   if (!tableOfContents || tableOfContents.length === 0) {
     return null;
   }
 
   return (
-    <List disablePadding component="nav" aria-labelledby="table-of-contents">
+    <List disablePadding component='nav' aria-labelledby='table-of-contents'>
       {tableOfContents.map((item, index) => {
         const { value, id, children } = item;
         const itemNumbering = [...numbering, index + 1];
@@ -59,7 +59,7 @@ const generateTableOfContents = (
           return (
             <List key={id} disablePadding>
               <ListItem disablePadding disableGutters sx={{ p: 0 }}>
-                <MuiLink href={`#${id}`} underline="none">
+                <MuiLink href={`#${id}`} underline='none'>
                   {listItemText}
                 </MuiLink>
               </ListItem>
@@ -77,7 +77,7 @@ const generateTableOfContents = (
             disableGutters
             sx={{ pt: 0, pb: 0 }}
           >
-            <MuiLink href={`#${id}`} underline="none">
+            <MuiLink href={`#${id}`} underline='none'>
               {listItemText}
             </MuiLink>
           </ListItem>
@@ -102,7 +102,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   return (
     <Box sx={{ pl: 0 }}>
       <Box
-        component="header"
+        component='header'
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -112,15 +112,15 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
       >
         <Typography
           component={menuTitleElement}
-          variant="subtitle2"
+          variant='subtitle2'
           sx={{ display: 'block', flex: '1 1 auto', fontSize: 16, pb: 1 }}
         >
-          {loading ? <Skeleton width="90%" /> : menuTitle}
+          {loading ? <Skeleton width='90%' /> : menuTitle}
         </Typography>
 
         <IconButton
           onClick={() => setCollapsed((prevState) => !prevState)}
-          size="medium"
+          size='medium'
           aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
           disabled={loading}
           sx={{
@@ -130,9 +130,9 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
           }}
         >
           {collapsed ? (
-            <KeyboardArrowRightIcon fontSize="inherit" />
+            <KeyboardArrowRightIcon fontSize='inherit' />
           ) : (
-            <KeyboardArrowDownIcon fontSize="inherit" />
+            <KeyboardArrowDownIcon fontSize='inherit' />
           )}
         </IconButton>
       </Box>

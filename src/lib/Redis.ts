@@ -29,7 +29,7 @@ export async function createRedisInstance(config = getRedisConfiguration()) {
         retryStrategy: (times: number) => {
           if (times > 3) {
             throw new Error(
-              `[Redis] Could not connect after ${times} attempts`,
+              `[Redis] Could not connect after ${times} attempts`
             );
           }
 
@@ -56,7 +56,7 @@ export async function createRedisInstance(config = getRedisConfiguration()) {
             port: config.port,
           },
         ],
-        options,
+        options
       );
     } else {
       // For local development or non-clustered environment
@@ -125,7 +125,7 @@ export async function cacheMRead(keys: string[], prefix = '') {
 export async function cacheWrite(
   key: string,
   value: string,
-  ttl: number | undefined = undefined,
+  ttl: number | undefined = undefined
 ) {
   try {
     if (!redisInstance) {

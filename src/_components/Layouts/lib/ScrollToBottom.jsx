@@ -64,8 +64,8 @@ const ScrollToBottom = () => {
         //   backgroundColor: theme.palette.background.default,
         //   color: theme.palette.primary.main,
       }}
-      color="primary"
-      aria-label="Scroll to bottom"
+      color='primary'
+      aria-label='Scroll to bottom'
       onClick={handleScrollToBottom}
     >
       <KeyboardArrowDownIcon />

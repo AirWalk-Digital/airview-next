@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     if (!owner || !repo || typeof filepath !== 'string') {
       return NextResponse.json(
         { error: 'Missing required parameters: owner, repo, or path' },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -53,17 +53,17 @@ export async function GET(req: NextRequest) {
       return new NextResponse(
         data?.content,
         // Buffer.from(data?.content.toString(), data.encoding as BufferEncoding),
-        { status: 200, statusText: 'OK', headers },
+        { status: 200, statusText: 'OK', headers }
       );
     }
     return NextResponse.json(
       { error: `File not found: ${filepath}` },
-      { status: 404 },
+      { status: 404 }
     );
   } catch (err) {
     return NextResponse.json(
       { error: `Error in API: ${err}` },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -80,19 +80,19 @@ export async function POST(req: NextRequest): Promise<NextResponse | void> {
     if (!owner || !repo || typeof filepath !== 'string') {
       return NextResponse.json(
         { error: 'Missing required parameters: owner, repo, or path' },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     const { content, message } = JSON.parse(
-      req?.body ? req.body.toString() : '',
+      req?.body ? req.body.toString() : ''
     );
     if (!content || !message) {
       return NextResponse.json(
         {
           error: 'Missing required parameters: content or message in the body',
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
     const commitResponse = await commitFileToBranch(
@@ -101,13 +101,13 @@ export async function POST(req: NextRequest): Promise<NextResponse | void> {
       branch,
       filepath,
       content,
-      message,
+      message
     );
     NextResponse.json({ response: commitResponse }, { status: 201 });
   } catch (err) {
     return NextResponse.json(
       { error: `Error in API: ${err}` },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

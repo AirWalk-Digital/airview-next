@@ -83,7 +83,7 @@ export function ContentViewer({
     ) {
       window.open(
         `https://github.com/${context?.owner}/${context?.repo}/blob/${context?.branch}/${context.file}`,
-        '_blank',
+        '_blank'
       );
     }
   }
@@ -111,7 +111,7 @@ export function ContentViewer({
   if (pageContent) {
     const { mdxContent: Page, frontmatter } = loadMDX(
       pageContent,
-      context?.file?.endsWith('.md') ? 'md' : 'mdx',
+      context?.file?.endsWith('.md') ? 'md' : 'mdx'
     );
     logger.info({ msg: 'ContentViewer', frontmatter });
     return (
@@ -121,34 +121,34 @@ export function ContentViewer({
             {frontmatter?.title && <h1>{frontmatter.title}</h1>}
             {contributors && <Contributors contributors={contributors} />}
             {(Page && <Page />) || (
-              <Alert variant="outlined" severity="error">
+              <Alert variant='outlined' severity='error'>
                 No content.
               </Alert>
             )}
           </MDXProvider>
         </Main>
         <Aside>
-          <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+          <Stack direction='row' spacing={1} sx={{ mb: 1 }}>
             <Chip
-              size="small"
-              color="primary"
+              size='small'
+              color='primary'
               icon={<PrintIcon />}
-              label="Print"
+              label='Print'
               onClick={() => openPrint()}
             />
             <Chip
-              size="small"
-              color="primary"
+              size='small'
+              color='primary'
               icon={<GitHubIcon />}
-              label="Code"
+              label='Code'
               onClick={() => openGithub()}
             />
             {frontmatter?.presentation && (
               <Chip
-                size="small"
-                color="primary"
+                size='small'
+                color='primary'
                 icon={<SlideshowIcon />}
-                label="Presentation"
+                label='Presentation'
               />
             )}
           </Stack>
@@ -178,7 +178,7 @@ export function ContentViewer({
     );
   }
   return (
-    <Alert variant="outlined" severity="error">
+    <Alert variant='outlined' severity='error'>
       No content.
     </Alert>
   );

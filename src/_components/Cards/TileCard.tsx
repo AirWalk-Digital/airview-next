@@ -25,7 +25,7 @@ const TileCard: React.FC<TileCardProps> = ({
     <Grid item xs={12} sm={4} md={3} minHeight={300} maxWidth={300}>
       <Link
         href={url}
-        underline="none"
+        underline='none'
         sx={{
           width: '100%',
           color: 'inherit',
@@ -35,7 +35,7 @@ const TileCard: React.FC<TileCardProps> = ({
         }}
       >
         <Card
-          variant="outlined"
+          variant='outlined'
           sx={{
             minHeight: 120,
             height: '100%',
@@ -46,9 +46,9 @@ const TileCard: React.FC<TileCardProps> = ({
             {image && (
               <div style={{ height: '194px' }}>
                 <CardMedia
-                  component="img"
+                  component='img'
                   image={image}
-                  alt=""
+                  alt=''
                   sx={{
                     height: '100%',
                     px: isHero ? 0 : 1,
@@ -67,15 +67,15 @@ const TileCard: React.FC<TileCardProps> = ({
             >
               <Typography
                 gutterBottom
-                variant="h5"
-                component="div"
+                variant='h5'
+                component='div'
                 sx={{ textAlign: 'center', wordWrap: 'break-word' }}
                 color={image && isHero ? 'text.primary' : 'text.invtext'}
               >
                 {name}
               </Typography>
               <Typography
-                variant="body2"
+                variant='body2'
                 color={image && isHero ? 'text.primary' : 'text.invtext'}
               >
                 {description}

@@ -60,7 +60,7 @@ declare module 'pagedjs' {
   export function initializeHandlers(
     chunker: any,
     polisher: any,
-    caller: any,
+    caller: any
   ): any;
 
   export function registerHandlers(...args: any[]): void;

@@ -50,12 +50,12 @@ export function ButtonMenu({
   children,
 }: ButtonMenuProps) {
   const [collapsed, setCollapsed] = useState(
-    collapsible ? initialCollapsed : false,
+    collapsible ? initialCollapsed : false
   );
 
   return (
     <Box
-      component="nav"
+      component='nav'
       sx={{
         ...(fetching && {
           opacity: 0.5,
@@ -65,7 +65,7 @@ export function ButtonMenu({
       }}
     >
       <Box
-        component="header"
+        component='header'
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -74,16 +74,16 @@ export function ButtonMenu({
         }}
       >
         <Typography
-          variant="subtitle2"
+          variant='subtitle2'
           sx={{ display: 'block', flex: '1 1 auto', fontSize: 16 }}
         >
-          {loading ? <Skeleton width="90%" /> : menuTitle}
+          {loading ? <Skeleton width='90%' /> : menuTitle}
         </Typography>
 
         {collapsible && (
           <IconButton
             onClick={() => setCollapsed((prevState) => !prevState)}
-            size="medium"
+            size='medium'
             aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
             disabled={loading}
             sx={{
@@ -93,9 +93,9 @@ export function ButtonMenu({
             }}
           >
             {collapsed ? (
-              <KeyboardArrowRightIcon fontSize="inherit" />
+              <KeyboardArrowRightIcon fontSize='inherit' />
             ) : (
-              <KeyboardArrowDownIcon fontSize="inherit" />
+              <KeyboardArrowDownIcon fontSize='inherit' />
             )}
           </IconButton>
         )}
@@ -106,8 +106,8 @@ export function ButtonMenu({
           <Box aria-hidden={collapsed} key={groupTitle}>
             {groupTitle && (
               <Typography
-                component="span"
-                variant="subtitle2"
+                component='span'
+                variant='subtitle2'
                 sx={{
                   display: 'block',
                   marginTop: 2,
@@ -117,12 +117,12 @@ export function ButtonMenu({
                   fontSize: 12,
                 }}
               >
-                {loading ? <Skeleton width="90%" /> : groupTitle}
+                {loading ? <Skeleton width='90%' /> : groupTitle}
               </Typography>
             )}
             {children && children}
             <Box
-              component="ul"
+              component='ul'
               sx={{
                 margin: 0,
                 marginTop: 2,
@@ -137,11 +137,11 @@ export function ButtonMenu({
             >
               {loading
                 ? [...Array(6)].map((index) => (
-                    <Skeleton key={`skeleton-${index}`} component="li" />
+                    <Skeleton key={`skeleton-${index}`} component='li' />
                   ))
                 : links?.map(({ label, url }, index) => {
                     return (
-                      <Box component="li" key={index}>
+                      <Box component='li' key={index}>
                         <ButtonBase
                           // component="button"
                           // variant="contained" // Add the variant prop with a valid value (e.g., "contained")

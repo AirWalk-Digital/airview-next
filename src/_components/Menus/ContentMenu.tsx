@@ -81,7 +81,7 @@ export const ContentMenu: React.FC<ContentMenuProps> = ({
         </ButtonBase>
 
         <ButtonMenu
-          menuTitle="Related Content"
+          menuTitle='Related Content'
           menuItems={chaptersMenu}
           initialCollapsed={false}
           loading={loading}

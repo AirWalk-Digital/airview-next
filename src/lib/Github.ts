@@ -61,7 +61,7 @@ const getGitHubConfiguration = (): GitHubConfig => {
 //   };
 // }
 export const createGitHubInstance = (
-  config = getGitHubConfiguration(),
+  config = getGitHubConfiguration()
 ): Octokit => {
   const octokit = new Octokit({
     authStrategy: createAppAuth,
@@ -137,7 +137,7 @@ export const createGitHubInstance = (
 export const getBranchSha = async (
   owner: string,
   repo: string,
-  branch: string,
+  branch: string
 ): Promise<string> => {
   if (!gitHubInstance) {
     gitHubInstance = createGitHubInstance();
@@ -173,7 +173,7 @@ async function getCachedFileContent(
   repo: string,
   branch: string,
   path: string,
-  sha: string | undefined = undefined,
+  sha: string | undefined = undefined
 ): Promise<{
   content: Buffer | undefined;
   encoding: string;
@@ -191,7 +191,7 @@ async function getCachedFileContent(
           return {
             content: Buffer.from(
               cachedContent.content.data as string,
-              cachedContent.encoding as BufferEncoding,
+              cachedContent.encoding as BufferEncoding
             ),
             encoding: cachedContent.encoding as string,
             contributors: cachedContent.contributors,
@@ -227,7 +227,7 @@ async function getCachedFileContent(
         //   `[Github][getCachedFileContent][Ref]: github:getContent:${owner}:${repo}:${ref.ref}:${path}`,
         // );
         const cachedRefContent = await cacheRead(
-          `github:content:${owner}:${repo}:${ref.ref}:${path}`,
+          `github:content:${owner}:${repo}:${ref.ref}:${path}`
         );
         if (cachedRefContent && cachedRefContent.encoding) {
           // logger.info(
@@ -239,7 +239,7 @@ async function getCachedFileContent(
           // }
           if (cachedRefContent.encoding !== 'none') {
             return cachedRefContent.content.data.toString(
-              cachedRefContent.encoding,
+              cachedRefContent.encoding
             );
           }
           // return cachedRefContent.content;
@@ -373,7 +373,7 @@ async function getGitHubFileContent({
     (acc: { authorName: string; authorDate: string }[], commit) => {
       const authorName = commit.commit.author?.name ?? '';
       const authorDate = new Date(
-        commit.commit.author?.date ?? '',
+        commit.commit.author?.date ?? ''
       ).toDateString();
 
       const pair: { authorName: string; authorDate: string } = {
@@ -384,7 +384,7 @@ async function getGitHubFileContent({
       const index = acc.findIndex(
         (item: { authorName: string; authorDate: string }) =>
           item.authorName === pair.authorName &&
-          item.authorDate === pair.authorDate,
+          item.authorDate === pair.authorDate
       );
 
       if (index === -1) {
@@ -393,7 +393,7 @@ async function getGitHubFileContent({
 
       return acc;
     },
-    [],
+    []
   );
   try {
     const { encoding, sha } = response?.data ?? {};
@@ -421,7 +421,7 @@ async function getGitHubFileContent({
         const ref = { ref: sha };
         await cacheWrite(
           `github:ref:${owner}:${repo}:${branchSha}:${path}`,
-          JSON.stringify(ref),
+          JSON.stringify(ref)
         ); // cache perpetually a reference to the file
         const isBuffer = Buffer.isBuffer(content);
         const stringifiedValue = isBuffer
@@ -434,7 +434,7 @@ async function getGitHubFileContent({
             content: stringifiedValue,
             encoding,
             contributors,
-          }),
+          })
         ); // cache perpetually the file contents
         // logger.debug(
         //   `[GitHub][Write][CachedFileAndRef] : ${path} : encoding: ${response.data.encoding}`,
@@ -508,7 +508,7 @@ export async function getFileContent({
       repo,
       branch,
       path,
-      fileSha,
+      fileSha
     );
     // logger.info(`github:getFileContent:getCachedFileContent ${cachedContent}`);
     if (cachedContent) {
@@ -538,7 +538,7 @@ export async function getDirStructure(
   repo: string,
   branchSha: string,
   path: string,
-  filter: string | undefined = undefined,
+  filter: string | undefined = undefined
 ) {
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();
@@ -604,7 +604,7 @@ export async function getDirStructure(
         async (dirObject) => {
           const subPath = path ? `${path}/${dirObject.name}` : dirObject.name;
           return getDirStructure(owner, repo, branchSha, subPath, filter);
-        },
+        }
       );
       subFiles = await Promise.all(subPromises);
     }
@@ -761,7 +761,7 @@ export async function getDirStructure(
 
 export async function getBranches(
   owner: string,
-  repo: string,
+  repo: string
 ): Promise<{ name: string; commit: { sha: string }; protected: boolean }[]> {
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();
@@ -787,7 +787,7 @@ export async function getBranches(
         owner,
         repo,
         per_page: 100,
-      },
+      }
     );
 
     // Filter branches with protected set to false
@@ -813,7 +813,7 @@ export async function createBranch(
   owner: string,
   repo: string,
   branch: string,
-  sourceBranch: string,
+  sourceBranch: string
 ) {
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();
@@ -851,7 +851,7 @@ export async function commitFileToBranch(
   branch: string,
   path: string,
   content: string,
-  message: string,
+  message: string
 ) {
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();
@@ -909,7 +909,7 @@ export async function commitFileToBranch(
     return newCommit.data;
   } catch (error) {
     logger.error(
-      `[GitHub][commitFileToBranch] Error committing file: ${error}`,
+      `[GitHub][commitFileToBranch] Error committing file: ${error}`
     );
     throw new Error(`${error}`);
   }
@@ -921,7 +921,7 @@ export async function commitFileChanges(
   branch: string,
   path: string,
   content: string,
-  message: string,
+  message: string
 ) {
   // use in pages
   try {
@@ -933,7 +933,7 @@ export async function commitFileChanges(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ content, message }),
-      },
+      }
     );
 
     if (!response.ok) {
@@ -975,7 +975,7 @@ export const createPR = async (
   title: string,
   body: string,
   head: string,
-  base: string,
+  base: string
 ) => {
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();

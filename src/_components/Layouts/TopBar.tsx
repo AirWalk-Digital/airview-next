@@ -20,6 +20,7 @@ import MenuItem from '@mui/material/MenuItem';
 // import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 import { siteConfig } from '../../../site.config';
@@ -40,7 +41,7 @@ export interface ComponentProps {
   edit?: boolean;
   // handlePrint?: () => void;
   // handlePresentation?: () => void;
-  handleEdit?: () => void;
+  handleEditFn?: () => void;
 }
 
 export default function TopBar({
@@ -50,18 +51,33 @@ export default function TopBar({
   back,
   logo,
   edit,
+  handleEditFn,
   // handlePrint,
   // handlePresentation,
-  handleEdit,
 }: ComponentProps): React.ReactElement {
   // Function body
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [activeMenu, setActiveMenu] = useState('');
+  const router = useRouter();
+  const pathname = usePathname();
 
+  const handleEdit = () => {
+    const pathnameArray = pathname.split('/');
+
+    if (pathnameArray[2] === 'edit') {
+      // Replace 'edit' with 'view' in the URL path
+      pathnameArray[2] = 'view';
+    } else {
+      // Replace 'view' with 'edit' in the URL path
+      pathnameArray[2] = 'edit';
+    }
+    const newPathname = pathnameArray.join('/');
+    router.push(newPathname);
+  };
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLButtonElement>,
-    id: React.SetStateAction<string>,
+    id: React.SetStateAction<string>
   ) => {
     setAnchorEl(event.currentTarget);
     setActiveMenu(id);
@@ -73,17 +89,18 @@ export default function TopBar({
   };
 
   const handleEditClick = () => {
-    if (typeof handleEdit === 'function') {
-      handleEdit();
+    if (typeof handleEditFn === 'function') {
+      handleEditFn();
     } else {
+      handleEdit();
       // console.error('TopBar: Error: handleEdit is not a function');
     }
   };
 
   return (
     <AppBar
-      position="fixed"
-      color="default"
+      position='fixed'
+      color='default'
       elevation={0}
       sx={{ displayPrint: 'none', borderBottom: 1, borderColor: 'grey.300' }}
     >
@@ -91,10 +108,10 @@ export default function TopBar({
         {/* has menu */}
         {menu && (
           <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
+            size='large'
+            edge='start'
+            color='inherit'
+            aria-label='menu'
             sx={{ mr: 2 }}
             onClick={onNavButtonClick}
           >
@@ -102,25 +119,25 @@ export default function TopBar({
           </IconButton>
         )}
         {logo && (
-          <Link href="/" sx={{ textDecoration: 'none' }}>
-            <Logo src="/logos/airwalk-logo.png" alt="Airview" />
+          <Link href='/' sx={{ textDecoration: 'none' }}>
+            <Logo src='/logos/airwalk-logo.png' alt='Airview' />
           </Link>
         )}
         {/* back button */}
         {back && (
-          <Link href="/" sx={{ textDecoration: 'none' }}>
-            <ArrowBackIosNewOutlinedIcon color="inherit" />
+          <Link href='/' sx={{ textDecoration: 'none' }}>
+            <ArrowBackIosNewOutlinedIcon color='inherit' />
           </Link>
         )}
 
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
+        <Typography variant='h6' component='div' sx={{ flexGrow: 1 }} />
 
-        <IconButton size="large" href="/search" color="inherit">
+        <IconButton size='large' href='/search' color='inherit'>
           <SearchIcon />
         </IconButton>
 
         <Button
-          color="inherit"
+          color='inherit'
           endIcon={<ExpandMoreIcon />}
           sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }}
           onClick={(event) => handleMenuOpen(event, 'catalogue')}
@@ -129,7 +146,7 @@ export default function TopBar({
         </Button>
         {siteConfig.content?.applications && (
           <Button
-            color="inherit"
+            color='inherit'
             endIcon={<ExpandMoreIcon />}
             sx={{
               fontWeight: 'light',
@@ -143,12 +160,12 @@ export default function TopBar({
         )}
         {siteConfig.content?.customers && (
           <Link
-            color="inherit"
-            href="/docs/view/default/customers"
+            color='inherit'
+            href='/docs/view/default/customers'
             sx={{ textDecoration: 'none' }}
           >
             <Button
-              color="inherit"
+              color='inherit'
               sx={{
                 fontWeight: 'light',
                 textTransform: 'none',
@@ -161,18 +178,18 @@ export default function TopBar({
         )}
         {/* <Link color="inherit" href="/etherpad" sx={{ textDecoration: 'none' }}><Button color='inherit' sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }}>Collaborate</Button></Link> */}
         <Menu
-          id="menu-content"
+          id='menu-content'
           anchorEl={anchorEl}
           open={activeMenu === 'content'}
           onClose={handleMenuClose}
           onClick={handleMenuClose}
         >
-          <Link href="/etherpad" sx={{ textDecoration: 'none' }}>
+          <Link href='/etherpad' sx={{ textDecoration: 'none' }}>
             <MenuItem>Etherpads</MenuItem>
           </Link>
         </Menu>
         <Menu
-          id="menu-catalogue"
+          id='menu-catalogue'
           anchorEl={anchorEl}
           open={activeMenu === 'catalogue'}
           onClose={handleMenuClose}
@@ -180,7 +197,7 @@ export default function TopBar({
         >
           {(siteConfig.content.providers || siteConfig.content.services) && (
             <Link
-              href="/docs/view/default/providers"
+              href='/docs/view/default/providers'
               sx={{ textDecoration: 'none' }}
             >
               <MenuItem>Providers & Services</MenuItem>
@@ -188,7 +205,7 @@ export default function TopBar({
           )}
           {siteConfig.content?.frameworks && (
             <Link
-              href="/docs/view/default/frameworks"
+              href='/docs/view/default/frameworks'
               sx={{ textDecoration: 'none' }}
             >
               <MenuItem>Frameworks & Standards</MenuItem>
@@ -196,7 +213,7 @@ export default function TopBar({
           )}
           {siteConfig.content.solutions && (
             <Link
-              href="/docs/view/default/solutions"
+              href='/docs/view/default/solutions'
               sx={{ textDecoration: 'none' }}
             >
               <MenuItem>Solutions</MenuItem>
@@ -204,7 +221,7 @@ export default function TopBar({
           )}
           {siteConfig.content.products && (
             <Link
-              href="/docs/view/default/products"
+              href='/docs/view/default/products'
               sx={{ textDecoration: 'none' }}
             >
               <MenuItem>Products</MenuItem>
@@ -212,25 +229,25 @@ export default function TopBar({
           )}
         </Menu>
         <Menu
-          id="menu-applications"
+          id='menu-applications'
           anchorEl={anchorEl}
           open={activeMenu === 'applications'}
           onClose={handleMenuClose}
           onClick={handleMenuClose}
         >
-          <Link href="/applications" sx={{ textDecoration: 'none' }}>
+          <Link href='/applications' sx={{ textDecoration: 'none' }}>
             <MenuItem>Business Applications</MenuItem>
           </Link>
-          <Link href="/business-units" sx={{ textDecoration: 'none' }}>
+          <Link href='/business-units' sx={{ textDecoration: 'none' }}>
             <MenuItem>Business Units</MenuItem>
           </Link>
         </Menu>
 
         {edit && (
           <Button
-            size="large"
+            size='large'
             onClick={() => handleEditClick()}
-            color="inherit"
+            color='inherit'
             startIcon={<AutoAwesomeIcon />}
           >
             Edit

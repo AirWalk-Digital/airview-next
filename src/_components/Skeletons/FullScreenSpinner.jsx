@@ -18,7 +18,7 @@ const FullScreenSpinnerWrapper = styled('div')({
 const FullScreenSpinner = () => {
   return (
     <FullScreenSpinnerWrapper>
-      <CircularProgress color="primary" />
+      <CircularProgress color='primary' />
     </FullScreenSpinnerWrapper>
   );
 };

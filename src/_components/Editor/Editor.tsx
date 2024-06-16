@@ -53,7 +53,7 @@ const toKebabCase = (str: string) => {
 
 const convertStyleObjectToCSS = (
   styleObject: Theme['typography'],
-  indent: string = '',
+  indent: string = ''
 ): string => {
   let cssString = '';
 
@@ -101,7 +101,7 @@ interface EditorProps {
   imageUploadHandler: (image: File, context: ContentItem) => Promise<string>;
   imagePreviewHandler: (
     imageSource: string,
-    context: ContentItem,
+    context: ContentItem
   ) => Promise<string>;
   enabled?: boolean;
   top: number;
@@ -209,7 +209,7 @@ export function Editor({
         setChanged(false);
       }
     },
-    [initialMarkdown],
+    [initialMarkdown]
   );
 
   const editorPlugins = useMemo(
@@ -266,7 +266,7 @@ export function Editor({
         ),
       }),
     ],
-    [initialMarkdown, imageUploadHandler, context, imagePreviewHandler],
+    [initialMarkdown, imageUploadHandler, context, imagePreviewHandler]
   );
 
   return (
@@ -289,8 +289,8 @@ export function Editor({
         plugins={editorPlugins}
       />
       <Fab
-        color="primary"
-        aria-label="save"
+        color='primary'
+        aria-label='save'
         disabled={!enabled || isLoading || !changed}
         style={{ position: 'fixed', bottom: 16, right: 16 }}
         onClick={async () => {
@@ -316,7 +316,7 @@ export function Editor({
       >
         <Alert
           onClose={() => setError('')}
-          severity="error"
+          severity='error'
           sx={{ width: '100%' }}
         >
           {error}
@@ -329,7 +329,7 @@ export function Editor({
       >
         <Alert
           onClose={() => setSuccess(true)}
-          severity="info"
+          severity='info'
           sx={{ width: '100%' }}
         >
           Saved file

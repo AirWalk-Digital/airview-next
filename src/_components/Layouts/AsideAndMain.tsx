@@ -20,7 +20,7 @@ export function AsideAndMainContainer({ children, sx }: Props) {
 
 export function Main({ children, sx }: Props) {
   return (
-    <Box component="main" sx={{ flex: '1 1 auto', ...sx }}>
+    <Box component='main' sx={{ flex: '1 1 auto', ...sx }}>
       {children}
     </Box>
   );
@@ -29,7 +29,7 @@ export function Main({ children, sx }: Props) {
 export function Aside({ children, sx }: Props) {
   return (
     <Box
-      component="aside"
+      component='aside'
       sx={{
         flex: '0 0 auto',
         width: 300,

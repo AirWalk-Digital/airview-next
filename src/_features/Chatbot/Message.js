@@ -82,7 +82,7 @@ export default function Message({
     >
       {!isBot && avatar}
       <Card
-        variant="outlined"
+        variant='outlined'
         sx={{
           maxWidth: 345,
           borderRadius: '20px',
@@ -100,13 +100,13 @@ export default function Message({
         onClick={handleBotMessageClick} // Attach click event handler
       >
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant='body2' color='text.secondary'>
             {content}
           </Typography>
         </CardContent>
         {isBot && (
           <LikeActions
-            alignment="center"
+            alignment='center'
             thumbUpClicked={thumbState[messageId]?.thumbUp || false}
             thumbDownClicked={thumbState[messageId]?.thumbDown || false}
             handleThumbUpClick={() => handleLikeActions('thumbUp')}

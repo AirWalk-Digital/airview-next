@@ -38,7 +38,7 @@ export async function getTiles(config: ContentItem): Promise<{
   const branchSha = await getBranchSha(
     config.owner,
     config.repo,
-    config.branch,
+    config.branch
   );
   // const frontmatterCache = `structure:${config.path}:${branchSha}`;
   // let files = null;
@@ -73,13 +73,13 @@ export async function getTiles(config: ContentItem): Promise<{
     config.repo,
     config.branch,
     config.path,
-    '.md*',
+    '.md*'
   );
 
   const filteredFiles = files.filter(
     (file) =>
       file.path.match(/(_index\.md$|_index\.mdx$|index\.md$|index\.mdx$)/) &&
-      file.path.split('/').length - 1 === 2,
+      file.path.split('/').length - 1 === 2
   );
   // logger.debug({ function: 'getPrimaryMenu', msg: 'getDirStructure', files });
 
@@ -116,7 +116,7 @@ export async function getTiles(config: ContentItem): Promise<{
       }
       await cacheWrite(
         cachedFrontmatterKey,
-        JSON.stringify({ file, frontmatter: matterData }),
+        JSON.stringify({ file, frontmatter: matterData })
       ); // cache perpetually a reference to the file
       return { file, frontmatter: matterData as FrontMatter };
     } catch (err) {

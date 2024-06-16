@@ -59,8 +59,8 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
   return (
     <Stack spacing={2} sx={{ width: 300 }}>
       <Autocomplete
-        id="branch"
-        size="small"
+        id='branch'
+        size='small'
         freeSolo
         value={branch}
         onChange={onBranchChange}
@@ -188,8 +188,8 @@ export const ControlBar: React.FC<ControlBarProps> = ({
 
   return (
     <AppBar
-      position="fixed"
-      color="transparent"
+      position='fixed'
+      color='transparent'
       elevation={0}
       sx={{
         // height,
@@ -207,13 +207,13 @@ export const ControlBar: React.FC<ControlBarProps> = ({
             control={
               <Switch checked={editMode} onClick={() => onEditClick()} />
             }
-            label="Edit Mode"
+            label='Edit Mode'
           />
           <FormControlLabel
             control={
               <Switch checked={changeBranch} onClick={() => onBranchToggle()} />
             }
-            label="Change Branch"
+            label='Change Branch'
           />
           {changeBranch && collection && (
             <>
@@ -226,28 +226,28 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                     collection={collection}
                   />
                 }
-                label=""
+                label=''
               />
               <FormControlLabel
                 control={
                   <IconButton
-                    size="medium"
+                    size='medium'
                     onClick={() => handleNewBranchClick()}
-                    color="primary"
-                    title="Add new branch"
+                    color='primary'
+                    title='Add new branch'
                     // sx={{ pl: 0 }}
                   >
                     <AddCircleIcon />
                   </IconButton>
                 }
-                label=""
+                label=''
               />
             </>
           )}
           {editMode && changeBranch && collection && (
             <>
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={handlePRClick}
                 startIcon={
                   isLoading ? <CircularProgress size={24} /> : <ApprovalIcon />
@@ -262,9 +262,9 @@ export const ControlBar: React.FC<ControlBarProps> = ({
               >
                 <MuiAlert
                   onClose={() => setShowError('')}
-                  severity="error"
+                  severity='error'
                   elevation={6}
-                  variant="filled"
+                  variant='filled'
                 >
                   An error occurred while processing your request: {showError}
                 </MuiAlert>
@@ -276,9 +276,9 @@ export const ControlBar: React.FC<ControlBarProps> = ({
               >
                 <MuiAlert
                   onClose={() => setShowPRSuccess(false)}
-                  severity="success"
+                  severity='success'
                   elevation={6}
-                  variant="filled"
+                  variant='filled'
                 >
                   PR successfully created
                 </MuiAlert>
@@ -291,42 +291,42 @@ export const ControlBar: React.FC<ControlBarProps> = ({
             <FormControlLabel
               control={
                 <IconButton
-                  size="large"
+                  size='large'
                   onClick={() => handleAddClick()}
-                  color="primary"
+                  color='primary'
                 >
                   <AddCircleIcon />
                 </IconButton>
               }
-              label="Add Content"
+              label='Add Content'
             />
           )}
           {handlePrint && !editMode && (
             <FormControlLabel
               control={
                 <IconButton
-                  size="large"
+                  size='large'
                   onClick={() => handlePrintClick()}
-                  color="primary"
+                  color='primary'
                 >
                   <PrintIcon />
                 </IconButton>
               }
-              label="Print"
+              label='Print'
             />
           )}
           {handlePresentation && !editMode && (
             <FormControlLabel
               control={
                 <IconButton
-                  size="large"
+                  size='large'
                   onClick={() => handlePresentationClick()}
-                  color="primary"
+                  color='primary'
                 >
                   <SlideshowIcon />
                 </IconButton>
               }
-              label="View Presentation"
+              label='View Presentation'
             />
           )}
         </div>

@@ -51,7 +51,7 @@ export function Stock({ symbol, price, delta }: StockProps) {
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography
-            variant="body2"
+            variant='body2'
             sx={{
               fontWeight: 'bold',
               textTransform: 'uppercase',
@@ -61,7 +61,7 @@ export function Stock({ symbol, price, delta }: StockProps) {
             {symbol}
           </Typography>
           <Typography
-            variant="body2"
+            variant='body2'
             sx={{ fontSize: 'base', color: 'zinc.500' }}
           >
             ${price.toExponential(1)}
@@ -69,7 +69,7 @@ export function Stock({ symbol, price, delta }: StockProps) {
         </Box>
         <Box sx={{ ml: 'auto', display: 'flex', flexDirection: 'column' }}>
           <Typography
-            variant="body2"
+            variant='body2'
             sx={{
               fontWeight: 'bold',
               textAlign: 'right',
@@ -80,7 +80,7 @@ export function Stock({ symbol, price, delta }: StockProps) {
             {` ${((delta / price) * 100).toExponential(1)}%`}
           </Typography>
           <Typography
-            variant="body2"
+            variant='body2'
             sx={{
               textAlign: 'right',
               fontSize: 'base',

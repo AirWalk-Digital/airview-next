@@ -1,8 +1,8 @@
 'use client';
 
 import Container from '@mui/material/Container';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { Suspense, useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { Suspense, useState } from 'react';
 
 import TopBar from '@/components/Layouts/TopBar';
 import { DummyMenu, HeaderMinimalMenu } from '@/components/Menus';
@@ -19,6 +19,7 @@ interface MenuWrapperProps {
   context: ContentItem;
   loading: boolean;
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  isEditing?: boolean;
 }
 
 logger.info('Loading MenuWrapper');
@@ -46,18 +47,19 @@ export default function MenuWrapper({
   menuStructure,
   context,
   loading,
+  isEditing,
   children,
 }: MenuWrapperProps): React.ReactElement {
   const navDrawerWidth = menuStructure ? 300 : 0;
   const topBarHeight = 65;
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   // const isEditing = Boolean(searchParams.get('edit'));
   // logger.debug({ isEditing });
 
   const [menuOpen, setMenuOpen] = useState(
-    menuComponent(context) !== DummyMenu,
+    menuComponent(context) !== DummyMenu && !isEditing
   );
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
 
   const handleOnNavButtonClick = () => setMenuOpen((prevState) => !prevState);
   const router = useRouter();
@@ -66,34 +68,50 @@ export default function MenuWrapper({
   const MenuComponent = menuComponent(context);
 
   const handleEdit = () => {
-    // const isEditing = Boolean(searchParams.get('edit'));
-    const params = new URLSearchParams(searchParams);
-    if (isEditing) {
-      params.delete('edit');
+    const pathnameArray = pathname.split('/');
+
+    if (pathnameArray[2] === 'edit') {
+      // Replace 'edit' with 'view' in the URL path
+      pathnameArray[2] = 'view';
       setMenuOpen(true);
-      setIsEditing(false);
-      router.push(
-        pathname + (params.toString() ? `?${params.toString()}` : ''),
-      );
     } else {
-      params.set('edit', 'true');
+      // Replace 'view' with 'edit' in the URL path
+      pathnameArray[2] = 'edit';
       setMenuOpen(false);
-      setIsEditing(true);
-      router.push(
-        pathname + (params.toString() ? `?${params.toString()}` : ''),
-      );
     }
+    const newPathname = pathnameArray.join('/');
+    router.push(newPathname);
   };
 
-  useEffect(() => {
-    const editParam = searchParams.get('edit');
-    if (editParam === 'true') {
-      setIsEditing(true);
-      setMenuOpen(false);
-    } else {
-      setIsEditing(false);
-    }
-  }, [searchParams]);
+  // const handleEdit = () => {
+  //   // const isEditing = Boolean(searchParams.get('edit'));
+  //   const params = new URLSearchParams(searchParams);
+  //   if (isEditing) {
+  //     params.delete('edit');
+  //     setMenuOpen(true);
+  //     setIsEditing(false);
+  //     router.push(
+  //       pathname + (params.toString() ? `?${params.toString()}` : ''),
+  //     );
+  //   } else {
+  //     params.set('edit', 'true');
+  //     setMenuOpen(false);
+  //     setIsEditing(true);
+  //     router.push(
+  //       pathname + (params.toString() ? `?${params.toString()}` : ''),
+  //     );
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const editParam = searchParams.get('edit');
+  //   if (editParam === 'true') {
+  //     setIsEditing(true);
+  //     setMenuOpen(false);
+  //   } else {
+  //     setIsEditing(false);
+  //   }
+  // }, [searchParams]);
 
   return (
     <>
@@ -103,7 +121,7 @@ export default function MenuWrapper({
         menu
         logo
         edit
-        handleEdit={() => handleEdit()}
+        handleEditFn={() => handleEdit()}
         // topBarHeight={topBarHeight}
       />
 

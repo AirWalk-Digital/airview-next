@@ -210,7 +210,7 @@ const baseTheme = deepmerge(
         display: 'block',
       },
     },
-  }),
+  })
 );
 
 // eslint-disable-next-line import/prefer-default-export

@@ -33,65 +33,65 @@ const LandingPage = () => {
           backgroundAttachment: 'fixed',
         }}
       >
-        <Container maxWidth="lg" sx={{ height: '100vh' }}>
-          <Grid container spacing={4} alignItems="stretch">
+        <Container maxWidth='lg' sx={{ height: '100vh' }}>
+          <Grid container spacing={4} alignItems='stretch'>
             <Grid item xs={12} md={12} sx={{ mb: '20px' }}>
               <Typography
-                variant="h2"
-                component="h2"
+                variant='h2'
+                component='h2'
                 sx={{ fontWeight: 'bold', mt: '50px' }}
               >
                 Airview
               </Typography>
-              <Typography variant="h5" component="h5" gutterBottom>
+              <Typography variant='h5' component='h5' gutterBottom>
                 Documentation, Compliance and Control for Cloud.
               </Typography>
-              <Button variant="contained" color="primary">
+              <Button variant='contained' color='primary'>
                 Get Started
               </Button>
             </Grid>
           </Grid>
-          <Grid container spacing={4} alignItems="stretch" sx={{ my: '0px' }}>
+          <Grid container spacing={4} alignItems='stretch' sx={{ my: '0px' }}>
             {siteConfig.content.frameworks && (
               <LinkCard
-                title="Frameworks & Standards"
-                description="View the compliance frameworks that guide our IT policy as well as standards to help adoption."
-                link="/docs/frameworks"
+                title='Frameworks & Standards'
+                description='View the compliance frameworks that guide our IT policy as well as standards to help adoption.'
+                link='/docs/frameworks'
               />
             )}
             {siteConfig.content.services && (
               <LinkCard
-                title="Providers & Services"
-                description="View the catalogue of Services available, complete with patterns, implementation guides and quality controls."
-                link="/docs/services"
+                title='Providers & Services'
+                description='View the catalogue of Services available, complete with patterns, implementation guides and quality controls.'
+                link='/docs/services'
               />
             )}
             {siteConfig.content.applications && (
               <LinkCard
-                title="Applications"
-                description="Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance."
-                link="/docs/applications"
+                title='Applications'
+                description='Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance.'
+                link='/docs/applications'
               />
             )}
             {siteConfig.content.customers && (
               <LinkCard
-                title="Customers & Projects"
+                title='Customers & Projects'
                 description="Customers and the projects we've done for them."
-                link="/docs/customers"
+                link='/docs/customers'
               />
             )}
             {siteConfig.content.solutions && (
               <LinkCard
-                title="Solutions"
-                description="Solutions and Propositions."
-                link="/docs/solutions"
+                title='Solutions'
+                description='Solutions and Propositions.'
+                link='/docs/solutions'
               />
             )}
             {siteConfig.content.products && (
               <LinkCard
-                title="Products"
-                description="Products."
-                link="/docs/products"
+                title='Products'
+                description='Products.'
+                link='/docs/products'
               />
             )}
           </Grid>
@@ -104,18 +104,18 @@ const LandingPage = () => {
           display: 'flex',
         }}
       >
-        <Container maxWidth="lg" sx={{ my: '20px' }}>
-          <Grid container spacing={4} alignItems="center">
+        <Container maxWidth='lg' sx={{ my: '20px' }}>
+          <Grid container spacing={4} alignItems='center'>
             <Grid item xs={12} md={6}>
-              <Typography variant="h3" component="h3" gutterBottom>
+              <Typography variant='h3' component='h3' gutterBottom>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               </Typography>
-              <Typography variant="body1" gutterBottom>
+              <Typography variant='body1' gutterBottom>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
                 eu ipsum enim. Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit. Morbi eu ipsum enim.
               </Typography>
-              <Button variant="outlined" color="primary">
+              <Button variant='outlined' color='primary'>
                 Learn More
               </Button>
             </Grid>

@@ -33,8 +33,8 @@ const ScrollToTop = () => {
         opacity: isVisible ? 1 : 0,
         transition: 'opacity 0.3s ease-in-out',
       }}
-      color="primary"
-      aria-label="Scroll to top"
+      color='primary'
+      aria-label='Scroll to top'
       onClick={handleScrollToTop}
     >
       <KeyboardArrowUpIcon />
