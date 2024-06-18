@@ -102,11 +102,11 @@ export default async function IndexTiles({
             isHero={c?.frontmatter?.hero}
             image={
               c?.frontmatter?.hero && c?.frontmatter?.image != null
-                ? `/api/content/github?owner=${initialContext.owner}&repo=${initialContext.repo}&path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
+                ? `/api/github/content?owner=${initialContext.owner}&repo=${initialContext.repo}&path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
                 : c?.frontmatter?.hero
                   ? '/generic-solution.png'
                   : c?.frontmatter?.image
-                    ? `/api/content/github?owner=${initialContext.owner}&repo=${initialContext.repo}&path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
+                    ? `/api/github/content?owner=${initialContext.owner}&repo=${initialContext.repo}&path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
                     : undefined
             }
           />

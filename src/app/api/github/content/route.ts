@@ -6,7 +6,7 @@ import path from 'path';
 import { commitFileToBranch, getFileContent } from '@/lib/Github';
 import { getLogger } from '@/lib/Logger';
 
-const logger = getLogger().child({ namespace: 'API:/api/content/github' });
+const logger = getLogger().child({ namespace: 'API:/api/github/content' });
 logger.level = 'error';
 // export const config = {
 //   api: {
@@ -16,7 +16,7 @@ logger.level = 'error';
 
 export async function GET(req: NextRequest) {
   // logger.info(
-  //   `[GET /api/content/github][query]: ${util.inspect(Object.fromEntries(req.nextUrl.searchParams))}`,
+  //   `[GET /api/github/content][query]: ${util.inspect(Object.fromEntries(req.nextUrl.searchParams))}`,
   // );
   try {
     const {
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
       path: filepath,
     } = Object.fromEntries(req.nextUrl.searchParams);
     // logger.info(
-    //   `[GET /api/content/github][query]: branch:${branch}, path:${filepath}, owner:${owner}, repo:${repo}`,
+    //   `[GET /api/github/content][query]: branch:${branch}, path:${filepath}, owner:${owner}, repo:${repo}`,
     // );
     if (!owner || !repo || typeof filepath !== 'string') {
       return NextResponse.json(
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     const data = await getFileContent({ owner, repo, branch, path: filepath });
     const extension = path.extname(filepath);
     const contentType = mime.lookup(extension) || 'application/octet-stream';
-    // logger.info(`[GET /api/content/github][data]: ${util.inspect(data)}`);
+    // logger.info(`[GET /api/github/content][data]: ${util.inspect(data)}`);
 
     const headers = new Headers();
     headers.set('Content-Type', contentType);

@@ -926,7 +926,7 @@ export async function commitFileChanges(
   // use in pages
   try {
     const response = await fetch(
-      `/api/content/github/${owner}/${repo}?branch=${branch}&path=${path}`,
+      `/api/github/content/${owner}/${repo}?branch=${branch}&path=${path}`,
       {
         method: 'POST',
         headers: {

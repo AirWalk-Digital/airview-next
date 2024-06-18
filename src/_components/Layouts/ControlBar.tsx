@@ -1,7 +1,5 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ApprovalIcon from '@mui/icons-material/Approval';
-import PrintIcon from '@mui/icons-material/Print';
-import SlideshowIcon from '@mui/icons-material/Slideshow';
 import {
   AppBar,
   Autocomplete,
@@ -26,17 +24,17 @@ logger.level = 'info';
 export interface ControlBarProps {
   open: boolean;
   // height: number;
-  handleEdit?: (editMode: boolean) => void;
-  handlePrint?: () => void;
-  handleAdd?: () => void;
-  handlePresentation?: () => void;
+  // handleEdit?: (editMode: boolean) => void;
+  // handlePrint?: () => void;
+  handleAddContent?: () => void;
+  // handlePresentation?: () => void;
   collection: any;
   context: any;
   branches: any[];
   top?: number;
   // onContextUpdate: (context: any) => void;
   editMode: boolean;
-  fetchBranches?: (collection: any) => void;
+  // fetchBranches?: (collection: any) => void;
   handleNewBranch?: () => void;
   handlePR?: () => void;
 }
@@ -63,10 +61,10 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
 
   const router = useRouter();
   const pathname = usePathname();
-  const onBranchChange = (value: any) => {
-    logger.info('handleContextUpdate', value);
+  const onBranchChange = (event: any, value: string) => {
+    logger.info('handleContextUpdate', { value, event });
     const pathnameArray = pathname.split('/');
-    pathnameArray[3] = value;
+    pathnameArray[3] = encodeURIComponent(value);
     const newPathname = pathnameArray.join('/');
     router.push(newPathname);
   };
@@ -95,17 +93,17 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
 export const ControlBar: React.FC<ControlBarProps> = ({
   open,
   // height,
-  handleEdit,
-  handlePrint,
-  handleAdd,
-  handlePresentation,
+  // handleEdit,
+  // handlePrint,
+  handleAddContent,
+  // handlePresentation,
   collection,
   context,
   branches,
   top = '64px',
   // onContextUpdate,
   editMode,
-  fetchBranches = () => {},
+  // fetchBranches = () => {},
   handleNewBranch = () => {},
   handlePR = () => {},
 }) => {
@@ -114,7 +112,8 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   const [showError, setShowError] = useState('');
   const [showPRSuccess, setShowPRSuccess] = useState(false);
   const [branch, setBranch] = useState(context.branch);
-
+  const router = useRouter();
+  const pathname = usePathname();
   useEffect(() => {
     if (context.branch !== collection.branch) {
       setBranch(context.branch);
@@ -126,16 +125,18 @@ export const ControlBar: React.FC<ControlBarProps> = ({
     if (changeBranch) {
       // const newCollection = { ...collection };
       setBranch(collection.branch);
+      const pathnameArray = pathname.split('/');
+      pathnameArray[3] = encodeURIComponent(collection.branch);
+      const newPathname = pathnameArray.join('/');
+      router.push(newPathname);
       // onContextUpdate(newCollection);
-      if (typeof window !== 'undefined') {
-        const url = new URL(window.location.href);
-        if (url.searchParams.has('branch')) {
-          url.searchParams.delete('branch');
-        }
-        window.history.replaceState({}, document.title, url);
-      }
-    } else {
-      fetchBranches(collection);
+      // if (typeof window !== 'undefined') {
+      //   const url = new URL(window.location.href);
+      //   if (url.searchParams.has('branch')) {
+      //     url.searchParams.delete('branch');
+      //   }
+      //   window.history.replaceState({}, document.title, url);
+      // }
     }
     setChangeBranch(!changeBranch);
     if (state === 'open') {
@@ -153,21 +154,21 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   //   }
   // };
 
-  const handlePresentationClick = () => {
-    if (typeof handlePresentation === 'function') {
-      handlePresentation();
-    }
-  };
+  // const handlePresentationClick = () => {
+  //   if (typeof handlePresentation === 'function') {
+  //     handlePresentation();
+  //   }
+  // };
 
-  const handlePrintClick = () => {
-    if (typeof handlePrint === 'function') {
-      handlePrint();
-    }
-  };
+  // const handlePrintClick = () => {
+  //   if (typeof handlePrint === 'function') {
+  //     handlePrint();
+  //   }
+  // };
 
   const handleAddClick = () => {
-    if (typeof handleAdd === 'function') {
-      handleAdd();
+    if (typeof handleAddContent === 'function') {
+      handleAddContent();
     }
   };
 
@@ -192,13 +193,13 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   };
 
   const onEditClick = () => {
-    if (typeof handleEdit === 'function') {
-      handleEdit(!editMode);
-      if (!editMode) {
-        fetchBranches(collection);
-        setChangeBranch(true);
-      }
-    }
+    // if (typeof handleEdit === 'function') {
+    //   handleEdit(!editMode);
+    //   if (!editMode) {
+    //     fetchBranches(collection);
+    //     setChangeBranch(true);
+    //   }
+    // }
   };
 
   return (
@@ -314,34 +315,6 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                 </IconButton>
               }
               label='Add Content'
-            />
-          )}
-          {handlePrint && !editMode && (
-            <FormControlLabel
-              control={
-                <IconButton
-                  size='large'
-                  onClick={() => handlePrintClick()}
-                  color='primary'
-                >
-                  <PrintIcon />
-                </IconButton>
-              }
-              label='Print'
-            />
-          )}
-          {handlePresentation && !editMode && (
-            <FormControlLabel
-              control={
-                <IconButton
-                  size='large'
-                  onClick={() => handlePresentationClick()}
-                  color='primary'
-                >
-                  <SlideshowIcon />
-                </IconButton>
-              }
-              label='View Presentation'
             />
           )}
         </div>

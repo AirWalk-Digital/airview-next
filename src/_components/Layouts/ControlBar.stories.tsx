@@ -1,6 +1,6 @@
 import type { Meta, StoryFn } from '@storybook/react';
 import { fn } from '@storybook/test';
-import React, { useState } from 'react';
+import React from 'react';
 
 import type { ContentItem } from '@/lib/Types';
 
@@ -29,7 +29,7 @@ export default {
   args: {
     handleRefresh: fn(),
     handlePrint: fn(),
-    handleAdd: fn(),
+    handleAddContent: fn(),
     handlePresentation: fn(),
   },
 } as Meta<StorybookControlBar>;
@@ -110,7 +110,7 @@ export const Simple = {
     handleEdit: fn(),
     handleRefresh: fn(),
     handlePrint: fn(),
-    handleAdd: fn(),
+    handleAddContent: fn(),
     onContextUpdate: fn(),
     handlePresentation: fn(),
     collection: dummyCollection,
@@ -128,7 +128,7 @@ export const EditMode = {
     handleEdit: fn(),
     handleRefresh: fn(),
     handlePrint: fn(),
-    handleAdd: fn(),
+    handleAddContent: fn(),
     onContextUpdate: fn(),
     handlePresentation: fn(),
     collection: dummyCollection,
@@ -160,22 +160,10 @@ export const DefaultBranch = {
 
 const Template: StoryFn<StorybookControlBar> = (args) => {
   // const [collection, setCollection] = useState(dummyCollection);
-  const [editMode, setEditMode] = useState(args.editMode || false);
   const context = {
     ...args.context,
     branch: 'main',
   };
-
-  // function fn()() {}
-
-  const handleEdit = (edit: boolean) => {
-    setEditMode(edit);
-    fn();
-  };
-
-  // function onContextUpdate(newCollection: ExtendedContentItem) {
-  //   setContext(newCollection);
-  // }
 
   function dummyDelay() {
     fn();
@@ -195,17 +183,12 @@ const Template: StoryFn<StorybookControlBar> = (args) => {
     <ControlBar
       open
       top={0}
-      handleEdit={handleEdit}
-      handleAdd={() => fn()}
-      handlePresentation={() => fn()}
-      handlePrint={() => fn()}
       handleNewBranch={() => fn()}
       // onContextUpdate={() => onContextUpdate}
       collection={args.collection}
       context={context}
       branches={args.branches}
-      editMode={editMode}
-      fetchBranches={fn()}
+      editMode
       handlePR={() => dummyDelay()}
     />
   );

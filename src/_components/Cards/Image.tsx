@@ -57,7 +57,7 @@ function getAPIUrl(src: string, baseContext: ContentItem) {
           newSrc = `${dir}/${newSrc}`;
         } // ignore base paths
       }
-      url = `/api/content/github?owner=${baseContext.linked.owner}&repo=${baseContext.linked.repo}&path=${newSrc}&branch=${baseContext.linked.branch}`;
+      url = `/api/github/content?owner=${baseContext.linked.owner}&repo=${baseContext.linked.repo}&path=${newSrc}&branch=${baseContext.linked.branch}`;
     } else {
       if (baseContext.file) {
         const dir = path.dirname(baseContext.file);
@@ -66,7 +66,7 @@ function getAPIUrl(src: string, baseContext: ContentItem) {
           newSrc = `${dir}/${newSrc}`;
         } // ignore base paths
       }
-      url = `/api/content/github?owner=${baseContext.owner}&repo=${baseContext.repo}&path=${newSrc}&branch=${baseContext.branch}`;
+      url = `/api/github/content?owner=${baseContext.owner}&repo=${baseContext.repo}&path=${newSrc}&branch=${baseContext.branch}`;
     }
     // console.debug('mdxProvider:MdxImage:src: ', src)
   } else if (src.slice(0, 1) === '/') {

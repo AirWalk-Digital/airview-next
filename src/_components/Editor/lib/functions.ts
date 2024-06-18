@@ -1,37 +1,65 @@
 import path from 'path';
 
+import { getLogger } from '@/lib/Logger';
 import type { ContentItem } from '@/lib/Types';
 
-export async function createFile(
-  owner: string,
-  repo: string,
-  branch: string,
-  file: string,
-  fileName: string,
-  content: string,
-  message: string
-) {
-  // use in pages
+const logger = getLogger().child({ namespace: 'Editor/functions' });
+logger.level = 'info';
 
-  // const file = path.basename(path);
+export async function createNewBranch({
+  owner,
+  repo,
+  branch,
+  sourceBranch,
+}: {
+  owner: string;
+  repo: string;
+  branch: string;
+  sourceBranch: string;
+}) {
+  const response = await fetch('/api/github/branch', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      owner,
+      repo,
+      branch,
+      sourceBranch,
+    }),
+  });
 
-  // console.debug(
-  //   'Editor:createFile: ',
-  //   owner,
-  //   repo,
-  //   branch,
-  //   file,
-  //   fileName,
-  //   content,
-  //   message,
-  // );
+  if (!response.ok) {
+    const data = await response.json();
+    logger.info('ControlBar:createNewBranch:response: ', data);
+    throw new Error(`${data.error}`);
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export async function createFile({
+  owner,
+  repo,
+  branch,
+  file,
+  content,
+  message,
+}: {
+  owner: string;
+  repo: string;
+  branch: string;
+  file: string;
+  content: string;
+  message: string;
+}) {
   const filePath = file.replace(/^\/|^\.\//, '');
-
-  // return fileName;
 
   try {
     const response = await fetch(
-      `/api/content/github/${owner}/${repo}?branch=${branch}&path=${filePath}`,
+      `/api/github/content/${owner}/${repo}?branch=${branch}&path=${filePath}`,
       {
         method: 'POST',
         headers: {
@@ -44,9 +72,9 @@ export async function createFile(
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    await response.json();
+    const result = await response.json();
     // console.log('Editor:createFile:Commit successful:', data);
-    return fileName;
+    return result;
   } catch (e: any) {
     // console.error('Editor:createFile:Error committing file:', e.message);
     return null;
@@ -69,7 +97,7 @@ export async function imagePreviewHandler(
   // console.log('Editor:imagePreviewHandler:filePath: ', filePath);
 
   const response = await fetch(
-    `/api/content/github/${context.owner}/${context.repo}?branch=${context.branch}&path=${filePath}`
+    `/api/github/content/${context.owner}/${context.repo}?branch=${context.branch}&path=${filePath}`
   );
   // console.log('Editor:imagePreviewHandler:response: ', response);
   if (!response.ok) {
@@ -95,7 +123,7 @@ export async function imageUploadHandler(
   const file = `${path.dirname(context.file || '')}/${image.name
     .replace(/[^a-zA-Z0-9.]/g, '')
     .toLowerCase()}`;
-  const fileName = image.name.replace(/[^a-zA-Z0-9.]/g, '').toLowerCase();
+  // const fileName = image.name.replace(/[^a-zA-Z0-9.]/g, '').toLowerCase();
 
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -106,15 +134,14 @@ export async function imageUploadHandler(
       const imageData =
         typeof base64Image === 'string' ? base64Image.split(',')[1] : '';
       try {
-        const url = await createFile(
-          context.owner,
-          context.repo,
-          context.branch,
+        const url = await createFile({
+          owner: context.owner,
+          repo: context.repo,
+          branch: context.branch,
           file,
-          fileName,
-          imageData ?? '',
-          'Image uploaded from Airview'
-        );
+          content: imageData ?? '',
+          message: 'Image uploaded from Airview',
+        });
         if (url) {
           resolve(url);
         } else {
@@ -130,3 +157,40 @@ export async function imageUploadHandler(
     reader.readAsDataURL(image);
   });
 }
+
+export const raisePR = async ({
+  owner,
+  repo,
+  title,
+  message,
+  head,
+  base,
+}: {
+  owner: string;
+  repo: string;
+  title: string;
+  message: string;
+  head: string;
+  base: string;
+}) => {
+  try {
+    const response = await fetch('/api/repo/pr', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner, repo, title, message, head, base }),
+    });
+
+    const data = await response.json();
+    // console.log('lib/github/raisePR:response: ', data)
+    if (!response.ok) {
+      throw Error(data.error || 'Network response was not ok');
+    }
+
+    return data;
+  } catch (error: any) {
+    // console.error('There has been a problem with your fetch operation:', error);
+    throw Error(error.message);
+  }
+};

@@ -1,3 +1,5 @@
 import { Editor } from './Editor';
+import { NewBranchDialog } from './NewBranchDialog';
+import { NewContentDialog } from './NewContentDialog';
 
-export { Editor };
+export { Editor, NewBranchDialog, NewContentDialog };

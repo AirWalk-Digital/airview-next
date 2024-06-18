@@ -92,7 +92,7 @@ export default async function Page({
     const branch = () =>
       params.branch === 'default'
         ? siteConfig?.content?.[contentKey]?.branch
-        : params.branch;
+        : decodeURIComponent(params.branch);
     const contentConfig = {
       ...siteConfig?.content?.[contentKey],
       file: file,
