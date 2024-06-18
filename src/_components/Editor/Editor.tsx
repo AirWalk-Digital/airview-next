@@ -31,20 +31,20 @@ import {
 } from '@mdxeditor/editor';
 import SaveIcon from '@mui/icons-material/Save';
 import { Alert, css, Fab } from '@mui/material';
-// const { MDXEditor, codeBlockPlugin, diffSourcePlugin, headingsPlugin, frontmatterPlugin, listsPlugin, linkPlugin, linkDialogPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, UndoRedo, InsertTable, InsertCodeBlock, InsertFrontmatter, CreateLink, InsertThematicBreak, DiffSourceToggleWrapper } = await import('@mdxeditor/editor')
-// import { useState, useRef, createContext } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import Snackbar from '@mui/material/Snackbar';
 import type { Theme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
-// import { $createParagraphNode, $createTextNode } from 'lexical';
-// import type { ForwardedRef } from 'react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import type { ContentItem } from '@/lib/Types';
-// import { css } from 'styled-components';
-// import store from '@/lib/redux/store';
 import { baseTheme } from '@/styles/baseTheme';
 
 const toKebabCase = (str: string) => {
@@ -59,12 +59,10 @@ const convertStyleObjectToCSS = (
 
   for (const [key, value] of Object.entries(styleObject)) {
     if (typeof value === 'object') {
-      // Handle nested objects
       cssString += `${indent}${toKebabCase(key)} {\n`;
       cssString += convertStyleObjectToCSS(value, `${indent}  `);
       cssString += `${indent}}\n`;
     } else {
-      // Convert style properties to CSS
       cssString += `${indent}${toKebabCase(key)}: ${value};\n`;
     }
   }
@@ -72,31 +70,10 @@ const convertStyleObjectToCSS = (
   return cssString;
 };
 
-// function convertMdastToLexical(mdastNode) {
-//   switch (mdastNode.type) {
-//     case 'mdxJsxTextElement':
-//       return convertJsxElement(mdastNode);
-//     case 'text':
-//       return mdastNode.value;
-//     // Handle other MDAST node types if needed
-//     default:
-//       return '';
-//   }
-// }
-
-// function convertJsxElement(jsxNode) {
-//   const tagName = jsxNode.name;
-//   const attributes = jsxNode.attributes
-//     .map((attr) => `${attr.name}="${attr.value}"`)
-//     .join(' ');
-//   const children = jsxNode.children.map(convertMdastToLexical).join('');
-
-//   return `<${tagName} ${attributes}>${children}</${tagName}>`;
-// }
-
 interface EditorProps {
   markdown: string;
   context: ContentItem;
+  defaultContext: ContentItem | undefined;
   editorSaveHandler: (arg: string) => Promise<string>;
   imageUploadHandler: (image: File, context: ContentItem) => Promise<string>;
   imagePreviewHandler: (
@@ -108,9 +85,10 @@ interface EditorProps {
   editorRef?: React.MutableRefObject<MDXEditorMethods | null>;
 }
 
-export function Editor({
+const Editor = React.memo(function EditorC({
   markdown: initialMarkdown,
   context,
+  defaultContext,
   editorSaveHandler,
   imageUploadHandler,
   imagePreviewHandler,
@@ -118,31 +96,18 @@ export function Editor({
   top,
   editorRef,
 }: EditorProps) {
-  // const [markdown, setMarkdown] = useState(initialMarkdown);
-  const [changed, setChanged] = useState(false); // enable/disable the save button
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  // const ref = useRef();
-  // const collection = context?.path || 'null';
-  // const currentState = store.getState();
-  // const reduxCollection = currentState.branch[collection];
-  // console.log('Editor:context: ', context);
-  // console.log('Editor:reduxCollection: ', reduxCollection);
-  // console.log('Editor:initialMarkdown: ', initialMarkdown.substring(0, 100));
+  const changedRef = useRef(false);
   const typographyCopy = { ...baseTheme.typography } as Theme['typography'];
-  // delete typographyCopy.table;
   const importedCss = convertStyleObjectToCSS(typographyCopy);
-  // console.log("Editor:importedCss: ", importedCss);
+
   const StyledMDXEditor = styled(MDXEditor)`
     font-family: 'Heebo';
     font-weight: 200;
     font-size: 14;
     [role='toolbar'] {
-      // border: 1px solid #d1d5db;
-      // border-radius: 0.15rem;
-      // border-bottom-right-radius: 0;
-      // border-bottom-left-radius: 0;
     }
     [class*='_contentEditable_'] {
       height: calc(100vh - ${top}px);
@@ -150,15 +115,8 @@ export function Editor({
       overflow-x: hidden;
     }
     [role='textbox'] {
-      // background-color: white;
-      // border: 1px solid #d1d5db;
-      // border-top: none;
-      // border-radius: 0.15rem;
-      // border-top-right-radius: 0;
-      // border-top-left-radius: 0;
     }
     [class^='_rootContentEditableWrapper'] {
-      /* Your CSS styles for elements with the matching class name here */
       h1,
       h2,
       h3,
@@ -194,22 +152,26 @@ export function Editor({
     }
   `;
 
-  // const ref = React.useRef<MDXEditorMethods>(null);
-
   const editorCallback = useCallback(
     (callback: string) => {
-      if (!initialMarkdown) {
-        setChanged(true);
+      if (
+        !initialMarkdown &&
+        defaultContext &&
+        context.branch !== defaultContext.branch
+      ) {
+        changedRef.current = true;
       } else if (
         initialMarkdown &&
-        callback.trim() !== initialMarkdown.trim()
+        callback.trim() !== initialMarkdown.trim() &&
+        defaultContext &&
+        context.branch !== defaultContext.branch
       ) {
-        setChanged(true);
+        changedRef.current = true;
       } else {
-        setChanged(false);
+        changedRef.current = false;
       }
     },
-    [initialMarkdown]
+    [initialMarkdown, defaultContext, context.branch]
   );
 
   const editorPlugins = useMemo(
@@ -244,8 +206,6 @@ export function Editor({
         imagePreviewHandler: (imageSource) =>
           Promise.resolve(imagePreviewHandler(imageSource, context)),
       }),
-      // catchAllPlugin(),
-
       toolbarPlugin({
         toolbarContents: () => (
           <>
@@ -269,25 +229,19 @@ export function Editor({
     [initialMarkdown, imageUploadHandler, context, imagePreviewHandler]
   );
 
-  return (
-    <Paper
-      sx={{
-        px: '1%',
-        maxHeight: 'calc(100vh - 65px)',
-        pt: '2%',
-        pb: '2%',
-        overflow: 'auto',
-      }}
-      elevation={0}
-    >
-      <StyledMDXEditor
-        ref={editorRef}
-        onChange={editorCallback}
-        // eslint-disable-next-line no-console
-        onError={(msg) => console.warn('Error in markdown: ', msg)}
-        markdown={initialMarkdown || ''}
-        plugins={editorPlugins}
-      />
+  const SaveButton = React.memo(function SaveButton() {
+    const [changed, setChanged] = useState(
+      defaultContext && context.branch !== defaultContext.branch
+    );
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setChanged(changedRef.current);
+      }, 100);
+      return () => clearInterval(interval);
+    }, []);
+
+    return (
       <Fab
         color='primary'
         aria-label='save'
@@ -295,7 +249,7 @@ export function Editor({
         style={{ position: 'fixed', bottom: 16, right: 16 }}
         onClick={async () => {
           setIsLoading(true);
-          setError(''); // clear any previous errors
+          setError('');
           try {
             const text = editorRef?.current?.getMarkdown() ?? 'error';
             await editorSaveHandler(text ?? '');
@@ -309,6 +263,35 @@ export function Editor({
       >
         {isLoading ? <CircularProgress size={24} /> : <SaveIcon />}
       </Fab>
+    );
+  });
+
+  return (
+    <Paper
+      sx={{
+        px: '1%',
+        maxHeight: 'calc(100vh - 65px)',
+        pt: '2%',
+        pb: '2%',
+        overflow: 'auto',
+      }}
+      elevation={0}
+    >
+      {defaultContext && context.branch === defaultContext.branch && (
+        <Alert severity='info'>
+          The editor is in read-only mode until you change branch
+        </Alert>
+      )}
+      <StyledMDXEditor
+        ref={editorRef}
+        onChange={editorCallback}
+        onError={(msg) => setError(`Error in markdown: ${msg}`)}
+        markdown={initialMarkdown || ''}
+        plugins={editorPlugins}
+        readOnly={defaultContext && context.branch === defaultContext.branch}
+        autoFocus
+      />
+      <SaveButton />
       <Snackbar
         open={!!error}
         autoHideDuration={5000}
@@ -337,4 +320,6 @@ export function Editor({
       </Snackbar>
     </Paper>
   );
-}
+});
+
+export { Editor };

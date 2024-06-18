@@ -197,6 +197,7 @@ export default function EditorWrapper({
           {mdx ? (
             <Editor
               context={context}
+              defaultContext={defaultContext}
               editorRef={editorRef}
               editorSaveHandler={() => Promise.resolve('')}
               enabled

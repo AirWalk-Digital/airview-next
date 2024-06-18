@@ -303,20 +303,19 @@ export const ControlBar: React.FC<ControlBarProps> = ({
           )}
         </div>
         <div>
-          {editMode && collection.branch !== context.branch && (
-            <FormControlLabel
-              control={
-                <IconButton
-                  size='large'
-                  onClick={() => handleAddClick()}
-                  color='primary'
-                >
-                  <AddCircleIcon />
-                </IconButton>
-              }
-              label='Add Content'
-            />
-          )}
+          <FormControlLabel
+            control={
+              <IconButton
+                size='large'
+                onClick={() => handleAddClick()}
+                color='primary'
+                disabled={!editMode || collection.branch === context.branch}
+              >
+                <AddCircleIcon />
+              </IconButton>
+            }
+            label='Add Content'
+          />
         </div>
       </Toolbar>
     </AppBar>

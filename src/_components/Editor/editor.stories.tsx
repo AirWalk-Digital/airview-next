@@ -1,12 +1,23 @@
 // components/Editor.stories.tsx
 import { type MDXEditorMethods } from '@mdxeditor/editor';
-import type { Meta, StoryFn } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import React, { useRef } from 'react';
 
 import { Editor } from '@/components/Editor';
 import type { ContentItem } from '@/lib/Types';
 
 const dummyContext: ContentItem = {
+  source: 'github',
+  repo: 'airwalk_patterns',
+  owner: 'airwalk-digital',
+  branch: 'another-branch',
+  path: 'providers',
+  reference: 'provider',
+  collections: ['services'],
+};
+
+const dummyDefaultContext: ContentItem = {
   source: 'github',
   repo: 'airwalk_patterns',
   owner: 'airwalk-digital',
@@ -22,11 +33,12 @@ const meta: Meta<typeof Editor> = {
   tags: ['autodocs'],
   args: {
     context: dummyContext,
+    defaultContext: dummyDefaultContext,
     enabled: true,
     top: 0,
-    editorSaveHandler: async () => {
+    editorSaveHandler: fn(async () => {
       return Promise.resolve('successfully saved file');
-    },
+    }),
     imageUploadHandler: async () => {
       // console.log('Image upload handler called with image:', image);
       return Promise.resolve('https://picsum.photos/200/300?grayscale');
@@ -42,40 +54,70 @@ const meta: Meta<typeof Editor> = {
 
 export default meta;
 
-const Template: StoryFn<typeof Editor> = (args, { loaded: { mdx } }) => {
-  const editorRef = useRef<MDXEditorMethods | null>(null);
-  return <Editor {...args} markdown={mdx} editorRef={editorRef} />;
+type Story = StoryObj<typeof Editor>;
+
+const Template: Story = {
+  render: (args, { loaded: { mdx } }) => {
+    const editorRef = useRef<MDXEditorMethods | null>(null);
+    return (
+      <Editor
+        markdown={mdx}
+        editorRef={editorRef}
+        context={args.context}
+        defaultContext={args.defaultContext}
+        editorSaveHandler={args.editorSaveHandler}
+        imageUploadHandler={args.imageUploadHandler}
+        imagePreviewHandler={args.imagePreviewHandler}
+        enabled={args.enabled}
+        top={args.top}
+        // {...args}
+        // other props you might need to pass
+      />
+    );
+  },
+};
+export const Default = {
+  ...Template,
 };
 
-export const Default = Template.bind({});
 Default.loaders = [
   async () => ({
     mdx: await (await fetch('/test/full-mdx.mdx')).text(),
   }),
 ];
-Default.args = {
-  // markdown will be dynamically loaded by the loader
-};
 
-export const MinimalMDX = Template.bind({});
+export const MinimalMDX = {
+  ...Template,
+};
 MinimalMDX.loaders = [
   async () => ({
     mdx: await (await fetch('/test/short-mdx.mdx')).text(),
   }),
 ];
-MinimalMDX.args = {
-  // markdown will be dynamically loaded by the loader
-};
 
-export const APIFailure = Template.bind({});
+export const SameBranch = {
+  ...Template,
+  args: {
+    context: dummyDefaultContext,
+  },
+};
+SameBranch.loaders = [
+  async () => ({
+    mdx: await (await fetch('/test/short-mdx.mdx')).text(),
+  }),
+];
+
+export const APIFailure = {
+  ...Template,
+};
 APIFailure.loaders = [
   async () => ({
     mdx: await (await fetch('/test/full-mdx.mdx')).text(),
   }),
 ];
 APIFailure.args = {
-  editorSaveHandler: async () => {
+  editorSaveHandler: fn(async () => {
     return Promise.reject(new Error('failed to save file'));
-  },
+  }),
   // markdown will be dynamically loaded by the loader
 };
