@@ -169,6 +169,19 @@ export default function EditorWrapper({
     }
   };
 
+  const handleEdit = () => {
+    const pathnameArray = pathname.split('/');
+    if (pathnameArray[2] === 'edit') {
+      // Replace 'edit' with 'view' in the URL path
+      pathnameArray[2] = 'view';
+    } else {
+      // Replace 'view' with 'edit' in the URL path
+      pathnameArray[2] = 'edit';
+    }
+    const newPathname = pathnameArray.join('/');
+    router.push(newPathname);
+  };
+
   return (
     <>
       <ControlBar
@@ -176,7 +189,7 @@ export default function EditorWrapper({
         collection={defaultContext}
         context={context}
         handleAddContent={onAddContentClicked}
-        // handleEdit={() => {}}
+        handleEdit={handleEdit}
         handleNewBranch={onNewBranchClicked}
         handlePR={handlePR}
         // handlePresentation={() => {}}

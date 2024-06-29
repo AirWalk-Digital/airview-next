@@ -29,6 +29,7 @@ export default {
   args: {
     handleRefresh: fn(),
     handlePrint: fn(),
+    handleEdit: fn(),
     handleAddContent: fn(),
     handlePresentation: fn(),
   },

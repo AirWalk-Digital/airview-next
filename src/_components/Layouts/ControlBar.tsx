@@ -24,7 +24,7 @@ logger.level = 'info';
 export interface ControlBarProps {
   open: boolean;
   // height: number;
-  // handleEdit?: (editMode: boolean) => void;
+  handleEdit?: () => void;
   // handlePrint?: () => void;
   handleAddContent?: () => void;
   // handlePresentation?: () => void;
@@ -93,7 +93,7 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
 export const ControlBar: React.FC<ControlBarProps> = ({
   open,
   // height,
-  // handleEdit,
+  handleEdit,
   // handlePrint,
   handleAddContent,
   // handlePresentation,
@@ -193,13 +193,9 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   };
 
   const onEditClick = () => {
-    // if (typeof handleEdit === 'function') {
-    //   handleEdit(!editMode);
-    //   if (!editMode) {
-    //     fetchBranches(collection);
-    //     setChangeBranch(true);
-    //   }
-    // }
+    if (typeof handleEdit === 'function') {
+      handleEdit();
+    }
   };
 
   return (
