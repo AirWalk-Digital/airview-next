@@ -127,16 +127,16 @@ export function NewContentDialog({
     }
     setIsLoading(true);
     setError('');
-    setTitle('');
-    setDocType('');
-    setParent('None');
-    setSelectedDropDown('');
     try {
       await handleDialog({ frontmatter });
     } catch (err: any) {
       setError(err.message);
     } finally {
       setIsLoading(false);
+      setTitle('');
+      setDocType('');
+      setParent('None');
+      setSelectedDropDown('');
     }
   };
 
