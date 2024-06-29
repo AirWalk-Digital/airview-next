@@ -5,6 +5,7 @@ import { Box, LinearProgress } from '@mui/material';
 import Container from '@mui/material/Container';
 import matter from 'gray-matter';
 import { usePathname, useRouter } from 'next/navigation';
+import path from 'path';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Editor, NewBranchDialog, NewContentDialog } from '@/components/Editor';
@@ -150,7 +151,7 @@ export default function EditorWrapper({
           message: e.message,
         });
 
-        throw new Error(`Error creating file: ${e.message}`);
+        throw new Error(`${e.message}`);
       }
     }
 
@@ -202,6 +203,112 @@ export default function EditorWrapper({
     router.push(newPathname);
   };
 
+  const onSave = async (content: string | null) => {
+    try {
+      if (!content) {
+        throw new Error('No content to save');
+      }
+      if (!context.file) {
+        throw new Error('No file to save');
+      }
+      const normalizedFile = context.file.replace(/^\/+/, '');
+
+      await createFile({
+        owner: context.owner,
+        repo: context.repo,
+        branch: context.branch,
+        file: normalizedFile,
+        content,
+        message: 'file updated from Airview',
+      });
+      setMdx(content);
+      return 'success';
+    } catch (error: any) {
+      logger.error('ContentPage:onSave:error: ', error);
+      throw new Error(`Error saving file: ${error.message}`);
+    }
+  };
+
+  const imageUploadHandler = async (image: File) => {
+    logger.debug('imageUploadHandler', context, image);
+    const formData = new FormData();
+    formData.append('image', image);
+    if (!context.file) {
+      throw new Error('No file to save');
+    }
+    const file = `${path.dirname(context.file)}/${image.name
+      .replace(/[^a-zA-Z0-9.]/g, '')
+      .toLowerCase()}`;
+    const fileName = image.name.replace(/[^a-zA-Z0-9.]/g, '').toLowerCase();
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onloadend = async function uploadImage() {
+        const base64Image = reader.result;
+        if (!base64Image) {
+          throw new Error('error reading image');
+        }
+        let imageData: string[] = [];
+        if (base64Image && typeof base64Image === 'string') {
+          imageData = base64Image.split(',');
+        }
+        if (!imageData || !imageData[1]) {
+          throw new Error('error reading image');
+        }
+
+        try {
+          const url = await createFile({
+            owner: context.owner,
+            repo: context.repo,
+            branch: context.branch,
+            file,
+            content: imageData[1],
+            message: 'image uploaded from Airview',
+          });
+          if (url) {
+            resolve(fileName);
+          } else {
+            throw new Error('Error uploading image');
+          }
+        } catch (error: any) {
+          throw new Error(error);
+        }
+      };
+
+      reader.onerror = reject;
+
+      reader.readAsDataURL(image);
+    });
+  };
+
+  const imagePreviewHandler = async (
+    imageSource: string
+    // context: ContentItem
+  ) => {
+    logger.info('imagePreviewHandler', context, imageSource);
+    if (imageSource.startsWith('http')) return imageSource;
+    if (!context.file) {
+      throw new Error('No file context');
+    }
+    const file = `${path.dirname(context.file)}/${imageSource.replace(/^\/|^\.\//, '')}`;
+    const filePath = file.replace(/^\/|^\.\//, ''); // strip leading slash
+    logger.debug('imagePreviewHandler', filePath);
+
+    const response = await fetch(
+      `/api/github/content?owner=${context.owner}&repo=${context.repo}&branch=${context.branch}&path=${filePath}`
+    );
+    if (!response.ok) {
+      throw new Error(`${response.status}`);
+    }
+    // Fetch the image as Blob directly
+    const blob = await response.blob();
+
+    // Create an object URL for the Blob
+    const imageObjectUrl = URL.createObjectURL(blob);
+    return imageObjectUrl;
+  };
+
   return (
     <>
       <ControlBar
@@ -232,10 +339,10 @@ export default function EditorWrapper({
               context={context}
               defaultContext={defaultContext}
               editorRef={editorRef}
-              editorSaveHandler={() => Promise.resolve('')}
+              editorSaveHandler={onSave}
               enabled
-              imagePreviewHandler={() => Promise.resolve('')}
-              imageUploadHandler={() => Promise.resolve('')}
+              imagePreviewHandler={imagePreviewHandler}
+              imageUploadHandler={imageUploadHandler}
               markdown={mdx}
               top={220}
             />

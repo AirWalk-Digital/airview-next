@@ -75,11 +75,8 @@ interface EditorProps {
   context: ContentItem;
   defaultContext: ContentItem | undefined;
   editorSaveHandler: (arg: string) => Promise<string>;
-  imageUploadHandler: (image: File, context: ContentItem) => Promise<string>;
-  imagePreviewHandler: (
-    imageSource: string,
-    context: ContentItem
-  ) => Promise<string>;
+  imageUploadHandler: (image: File) => Promise<any>;
+  imagePreviewHandler: (imageSource: string) => Promise<string>;
   enabled?: boolean;
   top: number;
   editorRef?: React.MutableRefObject<MDXEditorMethods | null>;
@@ -202,9 +199,9 @@ const Editor = React.memo(function EditorC({
       imagePlugin({
         disableImageResize: true,
         imageUploadHandler: (image) =>
-          Promise.resolve(imageUploadHandler(image, context)),
+          Promise.resolve(imageUploadHandler(image)),
         imagePreviewHandler: (imageSource) =>
-          Promise.resolve(imagePreviewHandler(imageSource, context)),
+          Promise.resolve(imagePreviewHandler(imageSource)),
       }),
       toolbarPlugin({
         toolbarContents: () => (
@@ -226,7 +223,7 @@ const Editor = React.memo(function EditorC({
         ),
       }),
     ],
-    [initialMarkdown, imageUploadHandler, context, imagePreviewHandler]
+    [initialMarkdown, imageUploadHandler, imagePreviewHandler]
   );
 
   const SaveButton = React.memo(function SaveButton() {
@@ -306,12 +303,12 @@ const Editor = React.memo(function EditorC({
         </Alert>
       </Snackbar>
       <Snackbar
-        open={!!success}
+        open={success}
         autoHideDuration={5000}
-        onClose={() => setSuccess(true)}
+        onClose={() => setSuccess(false)}
       >
         <Alert
-          onClose={() => setSuccess(true)}
+          onClose={() => setSuccess(false)}
           severity='info'
           sx={{ width: '100%' }}
         >

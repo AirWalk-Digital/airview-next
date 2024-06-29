@@ -129,14 +129,14 @@ export function NewContentDialog({
     setError('');
     try {
       await handleDialog({ frontmatter });
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
       setTitle('');
       setDocType('');
       setParent('None');
       setSelectedDropDown('');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 

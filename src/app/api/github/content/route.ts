@@ -83,10 +83,29 @@ export async function POST(req: NextRequest): Promise<NextResponse | void> {
         { status: 400 }
       );
     }
+    let content;
+    let message;
 
-    const { content, message } = JSON.parse(
-      req?.body ? req.body.toString() : ''
-    );
+    try {
+      // Ensure req.body exists and is not an empty string before parsing
+      const body = await req.json();
+
+      if (body) {
+        content = body.content;
+        message = body.message;
+      }
+    } catch (error) {
+      logger.error('Error parsing request body as JSON:', error);
+      return NextResponse.json(
+        {
+          error: 'Missing required parameters: content or message in the body',
+        },
+        { status: 400 }
+      );
+    }
+    // const { content, message } = JSON.parse(
+    //   req?.body ? req.body.toString() : ''
+    // );
     if (!content || !message) {
       return NextResponse.json(
         {
@@ -103,11 +122,8 @@ export async function POST(req: NextRequest): Promise<NextResponse | void> {
       content,
       message
     );
-    NextResponse.json({ response: commitResponse }, { status: 201 });
+    return NextResponse.json({ response: commitResponse }, { status: 201 });
   } catch (err) {
-    return NextResponse.json(
-      { error: `Error in API: ${err}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `${err}` }, { status: 500 });
   }
 }

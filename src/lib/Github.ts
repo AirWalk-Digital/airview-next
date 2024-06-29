@@ -10,7 +10,8 @@ import { cacheRead, cacheWrite } from '@/lib/Redis';
 import type { GitHubFile } from '@/lib/Types';
 
 let gitHubInstance: Octokit | undefined;
-const logger = getLogger();
+const logger = getLogger().child({ namespace: 'lib/Github' });
+
 logger.level = 'error';
 
 interface GitHubConfig {
@@ -858,7 +859,14 @@ export async function commitFileToBranch(
   }
 
   try {
-    const branchSha = await getBranchSha(owner, repo, branch);
+    const { data } = await gitHubInstance.rest.repos.getBranch({
+      owner,
+      repo,
+      branch,
+    });
+    const branchSha = data.commit.sha;
+
+    // const branchSha = await getBranchSha(owner, repo, branch);
     const encoding = isBase64(content) ? 'base64' : 'utf-8';
 
     const blob = await gitHubInstance.rest.git.createBlob({
@@ -900,17 +908,20 @@ export async function commitFileToBranch(
     // refresh branch cache
     try {
       // Store the content in the cache before returning it
-      const cacheKey = `github:getBranch:${owner}:${repo}:${branch}`;
+      const cacheKey = `github:branch:${owner}:${repo}:${branch}`;
+
       await cacheWrite(cacheKey, newCommit.data.sha, 600);
     } catch (error) {
-      logger.error(`[GitHub][getBranchSha] Error writing cache: ${error}`);
+      logger.error(`[getBranchSha] Error writing cache: ${error}`);
     }
 
     return newCommit.data;
-  } catch (error) {
-    logger.error(
-      `[GitHub][commitFileToBranch] Error committing file: ${error}`
-    );
+  } catch (error: any) {
+    logger.error(`[commitFileToBranch] Error committing file: ${error as any}`);
+    const errStr = error.toString();
+    if (errStr.includes('Update is not a fast forward')) {
+      throw new Error('Fast Forward Error (File may already exist)');
+    }
     throw new Error(`${error}`);
   }
 }

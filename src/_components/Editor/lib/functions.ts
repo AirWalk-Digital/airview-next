@@ -70,15 +70,16 @@ export async function createFile({
     );
     logger.info(response);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const error = await response.json();
+      logger.error('Editor:createFile:Commit failed:', error);
+      throw new Error(`${error.error}`);
     }
 
     const result = await response.json();
     // console.log('Editor:createFile:Commit successful:', data);
     return result;
   } catch (e: any) {
-    // console.error('Editor:createFile:Error committing file:', e.message);
-    return null;
+    throw new Error(`${e.message}`);
   }
 }
 
