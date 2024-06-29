@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation';
 import { getFileContent } from '@/lib/Github';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem, MatterData } from '@/lib/Types';
-import { loadMenu, nestMenu } from '@/lib/Content/loadMenu';
+import { loadMenu, nestMenu, menuConfig } from '@/lib/Content/loadMenu';
 const logger = getLogger().child({ namespace: 'docs/page' });
 logger.level = 'error';
 export const metadata: Metadata = {
@@ -99,18 +99,6 @@ export default async function Page({
       branch: branch(),
     } as ContentItem;
 
-    const menuConfig = (contentConfig: ContentItem) => {
-      if (contentConfig.menu && contentConfig.menu.collection) {
-        return (
-          siteConfig?.content?.[
-            contentConfig?.menu?.collection as keyof typeof siteConfig.content
-          ] || (contentConfig as ContentItem)
-        );
-      } else {
-        return contentConfig;
-      }
-    };
-
     // content page
     if (file.endsWith('.md') || file.endsWith('.mdx')) {
       // const contentKey = params.path[0] as keyof typeof siteConfig.content;
@@ -136,7 +124,10 @@ export default async function Page({
 
         logger.debug({ msg: 'context: ', context });
 
-        const content = await loadMenu(siteConfig, menuConfig(contentConfig));
+        const content = await loadMenu(
+          siteConfig,
+          menuConfig(siteConfig, contentConfig)
+        );
         const { menu: menuStructure } = nestMenu(content, 'docs');
 
         if (pageContent && pageContent.content && pageContentText) {

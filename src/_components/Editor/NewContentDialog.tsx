@@ -53,7 +53,7 @@ export function NewContentDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingItems, setIsLoadingItems] = useState(false);
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('' as string);
 
   const docTypes = Object.entries(siteConfig.content)
     .map(([_, item]) => {
@@ -121,7 +121,7 @@ export function NewContentDialog({
       };
     }
     setIsLoading(true);
-    setError(null);
+    setError('');
     try {
       await handleDialog({ frontmatter });
     } catch (err: any) {
@@ -135,19 +135,18 @@ export function NewContentDialog({
     setIsLoadingItems(true);
     setParent(newParent);
     setSelectedDropDown('');
-    fetch(`/api/structure?collection=${newParent}`)
+    fetch(`/api/content/structure?collection=${newParent}`)
       .then((res) => res.json())
       .then((data) => {
-        // const values = data.docs.map((item) => item.frontmatter.title) ?? [];
-        const values = data.docs.map(
-          ({ file, frontmatter }: { file: string; frontmatter: any }) => ({
-            label: frontmatter.title,
-            url: file,
-          })
-        );
+        // const values = data.docs.map(
+        //   ({ file, frontmatter }: { file: string; frontmatter: any }) => ({
+        //     label: frontmatter.title,
+        //     url: file,
+        //   })
+        // );
 
-        // console.log('NewContentDialog:handleParentChange:values: ', values);
-
+        const values = data;
+        logger.info({ values });
         setDropDownData(
           values.sort((a: any, b: any) => {
             // Assuming that some objects might not have a 'label' property
@@ -167,6 +166,7 @@ export function NewContentDialog({
       })
       .catch((err: any) => {
         logger.error(err);
+        setError('error loading content');
         setIsLoadingItems(false);
       });
   };
