@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { siteConfig } from '@/config';
 import { getLogger } from '@/lib/Logger';
 const logger = getLogger().child({ namespace: 'docs/page/@layout' });
-logger.level = 'info';
+logger.level = 'error';
 
 export const metadata: Metadata = {
   title: {

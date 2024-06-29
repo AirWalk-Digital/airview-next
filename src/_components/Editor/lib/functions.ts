@@ -59,7 +59,7 @@ export async function createFile({
 
   try {
     const response = await fetch(
-      `/api/github/content/${owner}/${repo}?branch=${branch}&path=${filePath}`,
+      `/api/github/content?owner=${owner}&repo=${repo}&branch=${branch}&path=${filePath}`,
       {
         method: 'POST',
         headers: {
@@ -68,10 +68,11 @@ export async function createFile({
         body: JSON.stringify({ content, message }),
       }
     );
-
+    logger.info(response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+
     const result = await response.json();
     // console.log('Editor:createFile:Commit successful:', data);
     return result;

@@ -10,7 +10,7 @@ import EditorWrapper from '@/features/Mdx/EditorWrapper';
 import { getBranches } from '@/lib/Github';
 
 const logger = getLogger().child({ namespace: 'docs/page/@edit' });
-logger.level = 'info';
+logger.level = 'error';
 export const metadata: Metadata = {
   title: 'Airview',
   description: 'Airview AI',

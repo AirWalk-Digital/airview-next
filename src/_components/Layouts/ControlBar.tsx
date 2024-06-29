@@ -20,7 +20,7 @@ import React, { useEffect, useState } from 'react';
 import { getLogger } from '@/lib/Logger';
 
 const logger = getLogger().child({ namespace: 'ControlBar' });
-logger.level = 'info';
+logger.level = 'error';
 export interface ControlBarProps {
   open: boolean;
   // height: number;

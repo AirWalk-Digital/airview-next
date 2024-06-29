@@ -6,7 +6,7 @@ import { loadMenu, nestMenu } from '@/lib/Content/loadMenu';
 import { getLogger } from '@/lib/Logger';
 
 const logger = getLogger().child({ namespace: 'API:/api/content/structure' });
-logger.level = 'info';
+logger.level = 'error';
 // export const config = {
 //   api: {
 //     responseLimit: '8mb',

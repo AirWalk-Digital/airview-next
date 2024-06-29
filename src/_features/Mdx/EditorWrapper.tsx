@@ -92,6 +92,16 @@ export default function EditorWrapper({
   const onAddContentClicked = () => {
     setIsAddOpen(true);
   };
+
+  const handleRedirect = (newPage: string) => {
+    const pathnameArray = pathname.split('/');
+    // pop every element of the array afer [2]
+    pathnameArray.splice(4);
+    // join the 2 arrays
+    pathnameArray.push(newPage);
+    router.push(pathnameArray.join('/'));
+  };
+
   const handleAdd = async (newFile: any) => {
     if (!newFile) {
       // handle the cancel button
@@ -112,7 +122,7 @@ export default function EditorWrapper({
         newContent.path = `${newFile.frontmatter.type}/${toSnakeCase(
           newFile.frontmatter.title
         )}/_index.mdx`;
-        createFile({
+        const createdFile = await createFile({
           owner: context.owner,
           repo: context.repo,
           branch: context.branch,
@@ -120,16 +130,26 @@ export default function EditorWrapper({
           content: matter.stringify('\n', newContent.frontmatter),
           message: 'New file created from Airview',
         });
-        logger.debug(
-          'ControlBar:handleAdd: ',
-          context.owner,
-          context.repo,
-          context.branch,
-          newContent.path,
-          matter.stringify('\n', newContent.frontmatter),
-          'New file created from Airview'
-        );
+        logger.info({
+          frontmatter: matter.stringify('\n', newContent.frontmatter),
+          createdFile,
+        });
+        if (createdFile) {
+          handleRedirect(newContent.path);
+        } else {
+          logger.error({
+            frontmatter: matter.stringify('\n', newContent.frontmatter),
+            message: 'Error creating file',
+          });
+
+          throw new Error(`Error creating file`);
+        }
       } catch (e: any) {
+        logger.error({
+          frontmatter: matter.stringify('\n', newContent.frontmatter),
+          message: e.message,
+        });
+
         throw new Error(`Error creating file: ${e.message}`);
       }
     }

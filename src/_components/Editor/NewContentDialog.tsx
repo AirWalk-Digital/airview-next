@@ -23,7 +23,7 @@ import { siteConfig } from '@/config';
 import { getLogger } from '@/lib/Logger';
 
 const logger = getLogger().child({ namespace: 'NewContentDialog' });
-logger.level = 'info';
+logger.level = 'error';
 
 // Custom Dropdown Indicator defined outside
 const DropdownIndicator = ({ isLoadingItems }: { isLoadingItems: boolean }) =>
@@ -103,7 +103,12 @@ export function NewContentDialog({
     // const pad = uuidv4(); // Generate a unique padID
 
     const parentRef = parentReference();
-    // console.log('parentRef: ', parentRef);
+
+    if (!docType || !title) {
+      // set the error to 'Please fill out all fields' and continue
+      setError('Please add a title and document type as a minimum');
+      return;
+    }
 
     let frontmatter;
     if (!parentRef) {
@@ -122,6 +127,10 @@ export function NewContentDialog({
     }
     setIsLoading(true);
     setError('');
+    setTitle('');
+    setDocType('');
+    setParent('None');
+    setSelectedDropDown('');
     try {
       await handleDialog({ frontmatter });
     } catch (err: any) {
