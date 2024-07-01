@@ -8,6 +8,8 @@ import { LinearProgress } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 
@@ -71,6 +73,9 @@ export function ContentViewer({
   });
   const router = useRouter();
   const currentPath = usePathname();
+  const theme = useTheme();
+  // Use useMediaQuery hook to check for screen width
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   function openGithub() {
     // example url: https://github.com/mdx-js/mdx/blob/main/changelog.md
@@ -89,7 +94,10 @@ export function ContentViewer({
   }
 
   function openPrint() {
-    router.push(`${currentPath}/print`);
+    const pathnameArray = currentPath.split('/');
+    pathnameArray[2] = 'print';
+    const newPathname = pathnameArray.join('/');
+    router.push(newPathname);
   }
 
   function handleContentChange(callback: any) {
@@ -119,7 +127,9 @@ export function ContentViewer({
         <Main>
           <MDXProvider components={components(context)}>
             {frontmatter?.title && <h1>{frontmatter.title}</h1>}
-            {contributors && <Contributors contributors={contributors} />}
+            {contributors && !isMobile && (
+              <Contributors contributors={contributors} />
+            )}
             {(Page && <Page />) || (
               <Alert variant='outlined' severity='error'>
                 No content.
@@ -127,45 +137,46 @@ export function ContentViewer({
             )}
           </MDXProvider>
         </Main>
-        <Aside>
-          <Stack direction='row' spacing={1} sx={{ mb: 1 }}>
-            <Chip
-              size='small'
-              color='primary'
-              icon={<PrintIcon />}
-              label='Print'
-              onClick={() => openPrint()}
-            />
-            <Chip
-              size='small'
-              color='primary'
-              icon={<GitHubIcon />}
-              label='Code'
-              onClick={() => openGithub()}
-            />
-            {frontmatter?.presentation && (
+        {!isMobile && (
+          <Aside>
+            <Stack direction='row' spacing={1} sx={{ mb: 1 }}>
               <Chip
                 size='small'
                 color='primary'
-                icon={<SlideshowIcon />}
-                label='Presentation'
+                icon={<PrintIcon />}
+                label='Print'
+                onClick={() => openPrint()}
               />
+              <Chip
+                size='small'
+                color='primary'
+                icon={<GitHubIcon />}
+                label='Code'
+                onClick={() => openGithub()}
+              />
+              {frontmatter?.presentation && (
+                <Chip
+                  size='small'
+                  color='primary'
+                  icon={<SlideshowIcon />}
+                  label='Presentation'
+                />
+              )}
+            </Stack>
+
+            <ContentMenu
+              content={relatedContent}
+              context={context}
+              handleContentChange={(callback) => handleContentChange(callback)}
+              handlePageReset={() => handlePageReset()}
+              loading={false}
+            />
+            {/*        {sideComponent && <SideComponent />} */}
+            {frontmatter?.tableOfContents && (
+              <TableOfContents tableOfContents={frontmatter.tableOfContents} />
             )}
-          </Stack>
 
-          <ContentMenu
-            content={relatedContent}
-            context={context}
-            handleContentChange={(callback) => handleContentChange(callback)}
-            handlePageReset={() => handlePageReset()}
-            loading={false}
-          />
-          {/*        {sideComponent && <SideComponent />} */}
-          {frontmatter?.tableOfContents && (
-            <TableOfContents tableOfContents={frontmatter.tableOfContents} />
-          )}
-
-          {/* <ButtonMenu
+            {/* <ButtonMenu
                 menuTitle="Controls"
                 menuItems={createControlMenu(controls)}
                 initialCollapsed={false}
@@ -173,7 +184,8 @@ export function ContentViewer({
                 fetching={false}
                 handleButtonClick={handleControlClick}
               /> */}
-        </Aside>
+          </Aside>
+        )}
       </AsideAndMainContainer>
     );
   }

@@ -10,6 +10,7 @@ interface Props {
 export function AsideAndMainContainer({ children, sx }: Props) {
   return (
     <MuiContainer
+      component='article'
       maxWidth={false}
       sx={{ paddingTop: 0, paddingBottom: 6, ...sx }}
     >

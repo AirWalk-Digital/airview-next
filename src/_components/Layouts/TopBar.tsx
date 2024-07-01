@@ -18,8 +18,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 // import PrintIcon from '@mui/icons-material/Print';
 // import SlideshowIcon from '@mui/icons-material/Slideshow';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -56,6 +57,9 @@ export default function TopBar({
   // handlePresentation,
 }: ComponentProps): React.ReactElement {
   // Function body
+  const theme = useTheme();
+  // Use useMediaQuery hook to check for screen width
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [activeMenu, setActiveMenu] = useState('');
@@ -118,13 +122,13 @@ export default function TopBar({
             {navOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
         )}
-        {logo && (
+        {logo && !isMobile && (
           <Link href='/' sx={{ textDecoration: 'none' }}>
             <Logo src='/logos/airwalk-logo.png' alt='Airview' />
           </Link>
         )}
         {/* back button */}
-        {back && (
+        {back && !isMobile && (
           <Link href='/' sx={{ textDecoration: 'none' }}>
             <ArrowBackIosNewOutlinedIcon color='inherit' />
           </Link>
@@ -136,15 +140,21 @@ export default function TopBar({
           <SearchIcon />
         </IconButton>
 
-        <Button
-          color='inherit'
-          endIcon={<ExpandMoreIcon />}
-          sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }}
-          onClick={(event) => handleMenuOpen(event, 'catalogue')}
-        >
-          Catalogue
-        </Button>
-        {siteConfig.content?.applications && (
+        {!isMobile && (
+          <Button
+            color='inherit'
+            endIcon={<ExpandMoreIcon />}
+            sx={{
+              fontWeight: 'light',
+              textTransform: 'none',
+              fontSize: '18pt',
+            }}
+            onClick={(event) => handleMenuOpen(event, 'catalogue')}
+          >
+            Catalogue
+          </Button>
+        )}
+        {siteConfig.content?.applications && !isMobile && (
           <Button
             color='inherit'
             endIcon={<ExpandMoreIcon />}
@@ -158,7 +168,7 @@ export default function TopBar({
             Applications
           </Button>
         )}
-        {siteConfig.content?.customers && (
+        {siteConfig.content?.customers && !isMobile && (
           <Link
             color='inherit'
             href='/docs/view/default/customers'
@@ -188,6 +198,7 @@ export default function TopBar({
             <MenuItem>Etherpads</MenuItem>
           </Link>
         </Menu>
+
         <Menu
           id='menu-catalogue'
           anchorEl={anchorEl}
@@ -228,6 +239,7 @@ export default function TopBar({
             </Link>
           )}
         </Menu>
+
         <Menu
           id='menu-applications'
           anchorEl={anchorEl}
@@ -243,7 +255,7 @@ export default function TopBar({
           </Link>
         </Menu>
 
-        {edit && (
+        {edit && !isMobile && (
           <Button
             size='large'
             onClick={() => handleEditClick()}

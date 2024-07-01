@@ -1,6 +1,8 @@
 'use client';
 
 import Container from '@mui/material/Container';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { Suspense, useState } from 'react';
 
@@ -24,8 +26,6 @@ interface MenuWrapperProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
   isEditing?: boolean;
 }
-
-logger.info('Loading MenuWrapper');
 
 const menuComponent = (context: ContentItem) => {
   if (context && context.menu && context.menu.component) {
@@ -55,12 +55,12 @@ export default function MenuWrapper({
 }: MenuWrapperProps): React.ReactElement {
   const navDrawerWidth = menuStructure ? 300 : 0;
   const topBarHeight = 65;
-  // const searchParams = useSearchParams();
-  // const isEditing = Boolean(searchParams.get('edit'));
-  // logger.debug({ isEditing });
+  const theme = useTheme();
+  // Use useMediaQuery hook to check for screen width
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [menuOpen, setMenuOpen] = useState(
-    menuComponent(context) !== DummyMenu && !isEditing
+    menuComponent(context) !== DummyMenu && !isEditing && !isMobile
   );
   // const [isEditing, setIsEditing] = useState(false);
 
@@ -155,7 +155,16 @@ export default function MenuWrapper({
           }}
         >
           {/* <Box sx={{ px: '2%' }} > */}
-          <Container sx={{ maxHeight: '100vh', pt: '2%', px: '2%' }}>
+          <Container
+            sx={{
+              maxHeight: '100vh',
+              maxWidth: '100% !important',
+              pt: '2%',
+              ml: 0,
+              pl: '0 !important',
+              pr: '0 !important',
+            }}
+          >
             {children && children}
           </Container>
           {/* </Box> */}
