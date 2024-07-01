@@ -332,8 +332,14 @@ export default function EditorWrapper({
         dialogOpen={isNewBranchOpen}
         handleDialog={handleNewBranch}
       />
-      <Box sx={{ px: '1%', pt: '65px' }}>
-        <Container sx={{ maxHeight: 'calc(100vh - 130px)' }}>
+      <Box sx={{ pl: '0 !important', pr: '0 !important', pt: '65px' }}>
+        <Container
+          sx={{
+            maxHeight: 'calc(100vh - 130px)',
+            maxWidth: '100% !important',
+            px: '0 !important',
+          }}
+        >
           {mdx ? (
             <Editor
               context={context}

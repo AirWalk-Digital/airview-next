@@ -108,6 +108,8 @@ const Editor = React.memo(function EditorC({
     }
     [class*='_contentEditable_'] {
       height: calc(100vh - ${top}px);
+      padding-left: 2% !important;
+      padding-right: 2% !important;
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -144,7 +146,7 @@ const Editor = React.memo(function EditorC({
       }
     }
     img {
-      max-width: 50%;
+      max-width: 70%;
       height: auto;
     }
   `;
@@ -266,10 +268,10 @@ const Editor = React.memo(function EditorC({
   return (
     <Paper
       sx={{
-        px: '1%',
+        px: 0,
         maxHeight: 'calc(100vh - 65px)',
-        pt: '2%',
-        pb: '2%',
+        pt: 0,
+        pb: 0,
         overflow: 'auto',
       }}
       elevation={0}
