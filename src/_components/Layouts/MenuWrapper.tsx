@@ -5,12 +5,16 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { Suspense, useState } from 'react';
 
 import TopBar from '@/components/Layouts/TopBar';
-import { DummyMenu, HeaderMinimalMenu } from '@/components/Menus';
+import {
+  DummyMenu,
+  HeaderMinimalMenu,
+  MainButtonMenu,
+} from '@/components/Menus';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem, MenuStructure } from '@/lib/Types';
 
 const logger = getLogger();
-logger.level = 'error';
+logger.level = 'info';
 // type MenuComponentType = typeof HeaderMinimalMenu; // | typeof HeaderMenu;
 
 interface MenuWrapperProps {
@@ -32,10 +36,10 @@ const menuComponent = (context: ContentItem) => {
       //   return FullHeaderMenu;
       case 'HeaderMinimalMenu':
         return HeaderMinimalMenu;
-      // case "ListMenu":
-      //   return ListMenu;
+      case 'MainButtonMenu':
+        return MainButtonMenu;
       default:
-        return HeaderMinimalMenu;
+        return MainButtonMenu;
     }
   } else {
     return DummyMenu;
@@ -82,6 +86,16 @@ export default function MenuWrapper({
     router.push(newPathname);
   };
 
+  const handleButtonClick = async (url: string) => {
+    const pathnameArray = pathname.split('/');
+    // pop the old path
+    logger.info('handleButtonClick', { initialPath: pathnameArray, url });
+    pathnameArray.splice(4);
+    // join the 2 arrays
+    pathnameArray.push(url);
+    logger.info('handleButtonClick', { finalPath: pathnameArray });
+    router.push(pathnameArray.join('/'));
+  };
   // const handleEdit = () => {
   //   // const isEditing = Boolean(searchParams.get('edit'));
   //   const params = new URLSearchParams(searchParams);
@@ -127,6 +141,7 @@ export default function MenuWrapper({
       {menuStructure && menuOpen && (
         <MenuComponent
           menu={menuStructure}
+          handleButtonClick={handleButtonClick}
           open={menuOpen}
           top={topBarHeight}
           drawerWidth={navDrawerWidth}

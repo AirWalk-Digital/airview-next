@@ -146,26 +146,6 @@ export const ControlBar: React.FC<ControlBarProps> = ({
     }
   };
 
-  // const onBranchChange = async (value: any) => {
-  //   if (value) {
-  //     const newContext = { ...collection, branch: value };
-  //     setBranch(value);
-  //     onContextUpdate(newContext);
-  //   }
-  // };
-
-  // const handlePresentationClick = () => {
-  //   if (typeof handlePresentation === 'function') {
-  //     handlePresentation();
-  //   }
-  // };
-
-  // const handlePrintClick = () => {
-  //   if (typeof handlePrint === 'function') {
-  //     handlePrint();
-  //   }
-  // };
-
   const handleAddClick = () => {
     if (typeof handleAddContent === 'function') {
       handleAddContent();

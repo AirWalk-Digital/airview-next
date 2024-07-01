@@ -2,16 +2,16 @@
 import type { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 
-import type { HeaderMinimalMenuProps } from './HeaderMinimalMenu';
-import { HeaderMinimalMenu } from './HeaderMinimalMenu';
+import type { MainButtonMenuProps } from './MainButtonMenu';
+import { MainButtonMenu } from './MainButtonMenu';
 
 export default {
-  title: 'Menus/HeaderMinimalMenu',
-  component: HeaderMinimalMenu,
+  title: 'Menus/MainButtonMenu',
+  component: MainButtonMenu,
 } as Meta;
 
-const Template: StoryFn<HeaderMinimalMenuProps> = (args) => (
-  <HeaderMinimalMenu {...args} />
+const Template: StoryFn<MainButtonMenuProps> = (args) => (
+  <MainButtonMenu {...args} />
 );
 
 export const Default = Template.bind({});
@@ -91,6 +91,74 @@ Providers.args = {
 
 export const ComplexMenu = Template.bind({});
 ComplexMenu.args = {
+  menu: [
+    {
+      label: 'Artificial Intelligence CoE',
+      url: '/docs/solutions/artificial_intelligence_coe/_index.md',
+      menuItems: [
+        {
+          groupTitle: 'Designs',
+          links: [
+            {
+              label: 'GenAI Agentic Automation with AutoGen',
+              url: '/docs/designs/ai_autogen/_index.md',
+            },
+            {
+              label: 'AI Request Routing',
+              url: '/docs/designs/ai_request_routing_lwkvef8q/_index.md',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: 'Cloud Architecture',
+      url: '/docs/solutions/cloud_architecture/_index.md',
+      menuItems: [
+        {
+          groupTitle: 'Chapters',
+          links: [
+            {
+              label: 'Cloud Architecture Presentation',
+              url: '/docs/solutions/cloud_architecture/architecture_presentation.ppt.mdx',
+            },
+            {
+              label: 'Test MDX',
+              url: '/docs/solutions/cloud_architecture/test.mdx',
+            },
+          ],
+        },
+        {
+          groupTitle: 'Solutions',
+          links: [
+            {
+              label: 'CSP Landing Zones',
+              url: '/docs/solutions/cloud_landing_zones/_index.md',
+            },
+          ],
+        },
+        {
+          groupTitle: 'Designs',
+          links: [
+            {
+              label: 'Discovery - Azure Governance Export',
+              url: '/docs/designs/discovery_azure_governance_export_l7yyys9e/_index.md',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  open: true,
+  top: 0,
+  drawerWidth: 240,
+  collapsible: true,
+  initialCollapsed: true,
+};
+
+export const Loading = Template.bind({});
+Loading.args = {
+  loading: true,
   menu: [
     {
       label: 'Artificial Intelligence CoE',

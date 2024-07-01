@@ -128,7 +128,7 @@ export default async function Page({
           siteConfig,
           menuConfig(siteConfig, contentConfig)
         );
-        const { menu: menuStructure } = nestMenu(content, 'docs');
+        const { menu: menuStructure } = nestMenu(content);
 
         if (pageContent && pageContent.content && pageContentText) {
           return (

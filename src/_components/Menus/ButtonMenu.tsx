@@ -26,9 +26,10 @@ interface MenuItem {
 
 export interface ButtonMenuProps {
   menuTitle: string;
+  url?: string;
   loading?: boolean;
   fetching?: boolean;
-  menuItems: MenuItem[];
+  menuItems: MenuItem[] | undefined;
   collapsible?: boolean;
   initialCollapsed?: boolean;
   handleButtonClick: (url: string, label: string) => void;
@@ -39,6 +40,7 @@ export interface ButtonMenuProps {
 
 export function ButtonMenu({
   menuTitle,
+  url,
   loading = false,
   fetching = false,
   menuItems,
@@ -52,6 +54,37 @@ export function ButtonMenu({
   const [collapsed, setCollapsed] = useState(
     collapsible ? initialCollapsed : false
   );
+
+  const handleClick = (url: string, menuTitle: string) => {
+    if (typeof handleButtonClick === 'function') {
+      handleButtonClick(url, menuTitle);
+    }
+  };
+
+  let menuContent;
+  if (loading) {
+    menuContent = <Skeleton width='90%' />;
+  } else if (url) {
+    menuContent = (
+      <ButtonBase
+        // component="button"
+        // variant="contained" // Add the variant prop with a valid value (e.g., "contained")
+        onClick={() => handleClick(url, menuTitle)}
+        sx={{
+          textDecoration: 'none',
+          // textTransform: 'none',
+          textAlign: 'left',
+          // fontWeight: 'light',
+          // color: 'secondary',
+          ...(url === currentRoute && { fontWeight: 'bold' }),
+        }}
+      >
+        {menuTitle}
+      </ButtonBase>
+    );
+  } else {
+    menuContent = menuTitle;
+  }
 
   return (
     <Box
@@ -77,7 +110,7 @@ export function ButtonMenu({
           variant='subtitle2'
           sx={{ display: 'block', flex: '1 1 auto', fontSize: 16 }}
         >
-          {loading ? <Skeleton width='90%' /> : menuTitle}
+          {menuContent}
         </Typography>
 
         {collapsible && (
@@ -102,67 +135,70 @@ export function ButtonMenu({
       </Box>
 
       <Collapse in={!collapsed}>
-        {menuItems?.map(({ groupTitle, links }) => (
-          <Box aria-hidden={collapsed} key={groupTitle}>
-            {groupTitle && (
-              <Typography
-                component='span'
-                variant='subtitle2'
+        {menuItems &&
+          menuItems?.map(({ groupTitle, links }) => (
+            <Box aria-hidden={collapsed} key={groupTitle}>
+              {groupTitle && (
+                <Typography
+                  component='span'
+                  variant='subtitle2'
+                  sx={{
+                    display: 'block',
+                    marginTop: 2,
+                    marginBottom: -1,
+                    color: 'secondary',
+                    textTransform: 'uppercase',
+                    fontSize: 12,
+                  }}
+                >
+                  {loading ? <Skeleton width='90%' /> : groupTitle}
+                </Typography>
+              )}
+              {children && children}
+              <Box
+                component='ul'
                 sx={{
-                  display: 'block',
+                  margin: 0,
                   marginTop: 2,
-                  marginBottom: -1,
-                  color: 'secondary',
-                  textTransform: 'uppercase',
-                  fontSize: 12,
+                  padding: 0,
+                  listStyle: 'none',
+                  '& > li': {
+                    fontSize: 14,
+                    marginBottom: 1,
+                    color: 'text.secondary',
+                  },
                 }}
               >
-                {loading ? <Skeleton width='90%' /> : groupTitle}
-              </Typography>
-            )}
-            {children && children}
-            <Box
-              component='ul'
-              sx={{
-                margin: 0,
-                marginTop: 2,
-                padding: 0,
-                listStyle: 'none',
-                '& > li': {
-                  fontSize: 14,
-                  marginBottom: 1,
-                  color: 'text.secondary',
-                },
-              }}
-            >
-              {loading
-                ? [...Array(6)].map((index) => (
-                    <Skeleton key={`skeleton-${index}`} component='li' />
-                  ))
-                : links?.map(({ label, url }, index) => {
-                    return (
-                      <Box component='li' key={index}>
-                        <ButtonBase
-                          // component="button"
-                          // variant="contained" // Add the variant prop with a valid value (e.g., "contained")
-                          onClick={() => handleButtonClick(url, label)}
-                          sx={{
-                            textDecoration: 'none',
-                            textTransform: 'none',
-                            textAlign: 'left',
-                            fontWeight: 'light',
-                            color: 'secondary',
-                            ...(url === currentRoute && { fontWeight: 'bold' }),
-                          }}
-                        >
-                          {label}
-                        </ButtonBase>
-                      </Box>
-                    );
-                  })}
+                {loading
+                  ? [...Array(6)].map((index) => (
+                      <Skeleton key={`skeleton-${index}`} component='li' />
+                    ))
+                  : links?.map(({ label, url }, index) => {
+                      return (
+                        <Box component='li' key={index}>
+                          <ButtonBase
+                            // component="button"
+                            // variant="contained" // Add the variant prop with a valid value (e.g., "contained")
+                            onClick={() => handleButtonClick(url, label)}
+                            sx={{
+                              textDecoration: 'none',
+                              textTransform: 'none',
+                              textAlign: 'left',
+                              fontWeight: 'light',
+                              color: 'secondary',
+                              ...(url === currentRoute && {
+                                fontWeight: 'bold',
+                              }),
+                            }}
+                          >
+                            {label}
+                          </ButtonBase>
+                        </Box>
+                      );
+                    })}
+              </Box>
             </Box>
-          </Box>
-        ))}
+          ))}
       </Collapse>
     </Box>
   );

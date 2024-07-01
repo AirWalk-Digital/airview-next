@@ -71,7 +71,7 @@ export const menuConfig = (
 
 export function nestMenu(
   menuInput: InputMenu,
-  prefix: string
+  prefix?: string
 ): { menu: MenuStructure[] } {
   const nestedMenu: MenuStructure[] = menuInput.primary.map((item) => {
     const urlKey = item.url.slice(0, item.url.lastIndexOf('/'));
@@ -79,14 +79,18 @@ export function nestMenu(
 
     // Creating a new object instead of modifying the original item
     const newItem = { ...item };
-    newItem.url = `/${prefix}/${item.url}`;
+    if (prefix) {
+      newItem.url = `/${prefix}/${item.url}`;
+    } else {
+      newItem.url = `/${item.url}`;
+    }
     if (content) {
       const menuItems: MenuItem[] = Object.keys(content).map((groupTitle) => ({
         groupTitle: capitalizeFirstLetter(groupTitle),
         links:
           content[groupTitle]?.map((link) => ({
             label: link.label,
-            url: `/${prefix}/${link.url}`,
+            url: prefix ? `/${prefix}/${link.url}` : `/${link.url}`,
           })) ?? [],
       }));
       newItem.menuItems = menuItems;

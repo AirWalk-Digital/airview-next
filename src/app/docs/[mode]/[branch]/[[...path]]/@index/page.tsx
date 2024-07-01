@@ -73,7 +73,7 @@ export default async function Page({
     };
 
     const content = await loadMenu(siteConfig, menuConfig(contentConfig));
-    const { menu: menuStructure } = nestMenu(content, 'docs');
+    const { menu: menuStructure } = nestMenu(content);
     logger.debug({ msg: 'menuStructure: ', menuStructure });
     return (
       <main>
