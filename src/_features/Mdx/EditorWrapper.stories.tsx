@@ -9,8 +9,8 @@ import EditorWrapper from './EditorWrapper';
 
 const dummyContext: ContentItem = {
   source: 'github',
-  repo: 'airwalk_patterns',
-  owner: 'airwalk-digital',
+  repo: 'dummy_patterns',
+  owner: 'dummy-digital',
   branch: 'another-branch',
   path: 'providers',
   reference: 'provider',
@@ -20,8 +20,8 @@ const dummyContext: ContentItem = {
 
 const dummyDefaultContext: ContentItem = {
   source: 'github',
-  repo: 'airwalk_patterns',
-  owner: 'airwalk-digital',
+  repo: 'dummy_patterns',
+  owner: 'dummy-digital',
   branch: 'main',
   path: 'providers',
   reference: 'provider',
@@ -33,7 +33,7 @@ const branches = [
     name: 'main',
     commit: {
       sha: '53bfd8457509778140caa47b01c6476d661f1b34',
-      url: 'https://api.github.com/repos/AirWalk-Digital/airwalk_patterns/commits/53bfd8457509778140caa47b01c6476d661f1b34',
+      url: 'https://api/patterns/commits/53bfd8457509778140caa47b01c6476d661f1b34',
     },
     protected: true,
   },
@@ -41,7 +41,7 @@ const branches = [
     name: 'branch-1',
     commit: {
       sha: '53bfd8457509778140caa47b01c6476d661f1b34',
-      url: 'https://api.github.com/repos/AirWalk-Digital/airwalk_patterns/commits/53bfd8457509778140caa47b01c6476d661f1b34',
+      url: 'https://api/patterns/commits/53bfd8457509778140caa47b01c6476d661f1b34',
     },
     protected: false,
   },
@@ -49,7 +49,7 @@ const branches = [
     name: 'branch-2',
     commit: {
       sha: '09a01dc4e148c35412d3a6a00a384930a41b813b',
-      url: 'https://api.github.com/repos/AirWalk-Digital/airwalk_patterns/commits/09a01dc4e148c35412d3a6a00a384930a41b813b',
+      url: 'https://api/patterns/commits/09a01dc4e148c35412d3a6a00a384930a41b813b',
     },
     protected: false,
   },
@@ -57,7 +57,7 @@ const branches = [
     name: 'branch-3',
     commit: {
       sha: '7080423b89568b0427cb781f8b753f52fbc394e0',
-      url: 'https://api.github.com/repos/AirWalk-Digital/airwalk_patterns/commits/7080423b89568b0427cb781f8b753f52fbc394e0',
+      url: 'https://api/patterns/commits/7080423b89568b0427cb781f8b753f52fbc394e0',
     },
     protected: false,
   },
@@ -117,7 +117,7 @@ export const Default = {
           }
         ),
         http.get(
-          '/api/github/content?owner=airwalk-digital&repo=airwalk_patterns&path=/test/test.mdx&branch=another-branch',
+          '/api/github/content?owner=dummy-digital&repo=dummy_patterns&path=/test/test.mdx&branch=another-branch',
           async () => {
             await delay(800);
             const content = await (await fetch('/test/full-mdx.mdx')).text();
@@ -149,7 +149,7 @@ export const CreateFailure = {
           }
         ),
         http.get(
-          '/api/github/content?owner=airwalk-digital&repo=airwalk_patterns&path=/test/test.mdx&branch=another-branch',
+          '/api/github/content?owner=dummy-digital&repo=dummy_patterns&path=/test/test.mdx&branch=another-branch',
           async () => {
             await delay(800);
             const content = await (await fetch('/test/full-mdx.mdx')).text();

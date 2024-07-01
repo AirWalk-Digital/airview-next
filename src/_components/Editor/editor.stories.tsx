@@ -9,8 +9,8 @@ import type { ContentItem } from '@/lib/Types';
 
 const dummyContext: ContentItem = {
   source: 'github',
-  repo: 'airwalk_patterns',
-  owner: 'airwalk-digital',
+  repo: 'dummy_patterns',
+  owner: 'dummy-digital',
   branch: 'another-branch',
   path: 'providers',
   reference: 'provider',
@@ -19,8 +19,8 @@ const dummyContext: ContentItem = {
 
 const dummyDefaultContext: ContentItem = {
   source: 'github',
-  repo: 'airwalk_patterns',
-  owner: 'airwalk-digital',
+  repo: 'dummy_patterns',
+  owner: 'dummy-digital',
   branch: 'main',
   path: 'providers',
   reference: 'provider',
