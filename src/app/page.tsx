@@ -1,16 +1,20 @@
-import type { Metadata } from 'next';
+'use server';
 
-export const metadata: Metadata = {
-  title: 'Airview',
-  description: 'Airview AI',
-};
+import React from 'react';
 
-export default function Home() {
+import { LandingPage } from '@/components/Layouts';
+
+// export const metadata: Metadata = {
+//   title: 'Airview',
+//   description: 'Airview AI',
+// };
+
+export default async function Home() {
   // const posts = getAllPosts(["title", "date", "excerpt", "coverImage", "slug"]);
 
   return (
     <main>
-      <h2>test</h2>
+      <LandingPage />
     </main>
   );
 }

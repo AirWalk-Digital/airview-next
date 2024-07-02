@@ -50,9 +50,9 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
 
   // Filter relevantDocs based on selectedBotMessageId
   const filteredDocs = relevantDocs.filter(
-    (doc) => doc.messageId === selectedBotMessageId,
+    (doc) => doc.messageId === selectedBotMessageId
   );
-  console.log('filteredDocs:', filteredDocs);
+
   return (
     <div>
       <h2>Related Documents</h2>
@@ -65,8 +65,8 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
               Source:{' '}
               <a
                 href={doc.metadata.url}
-                target="_blank"
-                rel="noopener noreferrer"
+                target='_blank'
+                rel='noopener noreferrer'
               >
                 {doc.metadata.url}
               </a>
@@ -83,7 +83,7 @@ export default function RelatedContent({ relevantDocs, selectedBotMessageId }) {
           </div>
         ))
       ) : (
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant='body2' color='text.secondary'>
           No related documents for this message.
         </Typography>
       )}

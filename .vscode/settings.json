@@ -5,7 +5,7 @@
     "package-lock.json": true
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": [
     "source.addMissingImports",
     "source.fixAll.eslint"
@@ -28,11 +28,23 @@
   "[json][jsonc][yaml]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "prettier.ignorePath": ".gitignore", // Don't run prettier for files listed in .gitignore
+  }, // Don't run prettier for files listed in .gitignore
+  "eslint.codeActionsOnSave.mode": "all",
+  "jest.runMode": null,
   "i18n-ally.localesPaths": ["src/locales"],
   "i18n-ally.keystyle": "nested",
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
-  }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.jsxSingleQuote": true,
+  "eslint.codeActionsOnSave.rules": null,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "githubPullRequests.ignoredPullRequestBranches": ["main"]
 }

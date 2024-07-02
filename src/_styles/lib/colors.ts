@@ -2,7 +2,7 @@ import type { Theme } from '@mui/material/styles';
 
 function getContrastYIQ(
   hexcolor: string | number | object,
-  theme: Theme,
+  theme: Theme
 ): string {
   let color: string;
   if (typeof hexcolor === 'object') {

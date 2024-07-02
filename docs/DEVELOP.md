@@ -45,3 +45,11 @@ source .env* && FONTAWESOME_NPM_AUTH_TOKEN=$FONTAWESOME_NPM_AUTH_TOKEN docker bu
 
 docker run -d -p 3001:3000 ghcr.io/airwalk-digital/airview-next:local
 
+# Debugging Deveopment
+
+Debug the linting
+
+```bash
+TIMING=1 DEBUG=eslint:cli-engine npx eslint src/_components/Cards/Image.stories.tsx --fix
+```
+

@@ -137,7 +137,7 @@ export async function POST(req) {
   ----------------
   QUESTION: {question}
   ----------------
-  Helpful Answer:`,
+  Helpful Answer:`
     );
 
     const questionGeneratorTemplate = PromptTemplate.fromTemplate(
@@ -147,7 +147,7 @@ export async function POST(req) {
   ----------------
   FOLLOWUP QUESTION: {question}
   ----------------
-  Standalone question:`,
+  Standalone question:`
     );
 
     let relevantDocs = [];
@@ -293,7 +293,7 @@ export async function POST(req) {
         headers: {
           'Content-Type': 'application/json', // Set content type to JSON
         },
-      },
+      }
     );
 
     return response;

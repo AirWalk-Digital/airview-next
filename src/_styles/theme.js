@@ -197,7 +197,7 @@ const theme = deepmerge(
         },
       },
     },
-  }),
+  })
 );
 
 // eslint-disable-next-line import/prefer-default-export

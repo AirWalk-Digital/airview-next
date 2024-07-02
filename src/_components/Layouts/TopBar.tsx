@@ -5,25 +5,26 @@ import {
   Menu as MenuIcon,
 } from '@mui/icons-material';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CloseIcon from '@mui/icons-material/Close';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
-import { Typography } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
+// import IconButton from '@mui/material/IconButton';
 // import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 // import PrintIcon from '@mui/icons-material/Print';
 // import SlideshowIcon from '@mui/icons-material/Slideshow';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 import { siteConfig } from '../../../site.config';
-
 // import logo from '../../public/logos/airwalk-logo.png';
 const Logo = styled('img')({
   display: 'block',
@@ -38,9 +39,10 @@ export interface ComponentProps {
   back?: boolean;
   // topBarHeight?: number;
   logo?: boolean;
+  edit?: boolean;
   // handlePrint?: () => void;
   // handlePresentation?: () => void;
-  handleMore?: () => void;
+  handleEditFn?: () => void;
 }
 
 export default function TopBar({
@@ -49,18 +51,37 @@ export default function TopBar({
   menu,
   back,
   logo,
+  edit,
+  handleEditFn,
   // handlePrint,
   // handlePresentation,
-  handleMore,
 }: ComponentProps): React.ReactElement {
   // Function body
+  const theme = useTheme();
+  // Use useMediaQuery hook to check for screen width
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [activeMenu, setActiveMenu] = useState('');
+  const router = useRouter();
+  const pathname = usePathname();
 
+  const handleEdit = () => {
+    const pathnameArray = pathname.split('/');
+
+    if (pathnameArray[2] === 'edit') {
+      // Replace 'edit' with 'view' in the URL path
+      pathnameArray[2] = 'view';
+    } else {
+      // Replace 'view' with 'edit' in the URL path
+      pathnameArray[2] = 'edit';
+    }
+    const newPathname = pathnameArray.join('/');
+    router.push(newPathname);
+  };
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLButtonElement>,
-    id: React.SetStateAction<string>,
+    id: React.SetStateAction<string>
   ) => {
     setAnchorEl(event.currentTarget);
     setActiveMenu(id);
@@ -71,18 +92,19 @@ export default function TopBar({
     setActiveMenu('');
   };
 
-  const handleMoreClick = () => {
-    if (typeof handleMore === 'function') {
-      handleMore();
+  const handleEditClick = () => {
+    if (typeof handleEditFn === 'function') {
+      handleEditFn();
     } else {
-      // console.error('TopBar: Error: handleMore is not a function');
+      handleEdit();
+      // console.error('TopBar: Error: handleEdit is not a function');
     }
   };
 
   return (
     <AppBar
-      position="fixed"
-      color="default"
+      position='fixed'
+      color='default'
       elevation={0}
       sx={{ displayPrint: 'none', borderBottom: 1, borderColor: 'grey.300' }}
     >
@@ -90,45 +112,51 @@ export default function TopBar({
         {/* has menu */}
         {menu && (
           <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
+            size='large'
+            edge='start'
+            color='inherit'
+            aria-label='menu'
             sx={{ mr: 2 }}
             onClick={onNavButtonClick}
           >
             {navOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
         )}
-        {logo && (
-          <Link href="/" sx={{ textDecoration: 'none' }}>
-            <Logo src="/logos/airwalk-logo.png" alt="Airview" />
+        {logo && !isMobile && (
+          <Link href='/' sx={{ textDecoration: 'none' }}>
+            <Logo src='/logos/airwalk-logo.png' alt='Airview' />
           </Link>
         )}
         {/* back button */}
-        {back && (
-          <Link href="/" sx={{ textDecoration: 'none' }}>
-            <ArrowBackIosNewOutlinedIcon color="inherit" />
+        {back && !isMobile && (
+          <Link href='/' sx={{ textDecoration: 'none' }}>
+            <ArrowBackIosNewOutlinedIcon color='inherit' />
           </Link>
         )}
 
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
+        <Typography variant='h6' component='div' sx={{ flexGrow: 1 }} />
 
-        <IconButton size="large" href="/search" color="inherit">
+        <IconButton size='large' href='/search' color='inherit'>
           <SearchIcon />
         </IconButton>
 
-        <Button
-          color="inherit"
-          endIcon={<ExpandMoreIcon />}
-          sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }}
-          onClick={(event) => handleMenuOpen(event, 'catalogue')}
-        >
-          Catalogue
-        </Button>
-        {siteConfig.content?.applications && (
+        {!isMobile && (
           <Button
-            color="inherit"
+            color='inherit'
+            endIcon={<ExpandMoreIcon />}
+            sx={{
+              fontWeight: 'light',
+              textTransform: 'none',
+              fontSize: '18pt',
+            }}
+            onClick={(event) => handleMenuOpen(event, 'catalogue')}
+          >
+            Catalogue
+          </Button>
+        )}
+        {siteConfig.content?.applications && !isMobile && (
+          <Button
+            color='inherit'
             endIcon={<ExpandMoreIcon />}
             sx={{
               fontWeight: 'light',
@@ -140,14 +168,14 @@ export default function TopBar({
             Applications
           </Button>
         )}
-        {siteConfig.content?.customers && (
+        {siteConfig.content?.customers && !isMobile && (
           <Link
-            color="inherit"
-            href="/customers"
+            color='inherit'
+            href='/docs/view/default/customers'
             sx={{ textDecoration: 'none' }}
           >
             <Button
-              color="inherit"
+              color='inherit'
               sx={{
                 fontWeight: 'light',
                 textTransform: 'none',
@@ -160,66 +188,83 @@ export default function TopBar({
         )}
         {/* <Link color="inherit" href="/etherpad" sx={{ textDecoration: 'none' }}><Button color='inherit' sx={{ fontWeight: 'light', textTransform: 'none', fontSize: '18pt' }}>Collaborate</Button></Link> */}
         <Menu
-          id="menu-content"
+          id='menu-content'
           anchorEl={anchorEl}
           open={activeMenu === 'content'}
           onClose={handleMenuClose}
           onClick={handleMenuClose}
         >
-          <Link href="/etherpad" sx={{ textDecoration: 'none' }}>
+          <Link href='/etherpad' sx={{ textDecoration: 'none' }}>
             <MenuItem>Etherpads</MenuItem>
           </Link>
         </Menu>
+
         <Menu
-          id="menu-catalogue"
+          id='menu-catalogue'
           anchorEl={anchorEl}
           open={activeMenu === 'catalogue'}
           onClose={handleMenuClose}
           onClick={handleMenuClose}
         >
           {(siteConfig.content.providers || siteConfig.content.services) && (
-            <Link href="/services" sx={{ textDecoration: 'none' }}>
+            <Link
+              href='/docs/view/default/providers'
+              sx={{ textDecoration: 'none' }}
+            >
               <MenuItem>Providers & Services</MenuItem>
             </Link>
           )}
           {siteConfig.content?.frameworks && (
-            <Link href="/frameworks" sx={{ textDecoration: 'none' }}>
+            <Link
+              href='/docs/view/default/frameworks'
+              sx={{ textDecoration: 'none' }}
+            >
               <MenuItem>Frameworks & Standards</MenuItem>
             </Link>
           )}
           {siteConfig.content.solutions && (
-            <Link href="/solutions" sx={{ textDecoration: 'none' }}>
+            <Link
+              href='/docs/view/default/solutions'
+              sx={{ textDecoration: 'none' }}
+            >
               <MenuItem>Solutions</MenuItem>
             </Link>
           )}
           {siteConfig.content.products && (
-            <Link href="/products" sx={{ textDecoration: 'none' }}>
+            <Link
+              href='/docs/view/default/products'
+              sx={{ textDecoration: 'none' }}
+            >
               <MenuItem>Products</MenuItem>
             </Link>
           )}
         </Menu>
+
         <Menu
-          id="menu-applications"
+          id='menu-applications'
           anchorEl={anchorEl}
           open={activeMenu === 'applications'}
           onClose={handleMenuClose}
           onClick={handleMenuClose}
         >
-          <Link href="/applications" sx={{ textDecoration: 'none' }}>
+          <Link href='/applications' sx={{ textDecoration: 'none' }}>
             <MenuItem>Business Applications</MenuItem>
           </Link>
-          <Link href="/business-units" sx={{ textDecoration: 'none' }}>
+          <Link href='/business-units' sx={{ textDecoration: 'none' }}>
             <MenuItem>Business Units</MenuItem>
           </Link>
         </Menu>
 
-        <IconButton
-          size="large"
-          onClick={() => handleMoreClick()}
-          color="inherit"
-        >
-          <MoreIcon />
-        </IconButton>
+        {edit && !isMobile && (
+          <Button
+            size='large'
+            onClick={() => handleEditClick()}
+            color='inherit'
+            startIcon={<AutoAwesomeIcon />}
+          >
+            Edit
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );

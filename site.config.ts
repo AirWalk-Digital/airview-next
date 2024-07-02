@@ -2,7 +2,7 @@ interface Menu {
   component: string;
   collection: string | null;
 }
-interface ContentItem {
+export interface ContentItem {
   source: string;
   repo: string;
   owner: string;
@@ -11,13 +11,15 @@ interface ContentItem {
   reference: string;
   collections?: string[];
   menu?: Menu;
+  file?: string;
+  linked?: { repo: string; owner: string; branch: string; path: string };
 }
 
 interface Etherpad {
   url: string;
 }
 
-interface SiteConfig {
+export interface SiteConfig {
   title: string;
   company: string;
   tagline: string;
@@ -52,7 +54,7 @@ export const siteConfig: SiteConfig = {
       path: 'services', // the base path for the content
       reference: 'service', // how the collection is referred to in frontmatter links
       collections: ['knowledge', 'designs'],
-      menu: { component: 'FullHeaderMenu', collection: 'providers' }, // the menu to use on the left and the baseline for the menu
+      menu: { component: 'MainButtonMenu', collection: 'providers' }, // the menu to use on the left and the baseline for the menu
     },
     providers: {
       source: 'github', // The source of the content
@@ -62,6 +64,7 @@ export const siteConfig: SiteConfig = {
       path: 'providers', // the base path for the content
       reference: 'provider', // how the collection is referred to in frontmatter links
       collections: ['services'],
+      menu: { component: 'MainButtonMenu', collection: 'providers' }, // the menu to use on the left and the baseline for the menu
     },
     solutions: {
       source: 'github', // The source of the content
@@ -71,7 +74,7 @@ export const siteConfig: SiteConfig = {
       path: 'solutions', // the base path for the content
       reference: 'solution', // how the collection is referred to in frontmatter links
       collections: ['knowledge', 'designs'],
-      menu: { component: 'ListMenu', collection: 'solutions' }, // the menu to use on the left and the baseline for the menu
+      menu: { component: 'MainButtonMenu', collection: 'solutions' }, // the menu to use on the left and the baseline for the menu
     },
     knowledge: {
       source: 'github', // The source of the content
@@ -108,7 +111,7 @@ export const siteConfig: SiteConfig = {
       path: 'projects', // the base path for the content
       reference: 'project', // how the collection is referred to in frontmatter links
       collections: ['knowledge'],
-      menu: { component: 'FullHeaderMenu', collection: 'customers' }, // the menu to use on the left and the baseline for the menu
+      menu: { component: 'MainButtonMenu', collection: 'customers' }, // the menu to use on the left and the baseline for the menu
     },
     products: {
       source: 'github', // The source of the content

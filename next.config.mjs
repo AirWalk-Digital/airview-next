@@ -36,11 +36,15 @@ const withMDX = createMDX({
 });
 
 const nextConfig = {
-  pageExtensions: ['js', 'jsx', 'mdx', 'tsx'],
+  pageExtensions: ['js', 'ts', 'jsx', 'mdx', 'tsx'],
   transpilePackages: ['@mdxeditor/editor', 'react-diff-view'],
   swcMinify: false,
   poweredByHeader: false,
   reactStrictMode: true,
+  experimental: {
+    // Related to Pino error with RSC: https://github.com/orgs/vercel/discussions/3150
+    serverComponentsExternalPackages: ['pino', 'pino-pretty'],
+  },
   images: {
     // limit of 25 deviceSizes values
     // deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

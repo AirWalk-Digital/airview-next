@@ -74,7 +74,7 @@ export default function Chatbot() {
       let conversationId = '';
       for (let i = 0; i < 5; i += 1) {
         conversationId += chars.charAt(
-          Math.floor(Math.random() * chars.length),
+          Math.floor(Math.random() * chars.length)
         );
       }
       conversationId += `-${Date.now()}`;
@@ -140,7 +140,7 @@ export default function Chatbot() {
                 const { content, messageId, role } = parsedObject;
                 setMessages((prevMessages) => {
                   const existingMessageIndex = prevMessages.findIndex(
-                    (msg) => msg.messageId === messageId,
+                    (msg) => msg.messageId === messageId
                   );
 
                   if (existingMessageIndex !== -1) {
@@ -162,7 +162,7 @@ export default function Chatbot() {
                 setRelevantDocs((prevDocs) => [...prevDocs, parsedObject]);
               }
             } catch (error) {
-              console.error('Error parsing JSON object:', error);
+              /* empty */
             }
           });
         }
@@ -318,7 +318,7 @@ export default function Chatbot() {
           <div ref={messagesEndRef} />
         </Box>
         <Box
-          component="form"
+          component='form'
           onSubmit={sendMessage}
           sx={{
             position: 'sticky',
@@ -329,14 +329,14 @@ export default function Chatbot() {
         >
           <TextField
             fullWidth
-            label="Ask me a question"
+            label='Ask me a question'
             value={input} // Bind the input state to the TextField
             onChange={handleInputChange} // Update state on input change
             onKeyPress={(e) => e.key === 'Enter' && sendMessage(e)} // Send message on Enter key press
             InputProps={{
               endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton type="submit" disabled={isLoading}>
+                <InputAdornment position='end'>
+                  <IconButton type='submit' disabled={isLoading}>
                     {!isLoading ? <SendIcon /> : <CircularProgress />}
                   </IconButton>
                 </InputAdornment>
@@ -359,7 +359,7 @@ export default function Chatbot() {
       >
         <Alert
           onClose={handleCloseSnackbar}
-          severity="error"
+          severity='error'
           sx={{ width: '100%' }}
         >
           {errorMessage}

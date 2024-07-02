@@ -44,7 +44,8 @@
       //   "lib/airview-cms-api"
       // ],
       "@/lib/*": ["./src/lib/*"],
-      "@/styles/*": ["./src/_styles/*"]
+      "@/styles/*": ["./src/_styles/*"],
+      "@/config": ["./site.config.ts"]
     },
     "plugins": [
       {
@@ -52,13 +53,18 @@
       }
     ]
   },
-  "exclude": ["./out/**/*", "./node_modules/**/*"],
+  "exclude": [
+    "./out/**/*",
+    "./node_modules/**/*",
+    "./jest.config.ts",
+    "./.next/**/*"
+  ],
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".storybook/*.ts",
     ".next/types/**/*.ts",
-    "src/libs/Env.mjs"
+    "src/lib/Env.mjs"
   ]
 }

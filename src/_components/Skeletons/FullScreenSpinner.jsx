@@ -1,0 +1,26 @@
+import React from 'react';
+import { styled } from '@mui/material/styles';
+import CircularProgress from '@mui/material/CircularProgress';
+
+const FullScreenSpinnerWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '400px',
+  width: '100%',
+  // position: 'fixed',
+  // top: 0,
+  // left: 0,
+  zIndex: 9999,
+  // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+});
+
+const FullScreenSpinner = () => {
+  return (
+    <FullScreenSpinnerWrapper>
+      <CircularProgress color='primary' />
+    </FullScreenSpinnerWrapper>
+  );
+};
+
+export default FullScreenSpinner;

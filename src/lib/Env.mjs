@@ -5,7 +5,7 @@ import { z } from 'zod';
 // Don't add NODE_ENV into T3 Env, it changes the tree-shaking behavior
 export const Env = createEnv({
   server: {
-    OPENAI_API_KEY: z.string().min(1),
+    OPENAI_API_KEY: z.string().optional(),
     // DATABASE_URL: z.string().min(1),
     // DATABASE_AUTH_TOKEN: z.string().optional(),
     LOGTAIL_SOURCE_TOKEN: z.string().optional(),
