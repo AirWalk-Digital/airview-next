@@ -51,7 +51,7 @@ export default async function Page({
     } as ContentItem;
     const branches = await getBranches(contentConfig.owner, contentConfig.repo);
     return (
-      <main>
+      <main style={{ overflow: 'hidden' }}>
         <TopBar
           // onNavButtonClick={handleOnNavButtonClick}
           navOpen={false}
