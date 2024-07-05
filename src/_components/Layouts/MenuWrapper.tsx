@@ -71,7 +71,7 @@ export default function MenuWrapper({
   const MenuComponent = menuComponent(context);
 
   const handleEdit = () => {
-    const pathnameArray = pathname.split('/');
+    const pathnameArray = pathname?.split('/') ?? [];
 
     if (pathnameArray[2] === 'edit') {
       // Replace 'edit' with 'view' in the URL path
@@ -87,7 +87,7 @@ export default function MenuWrapper({
   };
 
   const handleButtonClick = async (url: string) => {
-    const pathnameArray = pathname.split('/');
+    const pathnameArray = pathname?.split('/') ?? [];
     // pop the old path
     logger.info('handleButtonClick', { initialPath: pathnameArray, url });
     pathnameArray.splice(4);

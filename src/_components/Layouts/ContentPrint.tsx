@@ -19,7 +19,7 @@ export default function ContentPrint({ children }: PagedOutputProps) {
   const currentPath = usePathname();
 
   function handleClose() {
-    const newPath = currentPath.replace(/\/print$/, '');
+    const newPath = currentPath?.replace(/\/print$/, '') ?? '';
     router.replace(newPath);
   }
   function handlePrint() {

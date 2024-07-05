@@ -72,7 +72,7 @@ export default function EditorWrapper({
           sourceBranch: defaultContext?.branch || 'main',
         });
         setIsNewBranchOpen(false);
-        const pathnameArray = pathname.split('/');
+        const pathnameArray = pathname?.split('/') ?? [];
         pathnameArray[3] = encodeURIComponent(value.name);
         const newPathname = pathnameArray.join('/');
         router.push(newPathname);
@@ -95,7 +95,7 @@ export default function EditorWrapper({
   };
 
   const handleRedirect = (newPage: string) => {
-    const pathnameArray = pathname.split('/');
+    const pathnameArray = pathname?.split('/') ?? [];
     // pop every element of the array afer [2]
     pathnameArray.splice(4);
     // join the 2 arrays
@@ -191,14 +191,14 @@ export default function EditorWrapper({
   };
 
   const handleEdit = () => {
-    const pathnameArray = pathname.split('/');
-    if (pathnameArray[2] === 'edit') {
-      // Replace 'edit' with 'view' in the URL path
-      pathnameArray[2] = 'view';
-    } else {
-      // Replace 'view' with 'edit' in the URL path
-      pathnameArray[2] = 'edit';
+    const pathnameArray = pathname?.split('/') ?? [];
+    if (!pathnameArray[2]) {
+      return;
     }
+
+    // switch between view and edit
+    pathnameArray[2] = pathnameArray[2] === 'edit' ? 'view' : 'edit';
+
     const newPathname = pathnameArray.join('/');
     router.push(newPathname);
   };

@@ -64,7 +64,13 @@ const components = (baseContext: ContentItem) => ({
     const { className } = props;
     const language = className?.replace('language-', '');
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+      <div
+        style={{
+          display: language && 'flex',
+          flexDirection: language && 'row',
+          gap: language && '10px',
+        }}
+      >
         <SyntaxHighlighter
           className={className}
           language={language}

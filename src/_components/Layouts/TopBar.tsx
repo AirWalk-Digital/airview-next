@@ -67,7 +67,7 @@ export default function TopBar({
   const pathname = usePathname();
 
   const handleEdit = () => {
-    const pathnameArray = pathname.split('/');
+    const pathnameArray = pathname?.split('/') ?? [];
 
     if (pathnameArray[2] === 'edit') {
       // Replace 'edit' with 'view' in the URL path
