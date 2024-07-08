@@ -5,6 +5,7 @@ import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
 import matter from 'gray-matter';
 import type { MDXContent } from 'mdx/types';
 import * as runtime from 'react/jsx-runtime';
+import recmaMdxEscapeMissingComponents from 'recma-mdx-escape-missing-components';
 import withSlugs from 'rehype-slug';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
@@ -44,6 +45,7 @@ export function loadMDX(
         format: format as 'detect' | 'md' | 'mdx' | null | undefined,
         remarkPlugins,
         rehypePlugins,
+        recmaPlugins: [recmaMdxEscapeMissingComponents],
       });
       const frontmatter = data || {};
       if (tableOfContents) {
@@ -60,6 +62,7 @@ export function loadMDX(
       format: format as 'detect' | 'md' | 'mdx' | null | undefined,
       remarkPlugins,
       rehypePlugins,
+      recmaPlugins: [recmaMdxEscapeMissingComponents],
     });
     const frontmatter = data || {};
     if (tableOfContents) {
