@@ -161,8 +161,8 @@ export default function MenuWrapper({
               maxWidth: '100% !important',
               pt: '2%',
               ml: 0,
-              pl: '0 !important',
-              pr: '0 !important',
+              // pl: '0 !important',
+              // pr: '0 !important',
             }}
           >
             {children && children}

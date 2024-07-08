@@ -19,8 +19,13 @@ export default function ContentPrint({ children }: PagedOutputProps) {
   const currentPath = usePathname();
 
   function handleClose() {
-    const newPath = currentPath.replace(/\/print$/, '');
-    router.replace(newPath);
+    const pathnameArray = currentPath.split('/');
+
+    // Replace 'print' with 'view' in the URL path
+    pathnameArray[2] = 'view';
+
+    const newPathname = pathnameArray.join('/');
+    router.push(newPathname);
   }
   function handlePrint() {
     window.print();

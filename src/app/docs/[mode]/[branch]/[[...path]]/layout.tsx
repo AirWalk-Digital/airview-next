@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { siteConfig } from '@/config';
 import { getLogger } from '@/lib/Logger';
@@ -14,13 +13,13 @@ export const metadata: Metadata = {
 export default function Layout({
   view,
   edit,
-  // print,
+  print,
   index,
   params,
 }: {
   view: React.ReactNode;
   edit: React.ReactNode;
-  // print: React.ReactNode
+  print: React.ReactNode;
   index: React.ReactNode;
   // mode = 'view' | 'edit' | 'print'
   // branch: string
@@ -38,8 +37,8 @@ export default function Layout({
       return view;
     case 'edit':
       return edit;
-    //   case 'print':
-    //     return print;
+    case 'print':
+      return print;
   }
-  return notFound();
+  // return notFound();
 }

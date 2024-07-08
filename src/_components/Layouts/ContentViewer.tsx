@@ -117,10 +117,24 @@ export function ContentViewer({
     return <ContentSkeleton topBarHeight={topBarHeight} />;
   }
   if (pageContent) {
-    const { mdxContent: Page, frontmatter } = loadMDX(
-      pageContent,
-      context?.file?.endsWith('.md') ? 'md' : 'mdx'
-    );
+    let frontmatter;
+    let mdxContent;
+    try {
+      ({ mdxContent, frontmatter } = loadMDX(
+        pageContent,
+        context?.file?.endsWith('.md') ? 'md' : 'mdx'
+      ));
+    } catch (error: any) {
+      try {
+        ({ mdxContent, frontmatter } = loadMDX(
+          `---\ntitle: Error\n---\nError converting MDX\n${error.message}`,
+          'md'
+        ));
+      } catch (err: any) {
+        logger.error({ msg: 'Error converting MDX', err });
+      }
+    }
+    const Page = mdxContent;
     logger.info({ msg: 'ContentViewer', frontmatter });
     return (
       <AsideAndMainContainer>
