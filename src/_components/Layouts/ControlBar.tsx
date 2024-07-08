@@ -63,7 +63,7 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
   const pathname = usePathname();
   const onBranchChange = (event: any, value: string) => {
     logger.info('handleContextUpdate', { value, event });
-    const pathnameArray = pathname.split('/');
+    const pathnameArray = pathname?.split('/') ?? [];
     pathnameArray[3] = encodeURIComponent(value);
     const newPathname = pathnameArray.join('/');
     router.push(newPathname);
@@ -125,7 +125,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
     if (changeBranch) {
       // const newCollection = { ...collection };
       setBranch(collection.branch);
-      const pathnameArray = pathname.split('/');
+      const pathnameArray = pathname?.split('/') ?? [];
       pathnameArray[3] = encodeURIComponent(collection.branch);
       const newPathname = pathnameArray.join('/');
       router.push(newPathname);

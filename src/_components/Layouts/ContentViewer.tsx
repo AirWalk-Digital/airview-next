@@ -94,7 +94,7 @@ export function ContentViewer({
   }
 
   function openPrint() {
-    const pathnameArray = currentPath.split('/');
+    const pathnameArray = currentPath?.split('/') ?? [];
     pathnameArray[2] = 'print';
     const newPathname = pathnameArray.join('/');
     router.push(newPathname);
@@ -107,7 +107,7 @@ export function ContentViewer({
 
   function handlePageReset() {
     // reset the path to the current path before /related_content
-    const rootPath = currentPath.split('/related_content')[0];
+    const rootPath = currentPath?.split('/related_content')[0] ?? '';
     if (rootPath) {
       router.push(rootPath);
     }

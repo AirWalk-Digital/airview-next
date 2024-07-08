@@ -7,6 +7,9 @@ import MdxImage from '@/components/Cards/Image';
 import type { ContentItem } from '@/lib/Types';
 import { palette } from '@/styles/baseTheme';
 import { getContrastYIQ } from '@/styles/lib/colors';
+
+import { CopyButton } from './CopyButton';
+
 // const StatRoot = styled('table', {
 //   name: 'MuiStat', // The component name
 //   slot: 'root', // The slot name
@@ -61,7 +64,13 @@ const components = (baseContext: ContentItem) => ({
     const { className } = props;
     const language = className?.replace('language-', '');
     return (
-      <div>
+      <div
+        style={{
+          display: language && 'flex',
+          flexDirection: language && 'row',
+          gap: language && '10px',
+        }}
+      >
         <SyntaxHighlighter
           className={className}
           language={language}
@@ -74,12 +83,14 @@ const components = (baseContext: ContentItem) => ({
             display: 'block',
             overflow: 'clip',
             whiteSpace: 'pre-wrap',
+            flexGrow: '2',
             ...(language
               ? { fontSize: '0.75rem' }
               : { background: 'unset', padding: 'unset', fontSize: '0.85rem' }),
           }}
           {...props}
         />
+        {!!language && <CopyButton code={props.children} />}
       </div>
     );
   },
