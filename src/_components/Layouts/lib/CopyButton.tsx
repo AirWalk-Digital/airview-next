@@ -1,5 +1,3 @@
-import 'react-toastify/dist/ReactToastify.css';
-
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Alert, IconButton, Snackbar } from '@mui/material';
 import * as React from 'react';

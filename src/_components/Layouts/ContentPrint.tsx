@@ -19,7 +19,7 @@ export default function ContentPrint({ children }: PagedOutputProps) {
   const currentPath = usePathname();
 
   function handleClose() {
-    const pathnameArray = currentPath.split('/');
+    const pathnameArray = currentPath?.split('/') ?? [];
 
     // Replace 'print' with 'view' in the URL path
     pathnameArray[2] = 'view';

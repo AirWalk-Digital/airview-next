@@ -24,6 +24,7 @@ import { ContentMenu, TableOfContents } from '@/components/Menus';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem, RelatedContent } from '@/lib/Types';
 
+import { topBarHeight } from './constants';
 import { loadMDX } from './lib/loadMDX';
 // import { mdComponents } from '../../constants/mdxProvider.js';
 const logger = getLogger().child({ namespace: 'ContentViewer' });
@@ -42,7 +43,7 @@ interface ContentViewerProps {
   relatedContent: RelatedContent;
 }
 
-function ContentSkeleton({ topBarHeight }: { topBarHeight: number }) {
+function ContentSkeleton() {
   return (
     <div
       style={{
@@ -63,8 +64,6 @@ export function ContentViewer({
   loading,
   relatedContent,
 }: ContentViewerProps) {
-  const topBarHeight = 64;
-
   logger.info({
     msg: 'ContentViewer',
     pageContent,
@@ -114,7 +113,7 @@ export function ContentViewer({
   }
 
   if (loading) {
-    return <ContentSkeleton topBarHeight={topBarHeight} />;
+    return <ContentSkeleton />;
   }
   if (pageContent) {
     let frontmatter;

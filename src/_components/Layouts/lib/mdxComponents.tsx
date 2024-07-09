@@ -8,6 +8,7 @@ import type { ContentItem } from '@/lib/Types';
 import { palette } from '@/styles/baseTheme';
 import { getContrastYIQ } from '@/styles/lib/colors';
 
+import { topBarHeight } from '../constants';
 import { CopyButton } from './CopyButton';
 
 // const StatRoot = styled('table', {
@@ -60,6 +61,21 @@ const components = (baseContext: ContentItem) => ({
   table: (props: any) => <Table>{props.children}</Table>,
   pre: (props: any) => props.children,
   img: (props: any) => <MdxImage props={props} baseContext={baseContext} />,
+  h2: (props: any) => (
+    <h2 id={props.id} style={{ scrollMarginTop: topBarHeight }}>
+      {props.children}
+    </h2>
+  ),
+  h3: (props: any) => (
+    <h3 id={props.id} style={{ scrollMarginTop: topBarHeight }}>
+      {props.children}
+    </h3>
+  ),
+  h4: (props: any) => (
+    <h4 id={props.id} style={{ scrollMarginTop: topBarHeight }}>
+      {props.children}
+    </h4>
+  ),
   code: (props: any) => {
     const { className } = props;
     const language = className?.replace('language-', '');

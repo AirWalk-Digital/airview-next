@@ -8,6 +8,7 @@ import React from 'react';
 import components from '@/components/Layouts/lib/mdxComponents';
 import type { ContentItem } from '@/lib/Types';
 
+import { topBarHeight } from './constants';
 import { loadMDX } from './lib/loadMDX';
 // import { mdComponents } from '../../constants/mdxProvider.js';
 
@@ -21,7 +22,7 @@ function ContentSkeleton() {
   return (
     <div
       style={{
-        marginTop: 64,
+        marginTop: topBarHeight,
         paddingLeft: 0,
       }}
     >

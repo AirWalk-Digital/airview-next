@@ -25,11 +25,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 import { siteConfig } from '../../../site.config';
+import { topBarHeight } from './constants';
 // import logo from '../../public/logos/airwalk-logo.png';
 const Logo = styled('img')({
   display: 'block',
   width: 'auto',
-  height: 64,
+  height: topBarHeight,
 });
 
 export interface ComponentProps {
