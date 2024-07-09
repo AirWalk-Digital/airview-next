@@ -12,7 +12,7 @@
 1. Clone the project: `git clone https://github.com/AirWalk-Digital/airview-next`
 2. in VScode - "Open in Container" using remote containers [remote containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 3. Add required .env, github-app-private-key.pem, sharepoint-app-private-key.pem & .npmrc
-  3.1 Access to aws portal is required to get the access keys (.pem)
+  3.1 Access to aws portal is required to get the access keys from Secrets manger (.pem)
 4. Install dependencies: `npm i`
 5. Run the dev server: `npm run dev`
 6. Run storybook: `npm run storybook`
