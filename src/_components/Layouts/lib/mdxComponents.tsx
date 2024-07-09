@@ -62,26 +62,17 @@ const components = (baseContext: ContentItem) => ({
   pre: (props: any) => props.children,
   img: (props: any) => <MdxImage props={props} baseContext={baseContext} />,
   h2: (props: any) => (
-    <h2
-      id={props.id}
-      style={{ scrollBehavior: 'smooth', scrollMarginTop: topBarHeight }}
-    >
+    <h2 id={props.id} style={{ scrollMarginTop: topBarHeight }}>
       {props.children}
     </h2>
   ),
   h3: (props: any) => (
-    <h3
-      id={props.id}
-      style={{ scrollBehavior: 'smooth', scrollMarginTop: topBarHeight }}
-    >
+    <h3 id={props.id} style={{ scrollMarginTop: topBarHeight }}>
       {props.children}
     </h3>
   ),
   h4: (props: any) => (
-    <h4
-      id={props.id}
-      style={{ scrollBehavior: 'smooth', scrollMarginTop: topBarHeight }}
-    >
+    <h4 id={props.id} style={{ scrollMarginTop: topBarHeight }}>
       {props.children}
     </h4>
   ),

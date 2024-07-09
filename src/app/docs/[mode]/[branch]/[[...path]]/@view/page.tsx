@@ -132,7 +132,7 @@ export default async function Page({
 
         if (pageContent && pageContent.content && pageContentText) {
           return (
-            <main style={{ scrollBehavior: 'smooth' }}>
+            <main>
               <MenuWrapper
                 menuStructure={menuStructure}
                 loading={loading}
