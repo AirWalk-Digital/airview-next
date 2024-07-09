@@ -10,7 +10,7 @@
 ## Getting Started
 
 1. Clone the project: `git clone https://github.com/AirWalk-Digital/airview-next`
-2. in VScode - "Open in Container" using remote containers.
+2. in VScode - "Open in Container" using remote containers [remote containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 3. Install dependencies: `npm i`
 4. Run the dev server: `npm run dev`
 5. Run storybook: `npm run storybook`
