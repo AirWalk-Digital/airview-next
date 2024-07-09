@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
-    <html lang='en'>
+    <html lang='en' style={{ scrollBehavior: 'smooth' }}>
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={baseTheme}>
