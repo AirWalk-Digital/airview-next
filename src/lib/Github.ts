@@ -179,6 +179,7 @@ async function getCachedFileContent(
   content: Buffer | undefined;
   encoding: string;
   contributors: { authorName: string; authorDate: string }[];
+  sha: string;
 } | null> {
   // Generate a unique cache key for this file
   let cacheKey = '';
@@ -196,6 +197,7 @@ async function getCachedFileContent(
             ),
             encoding: cachedContent.encoding as string,
             contributors: cachedContent.contributors,
+            sha,
           };
           // return cachedContent.content.data.toString(
           //   cachedContent.encoding as BufferEncoding,
@@ -287,6 +289,7 @@ async function getGitHubFileContent({
   content: Buffer | undefined;
   encoding: string;
   contributors: { authorName: string; authorDate: string }[];
+  sha: string;
 } | null> {
   if (!gitHubInstance) {
     gitHubInstance = await createGitHubInstance();
@@ -435,6 +438,7 @@ async function getGitHubFileContent({
             content: stringifiedValue,
             encoding,
             contributors,
+            sha,
           })
         ); // cache perpetually the file contents
         // logger.debug(
@@ -458,7 +462,12 @@ async function getGitHubFileContent({
         error,
       });
     }
-    return { content, encoding: encoding || 'none', contributors };
+    return {
+      content,
+      encoding: encoding || 'none',
+      contributors,
+      sha: sha || '',
+    };
   } catch (error: any) {
     logger.error({
       function: 'getGitHubFileContent',
@@ -499,6 +508,7 @@ export async function getFileContent({
     authorName: string;
     authorDate: string;
   }[];
+  sha: string;
 } | null> {
   // if the SHA is passed, this is a specific revision of a file.
   // if not, pull back the generic revision of the file, stored with the branch sha instead.

@@ -1,9 +1,11 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ApprovalIcon from '@mui/icons-material/Approval';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   AppBar,
   Autocomplete,
   Button,
+  Drawer,
   FormControlLabel,
   IconButton,
   Snackbar,
@@ -14,6 +16,8 @@ import {
 } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -114,6 +118,9 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   const [branch, setBranch] = useState(context.branch);
   const router = useRouter();
   const pathname = usePathname();
+  const theme = useTheme();
+  // Use useMediaQuery hook to check for screen width
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   useEffect(() => {
     if (context.branch !== collection.branch) {
       setBranch(context.branch);
@@ -177,7 +184,163 @@ export const ControlBar: React.FC<ControlBarProps> = ({
       handleEdit();
     }
   };
+  const [drawerState, setDrawerState] = React.useState(false);
+  const toggleDrawer =
+    (openDrawer: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
 
+      setDrawerState(openDrawer);
+    };
+
+  const controlMenu = (
+    <Stack direction={isMobile ? 'column' : 'row'} spacing={2} sx={{ px: 1 }}>
+      {drawerState && ( // Assuming `isMenuOpen` controls the visibility of the menu
+        <IconButton
+          aria-label='Close menu'
+          onClick={() => setDrawerState(false)}
+          sx={{ position: 'absolute', top: 8, right: 8 }}
+          size='small'
+        >
+          <CloseIcon />
+        </IconButton>
+      )}
+      <FormControlLabel
+        control={<Switch checked={editMode} onClick={() => onEditClick()} />}
+        label='Edit Mode'
+      />
+      <FormControlLabel
+        control={
+          <Switch checked={changeBranch} onClick={() => onBranchToggle()} />
+        }
+        label='Change Branch'
+      />
+      {changeBranch && collection && (
+        <Stack direction='row' spacing={1} sx={{ px: 1 }}>
+          <FormControlLabel
+            control={
+              <BranchSelector
+                // onBranchChange={onBranchChange}
+                branches={branches}
+                branch={branch}
+                collection={collection}
+              />
+            }
+            label=''
+          />
+          <FormControlLabel
+            control={
+              <IconButton
+                size='medium'
+                onClick={() => handleNewBranchClick()}
+                color='primary'
+                title='Add new branch'
+                // sx={{ pl: 0 }}
+              >
+                <AddCircleIcon />
+              </IconButton>
+            }
+            label=''
+          />
+        </Stack>
+      )}
+      {editMode && changeBranch && collection && (
+        <>
+          <Button
+            variant='outlined'
+            onClick={handlePRClick}
+            startIcon={
+              isLoading ? <CircularProgress size={24} /> : <ApprovalIcon />
+            }
+          >
+            Raise PR
+          </Button>
+          <Snackbar
+            open={Boolean(showError)}
+            autoHideDuration={6000}
+            onClose={() => setShowError('')}
+          >
+            <MuiAlert
+              onClose={() => setShowError('')}
+              severity='error'
+              elevation={6}
+              variant='filled'
+            >
+              An error occurred while processing your request: {showError}
+            </MuiAlert>
+          </Snackbar>
+          <Snackbar
+            open={showPRSuccess}
+            autoHideDuration={6000}
+            onClose={() => setShowPRSuccess(false)}
+          >
+            <MuiAlert
+              onClose={() => setShowPRSuccess(false)}
+              severity='success'
+              elevation={6}
+              variant='filled'
+            >
+              PR successfully created
+            </MuiAlert>
+          </Snackbar>
+        </>
+      )}
+
+      <FormControlLabel
+        control={
+          <IconButton
+            size='large'
+            onClick={() => handleAddClick()}
+            color='primary'
+            disabled={!editMode || collection.branch === context.branch}
+          >
+            <AddCircleIcon />
+          </IconButton>
+        }
+        label='Add Content'
+      />
+    </Stack>
+  );
+
+  if (isMobile) {
+    const anchor = 'right';
+    return (
+      <>
+        <AppBar
+          position='fixed'
+          color='transparent'
+          elevation={0}
+          sx={{
+            // height,
+            display: open ? '' : 'none',
+            displayPrint: 'none',
+            borderBottom: 1,
+            borderColor: 'grey.300',
+            top,
+            zIndex: 1,
+          }}
+        >
+          {' '}
+          <Button size='small' onClick={toggleDrawer(true)}>
+            Edit Menu
+          </Button>
+        </AppBar>
+        <Drawer
+          anchor={anchor}
+          open={drawerState}
+          onClose={toggleDrawer(false)}
+        >
+          {controlMenu}
+        </Drawer>
+      </>
+    );
+  }
   return (
     <AppBar
       position='fixed'

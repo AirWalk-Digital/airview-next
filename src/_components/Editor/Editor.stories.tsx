@@ -1,7 +1,7 @@
 // components/Editor.stories.tsx
-import { type MDXEditorMethods } from '@mdxeditor/editor';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
+import { type MDXEditorMethods } from '@webtech0321/mdx-editor-collab';
 import React, { useRef } from 'react';
 
 import { Editor } from '@/components/Editor';
@@ -35,6 +35,7 @@ const meta: Meta<typeof Editor> = {
     context: dummyContext,
     defaultContext: dummyDefaultContext,
     enabled: true,
+    colabID: '12345',
     top: 0,
     editorSaveHandler: fn(async () => {
       return Promise.resolve('successfully saved file');
@@ -70,6 +71,7 @@ const Template: Story = {
         imagePreviewHandler={args.imagePreviewHandler}
         enabled={args.enabled}
         top={args.top}
+        colabID={args.colabID}
         // {...args}
         // other props you might need to pass
       />

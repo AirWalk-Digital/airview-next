@@ -49,6 +49,8 @@ export async function GET(req: NextRequest) {
 
     const headers = new Headers();
     headers.set('Content-Type', contentType);
+    headers.set('Content-Sha', data?.sha || '');
+
     if (data?.content) {
       return new NextResponse(
         data?.content,

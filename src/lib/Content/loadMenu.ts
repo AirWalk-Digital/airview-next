@@ -266,7 +266,7 @@ export async function getMenu(
 
   const contentPromises = files.map(async (file) => {
     let matterData: MatterData | null = null;
-    const cacheKey = `github:frontmatter:${path}:${file.sha}`;
+    const cacheKey = `github:frontmatter:${file.path}:${file.sha}`;
     const cachedContent = await cacheRead(cacheKey);
     if (cachedContent) {
       return JSON.parse(cachedContent);

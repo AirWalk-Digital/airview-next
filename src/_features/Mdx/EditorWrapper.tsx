@@ -1,8 +1,9 @@
 'use client';
 
-import { type MDXEditorMethods } from '@mdxeditor/editor';
+// import { type MDXEditorMethods } from '@mdxeditor/editor';
 import { Box, LinearProgress } from '@mui/material';
 import Container from '@mui/material/Container';
+import { type MDXEditorMethods } from '@webtech0321/mdx-editor-collab';
 import matter from 'gray-matter';
 import { usePathname, useRouter } from 'next/navigation';
 import path from 'path';
@@ -37,6 +38,8 @@ export default function EditorWrapper({
   const editorRef = useRef<MDXEditorMethods | null>(null);
   const searchParams = `owner=${context.owner}&repo=${context.repo}&path=${context.file}&branch=${context.branch}`;
   const [mdx, setMdx] = useState('');
+  const [colabID, setColabID] = useState('');
+
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isNewBranchOpen, setIsNewBranchOpen] = useState(false);
   const router = useRouter();
@@ -46,7 +49,11 @@ export default function EditorWrapper({
     const fetchData = async () => {
       const response = await fetch(`/api/github/content?${searchParams}`);
       const mdxResponse = await response.text();
+      // const contentSha = response.headers.get('Content-SHA'); // Retrieve the Content-SHA header
+      logger.info('fetchData', response);
       setMdx(mdxResponse);
+      // setColabID(`${context.branch}/${context.file}/${contentSha}`);
+      setColabID(`${context.branch}|${context.file?.replace(/\//g, '-')}`);
     };
 
     fetchData();
@@ -350,7 +357,9 @@ export default function EditorWrapper({
               imagePreviewHandler={imagePreviewHandler}
               imageUploadHandler={imageUploadHandler}
               markdown={mdx}
+              // markdown=''
               top={220}
+              colabID={colabID}
             />
           ) : (
             <LinearProgress />

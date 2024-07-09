@@ -14,6 +14,17 @@
         "uriFormat": "%s",
         "action": "debugWithChrome"
       }
+    },
+    {
+      "name": "Debug Collaboration",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev-colab",
+      "serverReadyAction": {
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
     }
   ]
 }
