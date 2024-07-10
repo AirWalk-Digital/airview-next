@@ -1,7 +1,7 @@
 'use server';
 
 /* eslint-disable no-nested-ternary */
-import { Box, Grid, LinearProgress } from '@mui/material';
+import { Alert, Box, Grid, LinearProgress, Snackbar } from '@mui/material';
 // import Container from '@mui/material/Container';
 // import Grid from '@mui/material/Grid';
 import path from 'path';
@@ -80,7 +80,17 @@ export default async function IndexTiles({
   // const MenuComponent =
   //   menuComponent === 'HeaderMinimalMenu' ? HeaderMinimalMenu : null;
 
-  if (loading || !tiles) {
+  if (!tiles) {
+    return (
+      <Snackbar open autoHideDuration={5000}>
+        <Alert severity='error' sx={{ width: '100%' }}>
+          Error loading content, please refresh
+        </Alert>
+      </Snackbar>
+    );
+  }
+
+  if (loading) {
     return (
       // <div style={{ marginTop: topBarHeight }}>
       // <Box sx={{ marginTop: topBarHeight }}>
