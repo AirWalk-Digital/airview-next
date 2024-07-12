@@ -1,6 +1,7 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+import NextTopLoader from 'nextjs-toploader';
 import * as React from 'react';
 
 import { baseTheme } from '@/styles/baseTheme';
@@ -20,6 +21,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           <ThemeProvider theme={baseTheme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
+            <NextTopLoader />
             {props.children}
           </ThemeProvider>
         </AppRouterCacheProvider>
