@@ -52,4 +52,3 @@ Debug the linting
 ```bash
 TIMING=1 DEBUG=eslint:cli-engine npx eslint src/_components/Cards/Image.stories.tsx --fix
 ```
-
