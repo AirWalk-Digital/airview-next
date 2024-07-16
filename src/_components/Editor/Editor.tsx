@@ -259,17 +259,6 @@ const Editor = React.memo(function EditorC({
                   doc
                 );
 
-                // provider.on('status', (event: { status: string }) => {
-                //   if (event.status === 'connected') {
-                //     const meta = doc.getMap('meta');
-                //     if (isNewDocument || !meta.has('initialized')) {
-                //       logger.info('NOT initialized');
-                //     } else {
-                //       logger.info('initialized');
-                //     }
-                //   }
-                // });
-
                 provider.on('synced', () => {
                   // The 'synced' event ensures all data has been loaded
                   // initializeDocument(doc, initialMarkdown, editorRef);
@@ -287,23 +276,12 @@ const Editor = React.memo(function EditorC({
                       logger.info('setting initial content');
                     }
                   } else {
-                    logger.info('initialised');
+                    logger.info('already initialised');
                   }
                 });
 
                 return provider;
               }}
-              // initialEditorState={(editor: LexicalEditor) => {
-              //   editor.update(() => {
-              //     const root = $getRoot();
-              //     root.clear(); // Clear existing nodes
-              //     if (initialMarkdown) {
-              //       // Here we assume you have a function `insertMarkdown` available
-              //       // If Lexical supports markdown parsing, you could use that directly
-              //       // editorRef?.current?.insertMarkdown(initialMarkdown);
-              //     }
-              //   });
-              // }}
               shouldBootstrap={false}
               excludedProperties={excludedProperties}
               username={`ABC-${Math.floor(Math.random() * 100)}`}
