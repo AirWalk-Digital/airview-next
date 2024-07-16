@@ -17,6 +17,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
 }) => {
   return (
     <Box
+      className='navigation-drawer'
       component='aside'
       sx={{
         display: open ? 'block' : 'none',

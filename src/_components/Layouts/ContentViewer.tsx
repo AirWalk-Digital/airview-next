@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
+import NProgress from 'nprogress';
 import React from 'react';
 
 import { Contributors } from '@/components/Cards';
@@ -96,11 +97,13 @@ export function ContentViewer({
     const pathnameArray = currentPath?.split('/') ?? [];
     pathnameArray[2] = 'print';
     const newPathname = pathnameArray.join('/');
+    NProgress.start();
     router.push(newPathname);
   }
 
   function handleContentChange(callback: any) {
     // add '/related_content/' and the callback file to the path
+    NProgress.start();
     router.push(`${currentPath}/related_content/${callback}`);
   }
 
@@ -108,6 +111,7 @@ export function ContentViewer({
     // reset the path to the current path before /related_content
     const rootPath = currentPath?.split('/related_content')[0] ?? '';
     if (rootPath) {
+      NProgress.start();
       router.push(rootPath);
     }
   }
