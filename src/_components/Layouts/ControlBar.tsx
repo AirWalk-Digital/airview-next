@@ -1,6 +1,8 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ApprovalIcon from '@mui/icons-material/Approval';
 import CloseIcon from '@mui/icons-material/Close';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import {
   AppBar,
   Autocomplete,
@@ -21,6 +23,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
+import type { ContentItem } from '@/config';
 import { getLogger } from '@/lib/Logger';
 
 const logger = getLogger().child({ namespace: 'ControlBar' });
@@ -32,9 +35,9 @@ export interface ControlBarProps {
   // handlePrint?: () => void;
   handleAddContent?: () => void;
   // handlePresentation?: () => void;
-  collection: any;
-  context: any;
-  branches: any[];
+  collection?: ContentItem;
+  context?: ContentItem;
+  branches: string[];
   top?: number;
   // onContextUpdate: (context: any) => void;
   editMode: boolean;
@@ -45,9 +48,9 @@ export interface ControlBarProps {
 
 interface BranchSelectorProps {
   // onBranchChange: (event: any, value: any) => void;
-  branches: any[];
-  branch: any;
-  collection: any;
+  branches: string[];
+  branch: string;
+  collection?: ContentItem;
 }
 
 const BranchSelector: React.FC<BranchSelectorProps> = ({
@@ -57,7 +60,7 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
   collection,
 }) => {
   let error = false;
-  if (collection.branch !== branch) {
+  if (collection?.branch !== branch) {
     error = false;
   } else {
     error = true;
@@ -65,23 +68,106 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({
 
   const router = useRouter();
   const pathname = usePathname();
-  const onBranchChange = (event: any, value: string) => {
-    logger.info('handleContextUpdate', { value, event });
+  const onBranchChange = (selectedValue: string) => {
+    if (!selectedValue) {
+      return;
+    }
     const pathnameArray = pathname?.split('/') ?? [];
-    pathnameArray[3] = encodeURIComponent(value);
+    pathnameArray[3] = encodeURIComponent(selectedValue);
     const newPathname = pathnameArray.join('/');
     router.push(newPathname);
   };
+
+  const favouritesStorageKey = 'favourites';
+
+  const [value, setValue] = useState<{
+    isFavourite: boolean;
+    name: string;
+  } | null>({ name: branch, isFavourite: false });
+
+  const [favourites, setFavourites] = useState<string[]>(() => {
+    // Retrieve favourites from localStorage on initial load
+    const storedFavourites = localStorage.getItem(favouritesStorageKey);
+    return storedFavourites ? JSON.parse(storedFavourites) : [];
+  });
+
+  const handleFavourite = (option: { name: string; isFavourite: boolean }) => {
+    const isFavourite = favourites.includes(option.name);
+    const updatedFavourites = isFavourite
+      ? favourites.filter((name) => name !== option.name)
+      : [...favourites, option.name];
+
+    setFavourites(updatedFavourites);
+    localStorage.setItem(
+      favouritesStorageKey,
+      JSON.stringify(updatedFavourites)
+    );
+  };
+
+  // Sort options based on favourites
+  const options = branches
+    .map((option) => ({
+      isFavourite: favourites.includes(option),
+      name: option,
+    }))
+    .sort(
+      (a, b) =>
+        (favourites.includes(b.name) ? 1 : -1) -
+        (favourites.includes(a.name) ? 1 : -1)
+    );
+
+  useEffect(() => {
+    options.sort(
+      (a, b) =>
+        (favourites.includes(b.name) ? 1 : -1) -
+        (favourites.includes(a.name) ? 1 : -1)
+    );
+  }, [favourites, options]);
 
   return (
     <Stack spacing={2} sx={{ width: 300 }}>
       <Autocomplete
         id='branch'
         size='small'
-        freeSolo
-        value={branch}
-        onChange={onBranchChange}
-        options={branches.map((option) => option.name)}
+        value={value}
+        onChange={(_event, newValue) => {
+          setValue(newValue);
+          onBranchChange(newValue?.name ?? '');
+        }}
+        options={options}
+        getOptionLabel={(option) => option.name}
+        renderOption={(props, option) => (
+          <li
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+            {...props}
+          >
+            <div
+              style={{
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {option.name}
+            </div>
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFavourite(option);
+              }}
+            >
+              {favourites.includes(option.name) ? (
+                <StarIcon />
+              ) : (
+                <StarBorderIcon />
+              )}
+            </IconButton>
+          </li>
+        )}
         renderInput={(params) => (
           <TextField
             error={error}
@@ -115,35 +201,27 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState('');
   const [showPRSuccess, setShowPRSuccess] = useState(false);
-  const [branch, setBranch] = useState(context.branch);
+  const [branch, setBranch] = useState(context?.branch);
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
   // Use useMediaQuery hook to check for screen width
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   useEffect(() => {
-    if (context.branch !== collection.branch) {
-      setBranch(context.branch);
+    if (context?.branch !== collection?.branch) {
+      setBranch(context?.branch);
       setChangeBranch(true);
     }
-  }, [context, collection.branch]);
+  }, [context, collection?.branch]);
 
   const onBranchToggle = async (state = 'ignore') => {
     if (changeBranch) {
       // const newCollection = { ...collection };
-      setBranch(collection.branch);
+      setBranch(collection?.branch);
       const pathnameArray = pathname?.split('/') ?? [];
-      pathnameArray[3] = encodeURIComponent(collection.branch);
+      pathnameArray[3] = encodeURIComponent(collection?.branch ?? '');
       const newPathname = pathnameArray.join('/');
       router.push(newPathname);
-      // onContextUpdate(newCollection);
-      // if (typeof window !== 'undefined') {
-      //   const url = new URL(window.location.href);
-      //   if (url.searchParams.has('branch')) {
-      //     url.searchParams.delete('branch');
-      //   }
-      //   window.history.replaceState({}, document.title, url);
-      // }
     }
     setChangeBranch(!changeBranch);
     if (state === 'open') {
@@ -228,7 +306,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
               <BranchSelector
                 // onBranchChange={onBranchChange}
                 branches={branches}
-                branch={branch}
+                branch={branch ?? ''}
                 collection={collection}
               />
             }
@@ -298,7 +376,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
             size='large'
             onClick={() => handleAddClick()}
             color='primary'
-            disabled={!editMode || collection.branch === context.branch}
+            disabled={!editMode || collection?.branch === context?.branch}
           >
             <AddCircleIcon />
           </IconButton>
@@ -377,7 +455,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   <BranchSelector
                     // onBranchChange={onBranchChange}
                     branches={branches}
-                    branch={branch}
+                    branch={branch ?? ''}
                     collection={collection}
                   />
                 }
@@ -448,7 +526,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                 size='large'
                 onClick={() => handleAddClick()}
                 color='primary'
-                disabled={!editMode || collection.branch === context.branch}
+                disabled={!editMode || collection?.branch === context?.branch}
               >
                 <AddCircleIcon />
               </IconButton>

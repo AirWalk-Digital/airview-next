@@ -2,6 +2,14 @@ interface Menu {
   component: string;
   collection: string | null;
 }
+
+export interface LinkedItem {
+  repo: string;
+  owner: string;
+  branch: string;
+  path: string;
+}
+
 export interface ContentItem {
   source: string;
   repo: string;
@@ -12,7 +20,7 @@ export interface ContentItem {
   collections?: string[];
   menu?: Menu;
   file?: string;
-  linked?: { repo: string; owner: string; branch: string; path: string };
+  linked?: LinkedItem;
 }
 
 interface Etherpad {
