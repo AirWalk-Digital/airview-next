@@ -259,6 +259,20 @@ const Editor = React.memo(function EditorC({
                   doc
                 );
 
+                provider.on('status', (event: { status: string }) => {
+                  if (
+                    event.status === 'connecting' ||
+                    event.status === 'disconnected'
+                  ) {
+                    if (editorRef && editorRef.current) {
+                      editorRef.current.setMarkdown(initialMarkdown);
+                      logger.error(
+                        'Websockets failed, setting initial content'
+                      );
+                    }
+                  }
+                });
+
                 provider.on('synced', () => {
                   // The 'synced' event ensures all data has been loaded
                   // initializeDocument(doc, initialMarkdown, editorRef);
