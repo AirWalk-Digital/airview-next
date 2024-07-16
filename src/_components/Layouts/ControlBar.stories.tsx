@@ -161,9 +161,14 @@ export const DefaultBranch = {
 
 const Template: StoryFn<StorybookControlBar> = (args) => {
   // const [collection, setCollection] = useState(dummyCollection);
-  const context = {
-    ...args.context,
+  const context: ContentItem = {
     branch: 'main',
+    collections: [''],
+    source: '',
+    repo: '',
+    owner: '',
+    path: '',
+    reference: '',
   };
 
   function dummyDelay() {
@@ -199,7 +204,7 @@ export const FullDemo = Template.bind({});
 FullDemo.args = {
   collection: dummyCollection,
   context: { ...dummyCollection, branch: 'branch-1' },
-  branches,
+  branches: branches.map((branch) => branch.name),
   result: 'success',
 };
 
@@ -207,7 +212,7 @@ export const APISuccess = Template.bind({});
 APISuccess.args = {
   collection: dummyCollection,
   context: { ...dummyCollection, branch: 'branch-1' },
-  branches,
+  branches: branches.map((branch) => branch.name),
   editMode: true,
   result: 'success',
 };
@@ -216,7 +221,7 @@ export const APIError = Template.bind({});
 APIError.args = {
   collection: dummyCollection,
   context: { ...dummyCollection, branch: 'branch-1' },
-  branches,
+  branches: branches.map((branch) => branch.name),
   editMode: true,
   result: 'error',
 };

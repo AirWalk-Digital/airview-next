@@ -24,10 +24,16 @@ import type { ContentItem } from '@/lib/Types';
 const logger = getLogger().child({ namespace: 'EditorWrapper' });
 logger.level = 'info';
 
+export interface Branch {
+  name: string;
+  commit: { sha: string };
+  protected: boolean;
+}
+
 interface EditorWrapperProps {
   defaultContext: ContentItem | undefined;
   context: ContentItem;
-  branches: { name: string; commit: { sha: string }; protected: boolean }[];
+  branches: Branch[];
 }
 
 export default function EditorWrapper({
@@ -319,17 +325,13 @@ export default function EditorWrapper({
   return (
     <>
       <ControlBar
-        branches={branches}
+        branches={branches.map((branch) => branch.name)}
         collection={defaultContext}
         context={context}
         handleAddContent={onAddContentClicked}
         handleEdit={handleEdit}
         handleNewBranch={onNewBranchClicked}
         handlePR={handlePR}
-        // handlePresentation={() => {}}
-        // handlePrint={() => {}}
-        // handleRefresh={() => {}}
-        // onContextUpdate={handleContextUpdate}
         open
         editMode
         top={65}
