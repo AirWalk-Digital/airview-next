@@ -56,42 +56,42 @@ const LandingPage = () => {
               <LinkCard
                 title='Frameworks & Standards'
                 description='View the compliance frameworks that guide our IT policy as well as standards to help adoption.'
-                link='/docs/frameworks'
+                link='/docs/view/default/frameworks'
               />
             )}
             {siteConfig.content.services && (
               <LinkCard
                 title='Providers & Services'
                 description='View the catalogue of Services available, complete with patterns, implementation guides and quality controls.'
-                link='/docs/services'
+                link='/docs/view/default/services'
               />
             )}
             {siteConfig.content.applications && (
               <LinkCard
                 title='Applications'
                 description='Browse the Applications deployed within our Organisation including documentation, knowledge and real-time compliance.'
-                link='/docs/applications'
+                link='/docs/view/default/applications'
               />
             )}
             {siteConfig.content.customers && (
               <LinkCard
                 title='Customers & Projects'
                 description="Customers and the projects we've done for them."
-                link='/docs/customers'
+                link='/docs/view/default/customers'
               />
             )}
             {siteConfig.content.solutions && (
               <LinkCard
                 title='Solutions'
                 description='Solutions and Propositions.'
-                link='/docs/solutions'
+                link='/docs/view/default/solutions'
               />
             )}
             {siteConfig.content.products && (
               <LinkCard
                 title='Products'
                 description='Products.'
-                link='/docs/products'
+                link='/docs/view/default/products'
               />
             )}
           </Grid>
