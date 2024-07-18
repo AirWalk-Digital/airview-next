@@ -101,7 +101,7 @@ export default async function IndexTiles({
             url={c?.file?.path}
             isHero={c?.frontmatter?.hero}
             image={
-              c?.frontmatter?.hero && c?.frontmatter?.image != null
+              c?.frontmatter?.hero && c?.frontmatter?.image !== null
                 ? `/api/github/content?owner=${initialContext.owner}&repo=${initialContext.repo}&path=${path.dirname(c.file.path)}/${c.frontmatter.image}&branch=${initialContext.branch}`
                 : c?.frontmatter?.hero
                   ? '/generic-solution.png'
