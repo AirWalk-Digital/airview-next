@@ -9,7 +9,7 @@
     "dev-colab": "node server.js",
     "build": "next build",
     "build-with-migrate": "npm run db:migrate && next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node server.js",
     "build-stats": "cross-env ANALYZE=true npm run build",
     "clean": "rimraf .next .swc out coverage",
     "lint": "next lint",

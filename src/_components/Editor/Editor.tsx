@@ -258,7 +258,7 @@ const Editor = React.memo(function EditorC({
                   doc.load();
                 }
                 const provider = new WebsocketProvider(
-                  `${protocol}//${window.location.host}`,
+                  `${protocol}//${window.location.host}/socket.io`,
                   id,
                   doc
                 );
