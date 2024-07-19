@@ -61,7 +61,7 @@ import type { ContentItem } from '@/lib/Types';
 import { baseTheme } from '@/styles/baseTheme';
 
 const logger = getLogger().child({ namespace: 'Editor' });
-logger.level = 'info';
+logger.level = 'debug';
 
 const CollaborationPlugin = dynamic(
   () =>
@@ -122,10 +122,14 @@ const Editor = React.memo(function EditorC({
   colabID,
 }: EditorProps) {
   // const [error, setError] = useState('');
-  // const [success, setSuccess] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
+  const collaborationConnection = useRef(0);
+  const [isCollaborative, setIsCollaborative] = useState(false);
   const changedRef = useRef(false);
   const errorRef = useRef('');
+
   // const successRef = useRef(false);
+  // const isEditable = useRef(enabled);
   const typographyCopy = { ...baseTheme.typography } as Theme['typography'];
   const importedCss = convertStyleObjectToCSS(typographyCopy);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -214,7 +218,7 @@ const Editor = React.memo(function EditorC({
         postInit(realm) {
           // const rootEditor = realm.getValue(rootEditor$);
           const newEditor = createEditor({
-            editable: true,
+            editable: isEditable,
             namespace: 'MDXEditor',
             nodes: realm.getValue(usedLexicalNodes$),
             onError: (err: any) => {
@@ -254,21 +258,27 @@ const Editor = React.memo(function EditorC({
                   doc.load();
                 }
                 const provider = new WebsocketProvider(
-                  `${protocol}//${window.location.host}`,
+                  `${protocol}//${window.location.host}/socket.io`,
                   id,
                   doc
                 );
 
                 provider.on('status', (event: { status: string }) => {
-                  if (
-                    event.status === 'connecting' ||
-                    event.status === 'disconnected'
-                  ) {
-                    if (editorRef && editorRef.current) {
-                      editorRef.current.setMarkdown(initialMarkdown);
-                      logger.error(
-                        'Websockets failed, setting initial content'
-                      );
+                  // logger.debug(event.status);
+                  if (event.status === 'connecting') {
+                    if (
+                      collaborationConnection.current > 0 &&
+                      !isCollaborative
+                    ) {
+                      if (editorRef && editorRef.current) {
+                        editorRef.current.setMarkdown(initialMarkdown);
+                        collaborationConnection.current = 0;
+                        logger.error(
+                          'Websockets failed, setting initial content'
+                        );
+                      }
+                    } else if (!isCollaborative) {
+                      collaborationConnection.current += 1;
                     }
                   }
                 });
@@ -287,11 +297,14 @@ const Editor = React.memo(function EditorC({
                     // This is truly a new document, so we set the initial markdown
                     if (editorRef && editorRef.current) {
                       editorRef.current.setMarkdown(initialMarkdown);
+                      setIsEditable(true);
                       logger.info('setting initial content');
                     }
                   } else {
+                    setIsEditable(true);
                     logger.info('already initialised');
                   }
+                  setIsCollaborative(true);
                 });
 
                 return provider;
@@ -304,7 +317,14 @@ const Editor = React.memo(function EditorC({
           ));
         },
       }),
-    [colabID, initialMarkdown, editorRef]
+    [
+      isEditable,
+      colabID,
+      collaborationConnection,
+      isCollaborative,
+      editorRef,
+      initialMarkdown,
+    ]
   );
 
   const editorPlugins = useMemo(
