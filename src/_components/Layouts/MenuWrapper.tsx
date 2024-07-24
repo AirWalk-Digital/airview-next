@@ -4,6 +4,7 @@ import Container from '@mui/material/Container';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
+import NProgress from 'nprogress';
 import React, { Suspense, useState } from 'react';
 
 import TopBar from '@/components/Layouts/TopBar';
@@ -83,10 +84,12 @@ export default function MenuWrapper({
       setMenuOpen(false);
     }
     const newPathname = pathnameArray.join('/');
+    NProgress.start();
     router.push(newPathname);
   };
 
   const handleButtonClick = async (url: string) => {
+    NProgress.start();
     const pathnameArray = pathname?.split('/') ?? [];
     // pop the old path
     logger.info('handleButtonClick', { initialPath: pathnameArray, url });

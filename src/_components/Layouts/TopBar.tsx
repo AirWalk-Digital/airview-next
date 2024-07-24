@@ -11,17 +11,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import { IconButton, Typography } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-// import IconButton from '@mui/material/IconButton';
-// import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-// import PrintIcon from '@mui/icons-material/Print';
-// import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
+import NProgress from 'nprogress';
 import React, { useState } from 'react';
 
 import { siteConfig } from '../../../site.config';
@@ -78,6 +75,7 @@ export default function TopBar({
       pathnameArray[2] = 'edit';
     }
     const newPathname = pathnameArray.join('/');
+    NProgress.start();
     router.push(newPathname);
   };
   const handleMenuOpen = (

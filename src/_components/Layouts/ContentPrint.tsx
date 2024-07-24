@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PrintIcon from '@mui/icons-material/Print';
 import { Box, Fab, LinearProgress } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
+import NProgress from 'nprogress';
 import { Previewer } from 'pagedjs';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -25,6 +26,7 @@ export default function ContentPrint({ children }: PagedOutputProps) {
     pathnameArray[2] = 'view';
 
     const newPathname = pathnameArray.join('/');
+    NProgress.start();
     router.push(newPathname);
   }
   function handlePrint() {

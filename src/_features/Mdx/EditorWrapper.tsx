@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import { type MDXEditorMethods } from '@webtech0321/mdx-editor-collab';
 import matter from 'gray-matter';
 import { usePathname, useRouter } from 'next/navigation';
+import NProgress from 'nprogress';
 import path from 'path';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -88,6 +89,7 @@ export default function EditorWrapper({
         const pathnameArray = pathname?.split('/') ?? [];
         pathnameArray[3] = encodeURIComponent(value.name);
         const newPathname = pathnameArray.join('/');
+        NProgress.start();
         router.push(newPathname);
 
         // if (typeof window !== 'undefined') {
@@ -113,6 +115,7 @@ export default function EditorWrapper({
     pathnameArray.splice(4);
     // join the 2 arrays
     pathnameArray.push(newPage);
+    NProgress.start();
     router.push(pathnameArray.join('/'));
   };
 
@@ -213,6 +216,7 @@ export default function EditorWrapper({
     pathnameArray[2] = pathnameArray[2] === 'edit' ? 'view' : 'edit';
 
     const newPathname = pathnameArray.join('/');
+    NProgress.start();
     router.push(newPathname);
   };
 
