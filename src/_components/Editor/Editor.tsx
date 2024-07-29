@@ -140,7 +140,12 @@ const Editor = React.memo(function EditorC({
     [role='toolbar'] {
     }
     [class*='_contentEditable_'] {
-      height: calc(100vh - ${top}px);
+      height: calc(100vh - ${top + 45}px);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    [class*='mdxeditor-diff-source-wrapper'] {
+      height: calc(100vh - ${top + 45}px);
       overflow-y: auto;
       overflow-x: hidden;
     }
