@@ -1,6 +1,9 @@
+'use client';
+
 /* eslint-disable react/no-unstable-nested-components */
 import '@webtech0321/mdx-editor-collab/style.css';
 
+import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
 import SaveIcon from '@mui/icons-material/Save';
 import { Alert, css, Fab } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -44,8 +47,8 @@ import {
   UndoRedo,
   usedLexicalNodes$,
 } from '@webtech0321/mdx-editor-collab';
+import { createHash } from 'crypto';
 import { createEditor } from 'lexical';
-import dynamic from 'next/dynamic';
 import React, {
   useCallback,
   useEffect,
@@ -63,15 +66,19 @@ import { baseTheme } from '@/styles/baseTheme';
 const logger = getLogger().child({ namespace: 'Editor' });
 logger.level = 'debug';
 
-const CollaborationPlugin = dynamic(
-  () =>
-    import('@lexical/react/LexicalCollaborationPlugin').then(
-      (mod) => mod.CollaborationPlugin
-    ),
-  {
-    ssr: false,
-  }
-);
+function hashString(input: string): string {
+  return createHash('sha256').update(input).digest('hex');
+}
+
+// const CollaborationPlugin = dynamic(
+//   () =>
+//     import('@lexical/react/LexicalCollaborationPlugin').then(
+//       (mod) => mod.CollaborationPlugin
+//     ),
+//   {
+//     ssr: false,
+//   }
+// );
 
 const toKebabCase = (str: string) => {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -217,6 +224,80 @@ const Editor = React.memo(function EditorC({
   //   root.append(paragraph);
   // };
 
+  const providerFactory = useCallback(
+    (id: string, yjsDocMap: Map<string, Y.Doc>) => {
+      let doc = yjsDocMap.get(id);
+      if (!doc) {
+        doc = new Y.Doc();
+        yjsDocMap.set(id, doc);
+      } else {
+        doc.load();
+      }
+
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+
+      const provider = new WebsocketProvider(
+        `${protocol}//${window.location.host}/socket.io`,
+        id,
+        doc,
+        {
+          connect: false,
+        }
+      );
+      provider.on('status', (event: { status: string }) => {
+        // logger.debug(event.status);
+        if (event.status === 'connecting') {
+          if (collaborationConnection.current > 2 && !isCollaborative) {
+            if (editorRef && editorRef.current) {
+              editorRef.current.setMarkdown(initialMarkdown);
+              collaborationConnection.current = 0;
+              logger.error('Websockets failed, setting initial content');
+            }
+          } else if (!isCollaborative) {
+            logger.debug(
+              `Websocket connection attempt: ${collaborationConnection.current}`
+            );
+            collaborationConnection.current += 1;
+          }
+        }
+        if (event.status === 'connected' && !isCollaborative) {
+          logger.info('Websockets: Connected');
+          setIsCollaborative(true);
+        }
+      });
+
+      provider.on('synced', () => {
+        // The 'synced' event ensures all data has been loaded
+        // initializeDocument(doc, initialMarkdown, editorRef);
+        const meta = doc.getMap('metadata');
+
+        const yxmlText = doc.get('root', Y.XmlText);
+
+        logger.debug(`Text: ${yxmlText}`);
+
+        if (yxmlText.length === 0) {
+          logger.info('The document is empty, initialising');
+          if (editorRef && editorRef.current) {
+            editorRef.current.setMarkdown(initialMarkdown);
+            // Set the document as initialized
+            meta.set('initialized', true);
+            setIsEditable(true);
+            logger.info('initialising initial content');
+          }
+        } else {
+          logger.info(`The document has content length: ${yxmlText.length}`);
+          setIsEditable(true);
+        }
+        logger.debug(
+          `Initialised: ${meta.get('initialized')}, content: ${yxmlText}`
+        );
+      });
+
+      return provider;
+    },
+    [editorRef, initialMarkdown, isCollaborative]
+  );
+
   const collaborationPlugin = useMemo(
     () =>
       realmPlugin({
@@ -250,70 +331,9 @@ const Editor = React.memo(function EditorC({
 
           realm.pub(addComposerChild$, () => (
             <CollaborationPlugin
-              id={colabID}
+              id={hashString(colabID)}
               // @ts-ignore
-              providerFactory={(id, yjsDocMap) => {
-                const protocol =
-                  window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                let doc = yjsDocMap.get(id);
-                if (!doc) {
-                  doc = new Y.Doc();
-                  yjsDocMap.set(id, doc);
-                } else {
-                  doc.load();
-                }
-                const provider = new WebsocketProvider(
-                  `${protocol}//${window.location.host}/socket.io`,
-                  id,
-                  doc
-                );
-
-                provider.on('status', (event: { status: string }) => {
-                  // logger.debug(event.status);
-                  if (event.status === 'connecting') {
-                    if (
-                      collaborationConnection.current > 0 &&
-                      !isCollaborative
-                    ) {
-                      if (editorRef && editorRef.current) {
-                        editorRef.current.setMarkdown(initialMarkdown);
-                        collaborationConnection.current = 0;
-                        logger.error(
-                          'Websockets failed, setting initial content'
-                        );
-                      }
-                    } else if (!isCollaborative) {
-                      collaborationConnection.current += 1;
-                    }
-                  }
-                });
-
-                provider.on('synced', () => {
-                  // The 'synced' event ensures all data has been loaded
-                  // initializeDocument(doc, initialMarkdown, editorRef);
-                  const meta = doc.getMap('metadata');
-
-                  // Check if the document has been initialized
-                  if (!meta.get('initialized')) {
-                    // Set the document as initialized
-                    meta.set('initialized', true);
-                    logger.info('Not initialised');
-
-                    // This is truly a new document, so we set the initial markdown
-                    if (editorRef && editorRef.current) {
-                      editorRef.current.setMarkdown(initialMarkdown);
-                      setIsEditable(true);
-                      logger.info('setting initial content');
-                    }
-                  } else {
-                    setIsEditable(true);
-                    logger.info('already initialised');
-                  }
-                  setIsCollaborative(true);
-                });
-
-                return provider;
-              }}
+              providerFactory={providerFactory}
               shouldBootstrap={false}
               excludedProperties={excludedProperties}
               username={`ABC-${Math.floor(Math.random() * 100)}`}
@@ -322,14 +342,7 @@ const Editor = React.memo(function EditorC({
           ));
         },
       }),
-    [
-      isEditable,
-      colabID,
-      collaborationConnection,
-      isCollaborative,
-      editorRef,
-      initialMarkdown,
-    ]
+    [isEditable, colabID, providerFactory]
   );
 
   const editorPlugins = useMemo(
