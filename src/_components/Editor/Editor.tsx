@@ -559,7 +559,9 @@ const Editor = React.memo(function EditorC({
             markdown={initialMarkdown || ''}
             plugins={editorPluginsCollab}
             readOnly={
-              defaultContext && context.branch === defaultContext.branch
+              defaultContext &&
+              context.branch === defaultContext.branch &&
+              !isEditable.current
             }
             autoFocus
           />
