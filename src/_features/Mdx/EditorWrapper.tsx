@@ -1,15 +1,16 @@
 'use client';
 
 // import { type MDXEditorMethods } from '@mdxeditor/editor';
+import { type MDXEditorMethods } from '@mdxeditor/editor';
 import { Box, LinearProgress } from '@mui/material';
 import Container from '@mui/material/Container';
-import { type MDXEditorMethods } from '@webtech0321/mdx-editor-collab';
 import matter from 'gray-matter';
+import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
 import path from 'path';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Editor, NewBranchDialog, NewContentDialog } from '@/components/Editor';
+import { NewBranchDialog, NewContentDialog } from '@/components/Editor';
 import {
   createFile,
   createNewBranch,
@@ -29,6 +30,13 @@ interface EditorWrapperProps {
   context: ContentItem;
   branches: { name: string; commit: { sha: string }; protected: boolean }[];
 }
+
+const Editor = dynamic(
+  () => import('@/components/Editor').then((mod) => mod.Editor),
+  {
+    ssr: false,
+  }
+);
 
 export default function EditorWrapper({
   defaultContext = undefined,

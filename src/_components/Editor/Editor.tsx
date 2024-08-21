@@ -1,16 +1,6 @@
-'use client';
-
 /* eslint-disable react/no-unstable-nested-components */
-import '@webtech0321/mdx-editor-collab/style.css';
+import '@mdxeditor/editor/style.css';
 
-import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
-import SaveIcon from '@mui/icons-material/Save';
-import { Alert, css, Fab } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
-import Snackbar from '@mui/material/Snackbar';
-import type { Theme } from '@mui/material/styles';
-import { styled } from '@mui/material/styles';
 import {
   activeEditor$,
   addComposerChild$,
@@ -39,16 +29,23 @@ import {
   type MDXEditorMethods,
   quotePlugin,
   realmPlugin,
-  rootEditor$,
   TableNode,
   tablePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
   UndoRedo,
   usedLexicalNodes$,
-} from '@webtech0321/mdx-editor-collab';
+} from '@mdxeditor/editor';
+import SaveIcon from '@mui/icons-material/Save';
+import { Alert, css, Fab } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
+import Snackbar from '@mui/material/Snackbar';
+import type { Theme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { createHash } from 'crypto';
 import { createEditor } from 'lexical';
+import dynamic from 'next/dynamic';
 import React, {
   useCallback,
   useEffect,
@@ -66,19 +63,19 @@ import { baseTheme } from '@/styles/baseTheme';
 const logger = getLogger().child({ namespace: 'Editor' });
 logger.level = 'debug';
 
+const CollaborationPlugin = dynamic(
+  () =>
+    import('@lexical/react/LexicalCollaborationPlugin').then(
+      (mod) => mod.CollaborationPlugin
+    ),
+  {
+    ssr: false,
+  }
+);
+
 function hashString(input: string): string {
   return createHash('sha256').update(input).digest('hex');
 }
-
-// const CollaborationPlugin = dynamic(
-//   () =>
-//     import('@lexical/react/LexicalCollaborationPlugin').then(
-//       (mod) => mod.CollaborationPlugin
-//     ),
-//   {
-//     ssr: false,
-//   }
-// );
 
 const toKebabCase = (str: string) => {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -129,9 +126,10 @@ const Editor = React.memo(function EditorC({
   colabID,
 }: EditorProps) {
   // const [error, setError] = useState('');
-  const [isEditable, setIsEditable] = useState(false);
+  // const [isEditable, setIsEditable] = useState(false);
+  const isEditable = useRef(false);
   const collaborationConnection = useRef(0);
-  const [isCollaborative, setIsCollaborative] = useState(false);
+  // const [isCollaborative, setIsCollaborative] = useState(false);
   const changedRef = useRef(false);
   const errorRef = useRef('');
 
@@ -147,7 +145,12 @@ const Editor = React.memo(function EditorC({
     [role='toolbar'] {
     }
     [class*='_contentEditable_'] {
-      height: calc(100vh - ${top}px);
+      height: calc(100vh - ${top + 45}px);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    [class*='mdxeditor-diff-source-wrapper'] {
+      height: calc(100vh - ${top + 45}px);
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -211,87 +214,79 @@ const Editor = React.memo(function EditorC({
     [initialMarkdown, defaultContext, context.branch]
   );
 
-  // const initialEditorState = (_editor: LexicalEditor): void => {
-  //   const root = $getRoot();
-  //   const paragraph = $createParagraphNode();
-  //   const text = $createTextNode();
-  //   paragraph.append(text);
-  //   root.append(paragraph);
-  // };
+  // const providerFactory = useCallback(
+  //   (id: string, yjsDocMap: Map<string, Y.Doc>) => {
+  //     let doc = yjsDocMap.get(id);
+  //     if (!doc) {
+  //       doc = new Y.Doc();
+  //       yjsDocMap.set(id, doc);
+  //     } else {
+  //       doc.load();
+  //     }
 
-  const providerFactory = useCallback(
-    (id: string, yjsDocMap: Map<string, Y.Doc>) => {
-      let doc = yjsDocMap.get(id);
-      if (!doc) {
-        doc = new Y.Doc();
-        yjsDocMap.set(id, doc);
-      } else {
-        doc.load();
-      }
+  //     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  //     const provider = new WebsocketProvider(
+  //       `${protocol}//${window.location.host}/socket.io`,
+  //       id,
+  //       doc,
+  //       {
+  //         connect: false,
+  //       }
+  //     );
+  //     provider.on('status', (event: { status: string }) => {
+  //       // logger.debug(event.status);
+  //       if (event.status === 'connecting') {
+  //         if (collaborationConnection.current > 2 && !isCollaborative) {
+  //           if (editorRef && editorRef.current) {
+  //             editorRef.current.setMarkdown(initialMarkdown);
+  //             collaborationConnection.current = 0;
+  //             logger.error('Websockets failed, setting initial content');
+  //           }
+  //         } else if (!isCollaborative) {
+  //           logger.debug(
+  //             `Websocket connection attempt: ${collaborationConnection.current}`
+  //           );
+  //           collaborationConnection.current += 1;
+  //         }
+  //       }
+  //       if (event.status === 'connected' && !isCollaborative) {
+  //         logger.info('Websockets: Connected');
+  //         setIsCollaborative(true);
+  //       }
+  //     });
 
-      const provider = new WebsocketProvider(
-        `${protocol}//${window.location.host}/socket.io`,
-        id,
-        doc,
-        {
-          connect: false,
-        }
-      );
-      provider.on('status', (event: { status: string }) => {
-        // logger.debug(event.status);
-        if (event.status === 'connecting') {
-          if (collaborationConnection.current > 2 && !isCollaborative) {
-            if (editorRef && editorRef.current) {
-              editorRef.current.setMarkdown(initialMarkdown);
-              collaborationConnection.current = 0;
-              logger.error('Websockets failed, setting initial content');
-            }
-          } else if (!isCollaborative) {
-            logger.debug(
-              `Websocket connection attempt: ${collaborationConnection.current}`
-            );
-            collaborationConnection.current += 1;
-          }
-        }
-        if (event.status === 'connected' && !isCollaborative) {
-          logger.info('Websockets: Connected');
-          setIsCollaborative(true);
-        }
-      });
+  //     provider.on('synced', () => {
+  //       // The 'synced' event ensures all data has been loaded
+  //       // initializeDocument(doc, initialMarkdown, editorRef);
+  //       const meta = doc.getMap('metadata');
 
-      provider.on('synced', () => {
-        // The 'synced' event ensures all data has been loaded
-        // initializeDocument(doc, initialMarkdown, editorRef);
-        const meta = doc.getMap('metadata');
+  //       const yxmlText = doc.get('root', Y.XmlText);
 
-        const yxmlText = doc.get('root', Y.XmlText);
+  //       logger.debug(`Text: ${yxmlText}`);
 
-        logger.debug(`Text: ${yxmlText}`);
+  //       if (yxmlText.length === 0) {
+  //         logger.info('The document is empty, initialising');
+  //         if (editorRef && editorRef.current) {
+  //           editorRef.current.setMarkdown(initialMarkdown);
+  //           // Set the document as initialized
+  //           meta.set('initialized', true);
+  //           setIsEditable(true);
+  //           logger.info('initialising initial content');
+  //         }
+  //       } else {
+  //         logger.info(`The document has content length: ${yxmlText.length}`);
+  //         setIsEditable(true);
+  //       }
+  //       logger.debug(
+  //         `Initialised: ${meta.get('initialized')}, content: ${yxmlText}`
+  //       );
+  //     });
 
-        if (yxmlText.length === 0) {
-          logger.info('The document is empty, initialising');
-          if (editorRef && editorRef.current) {
-            editorRef.current.setMarkdown(initialMarkdown);
-            // Set the document as initialized
-            meta.set('initialized', true);
-            setIsEditable(true);
-            logger.info('initialising initial content');
-          }
-        } else {
-          logger.info(`The document has content length: ${yxmlText.length}`);
-          setIsEditable(true);
-        }
-        logger.debug(
-          `Initialised: ${meta.get('initialized')}, content: ${yxmlText}`
-        );
-      });
-
-      return provider;
-    },
-    [editorRef, initialMarkdown, isCollaborative]
-  );
+  //     return provider;
+  //   },
+  //   [editorRef, initialMarkdown, isCollaborative]
+  // );
 
   const collaborationPlugin = useMemo(
     () =>
@@ -299,15 +294,16 @@ const Editor = React.memo(function EditorC({
         postInit(realm) {
           // const rootEditor = realm.getValue(rootEditor$);
           const newEditor = createEditor({
-            editable: isEditable,
+            editable: isEditable.current,
             namespace: 'MDXEditor',
-            nodes: realm.getValue(usedLexicalNodes$),
+            nodes: realm.getValue(usedLexicalNodes$) ?? [],
             onError: (err: any) => {
               throw err;
             },
+            editorState: undefined,
             // theme: rootEditor?._config.theme,
           });
-          realm.pub(rootEditor$, newEditor);
+          // realm.pub(rootEditor$, newEditor);
           realm.pub(activeEditor$, newEditor);
 
           const excludedProperties = new Map();
@@ -328,7 +324,85 @@ const Editor = React.memo(function EditorC({
             <CollaborationPlugin
               id={hashString(colabID)}
               // @ts-ignore
-              providerFactory={providerFactory}
+              providerFactory={(id, yjsDocMap) => {
+                let doc = yjsDocMap.get(id);
+                if (!doc) {
+                  doc = new Y.Doc();
+                  yjsDocMap.set(id, doc);
+                } else {
+                  doc.load();
+                }
+
+                const protocol =
+                  window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+
+                const provider = new WebsocketProvider(
+                  `${protocol}//${window.location.host}/socket.io`,
+                  id,
+                  doc,
+                  {
+                    connect: false,
+                  }
+                );
+                provider.on('status', (event: { status: string }) => {
+                  // logger.debug(event.status);
+                  if (event.status === 'connecting') {
+                    if (
+                      collaborationConnection.current > 2 &&
+                      !isEditable.current
+                    ) {
+                      if (editorRef && editorRef.current) {
+                        editorRef.current.setMarkdown(initialMarkdown);
+                        collaborationConnection.current = 0;
+                        logger.error(
+                          'Websockets failed, setting initial content'
+                        );
+                      }
+                    } else if (!isEditable.current) {
+                      logger.debug(
+                        `Websocket connection attempt: ${collaborationConnection.current}`
+                      );
+                      collaborationConnection.current += 1;
+                    }
+                  }
+                  if (event.status === 'connected' && !isEditable.current) {
+                    logger.info('Websockets: Connected');
+                  }
+                });
+
+                provider.on('synced', () => {
+                  // The 'synced' event ensures all data has been loaded
+                  // initializeDocument(doc, initialMarkdown, editorRef);
+                  const meta = doc.getMap('metadata');
+
+                  const yxmlText = doc.get('root', Y.XmlText);
+
+                  logger.debug(`Text: ${yxmlText}`);
+
+                  if (yxmlText.length === 0) {
+                    logger.info('The document is empty, initialising');
+                    if (editorRef && editorRef.current) {
+                      editorRef.current.setMarkdown(initialMarkdown);
+                      // Set the document as initialized
+                      meta.set('initialized', true);
+                      isEditable.current = true;
+                      logger.info('initialising initial content');
+                    }
+                  } else {
+                    logger.info(
+                      `The document has content length: ${yxmlText.length}`
+                    );
+                    isEditable.current = true;
+                  }
+                  logger.debug(
+                    `Initialised: ${meta.get(
+                      'initialized'
+                    )}, content: ${yxmlText}`
+                  );
+                });
+
+                return provider;
+              }}
               shouldBootstrap={false}
               excludedProperties={excludedProperties}
               username={`ABC-${Math.floor(Math.random() * 100)}`}
@@ -337,7 +411,7 @@ const Editor = React.memo(function EditorC({
           ));
         },
       }),
-    [isEditable, colabID, providerFactory]
+    [colabID, editorRef, initialMarkdown]
   );
 
   const editorPlugins = useMemo(
