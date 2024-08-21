@@ -43,7 +43,6 @@ import Paper from '@mui/material/Paper';
 import Snackbar from '@mui/material/Snackbar';
 import type { Theme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
-import { createHash } from 'crypto';
 import { createEditor } from 'lexical';
 import dynamic from 'next/dynamic';
 import React, {
@@ -72,10 +71,6 @@ const CollaborationPlugin = dynamic(
     ssr: false,
   }
 );
-
-function hashString(input: string): string {
-  return createHash('sha256').update(input).digest('hex');
-}
 
 const toKebabCase = (str: string) => {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -214,80 +209,6 @@ const Editor = React.memo(function EditorC({
     [initialMarkdown, defaultContext, context.branch]
   );
 
-  // const providerFactory = useCallback(
-  //   (id: string, yjsDocMap: Map<string, Y.Doc>) => {
-  //     let doc = yjsDocMap.get(id);
-  //     if (!doc) {
-  //       doc = new Y.Doc();
-  //       yjsDocMap.set(id, doc);
-  //     } else {
-  //       doc.load();
-  //     }
-
-  //     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-
-  //     const provider = new WebsocketProvider(
-  //       `${protocol}//${window.location.host}/socket.io`,
-  //       id,
-  //       doc,
-  //       {
-  //         connect: false,
-  //       }
-  //     );
-  //     provider.on('status', (event: { status: string }) => {
-  //       // logger.debug(event.status);
-  //       if (event.status === 'connecting') {
-  //         if (collaborationConnection.current > 2 && !isCollaborative) {
-  //           if (editorRef && editorRef.current) {
-  //             editorRef.current.setMarkdown(initialMarkdown);
-  //             collaborationConnection.current = 0;
-  //             logger.error('Websockets failed, setting initial content');
-  //           }
-  //         } else if (!isCollaborative) {
-  //           logger.debug(
-  //             `Websocket connection attempt: ${collaborationConnection.current}`
-  //           );
-  //           collaborationConnection.current += 1;
-  //         }
-  //       }
-  //       if (event.status === 'connected' && !isCollaborative) {
-  //         logger.info('Websockets: Connected');
-  //         setIsCollaborative(true);
-  //       }
-  //     });
-
-  //     provider.on('synced', () => {
-  //       // The 'synced' event ensures all data has been loaded
-  //       // initializeDocument(doc, initialMarkdown, editorRef);
-  //       const meta = doc.getMap('metadata');
-
-  //       const yxmlText = doc.get('root', Y.XmlText);
-
-  //       logger.debug(`Text: ${yxmlText}`);
-
-  //       if (yxmlText.length === 0) {
-  //         logger.info('The document is empty, initialising');
-  //         if (editorRef && editorRef.current) {
-  //           editorRef.current.setMarkdown(initialMarkdown);
-  //           // Set the document as initialized
-  //           meta.set('initialized', true);
-  //           setIsEditable(true);
-  //           logger.info('initialising initial content');
-  //         }
-  //       } else {
-  //         logger.info(`The document has content length: ${yxmlText.length}`);
-  //         setIsEditable(true);
-  //       }
-  //       logger.debug(
-  //         `Initialised: ${meta.get('initialized')}, content: ${yxmlText}`
-  //       );
-  //     });
-
-  //     return provider;
-  //   },
-  //   [editorRef, initialMarkdown, isCollaborative]
-  // );
-
   const collaborationPlugin = useMemo(
     () =>
       realmPlugin({
@@ -322,7 +243,7 @@ const Editor = React.memo(function EditorC({
 
           realm.pub(addComposerChild$, () => (
             <CollaborationPlugin
-              id={hashString(colabID)}
+              id={colabID}
               // @ts-ignore
               providerFactory={(id, yjsDocMap) => {
                 let doc = yjsDocMap.get(id);
@@ -414,6 +335,65 @@ const Editor = React.memo(function EditorC({
     [colabID, editorRef, initialMarkdown]
   );
 
+  const editorPluginsCollab = useMemo(
+    () => [
+      diffSourcePlugin({
+        diffMarkdown: initialMarkdown || '',
+        viewMode: 'rich-text',
+      }),
+      codeBlockPlugin({
+        codeBlockEditorDescriptors: [
+          {
+            priority: 100,
+            match: () => true,
+            Editor: CodeMirrorEditor,
+          },
+        ],
+      }),
+      headingsPlugin(),
+      frontmatterPlugin(),
+      listsPlugin(),
+      linkPlugin(),
+      imagePlugin(),
+      linkDialogPlugin(),
+      quotePlugin(),
+      tablePlugin(),
+      thematicBreakPlugin(),
+      markdownShortcutPlugin(),
+      imagePlugin({
+        disableImageResize: true,
+        imageUploadHandler: (image) =>
+          Promise.resolve(imageUploadHandler(image)),
+        imagePreviewHandler: (imageSource) =>
+          Promise.resolve(imagePreviewHandler(imageSource)),
+      }),
+      toolbarPlugin({
+        toolbarContents: () => (
+          <>
+            <UndoRedo />
+            <BlockTypeSelect />
+            <BoldItalicUnderlineToggles />
+            <CreateLink />
+            <InsertTable />
+            <InsertImage />
+            <InsertCodeBlock />
+            <InsertThematicBreak />
+            <DiffSourceToggleWrapper>
+              <UndoRedo />
+            </DiffSourceToggleWrapper>
+          </>
+        ),
+      }),
+      collaborationPlugin(),
+    ],
+    [
+      initialMarkdown,
+      imageUploadHandler,
+      imagePreviewHandler,
+      collaborationPlugin,
+    ]
+  );
+
   const editorPlugins = useMemo(
     () => [
       diffSourcePlugin({
@@ -464,14 +444,8 @@ const Editor = React.memo(function EditorC({
           </>
         ),
       }),
-      collaborationPlugin(),
     ],
-    [
-      initialMarkdown,
-      imageUploadHandler,
-      imagePreviewHandler,
-      collaborationPlugin,
-    ]
+    [initialMarkdown, imageUploadHandler, imagePreviewHandler]
   );
 
   const Messages = React.memo(function Messages() {
@@ -575,17 +549,35 @@ const Editor = React.memo(function EditorC({
         </Alert>
       )}
       <div ref={containerRef}>
-        <StyledMDXEditor
-          ref={editorRef}
-          onChange={editorCallback}
-          onError={(msg) => {
-            errorRef.current = msg.error.toString();
-          }}
-          markdown={initialMarkdown || ''}
-          plugins={editorPlugins}
-          readOnly={defaultContext && context.branch === defaultContext.branch}
-          autoFocus
-        />
+        {colabID ? (
+          <StyledMDXEditor
+            ref={editorRef}
+            onChange={editorCallback}
+            onError={(msg) => {
+              errorRef.current = msg.error.toString();
+            }}
+            markdown={initialMarkdown || ''}
+            plugins={editorPluginsCollab}
+            readOnly={
+              defaultContext && context.branch === defaultContext.branch
+            }
+            autoFocus
+          />
+        ) : (
+          <MDXEditor
+            ref={editorRef}
+            onChange={editorCallback}
+            onError={(msg) => {
+              errorRef.current = msg.error.toString();
+            }}
+            markdown={initialMarkdown || ''}
+            plugins={editorPlugins}
+            readOnly={
+              defaultContext && context.branch === defaultContext.branch
+            }
+            autoFocus
+          />
+        )}
       </div>
       <SaveButton />
       <Messages />
@@ -593,4 +585,4 @@ const Editor = React.memo(function EditorC({
   );
 });
 
-export { Editor };
+export { Editor, type EditorProps };

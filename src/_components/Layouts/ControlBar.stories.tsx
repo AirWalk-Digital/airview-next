@@ -136,6 +136,7 @@ export const EditMode = {
     context: { ...dummyCollection, branch: 'branch-1' },
     branches,
     editMode: true,
+    collaborateMode: true,
     fetchBranches: fn(),
     handlePR: fn(),
   },
@@ -155,6 +156,7 @@ export const DefaultBranch = {
     context: { ...dummyCollection },
     branches,
     editMode: true,
+    collaborateMode: true,
     fetchBranches: fn(),
   },
 };
@@ -190,6 +192,7 @@ const Template: StoryFn<StorybookControlBar> = (args) => {
       context={context}
       branches={args.branches}
       editMode
+      collaborateMode
       handlePR={() => dummyDelay()}
     />
   );

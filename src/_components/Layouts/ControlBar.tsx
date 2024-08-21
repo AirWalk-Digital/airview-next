@@ -1,6 +1,7 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ApprovalIcon from '@mui/icons-material/Approval';
 import CloseIcon from '@mui/icons-material/Close';
+import GroupsIcon from '@mui/icons-material/Groups';
 import {
   AppBar,
   Autocomplete,
@@ -37,7 +38,9 @@ export interface ControlBarProps {
   branches: any[];
   top?: number;
   // onContextUpdate: (context: any) => void;
+  handleCollaborateMode?: () => void;
   editMode: boolean;
+  collaborateMode: boolean;
   // fetchBranches?: (collection: any) => void;
   handleNewBranch?: () => void;
   handlePR?: () => void;
@@ -106,7 +109,9 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   branches,
   top = '64px',
   // onContextUpdate,
+  handleCollaborateMode,
   editMode,
+  collaborateMode,
   // fetchBranches = () => {},
   handleNewBranch = () => {},
   handlePR = () => {},
@@ -184,6 +189,11 @@ export const ControlBar: React.FC<ControlBarProps> = ({
       handleEdit();
     }
   };
+  const onCollaborateClick = () => {
+    if (typeof handleCollaborateMode === 'function') {
+      handleCollaborateMode();
+    }
+  };
   const [drawerState, setDrawerState] = React.useState(false);
   const toggleDrawer =
     (openDrawer: boolean) =>
@@ -211,10 +221,27 @@ export const ControlBar: React.FC<ControlBarProps> = ({
           <CloseIcon />
         </IconButton>
       )}
-      <FormControlLabel
-        control={<Switch checked={editMode} onClick={() => onEditClick()} />}
-        label='Edit Mode'
-      />
+      <Stack direction='row' spacing={1}>
+        <FormControlLabel
+          control={<Switch checked={editMode} onClick={() => onEditClick()} />}
+          label='Edit Mode'
+        />
+        <FormControlLabel
+          control={
+            <IconButton
+              // size='small'
+              onClick={() => onCollaborateClick()}
+              // color={collaborateMode ? 'primary' : 'inherit'}
+              title='Collaborate on the content. Note: you cant edit frontmatter in collaborative mode'
+              // enabled={collaborateMode}
+              sx={{ color: collaborateMode ? 'green' : 'red' }}
+            >
+              <GroupsIcon />
+            </IconButton>
+          }
+          label=''
+        />
+      </Stack>
       <FormControlLabel
         control={
           <Switch checked={changeBranch} onClick={() => onBranchToggle()} />
@@ -358,7 +385,8 @@ export const ControlBar: React.FC<ControlBarProps> = ({
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <div>
-          <FormControlLabel
+          {controlMenu}
+          {/* <FormControlLabel
             control={
               <Switch checked={editMode} onClick={() => onEditClick()} />
             }
@@ -454,7 +482,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
               </IconButton>
             }
             label='Add Content'
-          />
+          /> */}
         </div>
       </Toolbar>
     </AppBar>

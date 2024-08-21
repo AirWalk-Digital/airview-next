@@ -4,12 +4,14 @@
 import { type MDXEditorMethods } from '@mdxeditor/editor';
 import { Box, LinearProgress } from '@mui/material';
 import Container from '@mui/material/Container';
+import { createHash } from 'crypto';
 import matter from 'gray-matter';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
 import path from 'path';
 import React, { useEffect, useRef, useState } from 'react';
 
+import type { EditorProps } from '@/components/Editor';
 import { NewBranchDialog, NewContentDialog } from '@/components/Editor';
 import {
   createFile,
@@ -31,12 +33,16 @@ interface EditorWrapperProps {
   branches: { name: string; commit: { sha: string }; protected: boolean }[];
 }
 
-const Editor = dynamic(
+const Editor = dynamic<EditorProps>(
   () => import('@/components/Editor').then((mod) => mod.Editor),
   {
     ssr: false,
   }
 );
+
+function hashString(input: string): string {
+  return createHash('sha256').update(input).digest('hex');
+}
 
 export default function EditorWrapper({
   defaultContext = undefined,
@@ -46,8 +52,9 @@ export default function EditorWrapper({
   const editorRef = useRef<MDXEditorMethods | null>(null);
   const searchParams = `owner=${context.owner}&repo=${context.repo}&path=${context.file}&branch=${context.branch}`;
   const [mdx, setMdx] = useState('');
+  const [frontmatter, setFrontmatter] = useState({});
   const [colabID, setColabID] = useState('');
-
+  const [collaborateMode, setCollaborateMode] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isNewBranchOpen, setIsNewBranchOpen] = useState(false);
   const router = useRouter();
@@ -59,13 +66,22 @@ export default function EditorWrapper({
       const mdxResponse = await response.text();
       // const contentSha = response.headers.get('Content-SHA'); // Retrieve the Content-SHA header
       logger.info('fetchData', response);
-      setMdx(mdxResponse);
+      const { data, content } = matter(mdxResponse);
+      setFrontmatter(data);
       // setColabID(`${context.branch}/${context.file}/${contentSha}`);
-      setColabID(`${context.branch}|${context.file?.replace(/\//g, '-')}`);
+      if (collaborateMode) {
+        setMdx(content);
+        setColabID(
+          hashString(`${context.branch}|${context.file?.replace(/\//g, '-')}`)
+        );
+      } else {
+        setMdx(mdxResponse);
+        setColabID('');
+      }
     };
 
     fetchData();
-  }, [context, searchParams]);
+  }, [collaborateMode, context, searchParams]);
 
   const onNewBranchClicked = () => {
     setIsNewBranchOpen(true);
@@ -218,6 +234,10 @@ export default function EditorWrapper({
     router.push(newPathname);
   };
 
+  const handleCollaborateMode = () => {
+    setCollaborateMode(!collaborateMode);
+  };
+
   const onSave = async (content: string | null) => {
     try {
       if (!content) {
@@ -227,13 +247,20 @@ export default function EditorWrapper({
         throw new Error('No file to save');
       }
       const normalizedFile = context.file.replace(/^\/+/, '');
-
+      let mergedContent = content;
+      if (collaborateMode) {
+        mergedContent = matter.stringify(content, frontmatter);
+      } else {
+        const { data: newFrontmatter, content: newContent } = matter(content);
+        mergedContent = matter.stringify(newContent, newFrontmatter);
+        setFrontmatter(newFrontmatter);
+      }
       await createFile({
         owner: context.owner,
         repo: context.repo,
         branch: context.branch,
         file: normalizedFile,
-        content,
+        content: mergedContent,
         message: 'file updated from Airview',
       });
       setMdx(content);
@@ -334,12 +361,14 @@ export default function EditorWrapper({
         handleEdit={handleEdit}
         handleNewBranch={onNewBranchClicked}
         handlePR={handlePR}
+        handleCollaborateMode={handleCollaborateMode}
         // handlePresentation={() => {}}
         // handlePrint={() => {}}
         // handleRefresh={() => {}}
         // onContextUpdate={handleContextUpdate}
         open
         editMode
+        collaborateMode={collaborateMode}
         top={65}
       />
       <NewContentDialog dialogOpen={isAddOpen} handleDialog={handleAdd} />
