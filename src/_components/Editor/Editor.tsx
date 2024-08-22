@@ -215,7 +215,8 @@ const Editor = React.memo(function EditorC({
         postInit(realm) {
           // const rootEditor = realm.getValue(rootEditor$);
           const newEditor = createEditor({
-            editable: isEditable.current,
+            // editable: isEditable.current,
+            editable: true,
             namespace: 'MDXEditor',
             nodes: realm.getValue(usedLexicalNodes$) ?? [],
             onError: (err: any) => {
@@ -262,7 +263,7 @@ const Editor = React.memo(function EditorC({
                   id,
                   doc,
                   {
-                    connect: false,
+                    connect: true,
                   }
                 );
                 provider.on('status', (event: { status: string }) => {
@@ -306,14 +307,17 @@ const Editor = React.memo(function EditorC({
                       editorRef.current.setMarkdown(initialMarkdown);
                       // Set the document as initialized
                       meta.set('initialized', true);
-                      isEditable.current = true;
+                      // isEditable.current = true;
                       logger.info('initialising initial content');
+                      logger.debug(
+                        `initial content: ${initialMarkdown.substring(0, 100)}`
+                      );
                     }
                   } else {
                     logger.info(
                       `The document has content length: ${yxmlText.length}`
                     );
-                    isEditable.current = true;
+                    // isEditable.current = true;
                   }
                   logger.debug(
                     `Initialised: ${meta.get(
