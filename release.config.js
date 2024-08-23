@@ -4,8 +4,12 @@ module.exports = {
     'main',
     {
       name: 'beta',
-      prerelease: true
-    }
+      prerelease: true,
+    },
+    {
+      name: 'beta-colab',
+      prerelease: true,
+    },
   ],
   plugins: [
     '@semantic-release/commit-analyzer',
@@ -13,21 +17,20 @@ module.exports = {
     [
       '@semantic-release/changelog',
       {
-        changelogFile: 'CHANGELOG.md'
+        changelogFile: 'CHANGELOG.md',
       },
     ],
     [
-      "@semantic-release-plus/docker",
+      '@semantic-release-plus/docker',
       {
         name: {
-          namespace: "airwalk-digital",
-          repository: "airview-next",
+          namespace: 'airwalk-digital',
+          repository: 'airview-next',
         },
-        "registry": "ghcr.io",
+        registry: 'ghcr.io',
         skipLogin: true,
       },
     ],
     '@semantic-release/github',
-  ]
-}
-
+  ],
+};

@@ -47,6 +47,7 @@ COPY --from=builder /app/server.js ./server.js
 USER nextjs
 
 EXPOSE 3000
+EXPOSE 1234
 
 ENV PORT 3000
 
