@@ -3,7 +3,7 @@ name: Build and publish Docker images
 on:
   workflow_dispatch:
   push:
-    branches: [main, beta]
+    branches: [main, beta, beta-colab]
 
 jobs:
   release:
@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 20.x
-      
+
       - name: Install semantic-release extra plugins
         run: mv package.json package.json.bak && npm install --no-save @semantic-release/changelog @semantic-release-plus/docker && mv package.json.bak package.json
 
@@ -34,7 +34,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-    
+
       - name: Build Docker Image
         uses: docker/build-push-action@v3
         with:
