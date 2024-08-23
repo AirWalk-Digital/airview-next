@@ -266,8 +266,6 @@ const Editor = React.memo(function EditorC({
 
                 const url = new URL(window.location.href);
                 const wsUrl = `${protocol}//${url.hostname}:1234/socket.io`;
-                console.log('wsUrl: ', wsUrl);
-
                 const provider = new WebsocketProvider(wsUrl, id, doc);
 
                 provider.on('status', (event: { status: string }) => {
@@ -289,8 +287,6 @@ const Editor = React.memo(function EditorC({
                   // The 'synced' event ensures all data has been loaded
                   // initializeDocument(doc, initialMarkdown, editorRef);
                   const meta = doc.getMap('metadata');
-
-                  console.log('meta: ', meta);
 
                   // Check if the document has been initialized
                   if (!meta.get('initialized')) {
