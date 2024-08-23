@@ -264,6 +264,7 @@ const Editor = React.memo(function EditorC({
                   doc.load();
                 }
 
+                // web socket provider
                 const url = new URL(window.location.href);
                 const wsUrl = `${protocol}//${url.hostname}:1234/socket.io`;
                 const provider = new WebsocketProvider(wsUrl, id, doc);
