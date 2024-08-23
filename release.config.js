@@ -5,6 +5,10 @@ module.exports = {
     {
       name: 'beta',
       prerelease: true
+    },
+    {
+      name: 'beta-colab',
+      prerelease: true
     }
   ],
   plugins: [
