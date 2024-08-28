@@ -5,12 +5,14 @@ import { Box, LinearProgress } from '@mui/material';
 import Container from '@mui/material/Container';
 import { type MDXEditorMethods } from '@webtech0321/mdx-editor-collab';
 import matter from 'gray-matter';
+import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
 import NProgress from 'nprogress';
 import path from 'path';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Editor, NewBranchDialog, NewContentDialog } from '@/components/Editor';
+import { NewBranchDialog, NewContentDialog } from '@/components/Editor';
+import type { EditorProps } from '@/components/Editor/Editor';
 import {
   createFile,
   createNewBranch,
@@ -36,6 +38,13 @@ interface EditorWrapperProps {
   context: ContentItem;
   branches: Branch[];
 }
+
+const Editor = dynamic<EditorProps>(
+  () => import('@/components/Editor').then((mod) => mod.Editor),
+  {
+    ssr: false,
+  }
+);
 
 export default function EditorWrapper({
   defaultContext = undefined,

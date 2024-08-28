@@ -96,7 +96,7 @@ const convertStyleObjectToCSS = (
   return cssString;
 };
 
-interface EditorProps {
+export interface EditorProps {
   markdown: string;
   context: ContentItem;
   defaultContext: ContentItem | undefined;
@@ -226,7 +226,7 @@ const Editor = React.memo(function EditorC({
             editable: true,
             namespace: 'MDXEditor',
             editorState: undefined,
-            nodes: realm.getValue(usedLexicalNodes$),
+            nodes: realm.getValue(usedLexicalNodes$) ?? [],
             onError: (err: any) => {
               throw err;
             },
@@ -267,7 +267,9 @@ const Editor = React.memo(function EditorC({
                 // web socket provider
                 const url = new URL(window.location.href);
                 const wsUrl = `${protocol}//${url.hostname}:1234/socket.io`;
-                const provider = new WebsocketProvider(wsUrl, id, doc);
+                const provider = new WebsocketProvider(wsUrl, id, doc, {
+                  connect: false,
+                });
 
                 provider.on('status', (event: { status: string }) => {
                   // logger.debug(event.status);
