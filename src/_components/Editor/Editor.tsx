@@ -1,13 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/no-unstable-nested-components */
-import '@webtech0321/mdx-editor-collab/style.css';
+import '@mdxeditor/editor/style.css';
 
-import SaveIcon from '@mui/icons-material/Save';
-import { Alert, css, Fab } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
-import Snackbar from '@mui/material/Snackbar';
-import type { Theme } from '@mui/material/styles';
-import { styled } from '@mui/material/styles';
 import {
   activeEditor$,
   addComposerChild$,
@@ -43,7 +37,14 @@ import {
   toolbarPlugin,
   UndoRedo,
   usedLexicalNodes$,
-} from '@webtech0321/mdx-editor-collab';
+} from '@mdxeditor/editor';
+import SaveIcon from '@mui/icons-material/Save';
+import { Alert, css, Fab } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
+import Snackbar from '@mui/material/Snackbar';
+import type { Theme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { createEditor } from 'lexical';
 import dynamic from 'next/dynamic';
 import React, {
@@ -277,11 +278,14 @@ const Editor = React.memo(function EditorC({
                     if (collaborationConnection.current > 0) {
                       if (editorRef && editorRef.current) {
                         editorRef.current.setMarkdown(initialMarkdown);
+                        console.log('setting markdown');
                         collaborationConnection.current = 0;
                         logger.error(
                           'Websockets failed, setting initial content'
                         );
                       }
+                    } else {
+                      collaborationConnection.current += 1;
                     }
                   }
                 });
@@ -299,6 +303,7 @@ const Editor = React.memo(function EditorC({
 
                     // This is truly a new document, so we set the initial markdown
                     if (editorRef && editorRef.current) {
+                      console.log('setting markdown');
                       editorRef.current.setMarkdown(initialMarkdown);
                       logger.info('setting initial content');
                     }
@@ -325,7 +330,7 @@ const Editor = React.memo(function EditorC({
     ]
   );
 
-  const editorPlugins = useMemo(
+  const editorPluginsCollab = useMemo(
     () => [
       diffSourcePlugin({
         diffMarkdown: initialMarkdown || '',
@@ -493,7 +498,7 @@ const Editor = React.memo(function EditorC({
             errorRef.current = msg.error.toString();
           }}
           markdown={initialMarkdown || ''}
-          plugins={editorPlugins}
+          plugins={editorPluginsCollab}
           readOnly={defaultContext && context.branch === defaultContext.branch}
           autoFocus
         />
