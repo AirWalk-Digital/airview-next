@@ -278,7 +278,6 @@ const Editor = React.memo(function EditorC({
                     if (collaborationConnection.current > 0) {
                       if (editorRef && editorRef.current) {
                         editorRef.current.setMarkdown(initialMarkdown);
-                        console.log('setting markdown');
                         collaborationConnection.current = 0;
                         logger.error(
                           'Websockets failed, setting initial content'
@@ -303,7 +302,6 @@ const Editor = React.memo(function EditorC({
 
                     // This is truly a new document, so we set the initial markdown
                     if (editorRef && editorRef.current) {
-                      console.log('setting markdown');
                       editorRef.current.setMarkdown(initialMarkdown);
                       logger.info('setting initial content');
                     }
