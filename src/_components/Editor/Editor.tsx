@@ -255,8 +255,7 @@ const Editor = React.memo(function EditorC({
               id={colabID}
               // @ts-ignore
               providerFactory={(id, yjsDocMap) => {
-                const protocol =
-                  window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const protocol = 'ws:';
                 let doc = yjsDocMap.get(id);
                 if (!doc) {
                   doc = new Y.Doc();
@@ -269,7 +268,7 @@ const Editor = React.memo(function EditorC({
                 const url = new URL(window.location.href);
                 const wsUrl = `${protocol}//${url.hostname}:1234/socket.io`;
                 const provider = new WebsocketProvider(wsUrl, id, doc, {
-                  connect: false,
+                  connect: true,
                 });
 
                 provider.on('status', (event: { status: string }) => {
@@ -346,7 +345,7 @@ const Editor = React.memo(function EditorC({
       headingsPlugin(),
       frontmatterPlugin(),
       listsPlugin(),
-      linkPlugin(),
+      linkPlugin({ disableAutoLink: true }),
       imagePlugin(),
       linkDialogPlugin(),
       quotePlugin(),
