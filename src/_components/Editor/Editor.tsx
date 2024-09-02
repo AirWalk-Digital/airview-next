@@ -255,6 +255,7 @@ const Editor = React.memo(function EditorC({
               id={colabID}
               // @ts-ignore
               providerFactory={(id, yjsDocMap) => {
+                // problems with wss for now
                 const protocol = 'ws:';
                 let doc = yjsDocMap.get(id);
                 if (!doc) {
