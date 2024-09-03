@@ -4,6 +4,7 @@
 import { type MDXEditorMethods } from '@mdxeditor/editor';
 import { Box, LinearProgress } from '@mui/material';
 import Container from '@mui/material/Container';
+import { createHash } from 'crypto';
 import matter from 'gray-matter';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
@@ -46,6 +47,10 @@ const Editor = dynamic<EditorProps>(
   }
 );
 
+function hashString(input: string): string {
+  return createHash('sha256').update(input).digest('hex');
+}
+
 export default function EditorWrapper({
   defaultContext = undefined,
   context,
@@ -68,8 +73,9 @@ export default function EditorWrapper({
       // const contentSha = response.headers.get('Content-SHA'); // Retrieve the Content-SHA header
       logger.info('fetchData', response);
       setMdx(mdxResponse);
-      // setColabID(`${context.branch}/${context.file}/${contentSha}`);
-      setColabID(`${context.branch}|${context.file?.replace(/\//g, '-')}`);
+      setColabID(
+        hashString(`${context.branch}|${context.file?.replace(/\//g, '-')}`)
+      );
     };
 
     fetchData();
