@@ -255,8 +255,6 @@ const Editor = React.memo(function EditorC({
               id={colabID}
               // @ts-ignore
               providerFactory={(id, yjsDocMap) => {
-                const protocol =
-                  window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                 let doc = yjsDocMap.get(id);
                 if (!doc) {
                   doc = new Y.Doc();
@@ -265,16 +263,17 @@ const Editor = React.memo(function EditorC({
                   doc.load();
                 }
 
-                // web socket provider
-                const url = new URL(window.location.href);
-                const wsUrl =
-                  window.location.protocol === 'https'
-                    ? 'wss://socket.wetype.net'
-                    : `${protocol}//${url.hostname}:1234/socket.io`;
+                const protocol =
+                  window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 
-                const provider = new WebsocketProvider(wsUrl, id, doc, {
-                  connect: true,
-                });
+                const provider = new WebsocketProvider(
+                  `${protocol}//${window.location.host}/socket.io`,
+                  id,
+                  doc,
+                  {
+                    connect: true,
+                  }
+                );
 
                 provider.on('status', (event: { status: string }) => {
                   // logger.debug(event.status);
