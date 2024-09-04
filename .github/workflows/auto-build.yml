@@ -3,7 +3,7 @@ name: Build and publish Docker images
 on:
   workflow_dispatch:
   push:
-    branches: [main, beta, beta-colab]
+    branches: [main, beta]
 
 jobs:
   release:

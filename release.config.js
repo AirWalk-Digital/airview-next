@@ -6,10 +6,6 @@ module.exports = {
       name: 'beta',
       prerelease: true,
     },
-    {
-      name: 'beta-colab',
-      prerelease: true,
-    },
   ],
   plugins: [
     '@semantic-release/commit-analyzer',
