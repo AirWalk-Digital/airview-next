@@ -122,15 +122,9 @@ const Editor = React.memo(function EditorC({
   editorRef,
   colabID,
 }: EditorProps) {
-  // const [error, setError] = useState('');
-  // const [isEditable, setIsEditable] = useState(false);
   const collaborationConnection = useRef(0);
-  // const [isCollaborative, setIsCollaborative] = useState(false);
   const changedRef = useRef(false);
   const errorRef = useRef('');
-
-  // const successRef = useRef(false);
-  // const isEditable = useRef(enabled);
   const typographyCopy = { ...baseTheme.typography } as Theme['typography'];
   const importedCss = convertStyleObjectToCSS(typographyCopy);
   const containerRef = useRef<HTMLDivElement | null>(null);

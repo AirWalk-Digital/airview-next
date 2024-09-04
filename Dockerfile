@@ -31,7 +31,6 @@ FROM node:18.18-alpine AS runner
 
 WORKDIR /app
 
-ENV HOST=0.0.0.0
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -48,7 +47,6 @@ COPY --from=builder /app/server.js ./server.js
 USER nextjs
 
 EXPOSE 3000
-EXPOSE 1234
 
 ENV PORT 3000
 
