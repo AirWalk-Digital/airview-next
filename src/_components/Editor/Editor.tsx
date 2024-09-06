@@ -1,13 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/no-unstable-nested-components */
-import '@webtech0321/mdx-editor-collab/style.css';
+import '@mdxeditor/editor/style.css';
 
-import SaveIcon from '@mui/icons-material/Save';
-import { Alert, css, Fab } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
-import Snackbar from '@mui/material/Snackbar';
-import type { Theme } from '@mui/material/styles';
-import { styled } from '@mui/material/styles';
 import {
   activeEditor$,
   addComposerChild$,
@@ -43,7 +37,14 @@ import {
   toolbarPlugin,
   UndoRedo,
   usedLexicalNodes$,
-} from '@webtech0321/mdx-editor-collab';
+} from '@mdxeditor/editor';
+import SaveIcon from '@mui/icons-material/Save';
+import { Alert, css, Fab } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
+import Snackbar from '@mui/material/Snackbar';
+import type { Theme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { createEditor } from 'lexical';
 import dynamic from 'next/dynamic';
 import React, {
@@ -96,7 +97,7 @@ const convertStyleObjectToCSS = (
   return cssString;
 };
 
-interface EditorProps {
+export interface EditorProps {
   markdown: string;
   context: ContentItem;
   defaultContext: ContentItem | undefined;
@@ -121,15 +122,9 @@ const Editor = React.memo(function EditorC({
   editorRef,
   colabID,
 }: EditorProps) {
-  // const [error, setError] = useState('');
-  const [isEditable, setIsEditable] = useState(false);
   const collaborationConnection = useRef(0);
-  const [isCollaborative, setIsCollaborative] = useState(false);
   const changedRef = useRef(false);
   const errorRef = useRef('');
-
-  // const successRef = useRef(false);
-  // const isEditable = useRef(enabled);
   const typographyCopy = { ...baseTheme.typography } as Theme['typography'];
   const importedCss = convertStyleObjectToCSS(typographyCopy);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -223,9 +218,10 @@ const Editor = React.memo(function EditorC({
         postInit(realm) {
           // const rootEditor = realm.getValue(rootEditor$);
           const newEditor = createEditor({
-            editable: isEditable,
+            editable: true,
             namespace: 'MDXEditor',
-            nodes: realm.getValue(usedLexicalNodes$),
+            editorState: undefined,
+            nodes: realm.getValue(usedLexicalNodes$) ?? [],
             onError: (err: any) => {
               throw err;
             },
@@ -253,8 +249,6 @@ const Editor = React.memo(function EditorC({
               id={colabID}
               // @ts-ignore
               providerFactory={(id, yjsDocMap) => {
-                const protocol =
-                  window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                 let doc = yjsDocMap.get(id);
                 if (!doc) {
                   doc = new Y.Doc();
@@ -262,19 +256,23 @@ const Editor = React.memo(function EditorC({
                 } else {
                   doc.load();
                 }
+
+                const protocol =
+                  window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+
                 const provider = new WebsocketProvider(
                   `${protocol}//${window.location.host}/socket.io`,
                   id,
-                  doc
+                  doc,
+                  {
+                    connect: true,
+                  }
                 );
 
                 provider.on('status', (event: { status: string }) => {
                   // logger.debug(event.status);
                   if (event.status === 'connecting') {
-                    if (
-                      collaborationConnection.current > 0 &&
-                      !isCollaborative
-                    ) {
+                    if (collaborationConnection.current > 0) {
                       if (editorRef && editorRef.current) {
                         editorRef.current.setMarkdown(initialMarkdown);
                         collaborationConnection.current = 0;
@@ -282,7 +280,7 @@ const Editor = React.memo(function EditorC({
                           'Websockets failed, setting initial content'
                         );
                       }
-                    } else if (!isCollaborative) {
+                    } else {
                       collaborationConnection.current += 1;
                     }
                   }
@@ -302,14 +300,9 @@ const Editor = React.memo(function EditorC({
                     // This is truly a new document, so we set the initial markdown
                     if (editorRef && editorRef.current) {
                       editorRef.current.setMarkdown(initialMarkdown);
-                      setIsEditable(true);
                       logger.info('setting initial content');
                     }
-                  } else {
-                    setIsEditable(true);
-                    logger.info('already initialised');
                   }
-                  setIsCollaborative(true);
                 });
 
                 return provider;
@@ -323,16 +316,16 @@ const Editor = React.memo(function EditorC({
         },
       }),
     [
-      isEditable,
+      // isEditable,
       colabID,
       collaborationConnection,
-      isCollaborative,
+      // isCollaborative,
       editorRef,
       initialMarkdown,
     ]
   );
 
-  const editorPlugins = useMemo(
+  const editorPluginsCollab = useMemo(
     () => [
       diffSourcePlugin({
         diffMarkdown: initialMarkdown || '',
@@ -350,7 +343,7 @@ const Editor = React.memo(function EditorC({
       headingsPlugin(),
       frontmatterPlugin(),
       listsPlugin(),
-      linkPlugin(),
+      linkPlugin({ disableAutoLink: true }),
       imagePlugin(),
       linkDialogPlugin(),
       quotePlugin(),
@@ -500,7 +493,7 @@ const Editor = React.memo(function EditorC({
             errorRef.current = msg.error.toString();
           }}
           markdown={initialMarkdown || ''}
-          plugins={editorPlugins}
+          plugins={editorPluginsCollab}
           readOnly={defaultContext && context.branch === defaultContext.branch}
           autoFocus
         />

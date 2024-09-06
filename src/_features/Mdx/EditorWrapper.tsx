@@ -1,16 +1,19 @@
 'use client';
 
 // import { type MDXEditorMethods } from '@mdxeditor/editor';
+import { type MDXEditorMethods } from '@mdxeditor/editor';
 import { Box, LinearProgress } from '@mui/material';
 import Container from '@mui/material/Container';
-import { type MDXEditorMethods } from '@webtech0321/mdx-editor-collab';
+import { createHash } from 'crypto';
 import matter from 'gray-matter';
+import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
 import NProgress from 'nprogress';
 import path from 'path';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Editor, NewBranchDialog, NewContentDialog } from '@/components/Editor';
+import { NewBranchDialog, NewContentDialog } from '@/components/Editor';
+import type { EditorProps } from '@/components/Editor/Editor';
 import {
   createFile,
   createNewBranch,
@@ -37,6 +40,17 @@ interface EditorWrapperProps {
   branches: Branch[];
 }
 
+const Editor = dynamic<EditorProps>(
+  () => import('@/components/Editor').then((mod) => mod.Editor),
+  {
+    ssr: false,
+  }
+);
+
+function hashString(input: string): string {
+  return createHash('sha256').update(input).digest('hex');
+}
+
 export default function EditorWrapper({
   defaultContext = undefined,
   context,
@@ -59,8 +73,9 @@ export default function EditorWrapper({
       // const contentSha = response.headers.get('Content-SHA'); // Retrieve the Content-SHA header
       logger.info('fetchData', response);
       setMdx(mdxResponse);
-      // setColabID(`${context.branch}/${context.file}/${contentSha}`);
-      setColabID(`${context.branch}|${context.file?.replace(/\//g, '-')}`);
+      setColabID(
+        hashString(`${context.branch}|${context.file?.replace(/\//g, '-')}`)
+      );
     };
 
     fetchData();
