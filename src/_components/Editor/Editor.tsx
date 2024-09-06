@@ -54,6 +54,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import useSWR from 'swr';
 import { WebsocketProvider } from 'y-websocket';
 import * as Y from 'yjs';
 
@@ -212,6 +213,9 @@ const Editor = React.memo(function EditorC({
   //   root.append(paragraph);
   // };
 
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const { data } = useSWR<string>('/api/headers/user', fetcher);
+
   const collaborationPlugin = useMemo(
     () =>
       realmPlugin({
@@ -309,20 +313,13 @@ const Editor = React.memo(function EditorC({
               }}
               shouldBootstrap={false}
               excludedProperties={excludedProperties}
-              username={`ABC-${Math.floor(Math.random() * 100)}`}
+              username={data}
               cursorsContainerRef={containerRef}
             />
           ));
         },
       }),
-    [
-      // isEditable,
-      colabID,
-      collaborationConnection,
-      // isCollaborative,
-      editorRef,
-      initialMarkdown,
-    ]
+    [colabID, data, editorRef, initialMarkdown]
   );
 
   const editorPluginsCollab = useMemo(
