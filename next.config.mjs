@@ -8,7 +8,7 @@ import './src/lib/Env.mjs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import withBundleAnalyzer from '@next/bundle-analyzer';
 // import withNextIntl from 'next-intl/plugin';
-
+import path from 'path';
 // const withNextIntlConfig = withNextIntl('./src/libs/i18n.ts');
 
 const bundleAnalyzer = withBundleAnalyzer({
@@ -86,6 +86,7 @@ const nextConfig = {
     });
     // Add the alias configuration to the webpack config
     config.resolve.alias = {
+      yjs: path.resolve('./node_modules/yjs'),
       ...config.resolve.alias,
       // react: path.join(__dirname, 'node_modules/react'),
       // '@mui/material': path.join(__dirname, 'node_modules/@mui/material'),

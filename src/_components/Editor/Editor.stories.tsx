@@ -1,7 +1,7 @@
 // components/Editor.stories.tsx
+import { type MDXEditorMethods } from '@mdxeditor/editor';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import { type MDXEditorMethods } from '@webtech0321/mdx-editor-collab';
 import React, { useRef } from 'react';
 
 import { Editor } from '@/components/Editor';
