@@ -17,6 +17,7 @@ import {
   raisePR,
 } from '@/components/Editor/lib/functions';
 import { ControlBar } from '@/components/Layouts/ControlBar';
+import publishDraft from '@/lib/Content/publishDraft';
 // import { raisePR } from '@/lib/Github';
 import { getLogger } from '@/lib/Logger';
 import { toSnakeCase } from '@/lib/StringUtils';
@@ -335,6 +336,7 @@ export default function EditorWrapper({
         handleAddContent={onAddContentClicked}
         handleEdit={handleEdit}
         handleNewBranch={onNewBranchClicked}
+        handlePublishDraft={publishDraft}
         handlePR={handlePR}
         open
         editMode

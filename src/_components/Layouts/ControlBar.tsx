@@ -1,6 +1,7 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ApprovalIcon from '@mui/icons-material/Approval';
 import CloseIcon from '@mui/icons-material/Close';
+import PublishIcon from '@mui/icons-material/Publish';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import {
@@ -27,7 +28,7 @@ import type { ContentItem } from '@/config';
 import { getLogger } from '@/lib/Logger';
 
 const logger = getLogger().child({ namespace: 'ControlBar' });
-logger.level = 'error';
+logger.level = 'info';
 export interface ControlBarProps {
   open: boolean;
   // height: number;
@@ -41,6 +42,7 @@ export interface ControlBarProps {
   top?: number;
   // onContextUpdate: (context: any) => void;
   editMode: boolean;
+  handlePublishDraft?: (context: ContentItem | undefined) => void;
   // fetchBranches?: (collection: any) => void;
   handleNewBranch?: () => void;
   handlePR?: () => void;
@@ -196,6 +198,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   // fetchBranches = () => {},
   handleNewBranch = () => {},
   handlePR = () => {},
+  handlePublishDraft = () => {},
 }) => {
   const [changeBranch, setChangeBranch] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -257,11 +260,19 @@ export const ControlBar: React.FC<ControlBarProps> = ({
     }
   };
 
+  const handlePublishDraftClick = () => {
+    if (typeof handlePublishDraft === 'function') {
+      logger.info('handlePublishDraft', context);
+      handlePublishDraft(context);
+    }
+  };
+
   const onEditClick = () => {
     if (typeof handleEdit === 'function') {
       handleEdit();
     }
   };
+
   const [drawerState, setDrawerState] = React.useState(false);
   const toggleDrawer =
     (openDrawer: boolean) =>
@@ -331,7 +342,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
       {editMode && changeBranch && collection && (
         <>
           <Button
-            variant='outlined'
+            variant='contained'
             onClick={handlePRClick}
             startIcon={
               isLoading ? <CircularProgress size={24} /> : <ApprovalIcon />
@@ -339,6 +350,16 @@ export const ControlBar: React.FC<ControlBarProps> = ({
           >
             Raise PR
           </Button>
+          {typeof handlePublishDraft === 'function' && (
+            <Button
+              variant='contained'
+              color='secondary'
+              onClick={handlePublishDraftClick}
+              startIcon={<PublishIcon />}
+            >
+              Publish Draft
+            </Button>
+          )}
           <Snackbar
             open={Boolean(showError)}
             autoHideDuration={6000}
@@ -435,105 +456,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <div>
-          <FormControlLabel
-            control={
-              <Switch checked={editMode} onClick={() => onEditClick()} />
-            }
-            label='Edit Mode'
-          />
-          <FormControlLabel
-            control={
-              <Switch checked={changeBranch} onClick={() => onBranchToggle()} />
-            }
-            label='Change Branch'
-          />
-          {changeBranch && collection && (
-            <>
-              <FormControlLabel
-                control={
-                  <BranchSelector
-                    // onBranchChange={onBranchChange}
-                    branches={branches}
-                    branch={branch ?? ''}
-                    collection={collection}
-                  />
-                }
-                label=''
-              />
-              <FormControlLabel
-                control={
-                  <IconButton
-                    size='medium'
-                    onClick={() => handleNewBranchClick()}
-                    color='primary'
-                    title='Add new branch'
-                    // sx={{ pl: 0 }}
-                  >
-                    <AddCircleIcon />
-                  </IconButton>
-                }
-                label=''
-              />
-            </>
-          )}
-          {editMode && changeBranch && collection && (
-            <>
-              <Button
-                variant='outlined'
-                onClick={handlePRClick}
-                startIcon={
-                  isLoading ? <CircularProgress size={24} /> : <ApprovalIcon />
-                }
-              >
-                Raise PR
-              </Button>
-              <Snackbar
-                open={Boolean(showError)}
-                autoHideDuration={6000}
-                onClose={() => setShowError('')}
-              >
-                <MuiAlert
-                  onClose={() => setShowError('')}
-                  severity='error'
-                  elevation={6}
-                  variant='filled'
-                >
-                  An error occurred while processing your request: {showError}
-                </MuiAlert>
-              </Snackbar>
-              <Snackbar
-                open={showPRSuccess}
-                autoHideDuration={6000}
-                onClose={() => setShowPRSuccess(false)}
-              >
-                <MuiAlert
-                  onClose={() => setShowPRSuccess(false)}
-                  severity='success'
-                  elevation={6}
-                  variant='filled'
-                >
-                  PR successfully created
-                </MuiAlert>
-              </Snackbar>
-            </>
-          )}
-        </div>
-        <div>
-          <FormControlLabel
-            control={
-              <IconButton
-                size='large'
-                onClick={() => handleAddClick()}
-                color='primary'
-                disabled={!editMode || collection?.branch === context?.branch}
-              >
-                <AddCircleIcon />
-              </IconButton>
-            }
-            label='Add Content'
-          />
-        </div>
+        <div>{controlMenu}</div>
       </Toolbar>
     </AppBar>
   );

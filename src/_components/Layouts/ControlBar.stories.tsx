@@ -132,6 +132,7 @@ export const EditMode = {
     handleAddContent: fn(),
     onContextUpdate: fn(),
     handlePresentation: fn(),
+    handlePublishDraft: fn(),
     collection: dummyCollection,
     context: { ...dummyCollection, branch: 'branch-1' },
     branches,
