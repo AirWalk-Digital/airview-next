@@ -23,11 +23,13 @@ const decodeJWT = (token: string): JwtPayload | null => {
 export async function GET() {
   try {
     const userToken = headers().get('x-amzn-oidc-data');
+    const randomUserName = `ABC-${Math.floor(Math.random() * 100)}`;
 
     if (userToken == null) {
-      return NextResponse.json('No Token In Header', {
-        status: 404,
-        statusText: 'Not Found',
+      logger.debug('No token in header, setting random user name');
+      return NextResponse.json(randomUserName, {
+        status: 200,
+        statusText: 'OK',
       });
     }
 
@@ -38,7 +40,8 @@ export async function GET() {
         statusText: 'OK',
       });
     }
-    return NextResponse.json(`ABC-${Math.floor(Math.random() * 100)}`, {
+
+    return NextResponse.json(randomUserName, {
       status: 200,
       statusText: 'OK',
     });
