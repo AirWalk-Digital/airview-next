@@ -87,7 +87,8 @@ export default function MenuWrapper({
     NProgress.start();
     router.push(newPathname);
   };
-  // important to keep this !! ---------------------------------------------
+
+  // /// important bit --------------------------------------
   // const handleButtonClick = async (url: string) => {
   //   NProgress.start();
   //   const pathnameArray = pathname?.split('/') ?? [];
@@ -99,6 +100,7 @@ export default function MenuWrapper({
   //   logger.info('handleButtonClick', { finalPath: pathnameArray });
   //   router.push(pathnameArray.join('/'));
   // };
+
   // const handleEdit = () => {
   //   // const isEditing = Boolean(searchParams.get('edit'));
   //   const params = new URLSearchParams(searchParams);

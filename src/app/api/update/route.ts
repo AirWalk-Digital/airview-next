@@ -3,6 +3,8 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { getAllFiles, removeFile, reprocessFile } from '@/lib/Cache';
+
 export async function POST(req: NextRequest) {
   try {
     const { headers } = req;
@@ -20,22 +22,50 @@ export async function POST(req: NextRequest) {
     ) {
       // process the updates
       // added files
-      for (const commit of body.head_commit.added) {
+      const addedPromises = body.head_commit.added.map((commit: string) => {
         debug.added.push(commit);
-      }
+        return reprocessFile({
+          backend: 'github',
+          owner: body.repository.owner.name,
+          repo: body.repository.name,
+          path: commit,
+          branch: 'main',
+        });
+      });
+      await Promise.all(addedPromises);
       // modified files
-      for (const commit of body.head_commit.modified) {
-        debug.modified.push(commit);
-      }
+
+      const modifiedPromises = body.head_commit.modified.map(
+        (commit: string) => {
+          debug.modified.push(commit);
+          return reprocessFile({
+            backend: 'github',
+            owner: body.repository.owner.name,
+            repo: body.repository.name,
+            path: commit,
+            branch: 'main',
+          });
+        }
+      );
+      await Promise.all(modifiedPromises);
+
       // removed files
-      for (const commit of body.head_commit.removed) {
+      const removedPromises = body.head_commit.removed.map((commit: string) => {
         debug.removed.push(commit);
-      }
+        return removeFile({
+          backend: 'github',
+          owner: body.repository.owner.name,
+          repo: body.repository.name,
+          path: commit,
+          type: 'published',
+        });
+      });
+      await Promise.all(removedPromises);
 
       return NextResponse.json(
         {
           status: 'success',
-          headers: Object.fromEntries(headers),
+          // headers: Object.fromEntries(headers),
           debug,
           payload: body,
         },
@@ -45,7 +75,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: 'Invalid request',
-        headers: Object.fromEntries(headers),
+        // headers: Object.fromEntries(headers),
+        debug,
         payload: body,
       },
       { status: 400 }
@@ -60,9 +91,29 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const GET = async () => {
+export const GET = async (req: NextRequest) => {
+  const { secret, owner, repo } = Object.fromEntries(req.nextUrl.searchParams);
+  if (secret !== process.env.GITHUB_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: 'Invalid secret' }, { status: 401 });
+  }
+  if (!owner || !repo) {
+    return NextResponse.json(
+      { error: 'Missing required parameters: owner, repo' },
+      { status: 400 }
+    );
+  }
+  const files = await getAllFiles({ owner, repo, filter: '.md*' });
+  files.forEach((file) => {
+    reprocessFile({
+      backend: 'github',
+      owner,
+      repo,
+      path: file.path,
+      branch: 'main',
+    });
+  });
   return NextResponse.json(
-    { error: 'GET method not allowed' },
-    { status: 405 }
+    { message: 'Processed All Files', files },
+    { status: 200 }
   );
 };

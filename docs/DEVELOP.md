@@ -20,6 +20,14 @@ Listing all the keys: `keys *`
 
 Delete everything: `FLUSHALL`
 
+# API
+
+To index content, run the following commands
+
+```bash
+curl "http://localhost:3001/api/update?secret=secret&owner=airwalk-digital&repo=airwalk_patterns"
+```
+
 
 # Etherpad
 

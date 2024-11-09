@@ -1,8 +1,11 @@
 import type { ContentItem, SiteConfig } from '../../site.config';
 
+type FileType = 'published' | 'draft' | 'note';
+
 interface LinkItem {
   label: string;
   url: string;
+  type?: FileType;
 }
 
 interface MenuItem {
@@ -12,17 +15,23 @@ interface MenuItem {
 
 interface MenuStructure {
   label: string;
-  url: string;
-  menuItems?: MenuItem[];
+  url?: string;
+  isActive?: boolean;
+  icon?: React.ComponentType<React.ComponentProps<'svg'>>;
+  type?: FileType;
   links?: LinkItem[] | undefined;
 }
 
-interface Directory {
-  [key: string]: LinkItem[];
+interface MultiMenuStructure {
+  label: string;
+  menus: MenuStructure[];
 }
+// interface Directory {
+//   [key: string]: LinkItem[];
+// }
 
 interface RelatedContent {
-  [key: string]: Directory;
+  [key: string]: LinkItem[];
 }
 
 type FrontMatter = {
@@ -45,10 +54,23 @@ type MenuGroup = {
   menuItems?: MenuItem[];
 };
 
-// type NestedMenu = {
-//   groupTitle: string;
-//   links: { label: string; url: string }[];
-// };
+// Type Definitions
+type Metadata = {
+  backend: 'github';
+  owner: string;
+  repo: string;
+  path: string;
+  branch?: string;
+  encoding?: string;
+};
+
+type File = {
+  name: string;
+  frontmatter: FrontMatter | undefined;
+  hash: string | undefined;
+  type: FileType;
+  metadata?: Metadata;
+};
 
 type InputMenu = {
   primary: MenuStructure[];
@@ -75,7 +97,9 @@ type GitHubFile = {
 // export type { ContentItem, SiteConfig, siteConfig };
 export type {
   ContentItem,
+  File,
   FileContent,
+  FileType,
   FrontMatter,
   GitHubFile,
   InputMenu,
@@ -84,6 +108,8 @@ export type {
   MenuGroup,
   MenuItem,
   MenuStructure,
+  Metadata,
+  MultiMenuStructure,
   RelatedContent,
   SiteConfig,
 };

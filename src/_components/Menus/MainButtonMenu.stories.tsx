@@ -20,39 +20,10 @@ Default.args = {
     {
       label: 'Home',
       url: '/',
-      menuItems: [
-        {
-          groupTitle: 'Submenu',
-          links: [
-            {
-              label: 'Submenu 1',
-              url: '/submenu1',
-            },
-            {
-              label: 'Submenu 2',
-              url: '/submenu2',
-            },
-          ],
-        },
-      ],
     },
     {
       label: 'About',
       url: '/about',
-      menuItems: [
-        {
-          links: [
-            {
-              label: 'Submenu 1',
-              url: '/submenu1',
-            },
-            {
-              label: 'Submenu 2',
-              url: '/submenu2',
-            },
-          ],
-        },
-      ],
     },
   ],
   open: true,
@@ -69,17 +40,6 @@ Providers.args = {
     {
       label: 'Test 2 Service',
       url: 'services/test_2_service/_index.mdx',
-      menuItems: [
-        {
-          groupTitle: 'Chapters',
-          links: [
-            {
-              label: 'Test 2 content',
-              url: 'services/test_2_service/blah.mdx',
-            },
-          ],
-        },
-      ],
     },
   ],
   open: true,
@@ -95,56 +55,18 @@ ComplexMenu.args = {
     {
       label: 'Artificial Intelligence CoE',
       url: '/docs/solutions/artificial_intelligence_coe/_index.md',
-      menuItems: [
-        {
-          groupTitle: 'Designs',
-          links: [
-            {
-              label: 'GenAI Agentic Automation with AutoGen',
-              url: '/docs/designs/ai_autogen/_index.md',
-            },
-            {
-              label: 'AI Request Routing',
-              url: '/docs/designs/ai_request_routing_lwkvef8q/_index.md',
-            },
-          ],
-        },
-      ],
     },
     {
       label: 'Cloud Architecture',
       url: '/docs/solutions/cloud_architecture/_index.md',
-      menuItems: [
+      links: [
         {
-          groupTitle: 'Chapters',
-          links: [
-            {
-              label: 'Cloud Architecture Presentation',
-              url: '/docs/solutions/cloud_architecture/architecture_presentation.ppt.mdx',
-            },
-            {
-              label: 'Test MDX',
-              url: '/docs/solutions/cloud_architecture/test.mdx',
-            },
-          ],
+          label: 'Cloud Architecture Presentation',
+          url: '/docs/solutions/cloud_architecture/architecture_presentation.ppt.mdx',
         },
         {
-          groupTitle: 'Solutions',
-          links: [
-            {
-              label: 'CSP Landing Zones',
-              url: '/docs/solutions/cloud_landing_zones/_index.md',
-            },
-          ],
-        },
-        {
-          groupTitle: 'Designs',
-          links: [
-            {
-              label: 'Discovery - Azure Governance Export',
-              url: '/docs/designs/discovery_azure_governance_export_l7yyys9e/_index.md',
-            },
-          ],
+          label: 'Test MDX',
+          url: '/docs/solutions/cloud_architecture/test.mdx',
         },
       ],
     },
@@ -163,58 +85,10 @@ Loading.args = {
     {
       label: 'Artificial Intelligence CoE',
       url: '/docs/solutions/artificial_intelligence_coe/_index.md',
-      menuItems: [
-        {
-          groupTitle: 'Designs',
-          links: [
-            {
-              label: 'GenAI Agentic Automation with AutoGen',
-              url: '/docs/designs/ai_autogen/_index.md',
-            },
-            {
-              label: 'AI Request Routing',
-              url: '/docs/designs/ai_request_routing_lwkvef8q/_index.md',
-            },
-          ],
-        },
-      ],
     },
     {
       label: 'Cloud Architecture',
       url: '/docs/solutions/cloud_architecture/_index.md',
-      menuItems: [
-        {
-          groupTitle: 'Chapters',
-          links: [
-            {
-              label: 'Cloud Architecture Presentation',
-              url: '/docs/solutions/cloud_architecture/architecture_presentation.ppt.mdx',
-            },
-            {
-              label: 'Test MDX',
-              url: '/docs/solutions/cloud_architecture/test.mdx',
-            },
-          ],
-        },
-        {
-          groupTitle: 'Solutions',
-          links: [
-            {
-              label: 'CSP Landing Zones',
-              url: '/docs/solutions/cloud_landing_zones/_index.md',
-            },
-          ],
-        },
-        {
-          groupTitle: 'Designs',
-          links: [
-            {
-              label: 'Discovery - Azure Governance Export',
-              url: '/docs/designs/discovery_azure_governance_export_l7yyys9e/_index.md',
-            },
-          ],
-        },
-      ],
     },
   ],
   open: true,

@@ -13,7 +13,7 @@ import type {
   FileContent,
   FrontMatter,
   InputMenu,
-  LinkItem,
+  // LinkItem,
   MatterData,
   MenuItem,
   MenuStructure,
@@ -74,7 +74,7 @@ export function nestMenu(
   prefix?: string
 ): { menu: MenuStructure[] } {
   const nestedMenu: MenuStructure[] = menuInput.primary.map((item) => {
-    const urlKey = item.url.slice(0, item.url.lastIndexOf('/'));
+    const urlKey = item.url ? item.url.slice(0, item.url.lastIndexOf('/')) : '';
     const content = menuInput.relatedContent[urlKey];
 
     // Creating a new object instead of modifying the original item
@@ -93,7 +93,8 @@ export function nestMenu(
             url: prefix ? `/${prefix}/${link.url}` : `/${link.url}`,
           })) ?? [],
       }));
-      newItem.menuItems = menuItems;
+      logger.debug({ function: 'nestMenu', msg: 'menuItems', menuItems });
+      // newItem (menuItems);
     }
 
     return newItem;
@@ -154,10 +155,10 @@ export function convertToMenu(primary: FileContent[], siteConfig: SiteConfig) {
       // }
 
       // Check if the key exists in the relatedContent object
-      if (relatedContent && !relatedContent[directory]) {
-        relatedContent[directory] = { chapters: [] as LinkItem[] };
-      }
-      relatedContent[directory]?.chapters!.push({
+      // if (relatedContent && !relatedContent[directory]) {
+      //   relatedContent[directory] = { chapters: [] as LinkItem[] };
+      // }
+      relatedContent[directory]?.push({
         label: x.frontmatter.title,
         url: x.file.path,
         // url: x.file.path.startsWith('/') ? x.file.path : `${x.file.path}`,
@@ -194,14 +195,14 @@ export function convertToMenu(primary: FileContent[], siteConfig: SiteConfig) {
 
           if (parentDirectory && relatedContent) {
             // Ensure the parent directory key exists in relatedContent with a default object
-            if (!relatedContent[parentDirectory]) {
-              relatedContent[parentDirectory] = {};
-            }
+            // if (!relatedContent[parentDirectory]) {
+            //   relatedContent[parentDirectory] = {};
+            // }
 
             // Safely access or initialize the directory key under parentDirectory
             if (parentDirectory && directory) {
-              relatedContent[parentDirectory]![directory] =
-                relatedContent[parentDirectory]?.[directory] ?? [];
+              // relatedContent[parentDirectory]![directory] =
+              //   relatedContent[parentDirectory]?.[directory] ?? [];
 
               // Push the new content to the appropriate directory array
               // TypeScript should now understand that this cannot be undefined
@@ -209,11 +210,11 @@ export function convertToMenu(primary: FileContent[], siteConfig: SiteConfig) {
                 relatedContent &&
                 parentDirectory &&
                 directory &&
-                relatedContent[parentDirectory] &&
-                relatedContent[parentDirectory]![directory] &&
-                Array.isArray(relatedContent[parentDirectory]![directory])
+                relatedContent[parentDirectory]
+                // && relatedContent[parentDirectory]![directory] &&
+                // Array.isArray(relatedContent[parentDirectory]![directory])
               ) {
-                relatedContent[parentDirectory]![directory]!.push({
+                relatedContent[parentDirectory].push({
                   label: x.frontmatter.title,
                   url: x.file.path,
                 });

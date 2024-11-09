@@ -9,7 +9,7 @@ import type { ContentItem, RelatedContent } from '@/lib/Types';
 import { ButtonMenu } from './ButtonMenu';
 
 const logger = getLogger().child({ namespace: 'ContentMenu' });
-logger.level = 'warn';
+logger.level = 'debug';
 
 export interface ContentMenuProps {
   content: RelatedContent;
@@ -33,10 +33,11 @@ export const ContentMenu: React.FC<ContentMenuProps> = ({
   const directory: string = context?.file ? path.dirname(context.file) : '';
 
   // Ensure content is a dictionary-like structure
-  const contentDict = content as Record<string, any>;
+  const contentDict = content;
   const chaptersMenu = [];
+  logger.debug({ component: 'ContentMenu', contentDict });
 
-  if (directory && contentDict[directory] && context.collections) {
+  if (directory && context.collections) {
     //   for (const collectionItem of context.collections) {
     //     if (contentDict[directory][collectionItem]) {
     //       chaptersMenu.push({
@@ -46,11 +47,11 @@ export const ContentMenu: React.FC<ContentMenuProps> = ({
     //     }
     //   }
 
-    for (const collectionItem of Object.keys(contentDict[directory])) {
-      if (contentDict[directory][collectionItem]) {
+    for (const collectionItem of Object.keys(contentDict)) {
+      if (contentDict[collectionItem]) {
         chaptersMenu.push({
           groupTitle: collectionItem,
-          links: contentDict[directory][collectionItem],
+          links: contentDict[collectionItem],
         });
       }
     }
@@ -62,7 +63,7 @@ export const ContentMenu: React.FC<ContentMenuProps> = ({
     //   });
     // }
   }
-
+  logger.debug({ component: 'ContentMenu', chaptersMenu });
   if (chaptersMenu.length > 0) {
     return (
       <>

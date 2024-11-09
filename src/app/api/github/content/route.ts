@@ -3,7 +3,8 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import path from 'path';
 
-import { commitFileToBranch, getFileContent } from '@/lib/Github';
+import { getFileContent } from '@/lib/Cache';
+import { commitFileToBranch } from '@/lib/Github';
 import { getLogger } from '@/lib/Logger';
 
 const logger = getLogger().child({ namespace: 'API:/api/github/content' });
@@ -42,7 +43,13 @@ export async function GET(req: NextRequest) {
 
     //   return NextResponse.json({ files });
     // }
-    const data = await getFileContent({ owner, repo, branch, path: filepath });
+    const data = await getFileContent({
+      backend: 'github',
+      owner,
+      repo,
+      branch,
+      path: filepath,
+    });
     const extension = path.extname(filepath);
     const contentType = mime.lookup(extension) || 'application/octet-stream';
     // logger.info(`[GET /api/github/content][data]: ${util.inspect(data)}`);

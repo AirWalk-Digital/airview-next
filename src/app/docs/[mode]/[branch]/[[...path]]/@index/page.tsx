@@ -7,9 +7,11 @@ import { siteConfig } from '../../../../../../../site.config';
 import { notFound } from 'next/navigation';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem } from '@/lib/Types';
-import { loadMenu, nestMenu } from '@/lib/Content/loadMenu';
+// import { loadMenu, nestMenu } from '@/lib/Content/loadMenu';
+import { menuStructure } from '@/lib/Menu';
+
 const logger = getLogger().child({ namespace: 'docs/page' });
-logger.level = 'error';
+logger.level = 'debug';
 
 export async function generateMetadata({
   params,
@@ -71,14 +73,26 @@ export default async function Page({
         return contentConfig;
       }
     };
+    const contentParams = menuConfig(contentConfig);
 
-    const content = await loadMenu(siteConfig, menuConfig(contentConfig));
-    const { menu: menuStructure } = nestMenu(content);
-    logger.debug({ msg: 'menuStructure: ', menuStructure });
+    logger.debug({
+      page: 'index',
+      msg: 'contentParams: ',
+      contentParams,
+      path: params.path[0],
+    });
+    // const content = await loadMenu(siteConfig, menuConfig(contentConfig));
+    // const { menu: menuStructure } = nestMenu(content);
+    const menu = await menuStructure(
+      contentParams.menu?.scope ? contentParams.menu?.scope : params.path[0],
+      contentParams.menu?.collection as string
+    );
+
+    logger.debug({ page: 'index', msg: 'menu: ', menu });
     return (
       <main>
         <MenuWrapper
-          menuStructure={menuStructure}
+          menuStructure={menu}
           loading={loading}
           context={contentConfig}
         >

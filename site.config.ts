@@ -1,6 +1,7 @@
 interface Menu {
   component: string;
   collection: string | null;
+  scope?: string;
 }
 
 export interface LinkedItem {
@@ -17,6 +18,7 @@ export interface ContentItem {
   branch: string;
   path: string;
   reference: string;
+  icon?: React.ComponentType<React.ComponentProps<'svg'>> | JSX.Element;
   collections?: string[];
   menu?: Menu;
   file?: string;
@@ -72,7 +74,11 @@ export const siteConfig: SiteConfig = {
       path: 'providers', // the base path for the content
       reference: 'provider', // how the collection is referred to in frontmatter links
       collections: ['services'],
-      menu: { component: 'MainButtonMenu', collection: 'providers' }, // the menu to use on the left and the baseline for the menu
+      menu: {
+        component: 'MainButtonMenu',
+        collection: 'providers',
+        scope: 'services',
+      }, // the menu to use on the left and the baseline for the menu
     },
     solutions: {
       source: 'github', // The source of the content

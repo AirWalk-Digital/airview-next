@@ -1,8 +1,8 @@
 import { ButtonMenu } from './ButtonMenu';
 import { ContentMenu } from './ContentMenu';
 import DummyMenu from './DummyMenu';
-import { HeaderMinimalMenu } from './HeaderMinimalMenu';
-import { MainButtonMenu } from './MainButtonMenu';
+// import { HeaderMinimalMenu } from './HeaderMinimalMenu';
+// import { type MainButtonMenu, MainButtonMenu } from './MainButtonMenu';
 // import type { HeaderMinimalMenuProps, MenuProps } from './Menu';
 import { Menu } from './Menu';
 import { NavigationDrawer } from './NavigationDrawer';
@@ -12,8 +12,8 @@ export {
   ButtonMenu,
   ContentMenu,
   DummyMenu,
-  HeaderMinimalMenu,
-  MainButtonMenu,
+  // HeaderMinimalMenu,
+  // MainButtonMenu,
   Menu,
   NavigationDrawer,
   TableOfContents,

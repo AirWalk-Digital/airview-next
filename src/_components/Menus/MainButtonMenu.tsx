@@ -51,7 +51,7 @@ export const MainButtonMenu: React.FC<MainButtonMenuProps> = ({
           <ButtonMenu
             menuTitle={c.label}
             url={c.url}
-            menuItems={c.menuItems}
+            menuItems={[]}
             collapsible={collapsible}
             initialCollapsed={initialCollapsed}
             handleButtonClick={handleButtonClick}

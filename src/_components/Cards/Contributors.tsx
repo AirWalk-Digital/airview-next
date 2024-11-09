@@ -70,7 +70,9 @@ const Contributors: React.FC<{ contributors: Contributor[] }> = ({
                   !contributor.authorName.toLowerCase().includes('airview')
               )
               .map((contributor) => (
-                <TableRow key={contributor.authorName}>
+                <TableRow
+                  key={`${contributor.authorName}|${contributor.authorDate}`}
+                >
                   <TableCell>{contributor.authorName}</TableCell>
                   <TableCell>{contributor.authorDate}</TableCell>
                 </TableRow>

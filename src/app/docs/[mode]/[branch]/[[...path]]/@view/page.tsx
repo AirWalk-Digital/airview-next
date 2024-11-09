@@ -5,12 +5,12 @@ import React from 'react';
 import { MenuWrapper, ContentViewer } from '@/components/Layouts';
 import { siteConfig } from '@/config';
 import { notFound } from 'next/navigation';
-import { getFileContent } from '@/lib/Github';
+import { getFileContent } from '@/lib/Cache';
 import { getLogger } from '@/lib/Logger';
 import type { ContentItem, MatterData } from '@/lib/Types';
-import { loadMenu, nestMenu, menuConfig } from '@/lib/Content/loadMenu';
+import { menuStructure, loadRelated } from '@/lib/Menu';
 const logger = getLogger().child({ namespace: 'docs/page' });
-logger.level = 'error';
+logger.level = 'debug';
 export const metadata: Metadata = {
   title: 'Airview',
   description: 'Airview AI',
@@ -41,7 +41,12 @@ async function checkFrontmatter(content: string, context: ContentItem) {
     const file = external_path as string;
     let pageContent;
     try {
-      pageContent = await getFileContent({ owner, repo, path: file });
+      pageContent = await getFileContent({
+        backend: 'github',
+        owner,
+        repo,
+        path: file,
+      });
     } catch (error) {
       logger.error({ msg: 'checkFrontmatter: ', error });
     }
@@ -73,6 +78,7 @@ export default async function Page({
     let path = params.path;
 
     let file = '';
+    logger.info({ msg: ' Path: ', path });
 
     // if 'related_config' is somewhere in the path, then the file is the last element in the path
     if (path.includes('related_content')) {
@@ -80,6 +86,7 @@ export default async function Page({
       file = path
         .slice(path.indexOf('related_content') + 1)
         .join('/') as string;
+      logger.info({ msg: 'Related Content: ', file });
     } else {
       file = path.join('/') as string;
     }
@@ -111,7 +118,13 @@ export default async function Page({
         file
       ) {
         const { owner, repo, branch } = contentConfig;
-        pageContent = await getFileContent({ owner, repo, path: file, branch });
+        pageContent = await getFileContent({
+          backend: 'github',
+          owner,
+          repo,
+          path: file,
+          branch,
+        });
         if (pageContent && pageContent.content) {
           pageContentText = pageContent?.content
             ? Buffer.from(pageContent.content).toString()
@@ -122,19 +135,42 @@ export default async function Page({
           await checkFrontmatter(pageContentText || '', contentConfig); // check for frontmatter context
         pageContentText = linkedPageContentText;
 
-        logger.debug({ msg: 'context: ', context });
+        // logger.debug({ msg: 'context: ', context });
+        const menuConfig = (contentConfig: ContentItem) => {
+          if (contentConfig.menu && contentConfig.menu.collection) {
+            return (
+              siteConfig?.content?.[
+                contentConfig?.menu
+                  ?.collection as keyof typeof siteConfig.content
+              ] || (contentConfig as ContentItem)
+            );
+          } else {
+            return contentConfig;
+          }
+        };
+        // const content = await loadMenu(
+        //   siteConfig,
+        //   menuConfig(siteConfig, contentConfig)
+        // );
+        // const { menu: menuStructure } = nestMenu(content);
 
-        const content = await loadMenu(
-          siteConfig,
-          menuConfig(siteConfig, contentConfig)
+        const contentParams = menuConfig(contentConfig);
+        const menu = await menuStructure(
+          contentParams.menu?.scope
+            ? contentParams.menu?.scope
+            : params.path[0],
+          contentParams.menu?.collection as string
         );
-        const { menu: menuStructure } = nestMenu(content);
+        const relatedContent = await loadRelated(params.path.join('/'));
+        // const menu = await menuStructure(contentParams, params.path[0]);
+        logger.debug({ msg: 'Menu: ', menu });
+        logger.debug({ msg: 'Related Content: ', relatedContent });
 
         if (pageContent && pageContent.content && pageContentText) {
           return (
             <main>
               <MenuWrapper
-                menuStructure={menuStructure}
+                menuStructure={menu}
                 loading={loading}
                 context={contentConfig}
               >
@@ -143,7 +179,7 @@ export default async function Page({
                   contributors={pageContent.contributors}
                   context={context}
                   loading={loading}
-                  relatedContent={content.relatedContent}
+                  relatedContent={relatedContent}
                 />
               </MenuWrapper>
             </main>
